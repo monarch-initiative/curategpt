@@ -131,18 +131,38 @@ and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) can 
 Once in some kind of semi-structured format this is enough for GPT to generate suitable axioms using
 in-context learning and/or using SPIRES.
 
+### Make ontology suggestions
+
+- make my text definitions more human readable
+- make my text definitions conform to my logical definitions
+- make my text definitions more consistent
+- suggest missing logical definitions
+- suggest missing axioms
+- make general suggestions
+
+### Integration of reasoning
+
+We are [currently exploring](https://github.com/cmungall/gpt-reasoning-manuscript) how well GPT does at reasoning;
+unsurprisingly it's not very good.
+
+We would have an agent for performing reasoning using standard methods (e.g. robot by py4j or command line).
+
+Explanations can be rewritten by the LLM to make them more understandable to mortals.
+
+If the curator permits, results can be cached in the vector store. This will provide a bank of examples for
+in-context learning for future MVPs.
+
 ### Review and edit
 
 - show all the parts of the tentacle
 - show all terms added in last week
 - show all definitions for all neuron types
 
-TODO
-
 ## MVP 2
 
 - reactivity+carts: e.g. being able to click on elements in the payload and have them be added to a context/cart
 - syncing with existing editing environments
+- mining github issues
 - github operations
 
 
