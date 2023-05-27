@@ -1,0 +1,24 @@
+{
+  "template": "https://github.com/monarch-initiative/monarch-project-template/",
+  "commit": "0fce395fe859618d3feb3ac9ebd2f8b94d743b2b",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "curate-gpt",
+      "github_org_name": "monarch-initiative",
+      "__project_slug": "curate_gpt",
+      "project_description": "GPT-powered knowledge acquisition UI",
+      "min_python_version": "3.8",
+      "file_name": "main",
+      "greeting_recipient": "World",
+      "full_name": "Author 1",
+      "email": "cjmungall@lbl.gov",
+      "__author": "Author 1 <cjmungall@lbl.gov>",
+      "license": "BSD-3",
+      "github_token_for_doc_deployment": "GH_TOKEN",
+      "github_token_for_pypi_deployment": "PYPI_TOKEN",
+      "_template": "https://github.com/monarch-initiative/monarch-project-template/"
+    }
+  },
+  "directory": null
+}
