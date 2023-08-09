@@ -1,0 +1,42 @@
+id: http://w3id.org/ontogpt/ontology/
+name: ontology
+description: OntoGPT ontology model
+license: https://creativecommons.org/publicdomain/zero/1.0/
+prefixes:
+  linkml: https://w3id.org/linkml/
+  ontology: http://w3id.org/ontogpt/ontology/
+default_prefix: ontology
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+
+  OntologyClass:
+    tree_root: true
+    description: >-
+      A class in the OntoGPT ontology
+    attributes:
+      id:
+      label:
+      description:
+        description: >-
+          A description of the class
+      aliases:
+        description: >-
+          Alternate names or labels
+        multivalued: true
+      relationships:
+        description: >-
+          Relationships to other entities
+        range: Relationship
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+
+  Relationship:
+    description: >-
+      A relationship between two entities
+    attributes:
+      predicate:
+      target:
