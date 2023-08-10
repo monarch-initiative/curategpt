@@ -2,15 +2,12 @@
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Tuple, Union, Optional
+from typing import Dict, Iterable, Iterator, List, Optional, Tuple, Union
 
-from linkml_runtime import SchemaView
-from linkml_runtime.linkml_model import SchemaDefinition
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
 
-from curate_gpt.store.schema_manager import SchemaManager
+from curate_gpt.store.schema_proxy import SchemaProxy
 
 OBJECT = Union[YAMLRoot, BaseModel, Dict]
 QUERY = Union[str, YAMLRoot, BaseModel, Dict]
@@ -24,7 +21,9 @@ logger = logging.getLogger(__name__)
 
 class CollectionMetadata(BaseModel):
     """
-    Metadata about a collection
+    Metadata about a collection.
+
+    This is an open class, so additional metadata can be added.
     """
 
     name: Optional[str] = None
@@ -39,6 +38,13 @@ class CollectionMetadata(BaseModel):
     object_type: Optional[str] = None
     """Type of object in the collection"""
 
+    # DEPRECATED
+    annotations: Optional[Dict] = None
+    """Additional metadata"""
+
+    object_count: Optional[int] = None
+    """Number of objects in the collection"""
+
 
 @dataclass
 class DBAdapter(ABC):
@@ -47,12 +53,12 @@ class DBAdapter(ABC):
     """
 
     path: str = None
-    """Path to the database"""
+    """Path to a location where the database is stored or disk or the network."""
 
-    pydantic_model: Optional[BaseModel] = None
-    """Pydantic model"""
+    #pydantic_model: Optional[BaseModel] = None
+    #"""Pydantic model"""
 
-    schema_manager: Optional[SchemaManager] = None
+    schema_proxy: Optional[SchemaProxy] = None
     """Schema manager"""
 
     @abstractmethod
@@ -119,10 +125,29 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
     def list_collection_names(self) -> List[str]:
         """
         List all collections in the database.
 
+        :return:
+        """
+
+    @abstractmethod
+    def collection_metadata(self, collection_name: Optional[str] = DEFAULT_COLLECTION, include_derived=False, **kwargs) -> Optional[CollectionMetadata]:
+        """
+        Get the metadata for a collection.
+
+        :param collection_name:
+        :param include_derived: Include derived metadata, e.g. counts
+        :return:
+        """
+
+    def set_collection_metadata(self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs):
+        """
+        Set the metadata for a collection.
+
+        :param collection_name:
         :return:
         """
         raise NotImplementedError
@@ -136,7 +161,7 @@ class DBAdapter(ABC):
 
         :param text:
         :param collection:
-        :param where: 
+        :param where:
         :param kwargs:
         :return:
         """
@@ -178,11 +203,21 @@ class DBAdapter(ABC):
         :return:
         """
 
+    @abstractmethod
+    def peek(self, collection: str = DEFAULT_COLLECTION, limit=5, **kwargs) -> Iterator[OBJECT]:
+        """
+        Peek at first N objects in a collection.
+
+        :param collection:
+        :param limit:
+        :return:
+        """
+        raise NotImplementedError
 
     def identifier_field(self, collection: str = None) -> str:
-        if self.schema_manager and self.schema_manager.schemaview:
+        if self.schema_proxy and self.schema_proxy.schemaview:
             fields = []
-            for s in self.schema_manager.schemaview.all_slots(attributes=True).values():
+            for s in self.schema_proxy.schemaview.all_slots(attributes=True).values():
                 if s.identifier:
                     fields.append(s.name)
             if fields:

@@ -1,4 +1,4 @@
-from typing import Union, Dict, Any, List
+from typing import Any, Dict, List, Union
 
 
 class TestClass:

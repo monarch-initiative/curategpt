@@ -1,9 +1,7 @@
-from typing import List, Dict
+from typing import Dict, List
 
 
-def dicts_to_table_string(
-    headings: List[str], dicts: List[Dict[str, str]]
-) -> List[str]:
+def dicts_to_table_string(headings: List[str], dicts: List[Dict[str, str]]) -> List[str]:
     max_lengths = [len(h) for h in headings]
 
     # Compute maximum length for each column

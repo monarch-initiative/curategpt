@@ -19,7 +19,10 @@ classes:
     attributes:
       id:
       label:
-      description:
+      category:
+        designates_type: true
+        range: uriorcurie
+      definition:
         description: >-
           A description of the class
       aliases:

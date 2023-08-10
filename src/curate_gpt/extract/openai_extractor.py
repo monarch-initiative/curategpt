@@ -7,8 +7,7 @@ from typing import Any, Dict, List, Optional, Type, Union
 import openai
 import yaml
 
-from curate_gpt.extract.extractor import AnnotatedObject
-from curate_gpt.extract.extractor import Extractor
+from curate_gpt.extract.extractor import AnnotatedObject, Extractor
 
 FUNC_NAME = "extract_data"
 
@@ -20,26 +19,35 @@ class OpenAIExtractor(Extractor):
     """
     Extractor that uses OpenAI functions.
     """
+
     max_tokens: int = 3000
     model: str = "gpt-4"
-    #conversation: List[Dict[str, Any]] = None
-    #conversation_mode: bool = False
+    # conversation: List[Dict[str, Any]] = None
+    # conversation_mode: bool = False
 
     def functions(self):
         return [
             {
                 "name": FUNC_NAME,
                 "description": "A n ontology term",
-                "parameters": self.schema_manager.json_schema(),
+                "parameters": self.schema_proxy.json_schema(),
             },
         ]
 
     def extract(
-            self, text: str, target_class: str, examples: List[AnnotatedObject] = None, examples_as_functions=False, conversation=None, **kwargs
+        self,
+        text: str,
+        target_class: str,
+        examples: List[AnnotatedObject] = None,
+        examples_as_functions=False,
+        conversation=None,
+        **kwargs,
     ) -> AnnotatedObject:
-
         messages = [
-            {"role": "system", "content": f"You are system that returns {target_class} object in JSON."},
+            {
+                "role": "system",
+                "content": f"You are system that returns {target_class} object in JSON.",
+            },
         ]
         for example in examples:
             ex_text = example.text

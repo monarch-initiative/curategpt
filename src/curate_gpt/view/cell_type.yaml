@@ -1,0 +1,80 @@
+id: http://w3id.org/ontogpt/ontology/
+name: ontology
+description: OntoGPT ontology model
+license: https://creativecommons.org/publicdomain/zero/1.0/
+prefixes:
+  linkml: https://w3id.org/linkml/
+  ontology: http://w3id.org/ontogpt/ontology/
+default_prefix: ontology
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+
+  Concept:
+    attributes:
+      id:
+        identifier: true
+      label:
+      category:
+        designates_type: true
+        range: uriorcurie
+      definition:
+        description: >-
+          A description of the cell type
+      aliases:
+        description: >-
+          Alternate names or labels
+        multivalued: true
+      supertypes:
+        range: CellType
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      subtypes:
+        range: CellType
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+
+  AnatomicalStructure:
+    is_a: Concept
+
+
+  CellType:
+    tree_root: true
+    is_a: AnatomicalStructure
+    slot_usage:
+      supertypes:
+        range: CellType
+      subtypes:
+        range: CellType
+    attributes:
+      locations:
+        range: GrossAnatomicalStructure
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      diseases:
+        range: Disease
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+
+  GrossAnatomicalStructure:
+    is_a: AnatomicalStructure
+    attributes:
+      locations:
+        range: GrossAnatomicalStructure
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+
+  Disease:
+    is_a: Concept
+
+
+
+
+

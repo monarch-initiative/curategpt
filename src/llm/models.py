@@ -1,14 +1,16 @@
-from dataclasses import dataclass, field
 import datetime
-from .errors import NeedsKeyException
+import json
+import os
 import re
 import time
-from typing import Any, Dict, Iterator, List, Optional, Set
 from abc import ABC, abstractmethod
-import os
-import json
+from dataclasses import dataclass, field
+from typing import Any, Dict, Iterator, List, Optional, Set
+
 from pydantic import BaseModel
 from ulid import ULID
+
+from .errors import NeedsKeyException
 
 CONVERSATION_NAME_LENGTH = 32
 
@@ -37,11 +39,7 @@ class Conversation:
     responses: List["Response"] = field(default_factory=list)
 
     def prompt(
-        self,
-        prompt: Optional[str],
-        system: Optional[str] = None,
-        stream: bool = True,
-        **options
+        self, prompt: Optional[str], system: Optional[str] = None, stream: bool = True, **options
     ):
         return Response(
             Prompt(
@@ -128,9 +126,7 @@ class Response(ABC):
         db["conversations"].insert(
             {
                 "id": conversation.id,
-                "name": _conversation_name(
-                    self.prompt.prompt or self.prompt.system or ""
-                ),
+                "name": _conversation_name(self.prompt.prompt or self.prompt.system or ""),
                 "model": conversation.model.model_id,
             },
             ignore=True,
@@ -194,9 +190,7 @@ class Response(ABC):
         return response
 
     def __repr__(self):
-        return "<Response prompt='{}' text='{}'>".format(
-            self.prompt.prompt, self.text()
-        )
+        return "<Response prompt='{}' text='{}'>".format(self.prompt.prompt, self.text())
 
 
 class Options(BaseModel):
@@ -229,9 +223,7 @@ class Model(ABC):
             if key:
                 return key
 
-        message = "No key found - add one using 'llm keys set {}'".format(
-            self.needs_key
-        )
+        message = "No key found - add one using 'llm keys set {}'".format(self.needs_key)
         if self.key_env_var:
             message += " or set the {} environment variable".format(self.key_env_var)
         raise NeedsKeyException(message)
@@ -254,11 +246,7 @@ class Model(ABC):
         pass
 
     def prompt(
-        self,
-        prompt: Optional[str],
-        system: Optional[str] = None,
-        stream: bool = True,
-        **options
+        self, prompt: Optional[str], system: Optional[str] = None, stream: bool = True, **options
     ):
         return self.response(
             Prompt(prompt, system=system, model=self, options=self.Options(**options)),

@@ -1,6 +1,7 @@
-from pydantic import ConfigDict, BaseModel
 import string
-from typing import Optional, Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
+from pydantic import BaseModel, ConfigDict
 
 
 class Template(BaseModel):
@@ -42,9 +43,7 @@ class Template(BaseModel):
         vars = cls.extract_vars(string_template)
         missing = [p for p in vars if p not in params]
         if missing:
-            raise cls.MissingVariables(
-                "Missing variables: {}".format(", ".join(missing))
-            )
+            raise cls.MissingVariables("Missing variables: {}".format(", ".join(missing)))
         return string_template.substitute(**params)
 
     @staticmethod

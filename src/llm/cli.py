@@ -1,31 +1,33 @@
-import click
-from click_default_group import DefaultGroup
 import json
+import pathlib
+import shutil
+import sys
+import textwrap
+import warnings
+from runpy import run_module
+from typing import Optional, cast
+
+import click
+import pydantic
+import sqlite_utils
+import yaml
+from click_default_group import DefaultGroup
+
 from llm import (
     Conversation,
     Response,
     Template,
     UnknownModelError,
     get_key,
-    get_plugins,
     get_model,
     get_model_aliases,
     get_models_with_aliases,
+    get_plugins,
     user_dir,
 )
 
 from .migrations import migrate
 from .plugins import pm
-import pathlib
-import pydantic
-from runpy import run_module
-import shutil
-import sqlite_utils
-import sys
-import textwrap
-from typing import cast, Optional
-import warnings
-import yaml
 
 warnings.simplefilter("ignore", ResourceWarning)
 
@@ -222,9 +224,7 @@ def prompt(
         # Validate with pydantic
         try:
             validated_options = dict(
-                (key, value)
-                for key, value in model.Options(**dict(options))
-                if value is not None
+                (key, value) for key, value in model.Options(**dict(options)) if value is not None
             )
         except pydantic.ValidationError as ex:
             raise click.ClickException(render_errors(ex.errors()))
@@ -272,14 +272,10 @@ def load_conversation(conversation_id: Optional[str]) -> Optional[Conversation]:
     try:
         row = cast(sqlite_utils.db.Table, db["conversations"]).get(conversation_id)
     except sqlite_utils.db.NotFoundError:
-        raise click.ClickException(
-            "No conversation found with id={}".format(conversation_id)
-        )
+        raise click.ClickException("No conversation found with id={}".format(conversation_id))
     # Inflate that conversation
     conversation = Conversation.from_row(row)
-    for response in db["responses"].rows_where(
-        "conversation_id = ?", [conversation_id]
-    ):
+    for response in db["responses"].rows_where("conversation_id = ?", [conversation_id]):
         conversation.responses.append(Response.from_row(response))
     return conversation
 
@@ -352,9 +348,7 @@ def logs_status():
     click.echo("Found log database at {}".format(path))
     click.echo("Number of conversations logged:\t{}".format(db["conversations"].count))
     click.echo("Number of responses logged:\t{}".format(db["responses"].count))
-    click.echo(
-        "Database file size: \t\t{}".format(_human_readable_size(path.stat().st_size))
-    )
+    click.echo("Database file size: \t\t{}".format(_human_readable_size(path.stat().st_size)))
 
 
 @logs.command(name="on")
@@ -446,15 +440,11 @@ def logs_list(count, path, model, query, truncate):
     }
     if query:
         sql = LOGS_SQL_SEARCH
-        format_kwargs["extra_where"] = (
-            " and responses.model = :model" if model_id else ""
-        )
+        format_kwargs["extra_where"] = " and responses.model = :model" if model_id else ""
     else:
         format_kwargs["where"] = " where responses.model = :model" if model_id else ""
 
-    rows = list(
-        db.query(sql.format(**format_kwargs), {"model": model_id, "query": query})
-    )
+    rows = list(db.query(sql.format(**format_kwargs), {"model": model_id, "query": query}))
     for row in rows:
         if truncate:
             row["prompt"] = _truncate_string(row["prompt"])
@@ -476,9 +466,7 @@ def models():
 
 
 @models.command(name="list")
-@click.option(
-    "--options", is_flag=True, help="Show options for each model, if available"
-)
+@click.option("--options", is_flag=True, help="Show options for each model, if available")
 def models_list(options):
     "List available models"
     models_that_have_shown_options = set()
@@ -496,8 +484,7 @@ def models_list(options):
                     type_info = type_info[6:-11]
                 bits = ["\n  ", name, ": ", type_info]
                 if field.description and (
-                    model_with_aliases.model.__class__
-                    not in models_that_have_shown_options
+                    model_with_aliases.model.__class__ not in models_that_have_shown_options
                 ):
                     wrapped = textwrap.wrap(field.description, 70)
                     bits.append("\n    ")
@@ -603,9 +590,7 @@ def templates_path():
 
 @cli.command()
 @click.argument("packages", nargs=-1, required=False)
-@click.option(
-    "-U", "--upgrade", is_flag=True, help="Upgrade packages to latest version"
-)
+@click.option("-U", "--upgrade", is_flag=True, help="Upgrade packages to latest version")
 @click.option(
     "-e",
     "--editable",
@@ -707,9 +692,7 @@ def get_history(chat_id):
             chat_id = last_row[0].get("chat_id") or last_row[0].get("id")
         else:  # Database is empty
             return None, []
-    rows = db["logs"].rows_where(
-        "id = ? or chat_id = ?", [chat_id, chat_id], order_by="id"
-    )
+    rows = db["logs"].rows_where("id = ? or chat_id = ?", [chat_id, chat_id], order_by="id")
     return chat_id, rows
 
 

@@ -1,9 +1,11 @@
-import click
 import json
-import llm
+
+import click
 import replicate
 import requests
 import sqlite_utils
+
+import llm
 
 
 @llm.hookimpl
@@ -30,9 +32,7 @@ def register_commands(cli):
             headers={"Authorization": "Token {}".format(token)},
         )
         if response.status_code != 200:
-            raise click.ClickException(
-                "Error fetching models: {}".format(response.text)
-            )
+            raise click.ClickException("Error fetching models: {}".format(response.text))
         models = response.json()["models"]
         json_path = config_dir() / "fetch-models.json"
         with open(json_path, "w") as fp:
@@ -68,9 +68,7 @@ def register_commands(cli):
                 headers={"Authorization": "Token {}".format(token)},
             )
             if response.status_code != 200:
-                raise click.ClickException(
-                    "Error fetching model details: {}".format(response.text)
-                )
+                raise click.ClickException("Error fetching model details: {}".format(response.text))
             model_details = response.json()
             version = model_details["latest_version"]["id"]
         # Add to models.json
@@ -146,13 +144,9 @@ def register_commands(cli):
         next_url = "https://api.replicate.com/v1/predictions"
         to_fetch = []
         while next_url:
-            response = requests.get(
-                next_url, headers={"Authorization": "Token {}".format(token)}
-            )
+            response = requests.get(next_url, headers={"Authorization": "Token {}".format(token)})
             if response.status_code != 200:
-                raise click.ClickException(
-                    "Error fetching model details: {}".format(response.text)
-                )
+                raise click.ClickException("Error fetching model details: {}".format(response.text))
             data = response.json()
             next_url = data.get("next")
             # For each one check if we already have it
@@ -164,9 +158,7 @@ def register_commands(cli):
         def get_prediction(url):
             r = requests.get(url, headers={"Authorization": "Token {}".format(token)})
             if r.status_code != 200:
-                raise click.ClickException(
-                    "Error fetching prediction details: {}".format(url)
-                )
+                raise click.ClickException("Error fetching prediction details: {}".format(url))
             data = r.json()
             # Guess the model name, rewrite JSON with _model_guess after id
             info = {}
