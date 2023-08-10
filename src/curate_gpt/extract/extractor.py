@@ -3,15 +3,14 @@ import logging
 from abc import ABC, abstractmethod
 from copy import copy
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple, Type, List, Union
+from typing import Any, Dict, List, Tuple, Type, Union
 
-
-import llm
 from linkml_runtime import SchemaView
 from pydantic import BaseModel as BaseModel
 
+import llm
 from curate_gpt.store.db_adapter import DBAdapter
-from curate_gpt.store.schema_manager import SchemaManager
+from curate_gpt.store.schema_proxy import SchemaProxy
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +20,7 @@ class AnnotatedObject(BaseModel):
     Annotated object shadows a basic dictionary object
     """
 
-    #object: Union[Dict[str, Any], List[Dict[str, Any]]] = {} - TODO: pydantic bug?
+    # object: Union[Dict[str, Any], List[Dict[str, Any]]] = {} - TODO: pydantic bug?
     object: Any = {}
     annotations: Dict[str, Any] = {}
     key_values: Dict[str, "AnnotatedObject"] = {}
@@ -44,8 +43,8 @@ EXAMPLE = Tuple[str, AnnotatedObject]
 
 @dataclass
 class Extractor(ABC):
-    #db_adapter: DBAdapter = None
-    schema_manager: SchemaManager = None
+    # db_adapter: DBAdapter = None
+    schema_proxy: SchemaProxy = None
     model_name: str = None
     _model = None
     api_key: str = None
@@ -80,9 +79,8 @@ class Extractor(ABC):
 
     @property
     def schemaview(self) -> SchemaView:
-        return self.schema_manager.schemaview
+        return self.schema_proxy.schemaview
 
     @property
     def pydantic_root_model(self) -> BaseModel:
-        return self.schema_manager.pydantic_root_model
-
+        return self.schema_proxy.pydantic_root_model

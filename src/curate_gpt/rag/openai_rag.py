@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # TODO: refactor to reuse extractor
 
+
 @dataclass
 class OpenAIRAG(RAG):
     max_tokens: int = 3000
@@ -43,7 +44,9 @@ class OpenAIRAG(RAG):
         :return:
         """
         conversation_mode = self.conversation_mode
-        examples = list(self.db_adapter.search(text, relevance_factor=self.relevance_factor, **kwargs))
+        examples = list(
+            self.db_adapter.search(text, relevance_factor=self.relevance_factor, **kwargs)
+        )
 
         # TODO
         kind = "Ontology Term"

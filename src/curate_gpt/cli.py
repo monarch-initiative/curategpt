@@ -1,9 +1,12 @@
 """Command line interface for curate-gpt."""
+import csv
 import json
 import logging
+from typing import List, Tuple
 
 import click
 import yaml
+from click_default_group import DefaultGroup
 from oaklib import get_adapter
 
 from curate_gpt import ChromaDBAdapter, __version__
@@ -12,32 +15,39 @@ __all__ = [
     "main",
 ]
 
-from curate_gpt.agents.rage import RetrievalAugmentedExtractor
-
+from curate_gpt.agents.dalek import DatabaseAugmentedExtractor
 from curate_gpt.extract.basic_extractor import BasicExtractor
-
 from curate_gpt.rag.openai_rag import OpenAIRAG
-from curate_gpt.store.schema_manager import SchemaManager
+from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.view.ontology_view import Ontology, OntologyView
 from llm import get_plugins
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 path_option = click.option("-p", "--path", help="Path to a file or directory for database.")
 model_option = click.option("-m", "--model", help="Model to use for generation, e.g. gpt-4.")
 schema_option = click.option("-s", "--schema", help="Path to schema.")
 collection_option = click.option("-c", "--collection", help="Collection within the database.")
-relevance_factor_option = click.option("--relevance-factor", type=click.FLOAT,
-                                       help="Relevance factor for search.")
-limit_option = click.option("-l", "--limit", default=10, show_default=True, help="Number of results to return.")
+relevance_factor_option = click.option(
+    "--relevance-factor", type=click.FLOAT, help="Relevance factor for search."
+)
+limit_option = click.option(
+    "-l", "--limit", default=10, show_default=True, help="Number of results to return."
+)
 reset_option = click.option(
     "--reset/--no-reset",
     default=False,
     show_default=True,
     help="Reset the database before indexing.",
 )
+append_option = click.option(
+    "--append/--no-append", default=False, show_default=True, help="Append to the database."
+)
 
-@click.group()
+
+@click.group(cls=DefaultGroup,
+    default="search",
+    default_if_no_args=True,)
 @click.option("-v", "--verbose", count=True)
 @click.option("-q", "--quiet")
 @click.version_option(__version__)
@@ -47,7 +57,9 @@ def main(verbose: int, quiet: bool):
     :param verbose: Verbosity while running.
     :param quiet: Boolean to be quiet or verbose.
     """
-    logger = logging.getLogger()
+    # logger = logging.getLogger()
+    logging.basicConfig()
+    logger = logging.root
     if verbose >= 2:
         logger.setLevel(level=logging.DEBUG)
     elif verbose == 1:
@@ -59,29 +71,6 @@ def main(verbose: int, quiet: bool):
     logger.info(f"Logger {logger.name} set to level {logger.level}")
 
 
-@main.command()
-@path_option
-@reset_option
-@collection_option
-@model_option
-@click.argument("ontology")
-def index_ontology(ontology, path, reset: bool, collection, model, **kwargs):
-    """Index an ontology.
-
-    Example:
-
-        curategpt index-ontology  -c obo_hp $db/hp.db
-
-    """
-    oak_adapter = get_adapter(ontology)
-    view = OntologyView(oak_adapter)
-    db = ChromaDBAdapter(path, **kwargs)
-    db.text_lookup = view.text_field
-    if model:
-        db.model = model
-    if reset:
-        db.reset()
-    db.insert(view.objects(), collection=collection)
 
 
 @main.command()
@@ -108,6 +97,8 @@ def index(files, path, reset: bool, text_field, collection, model, **kwargs):
     for file in files:
         if file.endswith(".json"):
             objs = json.load(open(file))
+        elif file.endswith(".csv"):
+            objs = list(csv.DictReader(open(file)))
         else:
             objs = yaml.safe_load(open(file))
         if not isinstance(objs, list):
@@ -115,7 +106,7 @@ def index(files, path, reset: bool, text_field, collection, model, **kwargs):
         db.insert(objs, collection=collection)
 
 
-@main.command()
+@main.command(name="search")
 @path_option
 @collection_option
 @limit_option
@@ -127,6 +118,7 @@ def search(query, path, collection, **kwargs):
     results = db.search(query, collection=collection, **kwargs)
     i = 0
     for obj, distance, _ in results:
+        i += 1
         print(f"## {i} DISTANCE: {distance}")
         print(yaml.dump(obj, sort_keys=False))
 
@@ -149,34 +141,6 @@ def matches(id, path, collection):
         print(yaml.dump(obj, sort_keys=False))
 
 
-@main.command()
-@click.option(
-    "--peek/--no-peek",
-    default=False,
-    show_default=True,
-    help="Whether to peek at the first few entries of the collection.",
-)
-@path_option
-def list_collections(path, peek: bool):
-    """List all collections."""
-    db = ChromaDBAdapter(path)
-    for cn in db.collections():
-        c = db.client.get_or_create_collection(cn)
-        print(f"## Collection: {cn} N={c.count()} meta={c.metadata}")
-        if peek:
-            r = c.peek()
-            for id in r["ids"]:
-                print(f" - {id}")
-
-
-@main.command()
-@collection_option
-@path_option
-def delete_collection(path, collection):
-    """Delete a collections."""
-    db = ChromaDBAdapter(path)
-    c = db.client.get_collection(collection)
-    c.delete()
 
 
 @main.command()
@@ -192,22 +156,39 @@ def delete_collection(path, collection):
 @model_option
 @limit_option
 @click.option(
-    "-P",
-    "--query-property",
-    default="label",
-    show_default=True,
-    help="Property to use for query.")
+    "-P", "--query-property", default="label", show_default=True, help="Property to use for query."
+)
 @click.option(
     "--docstore-path",
     default=None,
-    help="Path to a docstore to for additional unstructured knowledge.")
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
 @click.option(
-    "--docstore-collection",
-    default=None,
-    help="Collection to use in the docstore.")
+    "--generate-background/--no-generate-background",
+    default=False,
+    show_default=True,
+    help="Whether to generate background knowledge.",
+)
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
 @schema_option
 @click.argument("query")
-def create(query, path, docstore_path, docstore_collection, conversation, model, query_property, schema, **kwargs):
+def create(
+    query,
+    path,
+    docstore_path,
+    docstore_collection,
+    conversation,
+    rule: List[str],
+    model,
+    query_property,
+    schema,
+    **kwargs,
+):
     """Generate an entry from a query using RAGE.
 
     Example:
@@ -216,7 +197,7 @@ def create(query, path, docstore_path, docstore_collection, conversation, model,
     """
     db = ChromaDBAdapter(path)
     if schema:
-        schema_manager = SchemaManager(schema)
+        schema_manager = SchemaProxy(schema)
     else:
         schema_manager = None
 
@@ -226,57 +207,107 @@ def create(query, path, docstore_path, docstore_collection, conversation, model,
     if model:
         extractor.model_name = model
     if schema_manager:
-        db.schema_manager = schema
-        extractor.schema_manager = schema_manager
-    rage = RetrievalAugmentedExtractor(kb_adapter=db, extractor=extractor)
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    rage = DatabaseAugmentedExtractor(kb_adapter=db, extractor=extractor)
     if docstore_path or docstore_collection:
         rage.document_adapter = ChromaDBAdapter(docstore_path)
         rage.document_adapter_collection = docstore_collection
-    ao = rage.generate_extract(query, target_class="OntologyClass", context_property=query_property, **filtered_kwargs)
-    print(yaml.dump(ao.object, sort_keys=False))
-
-@main.command()
-@path_option
-@collection_option
-@click.option(
-    "-C/--no-C",
-    "--conversation/--no-conversation",
-    default=False,
-    show_default=True,
-    help="Whether to run in conversation mode.",
-)
-@model_option
-@click.option(
-    "--num-examples", default=3, show_default=True, help="Number of examples for few-shot learning."
-)
-@click.argument("query")
-def old_generate(query, path, conversation, collection, num_examples, **kwargs):
-    """OLD Generate an entry from a query using RAG.
-
-    Example:
-
-        curategpt generate  -c obo_go "umbelliferose biosynthetic process"
-    """
-    db = ChromaDBAdapter(path)
-    # TODO: generalize
-    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
-    rag = OpenAIRAG(
-        db_adapter=db, root_class=Ontology, conversation_mode=conversation, **filtered_kwargs
+    ao = rage.generate_extract(
+        query, context_property=query_property, rules=rule, **filtered_kwargs
     )
-    while True:
-        if conversation and (not query or query == "-"):
-            query = input("QUERY: ")
-        obj = rag.generate(query, collection=collection, num_examples=num_examples)
-        print(yaml.dump(obj, sort_keys=False))
-        query = None
-        if not conversation:
-            break
+    print(yaml.dump(ao.object, sort_keys=False))
 
 
 @main.command()
 def plugins():
     "List installed plugins"
     print(yaml.dump(get_plugins()))
+
+
+
+@main.group()
+def collections():
+    "Operate on collections in the store."
+
+
+@collections.command(name="list")
+@click.option(
+    "--peek/--no-peek",
+    default=False,
+    show_default=True,
+    help="Whether to peek at the first few entries of the collection.",
+)
+@path_option
+def list_collections(path, peek: bool):
+    """List all collections."""
+    db = ChromaDBAdapter(path)
+    for cn in db.collections():
+        cm = db.collection_metadata(cn, include_derived=True)
+        c = db.client.get_or_create_collection(cn)
+        print(f"## Collection: {cn} N={c.count()} meta={c.metadata} // {cm}")
+        if peek:
+            r = c.peek()
+            for id in r["ids"]:
+                print(f" - {id}")
+
+
+@collections.command(name="delete")
+@collection_option
+@path_option
+def delete_collection(path, collection):
+    """Delete a collections."""
+    db = ChromaDBAdapter(path)
+    db.remove_collection(collection)
+
+
+@collections.command(name="set")
+@collection_option
+@path_option
+@click.argument("metadata_yaml")
+def set_collection_metadata(path, collection, metadata_yaml):
+    """Delete a collections."""
+    db = ChromaDBAdapter(path)
+    db.update_collection_metadata(collection, **yaml.safe_load(metadata_yaml))
+
+@main.group()
+def ontology():
+    "Use the ontology model"
+
+
+@ontology.command(name="index")
+@path_option
+@reset_option
+@collection_option
+@model_option
+@append_option
+@click.option(
+    "--index-fields",
+    help="Fields to index; comma sepatrated",
+)
+@click.argument("ont")
+def index_ontology_command(ont, path, reset: bool, collection, append, model, index_fields, **kwargs):
+    """Index an ontology.
+
+    Example:
+
+        curategpt index-ontology  -c obo_hp $db/hp.db
+
+    """
+    oak_adapter = get_adapter(ont)
+    view = OntologyView(oak_adapter)
+    db = ChromaDBAdapter(path, **kwargs)
+    db.text_lookup = view.text_field
+    if index_fields:
+        fields = index_fields.split(",")
+        db.text_lookup = lambda obj: " ".join([str(getattr(obj, f, "")) for f in fields])
+    if reset:
+        db.reset()
+    if not append:
+        db.remove_collection(collection, exists_ok=True)
+    db.insert(view.objects(), collection=collection, model=model)
+    db.update_collection_metadata(collection, object_type="OntologyClass")
+
 
 
 if __name__ == "__main__":

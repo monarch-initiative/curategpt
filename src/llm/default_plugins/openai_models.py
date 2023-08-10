@@ -1,17 +1,22 @@
-from llm import Model, hookimpl
-import llm
-from llm.utils import dicts_to_table_string
-import click
 import datetime
+
+import click
 import openai
+
+import llm
+from llm import Model, hookimpl
+from llm.utils import dicts_to_table_string
+
 try:
-    from pydantic import field_validator, Field
+    from pydantic import Field, field_validator
 except ImportError:
     from pydantic.fields import Field
     from pydantic.class_validators import validator as field_validator
-import requests
-from typing import List, Optional, Union
+
 import json
+from typing import List, Optional, Union
+
+import requests
 import yaml
 
 
@@ -72,9 +77,7 @@ def register_commands(cli):
             to_print = []
             for model in models:
                 # Print id, owned_by, root, created as ISO 8601
-                created_str = datetime.datetime.utcfromtimestamp(
-                    model["created"]
-                ).isoformat()
+                created_str = datetime.datetime.utcfromtimestamp(model["created"]).isoformat()
                 to_print.append(
                     {
                         "id": model["id"],
@@ -188,17 +191,10 @@ class Chat(Model):
         current_system = None
         if conversation is not None:
             for prev_response in conversation.responses:
-                if (
-                    prev_response.prompt.system
-                    and prev_response.prompt.system != current_system
-                ):
-                    messages.append(
-                        {"role": "system", "content": prev_response.prompt.system}
-                    )
+                if prev_response.prompt.system and prev_response.prompt.system != current_system:
+                    messages.append({"role": "system", "content": prev_response.prompt.system})
                     current_system = prev_response.prompt.system
-                messages.append(
-                    {"role": "user", "content": prev_response.prompt.prompt}
-                )
+                messages.append({"role": "user", "content": prev_response.prompt.prompt})
                 messages.append({"role": "assistant", "content": prev_response.text()})
         if prompt.system and prompt.system != current_system:
             messages.append({"role": "system", "content": prompt.system})

@@ -52,6 +52,7 @@ docs = [
 
 [tool.poetry.group.dev.dependencies]
 linkml = "^1.5.6"
+jupyter = "^1.0.0"
 
 [tool.poetry-dynamic-versioning]
 enable = false

@@ -12,6 +12,7 @@ from oaklib.types import CURIE
 from oaklib.utilities.iterator_utils import chunk
 from pydantic import BaseModel
 
+from curate_gpt.view.ontology import Ontology, OntologyClass, Relationship
 from curate_gpt.view.view import View
 
 logger = logging.getLogger(__name__)
@@ -27,42 +28,6 @@ def camelify(text: str) -> str:
     # replace all non-alphanumeric characters with underscores
     safe = "".join([c if c.isalnum() else "_" for c in text])
     return inflection.camelize(safe)
-
-
-class Relationship(BaseModel):
-    """
-    A relationship to another node.
-
-    Corresponds to an edge in an OBO graph.
-    """
-
-    predicate: str
-    target: CURIE
-
-
-class OntologyClass(BaseModel):
-    """
-    An ontology class.
-
-    Corresponds to a node in an OBO graph.
-    """
-
-    id: str
-    label: str = None
-    definition: str = None
-    aliases: List[str] = None
-    relationships: List[Relationship] = None
-    logical_definition: List[Relationship] = None
-
-
-class Ontology(BaseModel):
-    """
-    An ontology.
-
-    Corresponds to an OBO graph.
-    """
-
-    elements: List[OntologyClass] = None
 
 
 @dataclass

@@ -1,14 +1,15 @@
-from gpt4all import GPT4All as _GPT4All
-from pathlib import Path
-from typing import Optional
-import httpx
-import urllib3
 import json
-import llm
 import os
 import sys
 import time
+from pathlib import Path
 from typing import List, Optional, Tuple
+
+import httpx
+import urllib3
+from gpt4all import GPT4All as _GPT4All
+
+import llm
 
 
 class GPT4All(_GPT4All):
@@ -55,9 +56,7 @@ class Gpt4AllModel(llm.Model):
         self.model_id = details["filename"].split(".")[0]
 
     def prompt_template(self):
-        return (
-            self._details.get("promptTemplate") or "### Human: \n%1\n### Assistant:\n"
-        )
+        return self._details.get("promptTemplate") or "### Human: \n%1\n### Assistant:\n"
 
     def system_prompt(self):
         return self._details.get("systemPrompt")
@@ -86,9 +85,9 @@ class Gpt4AllModel(llm.Model):
         template = self.prompt_template()
         # Special case to add <|im_end|> if it looks necessary
         template_end = ""
-        if "<|im_start|>" in template and template.count(
-            "<|im_start|>"
-        ) - 1 == template.count("<|im_end|>"):
+        if "<|im_start|>" in template and template.count("<|im_start|>") - 1 == template.count(
+            "<|im_end|>"
+        ):
             template_end = "<|im_end|>"
 
         if conversation is not None:
@@ -120,9 +119,7 @@ class Gpt4AllModel(llm.Model):
 
     def is_installed(self):
         try:
-            GPT4All.retrieve_model(
-                self._details["filename"], allow_download=False, verbose=False
-            )
+            GPT4All.retrieve_model(self._details["filename"], allow_download=False, verbose=False)
             return True
         except ValueError:
             return False
@@ -174,9 +171,7 @@ def fetch_cached_json(url, path, cache_timeout):
                 return json.load(file)
         else:
             # If not, raise an error
-            raise DownloadError(
-                f"Failed to download data and no cache is available at {path}"
-            )
+            raise DownloadError(f"Failed to download data and no cache is available at {path}")
 
 
 def human_readable_size(size_bytes):

@@ -3,7 +3,9 @@ from typing import List
 import numpy as np
 
 
-def mmr_diversified_search(query_vector: np.ndarray, document_vectors: List[np.ndarray], relevance_factor=0.5, top_n=None):
+def mmr_diversified_search(
+    query_vector: np.ndarray, document_vectors: List[np.ndarray], relevance_factor=0.5, top_n=None
+):
     """
     Perform diversified search using Maximal Marginal Relevance (MMR).
 
@@ -32,7 +34,7 @@ def mmr_diversified_search(query_vector: np.ndarray, document_vectors: List[np.n
 
     # Diversified search loop
     for _ in range(top_n):
-        max_mmr = float('-inf')
+        max_mmr = float("-inf")
         best_index = None
 
         # Loop over all documents
@@ -43,9 +45,16 @@ def mmr_diversified_search(query_vector: np.ndarray, document_vectors: List[np.n
 
                 # Penalize based on similarity to already selected documents
                 if selected_indices:
-                    max_sim_to_selected = max([np.dot(document_vectors[idx], document_vectors[s]) / (
-                                np.linalg.norm(document_vectors[idx]) * np.linalg.norm(document_vectors[s])) for s in
-                                               selected_indices])
+                    max_sim_to_selected = max(
+                        [
+                            np.dot(document_vectors[idx], document_vectors[s])
+                            / (
+                                np.linalg.norm(document_vectors[idx])
+                                * np.linalg.norm(document_vectors[s])
+                            )
+                            for s in selected_indices
+                        ]
+                    )
                     diversity = (1 - relevance_factor) * max_sim_to_selected
 
                 mmr_score = relevance - diversity
@@ -60,6 +69,3 @@ def mmr_diversified_search(query_vector: np.ndarray, document_vectors: List[np.n
         selected_indices.add(best_index)
 
     return result_indices
-
-
-

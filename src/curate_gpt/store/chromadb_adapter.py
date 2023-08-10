@@ -3,7 +3,7 @@ import json
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Iterable, Iterator, List, Mapping, Tuple, Union, Optional
+from typing import Callable, Dict, Iterable, Iterator, List, Mapping, Optional, Tuple, Union
 
 import chromadb
 import yaml
@@ -15,9 +15,17 @@ from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
 
-from .db_adapter import DEFAULT_COLLECTION, OBJECT, SEARCH_RESULT, DBAdapter, QUERY, PROJECTION, \
-    CollectionMetadata
 from curate_gpt.utils.search import mmr_diversified_search
+
+from .db_adapter import (
+    DEFAULT_COLLECTION,
+    OBJECT,
+    PROJECTION,
+    QUERY,
+    SEARCH_RESULT,
+    CollectionMetadata,
+    DBAdapter,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +36,8 @@ class ChromaDBAdapter(DBAdapter):
     An Adapter that wraps a ChromaDB client
     """
 
-    model: str = field(default="all-MiniLM-L6-v2")
+    #model: str = field(default="all-MiniLM-L6-v2")
+    default_model = "all-MiniLM-L6-v2"
     client: API = None
     id_field: str = field(default="id")
     text_lookup: Optional[Union[str, Callable]] = field(default="text")
@@ -37,11 +46,13 @@ class ChromaDBAdapter(DBAdapter):
     def __post_init__(self):
         if not self.path:
             self.path = "./db"
+        logger.info(f"Using ChromaDB at {self.path}")
         self.client = chromadb.PersistentClient(path=self.path, settings=Settings(allow_reset=True))
 
     def _text(self, obj: OBJECT, text_field: Union[str, Callable]):
-        if text_field is None:
-            t = yaml.safe_dump(obj)
+        if text_field is None or (isinstance(text_field, str) and text_field not in obj):
+            obj = {k: v for k, v in obj.items() if v}
+            t = yaml.safe_dump(obj, sort_keys=False)
         elif isinstance(text_field, Callable):
             t = text_field(obj)
         elif isinstance(obj, dict):
@@ -72,10 +83,18 @@ class ChromaDBAdapter(DBAdapter):
         else:
             raise ValueError(f"Cannot convert {obj} to dict")
 
-    def _metadata(self, obj: OBJECT):
+    def _object_metadata(self, obj: OBJECT):
+        """
+        Transform an object into metadata suitable for storage in chromadb
+
+        :param obj:
+        :return:
+        """
         dict_obj = self._dict(obj)
         dict_obj["_json"] = json.dumps(dict_obj)
-        return {k: v for k, v in dict_obj.items() if not isinstance(v, (dict, list)) and v is not None}
+        return {
+            k: v for k, v in dict_obj.items() if not isinstance(v, (dict, list)) and v is not None
+        }
 
     def reset(self):
         """
@@ -84,8 +103,14 @@ class ChromaDBAdapter(DBAdapter):
         self.client.reset()
 
     def _embedding_function(self, model: str = None) -> EmbeddingFunction:
+        """
+        Get the embedding function for a given model.
+
+        :param model:
+        :return:
+        """
         if model is None:
-            model = self.model
+            raise ValueError("Model must be specified")
         if model.startswith("openai:"):
             return embedding_functions.OpenAIEmbeddingFunction(
                 api_key=os.environ.get("OPENAI_API_KEY"), model_name="text-embedding-ada-002"
@@ -93,9 +118,9 @@ class ChromaDBAdapter(DBAdapter):
         return embedding_functions.SentenceTransformerEmbeddingFunction(model_name=model)
 
     def insert(
-            self,
-            objs: Union[OBJECT, Iterable[OBJECT]],
-            **kwargs,
+        self,
+        objs: Union[OBJECT, Iterable[OBJECT]],
+        **kwargs,
     ):
         self._insert_or_update(objs, method_name="add", **kwargs)
 
@@ -106,6 +131,8 @@ class ChromaDBAdapter(DBAdapter):
         batch_size: int = None,
         method_name="add",
         object_type: str = None,
+        model: str = None,
+        text_field: Union[str, Callable] = None,
         **kwargs,
     ):
         """
@@ -117,13 +144,20 @@ class ChromaDBAdapter(DBAdapter):
         :return:
         """
         client = self.client
-        ef = self._embedding_function()
-        cm = CollectionMetadata(name=collection,
-                                model=self.model,
-                                object_type=object_type)
+        cm = self.collection_metadata(collection)
+        if model is None:
+            if cm:
+                model = cm.model
+            if model is None:
+                model = self.default_model
+        cm = self.update_collection_metadata(collection, model=model, object_type=object_type)
+        ef = self._embedding_function(cm.model)
+        #cm = CollectionMetadata(name=collection, model=self.model, object_type=object_type)
         cm_dict = cm.dict(exclude_none=True)
         collection_obj = client.get_or_create_collection(
-            name=collection, embedding_function=ef, metadata=cm_dict,
+            name=collection,
+            embedding_function=ef,
+            metadata=cm_dict,
         )
         if not isinstance(objs, list):
             if isinstance(objs, Iterable):
@@ -133,7 +167,8 @@ class ChromaDBAdapter(DBAdapter):
                 objs = [objs]
         if self._is_openai(collection_obj):
             batch_size = 100
-        text_field = self.text_lookup
+        if text_field is None:
+            text_field = self.text_lookup
         id_field = self.identifier_field(collection)
         logger.info(f"Preparing texts...")
         i = 0
@@ -147,8 +182,9 @@ class ChromaDBAdapter(DBAdapter):
                 next_objs = objs
                 i = len(objs)
             docs = [self._text(o, text_field) for o in next_objs]
+            logger.debug(f"Example doc (tf={text_field}): {docs[0]}")
             logger.info(f"Preparing metadatas...")
-            metadatas = [self._metadata(o) for o in next_objs]
+            metadatas = [self._object_metadata(o) for o in next_objs]
             logger.info(f"Preparing ids...")
             ids = [self._id(o, id_field) for o in next_objs]
             logger.info(f"Inserting {len(next_objs)} / {len(objs)} objects into {collection}")
@@ -159,9 +195,7 @@ class ChromaDBAdapter(DBAdapter):
                 ids=ids,
             )
 
-    def update(
-        self, objs: Union[OBJECT, List[OBJECT]], **kwargs
-    ):
+    def update(self, objs: Union[OBJECT, List[OBJECT]], **kwargs):
         """
         Update an object or list of objects in the store.
 
@@ -171,14 +205,20 @@ class ChromaDBAdapter(DBAdapter):
         """
         self._insert_or_update(objs, method_name="update", **kwargs)
 
-    def remove_collection(self, collection: str = DEFAULT_COLLECTION, **kwargs):
+    def remove_collection(self, collection: str = DEFAULT_COLLECTION, exists_ok=False, **kwargs):
         """
         Remove a collection from the database.
 
         :param collection:
+        :param exists_ok:
         :return:
         """
-        collection_obj = self.client.get_collection(name=collection)
+        try:
+            collection_obj = self.client.get_collection(name=collection)
+        except Exception as e:
+            if not exists_ok:
+                raise e
+            return
         collection_obj.delete()
 
     def _unjson(self, obj: Mapping):
@@ -192,17 +232,79 @@ class ChromaDBAdapter(DBAdapter):
         """
         return [c.name for c in self.client.list_collections()]
 
-    def search(
-            self, text: str, **kwargs
-    ) -> Iterator[SEARCH_RESULT]:
+    def collection_metadata(self, collection_name: Optional[str] = DEFAULT_COLLECTION, include_derived=False, **kwargs) -> Optional[CollectionMetadata]:
+        """
+        Get the metadata for a collection.
+
+        :param collection_name:
+        :return:
+        """
+        try:
+            collection_obj = self.client.get_collection(name=collection_name)
+        except Exception as e:
+            return None
+        cm = CollectionMetadata(**collection_obj.metadata)
+        if include_derived:
+            cm.object_count = collection_obj.count()
+        return cm
+
+    def set_collection_metadata(self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs):
+        """
+        Set the metadata for a collection.
+
+        :param collection_name:
+        :param metadata:
+        :return:
+        """
+        self.update_collection_metadata(collection_name=collection_name, **metadata.dict(exclude_none=True))
+
+    def update_collection_metadata(self, collection_name: str, **kwargs) -> CollectionMetadata:
+        """
+        Update the metadata for a collection.
+
+        :param collection_name:
+        :param kwargs:
+        :return:
+        """
+        metadata = self.collection_metadata(collection_name=collection_name)
+        if metadata is None:
+            metadata = CollectionMetadata(**kwargs)
+        else:
+            prev_model = metadata.model
+            metadata = metadata.copy(update=kwargs)
+            if prev_model and metadata.model != prev_model:
+                raise ValueError(f"Cannot change model from {prev_model} to {metadata.model}")
+        #self.set_collection_metadata(collection_name=collection_name, metadata=metadata)
+        if metadata.name:
+            assert metadata.name == collection_name
+        else:
+            metadata.name = collection_name
+        self.client.get_or_create_collection(name=collection_name, metadata=metadata.dict(exclude_none=True))
+        return metadata
+
+    def search(self, text: str, **kwargs) -> Iterator[SEARCH_RESULT]:
         yield from self._search(text=text, **kwargs)
 
     def _search(
-        self, text: str = None, where: QUERY = None, collection: str = DEFAULT_COLLECTION, limit=10, include=None, relevance_factor: float = None, **kwargs
+        self,
+        text: str = None,
+        where: QUERY = None,
+        collection: str = DEFAULT_COLLECTION,
+        limit=10,
+        include=None,
+        relevance_factor: float = None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         logger.info(f"Searching for {text} in {collection}")
         if relevance_factor is not None and relevance_factor < 1.0:
-            yield from self.diversified_search(text=text, where=where, collection=collection, limit=limit, relevance_factor=relevance_factor, **kwargs)
+            yield from self.diversified_search(
+                text=text,
+                where=where,
+                collection=collection,
+                limit=limit,
+                relevance_factor=relevance_factor,
+                **kwargs,
+            )
             return
         if not include:
             include = ["metadatas", "documents", "distances"]
@@ -212,11 +314,14 @@ class ChromaDBAdapter(DBAdapter):
         collection = client.get_collection(
             name=collection.name, embedding_function=self._embedding_function(metadata["model"])
         )
+        logger.debug(f"Collection metadata: {metadata}")
         if text:
             query_texts = [text]
         else:
             query_texts = [""]
-        results = collection.query(query_texts=query_texts, where=where, n_results=limit, include=include, **kwargs)
+        results = collection.query(
+            query_texts=query_texts, where=where, n_results=limit, include=include, **kwargs
+        )
         metadatas = results["metadatas"][0]
         distances = results["distances"][0]
         documents = results["documents"][0]
@@ -229,30 +334,43 @@ class ChromaDBAdapter(DBAdapter):
                 embeddings_i = embeddings[i]
             else:
                 embeddings_i = None
-            yield self._unjson(metadatas[i]), distances[i], {"embeddings": embeddings_i, "document": documents[i]}
+            yield self._unjson(metadatas[i]), distances[i], {
+                "embeddings": embeddings_i,
+                "document": documents[i],
+            }
 
-    def diversified_search(self, text: str = None, limit=10, relevance_factor=0.5, collection: str = DEFAULT_COLLECTION, **kwargs) -> Iterator[SEARCH_RESULT]:
-        logger.info(f"diversified search RF={relevance_factor}, text={text}, limit={limit}, collection={collection}")
+    def diversified_search(
+        self,
+        text: str = None,
+        limit=10,
+        relevance_factor=0.5,
+        collection: str = DEFAULT_COLLECTION,
+        **kwargs,
+    ) -> Iterator[SEARCH_RESULT]:
+        logger.info(
+            f"diversified search RF={relevance_factor}, text={text}, limit={limit}, collection={collection}"
+        )
         collection_obj = self.client.get_collection(name=collection)
         metadata = collection_obj.metadata
         ef = self._embedding_function(metadata["model"])
         query_embedding = ef([text])
         kwargs["include"] = ["metadatas", "documents", "distances", "embeddings"]
-        ranked_results = list(self.search(text, limit=limit*10, collection=collection, **kwargs))
+        ranked_results = list(self.search(text, limit=limit * 10, collection=collection, **kwargs))
         import numpy as np
+
         rows = [np.array(r[2]["embeddings"]) for r in ranked_results]
         query = np.array(query_embedding[0])
-        reranked_indices = mmr_diversified_search(query, rows, relevance_factor=relevance_factor, top_n=limit)
+        reranked_indices = mmr_diversified_search(
+            query, rows, relevance_factor=relevance_factor, top_n=limit
+        )
         for i in reranked_indices:
             yield ranked_results[i]
 
-
-
     def find(
-            self,
-            where: QUERY,
-            projection: PROJECTION = None,
-            **kwargs,
+        self,
+        where: QUERY,
+        projection: PROJECTION = None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         yield from self.search("", where=where, **kwargs)
 
@@ -296,4 +414,11 @@ class ChromaDBAdapter(DBAdapter):
         if collection.metadata.get("model", "").startswith("openai:"):
             return True
 
-
+    def peek(self, collection: str = DEFAULT_COLLECTION, limit=5, **kwargs) -> Iterator[OBJECT]:
+        c = self.client.get_collection(name=collection)
+        logger.debug(f"Peeking at {collection}")
+        results = c.peek(limit=limit)
+        # TODO: DRY
+        metadatas = results["metadatas"]
+        for i in range(0, len(metadatas)):
+            yield self._unjson(metadatas[i])

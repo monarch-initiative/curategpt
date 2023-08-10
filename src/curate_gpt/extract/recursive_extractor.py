@@ -5,8 +5,7 @@ from copy import copy, deepcopy
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-
-from curate_gpt.extract.extractor import Extractor, AnnotatedObject
+from curate_gpt.extract.extractor import AnnotatedObject, Extractor
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,12 @@ class RecursiveExtractor(Extractor):
     model_name: str = "gpt-3.5-turbo"
 
     def extract(
-        self, text: str, target_class: str, examples: List[AnnotatedObject] = None, path=None, **kwargs
+        self,
+        text: str,
+        target_class: str,
+        examples: List[AnnotatedObject] = None,
+        path=None,
+        **kwargs,
     ) -> AnnotatedObject:
         if path is None:
             path = []
@@ -33,7 +37,9 @@ class RecursiveExtractor(Extractor):
             pathstr = ""
         sv = self.schemaview
         cdef = sv.get_class(target_class)
-        prompt = f"Extract a {target_class} object from text in {self.serialization_format} format,\n"
+        prompt = (
+            f"Extract a {target_class} object from text in {self.serialization_format} format,\n"
+        )
         prompt += f"Conforming to the following schema:\n"
         for slot in sv.class_induced_slots(target_class):
             desc = f"## {slot.description}" if slot.description else ""
@@ -70,9 +76,16 @@ class RecursiveExtractor(Extractor):
                     vs = v
                 else:
                     vs = [v]
-                sub_objects = [self.extract(x, target_class=slot.range, examples=examples, path=path+[slot.name]) for x in vs]
+                sub_objects = [
+                    self.extract(
+                        x, target_class=slot.range, examples=examples, path=path + [slot.name]
+                    )
+                    for x in vs
+                ]
                 if isinstance(v, list):
-                    partial_object.object[slot.name] = [sub_object.object for sub_object in sub_objects]
+                    partial_object.object[slot.name] = [
+                        sub_object.object for sub_object in sub_objects
+                    ]
                 else:
                     partial_object.object[slot.name] = sub_objects[0].object
         return AnnotatedObject(object=partial_object.object, annotations={"text": text})
@@ -103,5 +116,3 @@ class RecursiveExtractor(Extractor):
         ao = AnnotatedObject(object=obj)
         print(f"AO object: {ao.object}")
         return ao
-
-
