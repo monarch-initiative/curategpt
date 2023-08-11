@@ -67,6 +67,7 @@ class ChatEngine:
         texts = []
         i = 0
         references = {}
+        logger.info(f"Chat: {query} on {self.kb_adapter} kwargs: {kwargs}")
         for obj, _, obj_meta in self.kb_adapter.search(
                 query, relevance_factor=self.relevance_factor, **kwargs
         ):
