@@ -283,7 +283,10 @@ class ChromaDBAdapter(DBAdapter):
             prev_model = metadata.model
             metadata = metadata.copy(update=kwargs)
             if prev_model and metadata.model != prev_model:
-                raise ValueError(f"Cannot change model from {prev_model} to {metadata.model}")
+                if self.client.get_or_create_collection(name=collection_name).count() > 0:
+                    raise ValueError(f"Cannot change model from {prev_model} to {metadata.model}")
+                else:
+                    logger.info(f"Changing (empy collection) model from {prev_model} to {metadata.model}")
         #self.set_collection_metadata(collection_name=collection_name, metadata=metadata)
         if metadata.name:
             assert metadata.name == collection_name
@@ -366,6 +369,8 @@ class ChromaDBAdapter(DBAdapter):
         query_embedding = ef([text])
         kwargs["include"] = ["metadatas", "documents", "distances", "embeddings"]
         ranked_results = list(self.search(text, limit=limit * 10, collection=collection, **kwargs))
+        if not ranked_results:
+            return
         import numpy as np
 
         rows = [np.array(r[2]["embeddings"]) for r in ranked_results]

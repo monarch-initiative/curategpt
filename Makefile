@@ -7,8 +7,8 @@ ONTS = cl uberon obi go envo hp mp mondo po
 
 all: index_all_oai
 
-index_all_oai: $(patsubst %,terms-oai-%,$(ONTS))
-index_all2_oai: $(patsubst %,terms_defns-oai-%,$(ONTS))
+old_index_all_oai: $(patsubst %,terms-oai-%,$(ONTS))
+index_all_oai: $(patsubst %,terms_defns-oai-%,$(ONTS))
 
 terms-oai-%:
 	$(CURATE) ontology index -p $(DB_PATH) -c terms_$*_oai -m openai: sqlite:obo:$*
