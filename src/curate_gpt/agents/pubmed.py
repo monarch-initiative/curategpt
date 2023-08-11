@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 ESEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
-PUBMED_COLLECTION_NAME = "pubmed_subset"
+PUBMED_COLLECTION_NAME = "pubmed_view"
 PUBMED_TEMP_COLLECTION_NAME = "__pubmed_temp__"
 PUBMED_EMBEDDING_MODEL = "openai:"
 
@@ -168,6 +168,8 @@ class PubmedAgent:
             collection = PUBMED_COLLECTION_NAME
         logger.info(f"Searching pubmed for {query}, kwargs={kwargs}, self={self}")
         self.search(query, collection=collection, **kwargs)
+        # ensure the collection exists and is configured correctly
+        self.local_store.set_collection_metadata(collection, model=PUBMED_EMBEDDING_MODEL, description=f"Special cache for pubmed searches")
         chat = ChatEngine(kb_adapter=self.local_store, extractor=self.extractor)
         response = chat.chat(query, collection=collection)
         return response
