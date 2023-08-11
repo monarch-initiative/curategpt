@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 ESEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
-PUBMED_COLLECTION_NAME = "pubmed_view"
+PUBMED_COLLECTION_NAME = "pubmed_dynamic_view"
 PUBMED_TEMP_COLLECTION_NAME = "__pubmed_temp__"
 PUBMED_EMBEDDING_MODEL = "openai:"
 
