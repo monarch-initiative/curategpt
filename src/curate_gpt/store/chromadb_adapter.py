@@ -165,7 +165,7 @@ class ChromaDBAdapter(DBAdapter):
                 objs = list(objs)
             else:
                 objs = [objs]
-        if self._is_openai(collection_obj):
+        if self._is_openai(collection_obj) and batch_size is None:
             batch_size = 100
         if text_field is None:
             text_field = self.text_lookup
@@ -204,6 +204,16 @@ class ChromaDBAdapter(DBAdapter):
         :return:
         """
         self._insert_or_update(objs, method_name="update", **kwargs)
+
+    def upsert(self, objs: Union[OBJECT, List[OBJECT]], **kwargs):
+        """
+        Update an object or list of objects in the store.
+
+        :param objs:
+        :param collection:
+        :return:
+        """
+        self._insert_or_update(objs, method_name="upsert", **kwargs)
 
     def remove_collection(self, collection: str = DEFAULT_COLLECTION, exists_ok=False, **kwargs):
         """

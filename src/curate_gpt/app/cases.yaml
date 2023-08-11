@@ -1,0 +1,35 @@
+cases:
+- source: cl
+  mode: CHAT
+  input: "What neurotransmitter is released by the hippocampus?"
+  domains:
+    - neuroscience
+    - cell types
+  answers:
+    - matches: glutamate
+      reference: GlutamateSecretion
+- source: cl
+  mode: CHAT
+  input: "What cells synthesize catecholamine?"
+- source: pubmed
+  mode: CHAT
+  input: "what neurons express VIP?"
+  domains:
+    - neuroscience
+    - cell types
+- source: pubmed
+  mode: CHAT
+  input: "what is the role of the hippocampus in memory?"
+- source: envo
+  mode: GENERATE
+  input: "Undersea volcano"
+  property: label
+  background: pubmed
+  domains:
+      - geology
+      - environment
+- source: obi
+  mode: GENERATE
+  input: "magnetoencephalography"
+  property: label
+  background: github_issues_obi

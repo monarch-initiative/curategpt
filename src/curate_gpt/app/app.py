@@ -5,18 +5,23 @@ import streamlit as st
 import yaml
 
 from curate_gpt import ChromaDBAdapter
-from curate_gpt.agents.chat import ChatEngine
+from curate_gpt.agents.chat import ChatEngine, ChatResponse
 from curate_gpt.agents.dalek import DatabaseAugmentedExtractor
+from curate_gpt.agents.pubmed import PubmedAgent
+from curate_gpt.app.helper import get_case_collection, get_applicable_examples
 from curate_gpt.extract import BasicExtractor
+
+PUBMED = "PubMed (via API)"
 
 SEARCH = "Search"
 ABOUT = "About"
 INSERT = "Insert"
-CREATE = "Synthesize"
+CREATE = "Generate"
 CHAT = "Chat"
 EXTRACT = "Extract"
 CART = "Cart"
 HELP = "Help"
+EXAMPLES = "Examples"
 
 NO_BACKGROUND_SELECTED = "No background collection"
 
@@ -26,20 +31,21 @@ logger = logging.getLogger(__name__)
 
 db = ChromaDBAdapter()
 extractor = BasicExtractor()
-agent = DatabaseAugmentedExtractor(kb_adapter=db, extractor=extractor)
-chatbot = ChatEngine(kb_adapter=db, extractor=extractor)
+
+
+
 
 st.title("CurateGPT! _alpha_")
 if not db.list_collection_names():
     st.warning("No collections found. Please use command line to load one.")
 
 # Sidebar with operation selection
-option = st.sidebar.selectbox("Choose operation", (CHAT, SEARCH, CREATE, INSERT, CART, ABOUT, HELP, ))
+option = st.sidebar.selectbox("Choose operation", (CHAT, SEARCH, CREATE, INSERT, CART, ABOUT, HELP, EXAMPLES))
 
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    list(db.list_collection_names()),
+    list(db.list_collection_names()) + [PUBMED],
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
@@ -62,7 +68,7 @@ model_name = st.sidebar.selectbox(
 
 background_collection = st.sidebar.selectbox(
     "Background knowledge",
-    [NO_BACKGROUND_SELECTED] + list(db.list_collection_names()),
+    [NO_BACKGROUND_SELECTED, PUBMED] + list(db.list_collection_names()),
     help="""
     Background databases can be used to give additional context to the LLM.
     A standard pattern is to have a structured knowledge base as the main
@@ -73,6 +79,17 @@ background_collection = st.sidebar.selectbox(
     the site admin to add new sources.
     """
 )
+
+st.sidebar.markdown("Developed by the Monarch Initiative")
+
+
+def ask_chatbot(query) -> ChatResponse:
+    if collection == PUBMED:
+        chatbot = PubmedAgent(local_store=db, extractor=extractor)
+        return chatbot.chat(query)
+    else:
+        chatbot = ChatEngine(kb_adapter=db, extractor=extractor)
+        return chatbot.chat(query, collection=collection)
 
 
 def html_table(rows: List[dict]) -> str:
@@ -92,8 +109,6 @@ def html_table(rows: List[dict]) -> str:
     return html_content
 
 
-
-# Insert operation
 if option == INSERT:
     st.subheader(f"Insert new document in {collection}")
     objs = list(db.peek(collection=collection))
@@ -166,6 +181,9 @@ elif option == CREATE:
                                for the model you selected.
                                """)
 
+    examples = get_applicable_examples(collection, CREATE)
+    st.write("Examples:")
+    st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
     extractor.model_name = model_name
 
     # Check for session state variables
@@ -175,13 +193,20 @@ elif option == CREATE:
     if st.button(CREATE):
         if not property_query:
             property_query = "label"
+        dalek = DatabaseAugmentedExtractor(kb_adapter=db, extractor=extractor)
         if background_collection != NO_BACKGROUND_SELECTED:
-            agent.document_adapter = db
-            agent.document_adapter_collection = background_collection
+            if background_collection == PUBMED:
+                dalek.document_adapter = PubmedAgent(local_store=db, extractor=extractor)
+                dalek.collection = None
+            else:
+                dalek.document_adapter = db
+                dalek.document_adapter_collection = background_collection
         st.write(f"Generating using: **{extractor.model_name}** using *{collection}* for examples")
+        if background_collection:
+            st.write(f"Using background knowledge from: *{background_collection}*")
         rules = [instructions] if instructions else None
         st.session_state.results = [
-            agent.generate_extract(
+            dalek.generate_extract(
                 search_query,
                 #target_class="OntologyClass",
                 context_property=property_query,
@@ -225,7 +250,7 @@ elif option == EXTRACT:
         if not property_query:
             property_query = "label"
         st.session_state.results = [
-            agent.generate_extract(
+            dalek.generate_extract(
                 search_query,
                 target_class="OntologyClass",
                 context_property=property_query,
@@ -263,9 +288,12 @@ elif option == CHAT:
                                    complete results, but may also exceed context windows for the model.
                                    """)
     extractor.model_name = model_name
+    examples = get_applicable_examples(collection, CHAT)
+    st.write("Examples:")
+    st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
 
     if st.button(CHAT):
-        response = chatbot.chat(query, collection=collection)
+        response = ask_chatbot(query)
         st.markdown(response.formatted_response)
         for ref, text in response.references.items():
             st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
@@ -273,6 +301,11 @@ elif option == CHAT:
 
 elif option == CART:
     st.subheader("Coming soon!")
+
+elif option == EXAMPLES:
+    cc = get_case_collection()
+    st.subheader("Examples")
+    st.code(yaml.dump(cc, sort_keys=False), language="yaml")
 
 
 elif option == ABOUT:
@@ -289,17 +322,26 @@ elif option == HELP:
     st.subheader("About")
     st.write("CurateGPT is a tool for generating new entries for a knowledge base, assisted by LLMs.")
     st.write("It is a highly generic system, but it's likely the instance you are using now is configured to work with ontologies.")
+    st.subheader("Issues")
+    st.write("If you have any issues, please raise them on the [GitHub issue tracker](https://github.com/monarch-initiative/curate-gpt).")
     st.subheader("Warning!")
     st.caption("CurateGPT is pre-alpha, documentation is incomplete!")
     st.caption("If you are using a publicly deployed instance, some operations may be slow, or broken")
     st.subheader("Instructions")
     st.write("Use the sidebar to select the operation you want to perform.")
     st.write(" * Synthesize: the core operation. Generate a new entry for the selected collection.")
+    st.write(" * Chat: chat to a structured knowledge base or unstructured source.")
     st.write(" * Search: Search the vector stores.")
     st.write(" * Insert: Manually add data (do this responsibly if on public instance - no auth yet!.")
     st.write(" * About: View metadata for each instance.")
     st.subheader("FAQ")
-    st.write("### Why are there no IDs")
+    st.write("### Why are there no IDs?")
     st.write("LLMs will hallucinate IDs so we transform to CamelCase labels for demo purposes.")
     st.write("In future versions we will have a more elegant solution.")
+    st.write("### What is the PubMed collection?")
+    st.write("This is a special *virtual* collections. It is not populated ahead of time.")
+    st.write("When this is used as a source, the pubmed API is called with a relevancy search.")
+    st.write("These results are then combined with others to answer the query.")
+    st.write("### What is the 'background' collection?")
+    st.write(f"This is used only by '{CREATE}' to provide additional context.")
 

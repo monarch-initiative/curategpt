@@ -18,6 +18,7 @@ __all__ = [
 from curate_gpt.agents.chat import ChatEngine
 
 from curate_gpt.agents.dalek import DatabaseAugmentedExtractor
+from curate_gpt.agents.pubmed import PubmedAgent
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.rag.openai_rag import OpenAIRAG
 from curate_gpt.store.schema_proxy import SchemaProxy
@@ -46,6 +47,17 @@ reset_option = click.option(
 append_option = click.option(
     "--append/--no-append", default=False, show_default=True, help="Append to the database."
 )
+object_type_option = click.option(
+    "--object-type",
+    default="Thing",
+    show_default=True,
+    help="Type of object in index.",
+)
+description_option = click.option(
+    "--description",
+    help="Description of the collection.",
+)
+
 
 
 @click.group(cls=DefaultGroup,
@@ -82,8 +94,12 @@ def main(verbose: int, quiet: bool):
 @collection_option
 @model_option
 @click.option("--text-field")
+@object_type_option
+@description_option
+@click.option("--batch-size", default=None, show_default=True, type=click.INT,
+              help="Batch size for indexing.")
 @click.argument("files", nargs=-1)
-def index(files, path, reset: bool, text_field, collection, model, **kwargs):
+def index(files, path, reset: bool, text_field, collection, model, object_type, description, batch_size, **kwargs):
     """Index files.
 
     Example:
@@ -93,8 +109,6 @@ def index(files, path, reset: bool, text_field, collection, model, **kwargs):
     """
     db = ChromaDBAdapter(path, **kwargs)
     db.text_lookup = text_field
-    if model:
-        db.model = model
     if reset:
         db.reset()
     for file in files:
@@ -106,7 +120,8 @@ def index(files, path, reset: bool, text_field, collection, model, **kwargs):
             objs = yaml.safe_load(open(file))
         if not isinstance(objs, list):
             objs = [objs]
-        db.insert(objs, collection=collection)
+        db.insert(objs, model=model, collection=collection, batch_size=batch_size)
+    db.update_collection_metadata(collection, model=model, object_type=object_type, description=description)
 
 
 @main.command(name="search")
@@ -357,6 +372,62 @@ def index_ontology_command(ont, path, reset: bool, collection, append, model, in
         db.remove_collection(collection, exists_ok=True)
     db.insert(view.objects(), collection=collection, model=model)
     db.update_collection_metadata(collection, object_type="OntologyClass")
+
+
+@main.group()
+def pubmed():
+    "Use pubmed"
+
+
+@pubmed.command(name="search")
+@collection_option
+@path_option
+@model_option
+@click.option("--expand/--no-expand", default=True, show_default=True,
+              help="Whether to expand the search term using an LLM.")
+@click.argument("query")
+def pubmed_search(query, path, model,  **kwargs):
+    pubmed = PubmedAgent()
+    db = ChromaDBAdapter(path)
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    pubmed.extractor = extractor
+    pubmed.local_store = db
+    results = pubmed.search(query, **kwargs)
+    i = 0
+    for obj, distance, _ in results:
+        i += 1
+        print(f"## {i} DISTANCE: {distance}")
+        print(yaml.dump(obj, sort_keys=False))
+
+
+@pubmed.command(name="ask")
+@collection_option
+@path_option
+@model_option
+@limit_option
+@click.option("--show-references/--no-show-references", default=True,
+              show_default=True,
+              help="Whether to show references.")
+@click.option("--expand/--no-expand", default=True, show_default=True,
+              help="Whether to expand the search term using an LLM.")
+@click.argument("query")
+def pubmed_ask(query, path, model, show_references, **kwargs):
+    pubmed = PubmedAgent()
+    db = ChromaDBAdapter(path)
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    pubmed.extractor = extractor
+    pubmed.local_store = db
+    response = pubmed.chat(query, **kwargs)
+    click.echo(response.formatted_response)
+    if show_references:
+        print("# References:")
+        for ref, ref_text in response.references.items():
+            print(f"## {ref}")
+            print(ref_text)
 
 
 

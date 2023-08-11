@@ -116,7 +116,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    def remove_collection(self, collection: str = DEFAULT_COLLECTION, **kwargs):
+    def remove_collection(self, collection: str = DEFAULT_COLLECTION, exists_ok=False, **kwargs):
         """
         Remove a collection from the database.
 
@@ -148,6 +148,16 @@ class DBAdapter(ABC):
         Set the metadata for a collection.
 
         :param collection_name:
+        :return:
+        """
+        raise NotImplementedError
+
+    def update_collection_metadata(self, collection_name: str, **kwargs) -> CollectionMetadata:
+        """
+        Update the metadata for a collection.
+
+        :param collection_name:
+        :param kwargs:
         :return:
         """
         raise NotImplementedError
