@@ -144,8 +144,8 @@ elif option == SEARCH:
         st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
         results = db.search(search_query, collection=collection, relevance_factor=relevance_factor)
         rows = [
-            {"rank": i + 1, "distance": distance, "obj": obj}
-            for i, (obj, distance, _) in enumerate(results)
+            {"rank": i + 1, "distance": distance, "obj": obj, "doc": doc}
+            for i, (obj, distance, doc) in enumerate(results)
         ]
         html = html_table(rows)
         st.write(html, unsafe_allow_html=True)
@@ -208,7 +208,6 @@ elif option == CREATE:
         st.session_state.results = [
             dalek.generate_extract(
                 search_query,
-                #target_class="OntologyClass",
                 context_property=property_query,
                 generate_background=generate_background,
                 collection=collection,

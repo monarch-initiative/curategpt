@@ -29,13 +29,13 @@ def chroma_db() -> ChromaDBAdapter:
         ("A metabolic process that results in the breakdown of cysteine", "definition"),
     ],
 )
-def test_rage(chroma_db, query_term, query_property):
+def test_dalek(chroma_db, query_term, query_property):
     # extractor = BasicExtractor()
     extractor = RecursiveExtractor()
     extractor = OpenAIExtractor()
     extractor.schema_proxy = chroma_db.schema_proxy
-    rage = DatabaseAugmentedExtractor(kb_adapter=chroma_db, extractor=extractor)
-    ao = rage.generate_extract(
+    dae = DatabaseAugmentedExtractor(kb_adapter=chroma_db, extractor=extractor)
+    ao = dae.generate_extract(
         query_term, target_class="OntologyClass", context_property=query_property
     )
     print("RESULT:")

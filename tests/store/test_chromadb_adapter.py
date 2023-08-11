@@ -1,3 +1,4 @@
+import shutil
 from typing import Dict
 
 import pytest
@@ -9,7 +10,9 @@ from curate_gpt import OntologyView
 from curate_gpt.store.chromadb_adapter import ChromaDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.view import ONTOLOGY_MODEL_PATH
-from tests import INPUT_DBS, INPUT_DIR, OUTPUT_CHROMA_DB_PATH
+from tests import INPUT_DBS, INPUT_DIR, OUTPUT_CHROMA_DB_PATH, OUTPUT_DIR
+
+EMPTY_DB_PATH = OUTPUT_DIR / "empty_db"
 
 texts = [
     "The quick brown fox jumps over the lazy dog",
@@ -51,6 +54,16 @@ def terms_to_objects(terms: list[str]) -> list[Dict]:
         {"id": f"ID:{i}", "text": t, "wordlen": len(t), "nested": {"wordlen": len(t)}}
         for i, t in enumerate(terms)
     ]
+
+
+@pytest.fixture
+def empty_db() -> ChromaDBAdapter:
+    shutil.rmtree(EMPTY_DB_PATH, ignore_errors=True)
+    db = ChromaDBAdapter(str(EMPTY_DB_PATH))
+    collection = "test"
+    objs = []
+    db.insert(objs, collection=collection)
+    return db
 
 
 @pytest.fixture
@@ -183,3 +196,11 @@ def test_diversified_search(combo_db):
     )
     for obj, dist, _meta in results:
         print(f"{dist}\t{obj['text']}")
+
+
+def test_diversified_search_on_empty_db(empty_db):
+    relevance_factor = 0.5
+    results = empty_db.search(
+        "pineapple helicopter 5", collection="test", relevance_factor=relevance_factor, limit=20
+    )
+    assert len(list(results)) == 0

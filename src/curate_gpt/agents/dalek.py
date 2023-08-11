@@ -2,7 +2,7 @@
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List, ClassVar
+from typing import Any, Dict, List, ClassVar, Union
 
 import yaml
 
@@ -13,6 +13,13 @@ logger = logging.getLogger(__name__)
 
 OBJECT = Dict[str, Any]
 
+
+def _dict2str(d: Dict[str, Any]) -> str:
+    toks = []
+    for k, v in d.items():
+        if v:
+            toks.append(f"{k}={v}")
+    return ", ".join(toks)
 
 @dataclass
 class DatabaseAugmentedExtractor:
@@ -46,7 +53,7 @@ class DatabaseAugmentedExtractor:
 
     def generate_extract(
         self,
-        text: str,
+        seed: Union[str, Dict[str, Any]],
         target_class: str = None,
         context_property: str = None,
         generate_background=False,
@@ -57,7 +64,12 @@ class DatabaseAugmentedExtractor:
         """
         Extract structured object using text seed and background knowledge.
 
-        :param text:
+        :param seed:
+        :param target_class:
+        :param context_property:
+        :param generate_background:
+        :param collection:
+        :param rules:
         :param kwargs:
         :return:
         """
@@ -68,35 +80,53 @@ class DatabaseAugmentedExtractor:
             target_class = self.default_target_class
         if context_property is None:
             context_property = "label"
-        gen_prompt = f"Structured representation of entity with {context_property} = " + "{text}"
-        annotated_examples = []
-        for obj, _, obj_meta in self.kb_adapter.search(
-            text, relevance_factor=self.relevance_factor, collection=collection, **kwargs
-        ):
-            if not context_property:
-                logger.warning(f"We recommend specifying a context property for {target_class}")
-                obj_text = json.dumps({k: v for k, v in obj.items() if v}, sort_keys=False)
+        if isinstance(seed, str):
+            seed = {context_property: seed}
+        if isinstance(seed, dict):
+            context_properties = list(seed.keys())
+        else:
+            if context_property:
+                context_properties = [context_property]
             else:
-                if context_property not in obj:
-                    logger.debug(f"Skipping object because it does not have {context_property}")
-                    continue
-                obj_text = obj[context_property]
-            # obj_text = obj_meta["document"]
-            ae = AnnotatedObject(object=obj, annotations={"text": gen_prompt.format(text=obj_text)})
+                context_properties = []
+        def gen_prompt_f(obj: Union[str, Dict], prefix="Structured representation of") -> str:
+            if isinstance(obj, dict):
+                if not context_properties:
+                    min_obj = {k: v for k, v in obj.items() if v and isinstance(v, str)}
+                else:
+                    min_obj = {k: obj[k] for k in context_properties if k in obj}
+                if min_obj:
+                    as_text = yaml.safe_dump(min_obj, sort_keys=True).strip()
+                    return f"{prefix} {target_class} with {as_text}"
+                else:
+                    return f"{prefix} {target_class}:"
+            elif isinstance(obj, str):
+                return f"{prefix} {target_class} with {context_property} = {obj}"
+            else:
+                raise ValueError(f"Invalid type for obj: {type(obj)} //  {obj}")
+
+        annotated_examples = []
+        seed_search_term = seed if isinstance(seed, str) else yaml.safe_dump(seed, sort_keys=True)
+        for obj, _, obj_meta in self.kb_adapter.search(
+            seed_search_term, relevance_factor=self.relevance_factor, collection=collection, **kwargs
+        ):
+            ae = AnnotatedObject(object=obj, annotations={"text": gen_prompt_f(obj)})
             annotated_examples.append(ae)
         docs = []
         if self.document_adapter:
             for obj, _, obj_meta in self.document_adapter.search(
-                text, limit=self.background_document_limit, collection=self.document_adapter_collection
+                seed_search_term, limit=self.background_document_limit, collection=self.document_adapter_collection
             ):
                 obj_text = obj_meta["document"]
                 # TODO: use tiktoken to estimate
                 obj_text = obj_text[0:self.max_background_document_size]
                 docs.append(obj_text)
-        gen_text = gen_prompt.format(text=text)
+        gen_text = gen_prompt_f(seed)
         if generate_background:
+            #prompt = f"Generate a comprehensive description about the {target_class} with {context_property} = {seed}"
+            prompt = gen_prompt_f(seed, prefix="Generate a comprehensive description about the")
             response = extractor.model.prompt(
-                f"Generate a comprehensive description about the {target_class} with {context_property} = {text}"
+                prompt
             )
             if docs is None:
                 docs = []

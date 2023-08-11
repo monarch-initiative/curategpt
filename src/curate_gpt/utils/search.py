@@ -5,7 +5,7 @@ import numpy as np
 
 def mmr_diversified_search(
     query_vector: np.ndarray, document_vectors: List[np.ndarray], relevance_factor=0.5, top_n=None
-):
+) -> List[int]:
     """
     Perform diversified search using Maximal Marginal Relevance (MMR).
 
@@ -22,6 +22,9 @@ def mmr_diversified_search(
     # If no specific number of results is specified, return all
     if top_n is None:
         top_n = len(document_vectors)
+
+    if top_n == 0:
+        return []
 
     # Calculate cosine similarities between query and all documents
     norms_query = np.linalg.norm(query_vector)

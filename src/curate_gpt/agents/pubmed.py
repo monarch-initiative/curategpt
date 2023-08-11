@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 ESEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
-PUBMED_COLLECTION_NAME = "pubmed_dynamic_view"
+PUBMED_COLLECTION_NAME = "pubmed_api_cached"
 PUBMED_TEMP_COLLECTION_NAME = "__pubmed_temp__"
 PUBMED_EMBEDDING_MODEL = "openai:"
 
@@ -146,7 +146,7 @@ class PubmedAgent:
             db.remove_collection(collection, exists_ok=True)
         logger.info(f"Inserting {len(parsed_data)} records into {collection}")
         db.upsert(parsed_data, collection=collection, model=PUBMED_EMBEDDING_MODEL)
-        db.update_collection_metadata(collection, description=f"Special cache for pubmed searches")
+        db.update_collection_metadata(collection, object_type="Publication", description=f"Special cache for pubmed searches")
         yield from db.search(text, collection=collection, **kwargs)
 
     def chat(
@@ -166,10 +166,10 @@ class PubmedAgent:
         # prime the pubmed cache
         if collection is None:
             collection = PUBMED_COLLECTION_NAME
-        logger.info(f"Searching pubmed for {query}, kwargs={kwargs}, self={self}")
-        self.search(query, collection=collection, **kwargs)
+        logger.info(f"Ensure pubmed cached for {query}, kwargs={kwargs}, self={self}")
+        _ = list(self.search(query, collection=collection, **kwargs))
         # ensure the collection exists and is configured correctly
-        self.local_store.set_collection_metadata(collection, model=PUBMED_EMBEDDING_MODEL, description=f"Special cache for pubmed searches")
+        self.local_store.update_collection_metadata(collection, model=PUBMED_EMBEDDING_MODEL, object_type="Publication", description=f"Special cache for pubmed searches")
         chat = ChatEngine(kb_adapter=self.local_store, extractor=self.extractor)
         response = chat.chat(query, collection=collection)
         return response
