@@ -15,12 +15,15 @@ __all__ = [
     "main",
 ]
 
+from curate_gpt.agents.chat import ChatEngine
+
 from curate_gpt.agents.dalek import DatabaseAugmentedExtractor
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.rag.openai_rag import OpenAIRAG
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.view.ontology_view import Ontology, OntologyView
-from llm import get_plugins
+from llm import get_plugins, UnknownModelError
+from llm.cli import load_conversation
 
 # logger = logging.getLogger(__name__)
 
@@ -218,6 +221,53 @@ def create(
     )
     print(yaml.dump(ao.object, sort_keys=False))
 
+
+@main.command()
+@collection_option
+@path_option
+@model_option
+@click.option("--show-references/--no-show-references", default=True,
+              show_default=True,
+              help="Whether to show references.")
+@click.option(
+    "_continue",
+    "-C",
+    "--continue",
+    is_flag=True,
+    flag_value=-1,
+    help="Continue the most recent conversation.",
+)
+@click.option(
+    "conversation_id",
+    "--cid",
+    "--conversation",
+    help="Continue the conversation with the given ID.",
+)
+@click.argument("query")
+def ask(query, path, collection, model, show_references, _continue, conversation_id):
+    """Chat with a chatbot."""
+    db = ChromaDBAdapter(path)
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    conversation = None
+    if conversation_id or _continue:
+        # Load the conversation - loads most recent if no ID provided
+        try:
+            conversation = load_conversation(conversation_id)
+            print(f"CONTINUING CONVERSATION {conversation}")
+        except UnknownModelError as ex:
+            raise click.ClickException(str(ex))
+    chatbot = ChatEngine(path)
+    chatbot.extractor = extractor
+    chatbot.kb_adapter = db
+    response = chatbot.chat(query, collection=collection, conversation=conversation)
+    click.echo(response.formatted_response)
+    if show_references:
+        print("# References:")
+        for ref, ref_text in response.references.items():
+            print(f"## {ref}")
+            print(ref_text)
 
 @main.command()
 def plugins():
