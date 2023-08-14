@@ -1,13 +1,17 @@
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 import yaml
 
-HELP_CASES = Path(__file__).parent / "cases.yaml"
+from curate_gpt.conf import EXAMPLES_DIR
+
+HELP_CASES = EXAMPLES_DIR / "bio.yaml"
+
 
 def get_case_collection():
     with open(HELP_CASES) as stream:
         return yaml.safe_load(stream)
+
 
 def get_applicable_examples(collection: Optional[str], mode: str, relax=True) -> List[Dict]:
     """

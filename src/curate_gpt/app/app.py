@@ -1,31 +1,43 @@
+import json
 import logging
+from enum import Enum
 from typing import List
 
+import matplotlib.pyplot as plt
+import numpy as np
 import streamlit as st
 import yaml
+from scipy.spatial import distance_matrix
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 from curate_gpt import ChromaDBAdapter
+from curate_gpt.agents import Mapper
 from curate_gpt.agents.chat import ChatEngine, ChatResponse
 from curate_gpt.agents.dalek import DatabaseAugmentedExtractor
-from curate_gpt.agents.pubmed import PubmedAgent
-from curate_gpt.app.helper import get_case_collection, get_applicable_examples
+from curate_gpt.app.helper import get_applicable_examples, get_case_collection
 from curate_gpt.extract import BasicExtractor
+from curate_gpt.virtualstore import WikipediaView
+from curate_gpt.virtualstore.pubmed import PubmedView
 
 PUBMED = "PubMed (via API)"
+WIKIPEDIA = "Wikipedia (via API)"
 
-SEARCH = "Search"
-ABOUT = "About"
-INSERT = "Insert"
-CREATE = "Generate"
 CHAT = "Chat"
+GENERATE = "Generate"
+SEARCH = "Search"
+CLUSTER_SEARCH = "Cluster Search"
+MATCH = "Match"
+INSERT = "Insert"
 EXTRACT = "Extract"
 CART = "Cart"
 HELP = "Help"
 EXAMPLES = "Examples"
+ABOUT = "About"
 
 NO_BACKGROUND_SELECTED = "No background collection"
 
-MODELS = ["gpt-3.5-turbo", "gpt-4", "nous-hermes-13b", "llama2"]
+MODELS = ["gpt-3.5-turbo", "gpt-4", "chatgpt-16k", "nous-hermes-13b", "llama2"]
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +45,10 @@ db = ChromaDBAdapter()
 extractor = BasicExtractor()
 
 
+class DimensionalityReductionOptions(str, Enum):
+    PCA = "PCA"
+    TSNE = "t-SNE"
+    UMAP = "UMAP"
 
 
 st.title("CurateGPT! _alpha_")
@@ -40,17 +56,20 @@ if not db.list_collection_names():
     st.warning("No collections found. Please use command line to load one.")
 
 # Sidebar with operation selection
-option = st.sidebar.selectbox("Choose operation", (CHAT, SEARCH, CREATE, INSERT, CART, ABOUT, HELP, EXAMPLES))
+option = st.sidebar.selectbox(
+    "Choose operation",
+    (CHAT, SEARCH, CLUSTER_SEARCH, MATCH, GENERATE, INSERT, CART, ABOUT, HELP, EXAMPLES),
+)
 
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    list(db.list_collection_names()) + [PUBMED],
+    list(db.list_collection_names()) + [WIKIPEDIA, PUBMED],
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
     Select 'About' to see details of each collection
-    """
+    """,
 )
 
 model_name = st.sidebar.selectbox(
@@ -63,12 +82,12 @@ model_name = st.sidebar.selectbox(
     (and they may be very slow).
     Note: if your instance is on EC2 it's likely open models
     that are not API backed will be unavailable or broken.
-    """
+    """,
 )
 
 background_collection = st.sidebar.selectbox(
     "Background knowledge",
-    [NO_BACKGROUND_SELECTED, PUBMED] + list(db.list_collection_names()),
+    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA] + list(db.list_collection_names()),
     help="""
     Background databases can be used to give additional context to the LLM.
     A standard pattern is to have a structured knowledge base as the main
@@ -77,7 +96,7 @@ background_collection = st.sidebar.selectbox(
     
     Note you cannot currently add new databases using the UI. Contact
     the site admin to add new sources.
-    """
+    """,
 )
 
 st.sidebar.markdown("Developed by the Monarch Initiative")
@@ -85,7 +104,10 @@ st.sidebar.markdown("Developed by the Monarch Initiative")
 
 def ask_chatbot(query) -> ChatResponse:
     if collection == PUBMED:
-        chatbot = PubmedAgent(local_store=db, extractor=extractor)
+        chatbot = PubmedView(local_store=db, extractor=extractor)
+        return chatbot.chat(query)
+    if collection == WIKIPEDIA:
+        chatbot = WikipediaView(local_store=db, extractor=extractor)
         return chatbot.chat(query)
     else:
         chatbot = ChatEngine(kb_adapter=db, extractor=extractor)
@@ -109,6 +131,31 @@ def html_table(rows: List[dict]) -> str:
     return html_content
 
 
+def vectors_to_fig(labels: List[str], vectors: List, method: DimensionalityReductionOptions = None):
+    if method == DimensionalityReductionOptions.PCA:
+        reducer = PCA(n_components=2)
+    elif method is None or method == DimensionalityReductionOptions.TSNE:
+        n_samples = len(vectors)
+        perplexity_value = min(
+            n_samples - 1, 30
+        )  # Default is 30, but should be less than number of samples
+        reducer = TSNE(n_components=2, perplexity=perplexity_value)
+    elif method == DimensionalityReductionOptions.UMAP:
+        # TODO: umap-learn is hard to install on a mac
+        raise NotImplementedError("UMAP not yet implemented")
+        # reducer = umap.UMAP()
+    else:
+        raise ValueError(f"Unknown method {method}")
+
+    reduced_data = reducer.fit_transform(vectors)
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.scatter(reduced_data[:, 0], reduced_data[:, 1], s=50)
+    for i, label in enumerate(labels):
+        ax.annotate(label, (reduced_data[i, 0], reduced_data[i, 1]), fontsize=9, ha="right")
+    return fig
+
+
 if option == INSERT:
     st.subheader(f"Insert new document in {collection}")
     objs = list(db.peek(collection=collection))
@@ -126,62 +173,197 @@ if option == INSERT:
         db.insert([inputs], collection=collection)
         st.success("Document inserted successfully!")
 
+elif option == MATCH:
+    st.subheader(f"Match to entities in *{collection}*")
+    search_query = st.text_input(
+        "Match text",
+        help="Enter label of concept to match.",
+    )
+    relevant_fields = st.text_input(
+        "Relavant fields",
+        help="Comma-separated (e.g. label, definition).",
+    )
+    limit = st.slider(
+        "Max results",
+        min_value=0,
+        max_value=200,
+        value=10,
+        step=1,
+        help="""
+                                       Number of results max
+                                       """,
+    )
+
+    if st.button("Match"):
+        cm = db.collection_metadata(collection, include_derived=True)
+        st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+        mapper = Mapper(kb_adapter=db, extractor=extractor)
+        if not relevant_fields:
+            relevant_fields = "label"
+        relevant_fields = [f.strip() for f in relevant_fields.split(",")]
+        results = mapper.match(
+            search_query,
+            collection=collection,
+            fields=relevant_fields,
+            limit=limit,
+        )
+
+        rows = [
+            {"subject": search_query, "object": m.object_id}
+            for m in results.mappings
+        ]
+        html = html_table(rows)
+        st.write(html, unsafe_allow_html=True)
+        st.subheader("Prompt", help="for debugging")
+        st.write(results.prompt)
+        st.subheader("Response", help="for debugging")
+        st.write(results.response_text)
+
 # Search operation
 elif option == SEARCH:
     st.subheader(f"Search documents in *{collection}*")
-    search_query = st.text_input("Search by text",
-                                 help="Enter any text - embedding similarity will be used to find similar objects.")
+    search_query = st.text_input(
+        "Search by text",
+        help="Enter any text - embedding similarity will be used to find similar objects.",
+    )
 
-    relevance_factor = st.slider("Relevance Factor", min_value=0.0, max_value=1.0, value=1.0, step=0.05,
-                                 help="""
+    relevance_factor = st.slider(
+        "Relevance Factor",
+        min_value=0.0,
+        max_value=1.0,
+        value=1.0,
+        step=0.05,
+        help="""
                                  How much to weight the relevance vs diversity of the search query.
                                  If this is set to less than 1.0, then MMR will be used to diversify the results.
                                  (this corresponds to the lambda parameter in the MMR formula)
-                                 """)
+                                 """,
+    )
 
     if st.button("Search"):
         cm = db.collection_metadata(collection, include_derived=True)
         st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
-        results = db.search(search_query, collection=collection, relevance_factor=relevance_factor)
+        results = db.search(
+            search_query, collection=collection, relevance_factor=relevance_factor, include=["*"]
+        )
+
+        def _flat(obj: dict, limit=40) -> dict:
+            if not obj:
+                return {}
+            return {
+                k: str(json.dumps(v) if isinstance(v, (list, dict)) else v)[0:limit]
+                for k, v in obj.items()
+            }
+
         rows = [
-            {"rank": i + 1, "distance": distance, "obj": obj, "doc": doc}
+            {"rank": i + 1, "distance": distance, **_flat(obj), "doc": _flat(doc)}
             for i, (obj, distance, doc) in enumerate(results)
         ]
         html = html_table(rows)
         st.write(html, unsafe_allow_html=True)
 
-elif option == CREATE:
+elif option == CLUSTER_SEARCH:
+    st.subheader(f"Cluster Search documents in *{collection}*")
+    search_query = st.text_input(
+        "Search by text",
+        help="Enter any text - embedding similarity will be used to find similar objects.",
+    )
+
+    relevance_factor = st.slider(
+        "Relevance Factor",
+        min_value=0.0,
+        max_value=1.0,
+        value=1.0,
+        step=0.05,
+        help="""How much to weight the relevance vs diversity of the search query.
+                                 If this is set to less than 1.0, then MMR will be used to diversify the results.
+                                 (this corresponds to the lambda parameter in the MMR formula)
+                                 """,
+    )
+
+    limit = st.slider(
+        "Max results",
+        min_value=0,
+        max_value=1000,
+        value=50,
+        step=1,
+        help="""
+                                   Number of results max
+                                   """,
+    )
+
+    method = st.radio(
+        "Dimensionality Reduction Method", options=list(DimensionalityReductionOptions), index=0
+    )
+
+    if st.button("Search"):
+        cm = db.collection_metadata(collection, include_derived=True)
+        st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+        include = ["*"]
+        results = db.search(
+            search_query,
+            collection=collection,
+            relevance_factor=relevance_factor,
+            include=include,
+            limit=limit,
+        )
+        labels = []
+        vectors = []
+        for i, (obj, distance, doc) in enumerate(results):
+            labels.append(obj.get("label", f"Object {i}"))
+            vectors.append(np.array(doc["embeddings"]))
+        distances = distance_matrix(vectors, vectors)
+        fig = vectors_to_fig(labels, np.array(vectors), method=method)
+        # plt.figure(figsize=(8, 6))
+        # fig, ax = plt.subplots(figsize=(8, 6))
+        # sns.heatmap(distances, annot=True, cmap='viridis', xticklabels=labels, yticklabels=labels, ax=ax)
+        st.pyplot(fig)
+
+elif option == GENERATE:
     st.subheader(f"Synthesize object", help="Generate a new object from a seed query.")
     st.write(f"Examples will be drawn from **{collection}**")
     if background_collection != NO_BACKGROUND_SELECTED:
         st.write(f"Background knowledge will be drawn from **{background_collection}**")
-    search_query = st.text_input("Seed",
-                                 help="Enter the label or description of the entity type you want to add.")
-    property_query = st.text_input("Property (e.g. label)",
-                                   help="""The value here depends on the data model of the index.
+    search_query = st.text_input(
+        "Seed", help="Enter the label or description of the entity type you want to add."
+    )
+    property_query = st.text_input(
+        "Property (e.g. label)",
+        help="""The value here depends on the data model of the index.
                                            For ontologies, use 'label' if your query if a label,
                                            or 'description' if your query is a description of a term.
-                                        """)
-    generate_background = st.checkbox("Generate background",
-                                        help="""
+                                        """,
+    )
+    generate_background = st.checkbox(
+        "Generate background",
+        help="""
                                         If checked, a full text description is first generated from the LLM.
                                         This is then used as background knowledge to generate the target object.
-                                        """)
-    instructions = st.text_input("Additional Instructions",
-                                    help="""
+                                        """,
+    )
+    instructions = st.text_input(
+        "Additional Instructions",
+        help="""
                                     Enter any additional instructions for the model here.
                                     E.g. 'You MUST include a definition field in your answer.
-                                    """)
+                                    """,
+    )
 
-    examples_limit = st.slider("Max examples", min_value=0, max_value=20, value=10, step=1,
-                               help="""
+    examples_limit = st.slider(
+        "Max examples",
+        min_value=0,
+        max_value=20,
+        value=10,
+        step=1,
+        help="""
                                Examples that are similar to your query are picked from the selected
                                knowledge base, and used as context to guide the LLM.
                                If you pick too many examples, it may go beyond the limits of the context window
                                for the model you selected.
-                               """)
+                               """,
+    )
 
-    examples = get_applicable_examples(collection, CREATE)
+    examples = get_applicable_examples(collection, GENERATE)
     st.write("Examples:")
     st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
     extractor.model_name = model_name
@@ -190,13 +372,16 @@ elif option == CREATE:
     if "results" not in st.session_state:
         st.session_state.results = []
 
-    if st.button(CREATE):
+    if st.button(GENERATE):
         if not property_query:
             property_query = "label"
         dalek = DatabaseAugmentedExtractor(kb_adapter=db, extractor=extractor)
         if background_collection != NO_BACKGROUND_SELECTED:
             if background_collection == PUBMED:
-                dalek.document_adapter = PubmedAgent(local_store=db, extractor=extractor)
+                dalek.document_adapter = PubmedView(local_store=db, extractor=extractor)
+                dalek.collection = None
+            if background_collection == WIKIPEDIA:
+                dalek.document_adapter = WikipediaView(local_store=db, extractor=extractor)
                 dalek.collection = None
             else:
                 dalek.document_adapter = db
@@ -277,15 +462,23 @@ elif option == EXTRACT:
 
 elif option == CHAT:
     st.subheader(f"Chat with a knowledge base")
-    query = st.text_area(f"Ask me anything (within the scope of {collection})!",
-                         help="You can query the current knowledge base using natural language.")
+    query = st.text_area(
+        f"Ask me anything (within the scope of {collection})!",
+        help="You can query the current knowledge base using natural language.",
+    )
 
-    limit = st.slider("Detail", min_value=0, max_value=30, value=10, step=1,
-                               help="""
+    limit = st.slider(
+        "Detail",
+        min_value=0,
+        max_value=30,
+        value=10,
+        step=1,
+        help="""
                                    Behind the scenes, N entries are fetched from the knowledge base,
                                    and these are fed to the LLM. Selecting more examples may give more
                                    complete results, but may also exceed context windows for the model.
-                                   """)
+                                   """,
+    )
     extractor.model_name = model_name
     examples = get_applicable_examples(collection, CHAT)
     st.write("Examples:")
@@ -293,10 +486,20 @@ elif option == CHAT:
 
     if st.button(CHAT):
         response = ask_chatbot(query)
-        st.markdown(response.formatted_response)
+        st.markdown(response.formatted_body)
+        st.markdown("## References")
         for ref, text in response.references.items():
             st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
             st.code(text, language="yaml")
+        if response.uncited_references:
+            st.markdown("## Uncited references")
+            st.caption(
+                "These references were flagged as potentially relevant, but a citation was not detected."
+            )
+            for ref, text in response.uncited_references.items():
+                st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
+                st.code(text, language="yaml")
+
 
 elif option == CART:
     st.subheader("Coming soon!")
@@ -309,7 +512,9 @@ elif option == EXAMPLES:
 
 elif option == ABOUT:
     st.subheader("About this instance")
-    st.write(f"**DB:** {type(db).__name__} schema: {db.schema_proxy.name if db.schema_proxy else None}")
+    st.write(
+        f"**DB:** {type(db).__name__} schema: {db.schema_proxy.name if db.schema_proxy else None}"
+    )
     st.write("Collections:")
     rows = []
     for cn in db.collections():
@@ -319,19 +524,29 @@ elif option == ABOUT:
 
 elif option == HELP:
     st.subheader("About")
-    st.write("CurateGPT is a tool for generating new entries for a knowledge base, assisted by LLMs.")
-    st.write("It is a highly generic system, but it's likely the instance you are using now is configured to work with ontologies.")
+    st.write(
+        "CurateGPT is a tool for generating new entries for a knowledge base, assisted by LLMs."
+    )
+    st.write(
+        "It is a highly generic system, but it's likely the instance you are using now is configured to work with ontologies."
+    )
     st.subheader("Issues")
-    st.write("If you have any issues, please raise them on the [GitHub issue tracker](https://github.com/monarch-initiative/curate-gpt).")
+    st.write(
+        "If you have any issues, please raise them on the [GitHub issue tracker](https://github.com/monarch-initiative/curate-gpt)."
+    )
     st.subheader("Warning!")
     st.caption("CurateGPT is pre-alpha, documentation is incomplete!")
-    st.caption("If you are using a publicly deployed instance, some operations may be slow, or broken")
+    st.caption(
+        "If you are using a publicly deployed instance, some operations may be slow, or broken"
+    )
     st.subheader("Instructions")
     st.write("Use the sidebar to select the operation you want to perform.")
     st.write(" * Synthesize: the core operation. Generate a new entry for the selected collection.")
     st.write(" * Chat: chat to a structured knowledge base or unstructured source.")
     st.write(" * Search: Search the vector stores.")
-    st.write(" * Insert: Manually add data (do this responsibly if on public instance - no auth yet!.")
+    st.write(
+        " * Insert: Manually add data (do this responsibly if on public instance - no auth yet!."
+    )
     st.write(" * About: View metadata for each instance.")
     st.subheader("FAQ")
     st.write("### Why are there no IDs?")
@@ -342,5 +557,4 @@ elif option == HELP:
     st.write("When this is used as a source, the pubmed API is called with a relevancy search.")
     st.write("These results are then combined with others to answer the query.")
     st.write("### What is the 'background' collection?")
-    st.write(f"This is used only by '{CREATE}' to provide additional context.")
-
+    st.write(f"This is used only by '{GENERATE}' to provide additional context.")

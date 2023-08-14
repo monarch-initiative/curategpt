@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Union, Optional
+from typing import Dict, Optional, Union
 
 from linkml_runtime import SchemaView
 from linkml_runtime.linkml_model import SchemaDefinition

@@ -28,6 +28,8 @@ sqlite-utils = "^3.34"
 gpt4all = "^1.0.8"
 httpx = "^0.24.1"
 eutils = "^0.6.0"
+matplotlib = "^3.7.2"
+seaborn = "^0.12.2"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7.1.2"

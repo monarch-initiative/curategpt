@@ -3,7 +3,18 @@ import json
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Iterable, Iterator, List, Mapping, Optional, Tuple, Union
+from typing import (
+    Callable,
+    ClassVar,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import chromadb
 import yaml
@@ -15,9 +26,7 @@ from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
 
-from curate_gpt.utils.search import mmr_diversified_search
-
-from .db_adapter import (
+from curate_gpt.store.db_adapter import (
     DEFAULT_COLLECTION,
     OBJECT,
     PROJECTION,
@@ -26,6 +35,7 @@ from .db_adapter import (
     CollectionMetadata,
     DBAdapter,
 )
+from curate_gpt.utils.search import mmr_diversified_search
 
 logger = logging.getLogger(__name__)
 
@@ -36,12 +46,14 @@ class ChromaDBAdapter(DBAdapter):
     An Adapter that wraps a ChromaDB client
     """
 
-    #model: str = field(default="all-MiniLM-L6-v2")
+    # model: str = field(default="all-MiniLM-L6-v2")
     default_model = "all-MiniLM-L6-v2"
     client: API = None
     id_field: str = field(default="id")
     text_lookup: Optional[Union[str, Callable]] = field(default="text")
     id_to_object: Mapping[str, OBJECT] = field(default_factory=dict)
+
+    default_max_document_length: ClassVar[int] = 6000  # TODO: use tiktoken
 
     def __post_init__(self):
         if not self.path:
@@ -61,6 +73,9 @@ class ChromaDBAdapter(DBAdapter):
             t = getattr(obj, text_field)
         if not t:
             raise ValueError(f"Text field {text_field} is empty for {obj}")
+        if len(t) > self.default_max_document_length:
+            logger.warning(f"Truncating text field {text_field} for {obj}")
+            t = t[: self.default_max_document_length]
         return t
 
     def _id(self, obj: OBJECT, id_field: str):
@@ -152,7 +167,7 @@ class ChromaDBAdapter(DBAdapter):
                 model = self.default_model
         cm = self.update_collection_metadata(collection, model=model, object_type=object_type)
         ef = self._embedding_function(cm.model)
-        #cm = CollectionMetadata(name=collection, model=self.model, object_type=object_type)
+        # cm = CollectionMetadata(name=collection, model=self.model, object_type=object_type)
         cm_dict = cm.dict(exclude_none=True)
         collection_obj = client.get_or_create_collection(
             name=collection,
@@ -242,7 +257,9 @@ class ChromaDBAdapter(DBAdapter):
         """
         return [c.name for c in self.client.list_collections()]
 
-    def collection_metadata(self, collection_name: Optional[str] = DEFAULT_COLLECTION, include_derived=False, **kwargs) -> Optional[CollectionMetadata]:
+    def collection_metadata(
+        self, collection_name: Optional[str] = DEFAULT_COLLECTION, include_derived=False, **kwargs
+    ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for a collection.
 
@@ -258,7 +275,9 @@ class ChromaDBAdapter(DBAdapter):
             cm.object_count = collection_obj.count()
         return cm
 
-    def set_collection_metadata(self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs):
+    def set_collection_metadata(
+        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+    ):
         """
         Set the metadata for a collection.
 
@@ -266,7 +285,9 @@ class ChromaDBAdapter(DBAdapter):
         :param metadata:
         :return:
         """
-        self.update_collection_metadata(collection_name=collection_name, **metadata.dict(exclude_none=True))
+        self.update_collection_metadata(
+            collection_name=collection_name, **metadata.dict(exclude_none=True)
+        )
 
     def update_collection_metadata(self, collection_name: str, **kwargs) -> CollectionMetadata:
         """
@@ -286,13 +307,17 @@ class ChromaDBAdapter(DBAdapter):
                 if self.client.get_or_create_collection(name=collection_name).count() > 0:
                     raise ValueError(f"Cannot change model from {prev_model} to {metadata.model}")
                 else:
-                    logger.info(f"Changing (empy collection) model from {prev_model} to {metadata.model}")
-        #self.set_collection_metadata(collection_name=collection_name, metadata=metadata)
+                    logger.info(
+                        f"Changing (empy collection) model from {prev_model} to {metadata.model}"
+                    )
+        # self.set_collection_metadata(collection_name=collection_name, metadata=metadata)
         if metadata.name:
             assert metadata.name == collection_name
         else:
             metadata.name = collection_name
-        self.client.get_or_create_collection(name=collection_name, metadata=metadata.dict(exclude_none=True))
+        self.client.get_or_create_collection(
+            name=collection_name, metadata=metadata.dict(exclude_none=True)
+        )
         return metadata
 
     def search(self, text: str, **kwargs) -> Iterator[SEARCH_RESULT]:
@@ -321,6 +346,8 @@ class ChromaDBAdapter(DBAdapter):
             return
         if not include:
             include = ["metadatas", "documents", "distances"]
+        if "*" in include:
+            include = ["metadatas", "documents", "distances", "embeddings"]
         client = self.client
         collection = client.get_collection(name=collection)
         metadata = collection.metadata
@@ -355,11 +382,13 @@ class ChromaDBAdapter(DBAdapter):
     def diversified_search(
         self,
         text: str = None,
-        limit=10,
+        limit: int = None,
         relevance_factor=0.5,
         collection: str = DEFAULT_COLLECTION,
         **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
+        if limit is None:
+            limit = 10
         logger.info(
             f"diversified search RF={relevance_factor}, text={text}, limit={limit}, collection={collection}"
         )

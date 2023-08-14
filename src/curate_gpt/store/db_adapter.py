@@ -55,8 +55,8 @@ class DBAdapter(ABC):
     path: str = None
     """Path to a location where the database is stored or disk or the network."""
 
-    #pydantic_model: Optional[BaseModel] = None
-    #"""Pydantic model"""
+    # pydantic_model: Optional[BaseModel] = None
+    # """Pydantic model"""
 
     schema_proxy: Optional[SchemaProxy] = None
     """Schema manager"""
@@ -134,7 +134,9 @@ class DBAdapter(ABC):
         """
 
     @abstractmethod
-    def collection_metadata(self, collection_name: Optional[str] = DEFAULT_COLLECTION, include_derived=False, **kwargs) -> Optional[CollectionMetadata]:
+    def collection_metadata(
+        self, collection_name: Optional[str] = DEFAULT_COLLECTION, include_derived=False, **kwargs
+    ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for a collection.
 
@@ -143,7 +145,9 @@ class DBAdapter(ABC):
         :return:
         """
 
-    def set_collection_metadata(self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs):
+    def set_collection_metadata(
+        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+    ):
         """
         Set the metadata for a collection.
 
@@ -235,3 +239,16 @@ class DBAdapter(ABC):
                     raise ValueError(f"Multiple identifier fields: {fields}")
                 return fields[0]
         return "id"
+
+    def field_names(self, collection: str = None) -> List[str]:
+        """
+        Return the names of all top level fields in the database for a collection.
+
+        :param collection:
+        :return:
+        """
+        obj = self.peek(collection=collection, limit=1)
+        if obj:
+            return list(obj.keys())
+        else:
+            raise ValueError(f"Collection {collection} is empty")

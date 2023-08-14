@@ -2,7 +2,8 @@
 import csv
 import json
 import logging
-from typing import List, Tuple
+from pathlib import Path
+from typing import List
 
 import click
 import yaml
@@ -16,14 +17,12 @@ __all__ = [
 ]
 
 from curate_gpt.agents.chat import ChatEngine
-
 from curate_gpt.agents.dalek import DatabaseAugmentedExtractor
-from curate_gpt.agents.pubmed import PubmedAgent
 from curate_gpt.extract.basic_extractor import BasicExtractor
-from curate_gpt.rag.openai_rag import OpenAIRAG
 from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.view.ontology_view import Ontology, OntologyView
-from llm import get_plugins, UnknownModelError
+from curate_gpt.view.ontology_view import OntologyView
+from curate_gpt.virtualstore.pubmed import PubmedView
+from llm import UnknownModelError, get_plugins
 from llm.cli import load_conversation
 
 # logger = logging.getLogger(__name__)
@@ -59,10 +58,11 @@ description_option = click.option(
 )
 
 
-
-@click.group(cls=DefaultGroup,
+@click.group(
+    cls=DefaultGroup,
     default="search",
-    default_if_no_args=True,)
+    default_if_no_args=True,
+)
 @click.option("-v", "--verbose", count=True)
 @click.option("-q", "--quiet")
 @click.version_option(__version__)
@@ -86,8 +86,6 @@ def main(verbose: int, quiet: bool):
     logger.info(f"Logger {logger.name} set to level {logger.level}")
 
 
-
-
 @main.command()
 @path_option
 @reset_option
@@ -96,10 +94,30 @@ def main(verbose: int, quiet: bool):
 @click.option("--text-field")
 @object_type_option
 @description_option
-@click.option("--batch-size", default=None, show_default=True, type=click.INT,
-              help="Batch size for indexing.")
+@click.option(
+    "--glob/--no-glob", default=False, show_default=True, help="Whether to glob the files."
+)
+@click.option(
+    "--collect/--no-collect", default=False, show_default=True, help="Whether to collect files."
+)
+@click.option(
+    "--batch-size", default=None, show_default=True, type=click.INT, help="Batch size for indexing."
+)
 @click.argument("files", nargs=-1)
-def index(files, path, reset: bool, text_field, collection, model, object_type, description, batch_size, **kwargs):
+def index(
+    files,
+    path,
+    reset: bool,
+    text_field,
+    collection,
+    model,
+    object_type,
+    description,
+    batch_size,
+    glob,
+    collect,
+    **kwargs,
+):
     """Index files.
 
     Example:
@@ -111,7 +129,10 @@ def index(files, path, reset: bool, text_field, collection, model, object_type, 
     db.text_lookup = text_field
     if reset:
         db.reset()
+    if glob:
+        files = [str(gf) for f in files for gf in Path().glob(f)]
     for file in files:
+        logging.debug(f"Indexing {file}")
         if file.endswith(".json"):
             objs = json.load(open(file))
         elif file.endswith(".csv"):
@@ -121,7 +142,9 @@ def index(files, path, reset: bool, text_field, collection, model, object_type, 
         if not isinstance(objs, list):
             objs = [objs]
         db.insert(objs, model=model, collection=collection, batch_size=batch_size)
-    db.update_collection_metadata(collection, model=model, object_type=object_type, description=description)
+    db.update_collection_metadata(
+        collection, model=model, object_type=object_type, description=description
+    )
 
 
 @main.command(name="search")
@@ -157,8 +180,6 @@ def matches(id, path, collection):
     for obj, distance in results:
         print(f"## {i} DISTANCE: {distance}")
         print(yaml.dump(obj, sort_keys=False))
-
-
 
 
 @main.command()
@@ -241,9 +262,12 @@ def create(
 @collection_option
 @path_option
 @model_option
-@click.option("--show-references/--no-show-references", default=True,
-              show_default=True,
-              help="Whether to show references.")
+@click.option(
+    "--show-references/--no-show-references",
+    default=True,
+    show_default=True,
+    help="Whether to show references.",
+)
 @click.option(
     "_continue",
     "-C",
@@ -277,18 +301,21 @@ def ask(query, path, collection, model, show_references, _continue, conversation
     chatbot.extractor = extractor
     chatbot.kb_adapter = db
     response = chatbot.chat(query, collection=collection, conversation=conversation)
-    click.echo(response.formatted_response)
+    print("# Response:")
+    click.echo(response.formatted_body)
+    print("# Raw:")
+    click.echo(response.body)
     if show_references:
         print("# References:")
         for ref, ref_text in response.references.items():
             print(f"## {ref}")
             print(ref_text)
 
+
 @main.command()
 def plugins():
     "List installed plugins"
     print(yaml.dump(get_plugins()))
-
 
 
 @main.group()
@@ -335,6 +362,7 @@ def set_collection_metadata(path, collection, metadata_yaml):
     db = ChromaDBAdapter(path)
     db.update_collection_metadata(collection, **yaml.safe_load(metadata_yaml))
 
+
 @main.group()
 def ontology():
     "Use the ontology model"
@@ -351,7 +379,9 @@ def ontology():
     help="Fields to index; comma sepatrated",
 )
 @click.argument("ont")
-def index_ontology_command(ont, path, reset: bool, collection, append, model, index_fields, **kwargs):
+def index_ontology_command(
+    ont, path, reset: bool, collection, append, model, index_fields, **kwargs
+):
     """Index an ontology.
 
     Example:
@@ -383,11 +413,15 @@ def pubmed():
 @collection_option
 @path_option
 @model_option
-@click.option("--expand/--no-expand", default=True, show_default=True,
-              help="Whether to expand the search term using an LLM.")
+@click.option(
+    "--expand/--no-expand",
+    default=True,
+    show_default=True,
+    help="Whether to expand the search term using an LLM.",
+)
 @click.argument("query")
-def pubmed_search(query, path, model,  **kwargs):
-    pubmed = PubmedAgent()
+def pubmed_search(query, path, model, **kwargs):
+    pubmed = PubmedView()
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
     if model:
@@ -407,14 +441,21 @@ def pubmed_search(query, path, model,  **kwargs):
 @path_option
 @model_option
 @limit_option
-@click.option("--show-references/--no-show-references", default=True,
-              show_default=True,
-              help="Whether to show references.")
-@click.option("--expand/--no-expand", default=True, show_default=True,
-              help="Whether to expand the search term using an LLM.")
+@click.option(
+    "--show-references/--no-show-references",
+    default=True,
+    show_default=True,
+    help="Whether to show references.",
+)
+@click.option(
+    "--expand/--no-expand",
+    default=True,
+    show_default=True,
+    help="Whether to expand the search term using an LLM.",
+)
 @click.argument("query")
 def pubmed_ask(query, path, model, show_references, **kwargs):
-    pubmed = PubmedAgent()
+    pubmed = PubmedView()
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
     if model:
@@ -422,13 +463,12 @@ def pubmed_ask(query, path, model, show_references, **kwargs):
     pubmed.extractor = extractor
     pubmed.local_store = db
     response = pubmed.chat(query, **kwargs)
-    click.echo(response.formatted_response)
+    click.echo(response.formatted_body)
     if show_references:
         print("# References:")
         for ref, ref_text in response.references.items():
             print(f"## {ref}")
             print(ref_text)
-
 
 
 if __name__ == "__main__":
