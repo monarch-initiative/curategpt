@@ -39,3 +39,6 @@ cases:
 - source: phenopackets
   mode: CHAT
   input: "What are some examples of patients with liver failure or abnormal liver enzymes?"
+- source: pubmed
+  mode: CHAT
+  input: "what are some genes involved in liver abnormalities?"

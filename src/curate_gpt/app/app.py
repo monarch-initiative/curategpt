@@ -380,7 +380,7 @@ elif option == GENERATE:
             if background_collection == PUBMED:
                 dalek.document_adapter = PubmedView(local_store=db, extractor=extractor)
                 dalek.collection = None
-            if background_collection == WIKIPEDIA:
+            elif background_collection == WIKIPEDIA:
                 dalek.document_adapter = WikipediaView(local_store=db, extractor=extractor)
                 dalek.collection = None
             else:
