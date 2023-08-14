@@ -152,6 +152,7 @@ def test_embedding_function(simple_schema_manager):
     with pytest.raises(Exception):
         db.update_collection_metadata("openai", model="all-MiniLM-L6-v2")
 
+
 @pytest.fixture
 def ontology_db() -> ChromaDBAdapter:
     db = ChromaDBAdapter(str(INPUT_DBS / "go-nucleus-chroma"))

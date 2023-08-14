@@ -13,14 +13,6 @@ from curate_gpt.view.ontology_view import Ontology, OntologyClass
 from tests import INPUT_DBS
 
 
-@pytest.fixture
-def chroma_db() -> ChromaDBAdapter:
-    db = ChromaDBAdapter(str(INPUT_DBS / "go-nucleus-chroma"))
-    db.schema_proxy = SchemaProxy(ONTOLOGY_MODEL_PATH)
-    m = OntologyClass
-    return db
-
-
 @pytest.mark.parametrize(
     "query_term,query_property",
     [
@@ -29,12 +21,12 @@ def chroma_db() -> ChromaDBAdapter:
         ("A metabolic process that results in the breakdown of cysteine", "definition"),
     ],
 )
-def test_dalek(chroma_db, query_term, query_property):
-    # extractor = BasicExtractor()
-    extractor = RecursiveExtractor()
-    extractor = OpenAIExtractor()
-    extractor.schema_proxy = chroma_db.schema_proxy
-    dae = DatabaseAugmentedExtractor(kb_adapter=chroma_db, extractor=extractor)
+def test_dalek(go_test_chroma_db, query_term, query_property):
+    extractor = BasicExtractor()
+    # extractor = RecursiveExtractor()
+    # extractor = OpenAIExtractor()
+    extractor.schema_proxy = go_test_chroma_db.schema_proxy
+    dae = DatabaseAugmentedExtractor(kb_adapter=go_test_chroma_db, extractor=extractor)
     ao = dae.generate_extract(
         query_term, target_class="OntologyClass", context_property=query_property
     )

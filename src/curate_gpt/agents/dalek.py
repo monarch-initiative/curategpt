@@ -2,7 +2,7 @@
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List, ClassVar, Union
+from typing import Any, ClassVar, Dict, List, Union
 
 import yaml
 
@@ -20,6 +20,7 @@ def _dict2str(d: Dict[str, Any]) -> str:
         if v:
             toks.append(f"{k}={v}")
     return ", ".join(toks)
+
 
 @dataclass
 class DatabaseAugmentedExtractor:
@@ -40,8 +41,8 @@ class DatabaseAugmentedExtractor:
 
     default_target_class: ClassVar[str] = "Thing"
 
-    conversation: List[Dict[str, Any]] = None # TODO
-    conversation_mode: bool = False # TODO
+    conversation: List[Dict[str, Any]] = None  # TODO
+    conversation_mode: bool = False  # TODO
     relevance_factor: float = 0.5
     """Relevance factor for diversifying search results using MMR."""
 
@@ -89,6 +90,7 @@ class DatabaseAugmentedExtractor:
                 context_properties = [context_property]
             else:
                 context_properties = []
+
         def gen_prompt_f(obj: Union[str, Dict], prefix="Structured representation of") -> str:
             if isinstance(obj, dict):
                 if not context_properties:
@@ -108,26 +110,29 @@ class DatabaseAugmentedExtractor:
         annotated_examples = []
         seed_search_term = seed if isinstance(seed, str) else yaml.safe_dump(seed, sort_keys=True)
         for obj, _, obj_meta in self.kb_adapter.search(
-            seed_search_term, relevance_factor=self.relevance_factor, collection=collection, **kwargs
+            seed_search_term,
+            relevance_factor=self.relevance_factor,
+            collection=collection,
+            **kwargs,
         ):
             ae = AnnotatedObject(object=obj, annotations={"text": gen_prompt_f(obj)})
             annotated_examples.append(ae)
         docs = []
         if self.document_adapter:
             for obj, _, obj_meta in self.document_adapter.search(
-                seed_search_term, limit=self.background_document_limit, collection=self.document_adapter_collection
+                seed_search_term,
+                limit=self.background_document_limit,
+                collection=self.document_adapter_collection,
             ):
                 obj_text = obj_meta["document"]
                 # TODO: use tiktoken to estimate
-                obj_text = obj_text[0:self.max_background_document_size]
+                obj_text = obj_text[0 : self.max_background_document_size]
                 docs.append(obj_text)
         gen_text = gen_prompt_f(seed)
         if generate_background:
-            #prompt = f"Generate a comprehensive description about the {target_class} with {context_property} = {seed}"
+            # prompt = f"Generate a comprehensive description about the {target_class} with {context_property} = {seed}"
             prompt = gen_prompt_f(seed, prefix="Generate a comprehensive description about the")
-            response = extractor.model.prompt(
-                prompt
-            )
+            response = extractor.model.prompt(prompt)
             if docs is None:
                 docs = []
             docs.append(response.text())

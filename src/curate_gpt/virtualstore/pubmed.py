@@ -5,7 +5,7 @@ import re
 import time
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Dict, List, ClassVar, Optional, Iterator
+from typing import Any, ClassVar, Dict, Iterator, List, Optional
 
 import requests
 import yaml
@@ -16,6 +16,7 @@ from curate_gpt.agents.chat import ChatEngine, ChatResponse
 from curate_gpt.extract import AnnotatedObject, Extractor
 from curate_gpt.store import DBAdapter
 from curate_gpt.store.db_adapter import SEARCH_RESULT
+from curate_gpt.virtualstore.dbview import DBView
 
 logger = logging.getLogger(__name__)
 
@@ -28,42 +29,22 @@ PUBMED_EMBEDDING_MODEL = "openai:"
 
 
 @dataclass
-class PubmedAgent:
+class PubmedView(DBView):
     """
     An agent to pull from pubmed.
-
-    TODO: make this a virtual store
     """
 
-    local_store: DBAdapter = None
-    """Adapter to local knowledge base"""
+    name: ClassVar[str] = "pubmed"
 
     eutils_client: Client = None
 
-    extractor: Extractor = None
-
-    def search(
-        self,
-        text: str,
-        collection: str = None,
-        cache: bool = True,
-        expand: bool = True,
-        **kwargs,
-    ) -> Iterator[SEARCH_RESULT]:
-        """
-        Extract structured object using text seed and background knowledge.
-
-        :param text:
-        :param kwargs:
-        :return:
-        """
-        if collection is None:
-            collection = PUBMED_COLLECTION_NAME
-        logger.info(f"Searching for {text}, caching in {collection}")
+    def external_search(self, text: str, expand: bool = True, **kwargs) -> List:
         if expand:
             logger.info(f"Expanding search term: {text} to create pubmed query")
             model = self.extractor.model
-            response = model.prompt(text, system="generate a semi-colon separated list of the most relevant terms")
+            response = model.prompt(
+                text, system="generate a semi-colon separated list of the most relevant terms"
+            )
             terms = response.text().split(";")
             search_term = " OR ".join(terms)
         else:
@@ -75,7 +56,7 @@ class PubmedAgent:
             "term": search_term,
             "retmax": 100,
             "sort": "relevance",
-            "retmode": "json"
+            "retmode": "json",
         }
 
         time.sleep(0.5)
@@ -89,17 +70,17 @@ class PubmedAgent:
             logger.warning(f"No results with {search_term}")
             if expand:
                 logger.info(f"Trying again without expansion")
-                return self.search(text, collection=collection, cache=cache, expand=False, **kwargs)
+                return self.external_search(text, expand=False, **kwargs)
             else:
                 logger.error(f"Failed to find results for {text}")
-                return
+                return []
 
         logger.info(f"Found {len(pubmed_ids)} results: {pubmed_ids}")
 
         efetch_params = {
             "db": "pubmed",
             "id": ",".join(pubmed_ids),  # Combine PubMed IDs into a comma-separated string
-            "retmode": "json"
+            "retmode": "json",
         }
 
         # Parameters for the efetch request
@@ -107,7 +88,7 @@ class PubmedAgent:
             "db": "pubmed",
             "id": ",".join(pubmed_ids),  # Combine PubMed IDs into a comma-separated string
             "rettype": "medline",
-            "retmode": "text"
+            "retmode": "text",
         }
         efetch_response = requests.get(EFETCH_URL, params=efetch_params)
         medline_records = efetch_response.text
@@ -140,42 +121,4 @@ class PubmedAgent:
                 if current_record:
                     parsed_data.append(current_record)
                     current_record = {}
-        db = self.local_store
-        if not cache:
-            collection = PUBMED_TEMP_COLLECTION_NAME
-            db.remove_collection(collection, exists_ok=True)
-        logger.info(f"Inserting {len(parsed_data)} records into {collection}")
-        db.upsert(parsed_data, collection=collection, model=PUBMED_EMBEDDING_MODEL)
-        db.update_collection_metadata(collection, object_type="Publication", description=f"Special cache for pubmed searches")
-        yield from db.search(text, collection=collection, **kwargs)
-
-    def chat(
-            self,
-            query: str,
-            collection: str = None,
-            **kwargs,
-    ) -> ChatResponse:
-        """
-        Chat with pubmed.
-
-        :param query:
-        :param collection:
-        :param kwargs:
-        :return:
-        """
-        # prime the pubmed cache
-        if collection is None:
-            collection = PUBMED_COLLECTION_NAME
-        logger.info(f"Ensure pubmed cached for {query}, kwargs={kwargs}, self={self}")
-        _ = list(self.search(query, collection=collection, **kwargs))
-        # ensure the collection exists and is configured correctly
-        self.local_store.update_collection_metadata(collection, model=PUBMED_EMBEDDING_MODEL, object_type="Publication", description=f"Special cache for pubmed searches")
-        chat = ChatEngine(kb_adapter=self.local_store, extractor=self.extractor)
-        response = chat.chat(query, collection=collection)
-        return response
-
-
-
-
-
-
+        return parsed_data
