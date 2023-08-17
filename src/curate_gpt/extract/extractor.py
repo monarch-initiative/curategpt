@@ -3,13 +3,12 @@ import logging
 from abc import ABC, abstractmethod
 from copy import copy
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple, Type, Union
+from typing import Any, Dict, List, Tuple
 
 from linkml_runtime import SchemaView
 from pydantic import BaseModel as BaseModel
 
 import llm
-from curate_gpt.store.db_adapter import DBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 
 logger = logging.getLogger(__name__)
@@ -26,7 +25,7 @@ class AnnotatedObject(BaseModel):
     key_values: Dict[str, "AnnotatedObject"] = {}
 
     def as_single_object(self) -> Dict[str, Any]:
-        object = copy(object)
+        object = copy(self.object)
         for key, value in self.annotations.items():
             object[f"_{key}"] = value
         for key, value in self.key_values.items():
@@ -71,7 +70,7 @@ class Extractor(ABC):
         :return:
         """
         if self._model is None:
-            model = llm.get_model(self.model_name)
+            model = llm.get_model(self.model_name or "gpt-3.5-turbo")
             if model.needs_key:
                 model.key = llm.get_key(self.api_key, model.needs_key, model.key_env_var)
             self._model = model

@@ -10,8 +10,15 @@ Welcome to curate-gpt's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   curate_gpt.store
+   curate_gpt.wrappers
+   curate_gpt.agents
+   curate_gpt.extract
+   curate_gpt.utils
+   curate_gpt.formatters
 
+   modules
+   
 Indices and tables
 ==================
 

@@ -1,7 +1,7 @@
 """Basic Extractor that is purely example driven."""
 import json
 import logging
-from copy import copy, deepcopy
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
@@ -36,11 +36,10 @@ class RecursiveExtractor(Extractor):
         else:
             pathstr = ""
         sv = self.schemaview
-        cdef = sv.get_class(target_class)
         prompt = (
             f"Extract a {target_class} object from text in {self.serialization_format} format,\n"
         )
-        prompt += f"Conforming to the following schema:\n"
+        prompt += "Conforming to the following schema:\n"
         for slot in sv.class_induced_slots(target_class):
             desc = f"## {slot.description}" if slot.description else ""
             if slot.range:

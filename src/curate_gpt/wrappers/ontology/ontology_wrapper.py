@@ -1,69 +1,81 @@
-"""A View that bridges to an OAK ontology."""
+"""Chat with a KB."""
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
-from typing import Callable, Dict, Iterator, List, Mapping, Optional, Union
+from dataclasses import dataclass, field
+from typing import Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional
 
-import inflection
 from oaklib import BasicOntologyInterface
+from oaklib.datamodels.search import SearchConfiguration
 from oaklib.datamodels.vocabulary import IS_A
-from oaklib.interfaces import OboGraphInterface
+from oaklib.interfaces import OboGraphInterface, SearchInterface
 from oaklib.types import CURIE
 from oaklib.utilities.iterator_utils import chunk
-from pydantic import BaseModel
 
-from curate_gpt.view.ontology import Ontology, OntologyClass, Relationship
-from curate_gpt.view.view import View
+from curate_gpt.formatters.format_utils import camelify
+from curate_gpt.wrappers.base_wrapper import BaseWrapper
+from curate_gpt.wrappers.ontology.ontology import OntologyClass, Relationship
 
 logger = logging.getLogger(__name__)
 
 
-def camelify(text: str) -> str:
-    """
-    Convert text to camel case.
-
-    :param text:
-    :return:
-    """
-    # replace all non-alphanumeric characters with underscores
-    safe = "".join([c if c.isalnum() else "_" for c in text])
-    return inflection.camelize(safe)
-
-
 @dataclass
-class OntologyView(View):
+class OntologyWrapper(BaseWrapper):
     """
-    A view of an ontology.
+    A wrapper to pull from ontologies using OAK.
 
-    Uses OAK.
+    This wrapper can be used either with static sources (e.g. an ontology file)
+    or dynamic (pubmed)
     """
 
-    adapter: BasicOntologyInterface = None
+    name: ClassVar[str] = "oaklib"
+
+    oak_adapter: BasicOntologyInterface = None
+
     id_to_shorthand: Mapping[CURIE, CURIE] = None
     shorthand_to_id: Mapping[CURIE, CURIE] = None
     _objects_by_curie: Mapping[CURIE, OntologyClass] = None
     _objects_by_shorthand: Mapping[str, OntologyClass] = None
 
+    default_max_search_results: int = 500
+    fetch_definitions: bool = field(default=True)
+    fetch_relationships: bool = field(default=True)
+
     def __post_init__(self):
         """Initialize."""
         self.id_to_shorthand = {}
 
-    def objects(self) -> Iterator[OntologyClass]:
+    def external_search(self, text: str, expand: bool = True, limit: int = None, **kwargs) -> List:
+        adapter = self.oak_adapter
+        if not isinstance(adapter, SearchInterface):
+            raise ValueError(f"OAK adapter {self.oak_adapter} does not support search")
+        cfg = SearchConfiguration(is_partial=True)
+        chunk_iter = chunk(
+            adapter.basic_search(text, cfg), limit or self.default_max_search_results
+        )
+        for object_ids in chunk_iter:
+            print("object_ids", object_ids)
+            return list(self.objects(object_ids=object_ids))
+
+    def objects(
+        self, collection: str = None, object_ids: Optional[Iterable[str]] = None, **kwargs
+    ) -> Iterator[Dict]:
         """
         Yield all objects in the view.
 
         :return:
         """
-        adapter = self.adapter
-        entities = list(adapter.entities())
+        adapter = self.oak_adapter
+        entities = list(object_ids if object_ids else adapter.entities())
         labels = {e: lbl for e, lbl in adapter.labels(entities, allow_none=False)}
         definitions = {}
-        for chunked_entities in chunk(entities, 100):
-            for id, defn, _ in adapter.definitions(chunked_entities):
-                definitions[id] = defn
+        if self.fetch_definitions:
+            for chunked_entities in chunk(entities, 100):
+                for id, defn, _ in adapter.definitions(chunked_entities):
+                    definitions[id] = defn
         relationships = defaultdict(list)
-        for sub, pred, obj in adapter.relationships():
-            relationships[sub].append((pred, obj))
+        if self.fetch_relationships:
+            for sub, pred, obj in adapter.relationships():
+                relationships[sub].append((pred, obj))
         self.id_to_shorthand = {}
         self.shorthand_to_id = {}
         for id, lbl in labels.items():
@@ -106,7 +118,7 @@ class OntologyView(View):
                     for r in ldef.restrictions
                 ]
         for obj in self._objects_by_curie.values():
-            yield obj
+            yield obj.dict()
 
     def as_object(self, curie: CURIE) -> Optional[OntologyClass]:
         if not self._objects_by_curie:
@@ -125,4 +137,3 @@ class OntologyView(View):
         """
         # TODO: decouple from OntologyClass
         return lambda obj: obj.label if isinstance(obj, OntologyClass) else obj.get("label")
-        # return lambda obj: f"{obj.label}: {obj.definition}" if isinstance(obj, OntologyClass) else f'{obj.get("label")}: {obj.get("definition", "")}'

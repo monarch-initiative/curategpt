@@ -1,19 +1,14 @@
 """Chat with a KB."""
-import json
 import logging
-import re
-import time
-from collections import defaultdict
+from abc import ABC
 from dataclasses import dataclass
-from typing import Any, ClassVar, Dict, Iterator, List, Optional
+from pathlib import Path
+from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional, Union
 
-import requests
-import yaml
-from eutils import Client
-from pydantic import BaseModel
+from deprecation import deprecated
 
-from curate_gpt.agents.chat import ChatEngine, ChatResponse
-from curate_gpt.extract import AnnotatedObject, Extractor
+from curate_gpt import ChromaDBAdapter
+from curate_gpt.extract import Extractor
 from curate_gpt.store import DBAdapter
 from curate_gpt.store.db_adapter import SEARCH_RESULT
 
@@ -21,15 +16,17 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class DBView:
+class BaseWrapper(ABC):
     """
-    A virtual store that implements a view over some remote source
+    A virtual store that implements a view over some remote or external source.
     """
 
     local_store: DBAdapter = None
     """Adapter to local knowledge base used to cache results."""
 
     extractor: Extractor = None
+
+    source_locator: Optional[Union[str, Path]] = None
 
     name: ClassVar[str] = "__dbview__"
 
@@ -50,6 +47,7 @@ class DBView:
         Search an external source and cache the results in the local store.
 
         :param text:
+        :param collection: used for caching
         :param kwargs:
         :return:
         """
@@ -59,6 +57,9 @@ class DBView:
             text, expand=expand, limit=external_search_limit, **ext_kwargs
         )
         db = self.local_store
+        if db is None:
+            tmpdir = Path("/tmp")
+            db = ChromaDBAdapter(tmpdir)
         if collection is None:
             collection = self._cached_collection_name(is_temp=not cache)
         if not cache:
@@ -71,6 +72,19 @@ class DBView:
             description=f"Special cache for {self.name} searches",
         )
         yield from db.search(text, collection=collection, **kwargs)
+
+    def objects(
+        self, collection: str = None, object_ids: Iterable[str] = None, **kwargs
+    ) -> Iterator[Dict]:
+        """
+        Return all objects in the view.
+
+        :param collection:
+        :param object_ids: Optional list of IDs to fetch
+        :param kwargs:
+        :return:
+        """
+        raise NotImplementedError
 
     def external_search(self, text: str, expand: bool = True, **kwargs) -> List:
         """
@@ -90,12 +104,13 @@ class DBView:
         terms = response.text().split(";")
         return terms
 
+    @deprecated("Use a chat agent with a wrapper as source instead")
     def chat(
         self,
         query: str,
         collection: str = None,
         **kwargs,
-    ) -> ChatResponse:
+    ) -> Any:
         """
         Chat with pubmed.
 
@@ -104,6 +119,8 @@ class DBView:
         :param kwargs:
         :return:
         """
+        from curate_gpt.agents.chat_agent import ChatAgent
+
         # prime the pubmed cache
         if collection is None:
             collection = self._cached_collection_name()
@@ -116,7 +133,7 @@ class DBView:
             object_type=self.default_object_type,
             description=f"Special cache for {self.name} searches",
         )
-        chat = ChatEngine(kb_adapter=self.local_store, extractor=self.extractor)
+        chat = ChatAgent(knowledge_source=self.local_store, extractor=self.extractor)
         response = chat.chat(query, collection=collection)
         return response
 

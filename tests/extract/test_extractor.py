@@ -1,4 +1,3 @@
-from types import ModuleType
 from typing import List
 
 import pytest
@@ -6,7 +5,7 @@ from linkml_runtime.utils.schema_builder import SchemaBuilder
 from pydantic import BaseModel
 
 from curate_gpt.extract.basic_extractor import BasicExtractor
-from curate_gpt.extract.extractor import AnnotatedObject, Extractor
+from curate_gpt.extract.extractor import AnnotatedObject
 from curate_gpt.extract.openai_extractor import OpenAIExtractor
 from curate_gpt.extract.recursive_extractor import RecursiveExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
@@ -46,7 +45,7 @@ def schema_manager() -> SchemaProxy:
 @pytest.mark.parametrize(
     "extractor_type,kwargs,num_examples",
     [
-        (RecursiveExtractor, {}, 0),
+        (RecursiveExtractor, {}, 5),
         (RecursiveExtractor, {}, 99),
         (OpenAIExtractor, {}, 99),
         (OpenAIExtractor, {}, 0),
@@ -107,7 +106,7 @@ def test_extract(extractor_type, kwargs, num_examples, schema_manager):
         result = extractor.extract(
             target_class="Person", examples=train[0:num_examples], text=test.text, **kwargs
         )
-        print(f"RESULTS:")
+        print("RESULTS:")
         print(result)
         if result.object == test.object:
             print("SUCCESS")

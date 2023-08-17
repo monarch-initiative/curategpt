@@ -1,10 +1,12 @@
 """Basic Extractor that is purely example driven."""
 import json
 import logging
+from copy import copy
 from dataclasses import dataclass
 from typing import List
 
 from .extractor import AnnotatedObject, Extractor
+from ..utils.tokens import estimate_num_tokens, max_tokens_by_model
 
 logger = logging.getLogger(__name__)
 
@@ -25,27 +27,39 @@ class BasicExtractor(Extractor):
         examples: List[AnnotatedObject] = None,
         background_text: str = None,
         rules: List[str] = None,
+        min_examples=3,
         **kwargs,
     ) -> AnnotatedObject:
         logger.debug(f"Basic extractor: {text}, {len(examples)} examples")
-        prompt = ""
-        if background_text:
-            prompt += f"{background_text}\n\n"
-        prompt += (
-            f"Extract a {target_class} object from text in {self.serialization_format} format.\n\n"
-        )
-        if rules:
-            prompt += "Rules:\n\n"
-            for rule in rules:
-                prompt += f"- {rule}\n"
-            prompt += "\n"
-            prompt += "---\n"
-        prompt += "Examples:\n\n"
-        for example in examples:
-            prompt += f"##\nText: {example.text}\n"
-            prompt += f"Response: {self.serialize(example)}\n"
-        prompt += f"\n##\nText: {text}\n\n"
-        prompt += "Response: "
+        examples = copy(examples)
+        while True:
+            prompt = ""
+            if background_text:
+                prompt += f"{background_text}\n\n"
+            prompt += f"Extract a {target_class} object from text in {self.serialization_format} format.\n\n"
+            if rules:
+                prompt += "Rules:\n\n"
+                for rule in rules:
+                    prompt += f"- {rule}\n"
+                prompt += "\n"
+                prompt += "---\n"
+            prompt += "Examples:\n\n"
+            for example in examples:
+                prompt += f"##\nText: {example.text}\n"
+                prompt += f"Response: {self.serialize(example)}\n"
+            prompt += f"\n##\nText: {text}\n\n"
+            prompt += "Response: "
+            estimated_length = estimate_num_tokens([prompt])
+            if estimated_length + 300 < max_tokens_by_model(self.model.model_id):
+                break
+            else:
+                # remove least relevant
+                logger.debug(f"Removing least relevant of {len(examples)}: {examples[-1]}")
+                examples.pop()
+                if len(examples) < min_examples:
+                    raise ValueError(
+                        f"Prompt too long, need at least {min_examples} examples: {prompt}."
+                    )
         model = self.model
         logger.info(f"Prompt: {prompt}")
         response = model.prompt(prompt)

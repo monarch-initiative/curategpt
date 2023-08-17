@@ -1,7 +1,8 @@
+"""Streamlit app for CurateGPT."""
 import json
 import logging
 from enum import Enum
-from typing import List
+from typing import List, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,13 +13,14 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 from curate_gpt import ChromaDBAdapter
-from curate_gpt.agents import Mapper
-from curate_gpt.agents.chat import ChatEngine, ChatResponse
-from curate_gpt.agents.dalek import DatabaseAugmentedExtractor
+from curate_gpt.agents import MappingAgent
+from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
+from curate_gpt.agents.dae_agent import DatabaseAugmentedExtractor
+from curate_gpt.agents.evidence_agent import EvidenceAgent
 from curate_gpt.app.helper import get_applicable_examples, get_case_collection
 from curate_gpt.extract import BasicExtractor
-from curate_gpt.virtualstore import WikipediaView
-from curate_gpt.virtualstore.pubmed import PubmedView
+from curate_gpt.wrappers import BaseWrapper, WikipediaWrapper
+from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 
 PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"
@@ -30,6 +32,7 @@ CLUSTER_SEARCH = "Cluster Search"
 MATCH = "Match"
 INSERT = "Insert"
 EXTRACT = "Extract"
+CITESEEK = "CiteSeek"
 CART = "Cart"
 HELP = "Help"
 EXAMPLES = "Examples"
@@ -58,7 +61,7 @@ if not db.list_collection_names():
 # Sidebar with operation selection
 option = st.sidebar.selectbox(
     "Choose operation",
-    (CHAT, SEARCH, CLUSTER_SEARCH, MATCH, GENERATE, INSERT, CART, ABOUT, HELP, EXAMPLES),
+    (CHAT, SEARCH, CLUSTER_SEARCH, MATCH, GENERATE, CITESEEK, INSERT, CART, ABOUT, HELP, EXAMPLES),
 )
 
 
@@ -92,8 +95,7 @@ background_collection = st.sidebar.selectbox(
     Background databases can be used to give additional context to the LLM.
     A standard pattern is to have a structured knowledge base as the main
     collection (this is used to find example records), and an unstructured
-    database (e.g. githun issues, abstracts, pdfs, ...) as background.
-    
+    database (e.g. github issues, abstracts, pdfs, ...) as background.
     Note you cannot currently add new databases using the UI. Contact
     the site admin to add new sources.
     """,
@@ -102,16 +104,34 @@ background_collection = st.sidebar.selectbox(
 st.sidebar.markdown("Developed by the Monarch Initiative")
 
 
-def ask_chatbot(query) -> ChatResponse:
+def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
+    source = None
+    knowledge_source_collection = None
     if collection == PUBMED:
-        chatbot = PubmedView(local_store=db, extractor=extractor)
-        return chatbot.chat(query)
-    if collection == WIKIPEDIA:
-        chatbot = WikipediaView(local_store=db, extractor=extractor)
-        return chatbot.chat(query)
+        source = PubmedWrapper(local_store=db, extractor=extractor)
+    elif collection == WIKIPEDIA:
+        source = WikipediaWrapper(local_store=db, extractor=extractor)
     else:
-        chatbot = ChatEngine(kb_adapter=db, extractor=extractor)
-        return chatbot.chat(query, collection=collection)
+        source = db
+        knowledge_source_collection = collection
+    return ChatAgent(
+        knowledge_source=source,
+        knowledge_source_collection=knowledge_source_collection,
+        extractor=extractor,
+    )
+
+
+def ask_chatbot(query) -> ChatResponse:
+    return get_chat_agent().chat(query)
+    # if collection == PUBMED:
+    #    chatbot = PubmedWrapper(local_store=db, extractor=extractor)
+    #    return chatbot.chat(query)
+    # if collection == WIKIPEDIA:
+    #    chatbot = WikipediaWrapper(local_store=db, extractor=extractor)
+    #    return chatbot.chat(query)
+    # else:
+    #    chatbot = ChatAgent(kb_adapter=db, extractor=extractor)
+    #    return chatbot.chat(query, collection=collection)
 
 
 def html_table(rows: List[dict]) -> str:
@@ -197,7 +217,7 @@ elif option == MATCH:
     if st.button("Match"):
         cm = db.collection_metadata(collection, include_derived=True)
         st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
-        mapper = Mapper(kb_adapter=db, extractor=extractor)
+        mapper = MappingAgent(knowledge_source=db, extractor=extractor)
         if not relevant_fields:
             relevant_fields = "label"
         relevant_fields = [f.strip() for f in relevant_fields.split(",")]
@@ -208,10 +228,7 @@ elif option == MATCH:
             limit=limit,
         )
 
-        rows = [
-            {"subject": search_query, "object": m.object_id}
-            for m in results.mappings
-        ]
+        rows = [{"subject": search_query, "object": m.object_id} for m in results.mappings]
         html = html_table(rows)
         st.write(html, unsafe_allow_html=True)
         st.subheader("Prompt", help="for debugging")
@@ -242,7 +259,10 @@ elif option == SEARCH:
 
     if st.button("Search"):
         cm = db.collection_metadata(collection, include_derived=True)
-        st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+        if cm:
+            st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+        else:
+            st.write(f"Dynamic search over {collection}...")
         results = db.search(
             search_query, collection=collection, relevance_factor=relevance_factor, include=["*"]
         )
@@ -309,18 +329,15 @@ elif option == CLUSTER_SEARCH:
         )
         labels = []
         vectors = []
-        for i, (obj, distance, doc) in enumerate(results):
-            labels.append(obj.get("label", f"Object {i}"))
+        for i, (obj, _distance, doc) in enumerate(results):
+            labels.append(obj.get("label", obj.get("id", f"Object {i}")))
             vectors.append(np.array(doc["embeddings"]))
         distances = distance_matrix(vectors, vectors)
         fig = vectors_to_fig(labels, np.array(vectors), method=method)
-        # plt.figure(figsize=(8, 6))
-        # fig, ax = plt.subplots(figsize=(8, 6))
-        # sns.heatmap(distances, annot=True, cmap='viridis', xticklabels=labels, yticklabels=labels, ax=ax)
         st.pyplot(fig)
 
 elif option == GENERATE:
-    st.subheader(f"Synthesize object", help="Generate a new object from a seed query.")
+    st.subheader("Synthesize object", help="Generate a new object from a seed query.")
     st.write(f"Examples will be drawn from **{collection}**")
     if background_collection != NO_BACKGROUND_SELECTED:
         st.write(f"Background knowledge will be drawn from **{background_collection}**")
@@ -375,13 +392,13 @@ elif option == GENERATE:
     if st.button(GENERATE):
         if not property_query:
             property_query = "label"
-        dalek = DatabaseAugmentedExtractor(kb_adapter=db, extractor=extractor)
+        dalek = DatabaseAugmentedExtractor(knowledge_source=db, extractor=extractor)
         if background_collection != NO_BACKGROUND_SELECTED:
             if background_collection == PUBMED:
-                dalek.document_adapter = PubmedView(local_store=db, extractor=extractor)
+                dalek.document_adapter = PubmedWrapper(local_store=db, extractor=extractor)
                 dalek.collection = None
             elif background_collection == WIKIPEDIA:
-                dalek.document_adapter = WikipediaView(local_store=db, extractor=extractor)
+                dalek.document_adapter = WikipediaWrapper(local_store=db, extractor=extractor)
                 dalek.collection = None
             else:
                 dalek.document_adapter = db
@@ -409,17 +426,15 @@ elif option == GENERATE:
         st.code(yaml.dump(obj, sort_keys=False), language="yaml")
         add_button = st.button(f"Add to {collection}")
         if add_button:
-            print(f"ADDING!!!!!!!!!")
             db.insert([obj], collection=collection)
-            # delete_data(collection, doc['_id'])  # Assuming each document has a unique '_id' field
-            st.write(f"Added!!!")
+            st.write("Added!!!")
         st.subheader("Debug info")
         st.write("Prompt:")
         st.code(created.annotations["prompt"])
         st.write("Property:", property_query)
 
 elif option == EXTRACT:
-    st.subheader(f"Extract from text")
+    st.subheader("Extract from text")
     search_query = st.text_area("Text to parse")
     property_query = st.text_input("Property (e.g. label)")
     generate_background = st.checkbox("Generate background")
@@ -451,17 +466,16 @@ elif option == EXTRACT:
         st.code(yaml.dump(obj, sort_keys=False), language="yaml")
         add_button = st.button(f"Add to {collection}")
         if add_button:
-            print(f"ADDING!!!!!!!!!")
             db.insert([obj], collection=collection)
             # delete_data(collection, doc['_id'])  # Assuming each document has a unique '_id' field
-            st.write(f"Added!!!")
+            st.write("Added!!!")
         st.subheader("Debug info")
         st.write("Prompt:")
         st.code(created.annotations["prompt"])
         st.write("Property:", property_query)
 
 elif option == CHAT:
-    st.subheader(f"Chat with a knowledge base")
+    st.subheader("Chat with a knowledge base")
     query = st.text_area(
         f"Ask me anything (within the scope of {collection})!",
         help="You can query the current knowledge base using natural language.",
@@ -500,6 +514,57 @@ elif option == CHAT:
                 st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
                 st.code(text, language="yaml")
 
+elif option == CITESEEK:
+    st.subheader("Find citations for a claim")
+    query = st.text_area(
+        f"Enter YAML object to be verified by {collection}",
+        help="Copy the YAML from some of the other outputs of this tool.",
+    )
+
+    limit = st.slider(
+        "Detail",
+        min_value=0,
+        max_value=30,
+        value=10,
+        step=1,
+        help="""
+                                   Behind the scenes, N entries are fetched from the knowledge base,
+                                   and these are fed to the LLM. Selecting more examples may give more
+                                   complete results, but may also exceed context windows for the model.
+                                   """,
+    )
+    extractor.model_name = model_name
+    # examples = get_applicable_examples(collection, CITESEEK)
+    # st.write("Examples:")
+    # st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
+
+    if st.button(CITESEEK):
+        chat_agent = get_chat_agent()
+        ea = EvidenceAgent(chat_agent=chat_agent)
+        try:
+            query_obj = yaml.safe_load(query)
+        except yaml.YAMLError:
+            try:
+                query_obj = json.loads(query)
+            except json.JSONDecodeError as exc:
+                st.warning(f"Invalid YAML or JSON: {exc}")
+                query_obj = None
+        if query_obj:
+            response = ea.find_evidence(query_obj)
+            # TODO: reuse code for this
+            st.markdown(response.formatted_body)
+            st.markdown("## References")
+            for ref, text in response.references.items():
+                st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
+                st.code(text, language="yaml")
+            if response.uncited_references:
+                st.markdown("## Uncited references")
+                st.caption(
+                    "These references were flagged as potentially relevant, but a citation was not detected."
+                )
+                for ref, text in response.uncited_references.items():
+                    st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
+                    st.code(text, language="yaml")
 
 elif option == CART:
     st.subheader("Coming soon!")
@@ -528,11 +593,13 @@ elif option == HELP:
         "CurateGPT is a tool for generating new entries for a knowledge base, assisted by LLMs."
     )
     st.write(
-        "It is a highly generic system, but it's likely the instance you are using now is configured to work with ontologies."
+        "It is a highly generic system, but it's likely the instance"
+        "you are using now is configured to work with ontologies."
     )
     st.subheader("Issues")
     st.write(
-        "If you have any issues, please raise them on the [GitHub issue tracker](https://github.com/monarch-initiative/curate-gpt)."
+        "If you have any issues, please raise them on the"
+        "[GitHub issue tracker](https://github.com/monarch-initiative/curate-gpt)."
     )
     st.subheader("Warning!")
     st.caption("CurateGPT is pre-alpha, documentation is incomplete!")

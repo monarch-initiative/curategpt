@@ -11,7 +11,7 @@ from curate_gpt import __version__
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'curate-gpt'
+project = 'curate_gpt'
 copyright = f"{date.today().year}, Author 1 <cjmungall@lbl.gov>"
 author = 'Author 1 <cjmungall@lbl.gov>'
 release = __version__
@@ -25,6 +25,7 @@ extensions = [
     "sphinx_rtd_theme",
     "sphinx_click",
     "sphinx_autodoc_typehints",
+    "sphinx_automodapi.automodapi",
     "myst_parser"
 ]
 

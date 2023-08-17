@@ -16,12 +16,15 @@ __all__ = [
     "main",
 ]
 
-from curate_gpt.agents.chat import ChatEngine
-from curate_gpt.agents.dalek import DatabaseAugmentedExtractor
+from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
+from curate_gpt.agents.dae_agent import DatabaseAugmentedExtractor
+from curate_gpt.agents.evidence_agent import EvidenceAgent
+from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedExtractorEvaluator
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.view.ontology_view import OntologyView
-from curate_gpt.virtualstore.pubmed import PubmedView
+from curate_gpt.utils.metrics import calculate_metrics, evaluate_predictions
+from curate_gpt.wrappers import BaseWrapper, OntologyWrapper, get_wrapper
+from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from llm import UnknownModelError, get_plugins
 from llm.cli import load_conversation
 
@@ -56,6 +59,23 @@ description_option = click.option(
     "--description",
     help="Description of the collection.",
 )
+
+
+def show_chat_response(response: ChatResponse, show_references: bool = True):
+    """Show a chat response."""
+    print("# Response:")
+    click.echo(response.formatted_body)
+    print("# Raw:")
+    click.echo(response.body)
+    if show_references:
+        print("# References:")
+        for ref, ref_text in response.references.items():
+            print(f"## {ref}")
+            print(ref_text)
+        print("# Uncited:")
+        for ref, ref_text in response.uncited_references.items():
+            print(f"## {ref}")
+            print(ref_text)
 
 
 @click.group(
@@ -95,6 +115,11 @@ def main(verbose: int, quiet: bool):
 @object_type_option
 @description_option
 @click.option(
+    "--view",
+    "-V",
+    help="View/Proxy to use for the database, e.g. bioc.",
+)
+@click.option(
     "--glob/--no-glob", default=False, show_default=True, help="Whether to glob the files."
 )
 @click.option(
@@ -115,6 +140,7 @@ def index(
     description,
     batch_size,
     glob,
+    view,
     collect,
     **kwargs,
 ):
@@ -131,12 +157,25 @@ def index(
         db.reset()
     if glob:
         files = [str(gf) for f in files for gf in Path().glob(f)]
+    if view:
+        proxy_object = get_wrapper(view)
+        if not object_type:
+            object_type = proxy_object.default_object_type
+        if not description:
+            description = f"{object_type} objects loaded from {str(files)[0:30]}"
+    else:
+        proxy_object = None
     for file in files:
         logging.debug(f"Indexing {file}")
-        if file.endswith(".json"):
+        if proxy_object:
+            proxy_object.source_locator = file
+            objs = list(proxy_object.objects())
+        elif file.endswith(".json"):
             objs = json.load(open(file))
         elif file.endswith(".csv"):
             objs = list(csv.DictReader(open(file)))
+        elif file.endswith(".tsv"):
+            objs = list(csv.DictReader(open(file), delimiter="\t"))
         else:
             objs = yaml.safe_load(open(file))
         if not isinstance(objs, list):
@@ -216,7 +255,7 @@ def matches(id, path, collection):
 )
 @schema_option
 @click.argument("query")
-def create(
+def generate(
     query,
     path,
     docstore_path,
@@ -248,7 +287,7 @@ def create(
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
-    rage = DatabaseAugmentedExtractor(kb_adapter=db, extractor=extractor)
+    rage = DatabaseAugmentedExtractor(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
         rage.document_adapter = ChromaDBAdapter(docstore_path)
         rage.document_adapter_collection = docstore_collection
@@ -256,6 +295,109 @@ def create(
         query, context_property=query_property, rules=rule, **filtered_kwargs
     )
     print(yaml.dump(ao.object, sort_keys=False))
+
+
+@main.command()
+@path_option
+@collection_option
+@click.option("--test-collection", "-T", required=True, help="Collection to use as the test set")
+@click.option(
+    "--hold-back-fields",
+    "-F",
+    required=True,
+    help="Comma separated list of fields to predict in the test.",
+)
+@model_option
+@limit_option
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@click.option(
+    "--generate-background/--no-generate-background",
+    default=False,
+    show_default=True,
+    help="Whether to generate background knowledge.",
+)
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@click.option(
+    "--report-file",
+    "-o",
+    type=click.File("w"),
+    help="File to write report to.",
+)
+@click.option(
+    "--num-tests",
+    default=10000,
+    show_default=True,
+    help="Number (max) of tests to run.",
+)
+@schema_option
+def generate_evaluate(
+    path,
+    docstore_path,
+    docstore_collection,
+    model,
+    schema,
+    test_collection,
+    hold_back_fields,
+    rule: List[str],
+    **kwargs,
+):
+    """Evaluate generate using a test set.
+
+    Example:
+
+        curategpt -v generate-evaluate -c cdr_training -T cdr_test -F statements -m gpt-4
+    """
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    rage = DatabaseAugmentedExtractor(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        rage.document_adapter = ChromaDBAdapter(docstore_path)
+        rage.document_adapter_collection = docstore_collection
+    hold_back_fields = hold_back_fields.split(",")
+    evaluator = DatabaseAugmentedExtractorEvaluator(agent=rage, hold_back_fields=hold_back_fields)
+    results = evaluator.evaluate(test_collection, **kwargs)
+    print(yaml.dump(results.dict(), sort_keys=False))
+    raise ValueError("STOP")
+    # db.find(where={}, collection=test_collection)
+    test_objs = db.peek(test_collection, limit=10000)
+    for test_obj in test_objs:
+        query_obj = {k: v for k, v in test_obj.items() if k not in hold_back_fields}
+        print(f"## Query: {query_obj}")
+        ao = rage.generate_extract(query_obj, rules=rule, **filtered_kwargs)
+        print("## Expected:")
+        print(yaml.dump(test_obj, sort_keys=False))
+        print("## Prediction:")
+        print(yaml.dump(ao.object, sort_keys=False))
+        outcomes = []
+        for f in hold_back_fields:
+            outcomes.extend(
+                list(evaluate_predictions(ao.object.get(f, None), test_obj.get(f, None)))
+            )
+        metrics = calculate_metrics(outcomes)
+        print("## Scores")
+        print(yaml.dump(metrics.dict(), sort_keys=False))
+        # for diff in diffs:
+        #    print(f" * Diff: {diff}")
 
 
 @main.command()
@@ -297,10 +439,47 @@ def ask(query, path, collection, model, show_references, _continue, conversation
             print(f"CONTINUING CONVERSATION {conversation}")
         except UnknownModelError as ex:
             raise click.ClickException(str(ex))
-    chatbot = ChatEngine(path)
+    chatbot = ChatAgent(path)
     chatbot.extractor = extractor
-    chatbot.kb_adapter = db
+    chatbot.knowledge_source = db
     response = chatbot.chat(query, collection=collection, conversation=conversation)
+    show_chat_response(response, show_references)
+
+
+@main.command()
+@collection_option
+@path_option
+@model_option
+@click.option(
+    "--show-references/--no-show-references",
+    default=True,
+    show_default=True,
+    help="Whether to show references.",
+)
+@click.option(
+    "_continue",
+    "-C",
+    "--continue",
+    is_flag=True,
+    flag_value=-1,
+    help="Continue the most recent conversation.",
+)
+@click.option(
+    "conversation_id",
+    "--cid",
+    "--conversation",
+    help="Continue the conversation with the given ID.",
+)
+@click.argument("query")
+def citeseek(query, path, collection, model, show_references, _continue, conversation_id):
+    """Find citations for an object."""
+    db = ChromaDBAdapter(path)
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    chatbot = ChatAgent(db, extractor=extractor, knowledge_source_collection=collection)
+    ea = EvidenceAgent(chat_agent=chatbot)
+    response = ea.find_evidence(query)
     print("# Response:")
     click.echo(response.formatted_body)
     print("# Raw:")
@@ -390,7 +569,7 @@ def index_ontology_command(
 
     """
     oak_adapter = get_adapter(ont)
-    view = OntologyView(oak_adapter)
+    view = OntologyWrapper(oak_adapter=oak_adapter)
     db = ChromaDBAdapter(path, **kwargs)
     db.text_lookup = view.text_field
     if index_fields:
@@ -402,6 +581,48 @@ def index_ontology_command(
         db.remove_collection(collection, exists_ok=True)
     db.insert(view.objects(), collection=collection, model=model)
     db.update_collection_metadata(collection, object_type="OntologyClass")
+
+
+@main.group()
+def view():
+    "Virtual store"
+
+
+@view.command(name="objects")
+@click.option("--view")
+@click.option("--source-locator")
+def view_objects(view, **kwargs):
+    """View objects in a virtual store."""
+    vstore = get_wrapper(view, **kwargs)
+    for obj in vstore.objects():
+        print(yaml.dump(obj, sort_keys=False))
+
+
+@view.command(name="search")
+@click.option("--view", "-V")
+@click.option("--source-locator")
+@model_option
+@click.argument("query")
+def view_search(query, view, model, **kwargs):
+    """Search in a virtual store."""
+    vstore: BaseWrapper = get_wrapper(view)
+    vstore.extractor = BasicExtractor(model_name=model)
+    for obj, _dist, _ in vstore.search(query):
+        print(yaml.dump(obj, sort_keys=False))
+
+
+@view.command(name="ask")
+@click.option("--view", "-V")
+@click.option("--source-locator")
+@model_option
+@click.argument("query")
+def view_ask(query, view, model, **kwargs):
+    """Ask a knowledge source wrapper."""
+    vstore: BaseWrapper = get_wrapper(view)
+    vstore.extractor = BasicExtractor(model_name=model)
+    chatbot = ChatAgent(knowledge_source=vstore)
+    response = chatbot.chat(query)
+    show_chat_response(response, True)
 
 
 @main.group()
@@ -421,7 +642,7 @@ def pubmed():
 )
 @click.argument("query")
 def pubmed_search(query, path, model, **kwargs):
-    pubmed = PubmedView()
+    pubmed = PubmedWrapper()
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
     if model:
@@ -455,7 +676,7 @@ def pubmed_search(query, path, model, **kwargs):
 )
 @click.argument("query")
 def pubmed_ask(query, path, model, show_references, **kwargs):
-    pubmed = PubmedView()
+    pubmed = PubmedWrapper()
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
     if model:

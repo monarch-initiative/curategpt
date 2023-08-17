@@ -2,7 +2,7 @@ import pytest
 
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.store import SchemaProxy
-from curate_gpt.view import ONTOLOGY_MODEL_PATH
+from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH
 from tests import INPUT_DBS
 
 
