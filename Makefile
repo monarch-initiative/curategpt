@@ -21,5 +21,12 @@ terms_defns-oai-%:
 terms-default-%:
 	$(CURATE) ontology index -p $(DB_PATH) -c terms_$* sqlite:obo:$*
 
+load-biosamples_nmdc:
+    $(CURATE) index -V nmdc  -c $@ -m openai: API
+
 app:
 	$(RUN) streamlit run src/curate_gpt/app/app.py --logger.level=debug
+
+
+apidoc:
+	$(RUN) sphinx-apidoc -f -M -o docs/ src/curate_gpt/ && cd docs && $(RUN) make html

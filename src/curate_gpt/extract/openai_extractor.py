@@ -2,7 +2,7 @@
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import List
 
 import openai
 import yaml

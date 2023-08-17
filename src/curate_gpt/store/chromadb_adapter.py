@@ -3,18 +3,7 @@ import json
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import (
-    Callable,
-    ClassVar,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Mapping,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Callable, ClassVar, Iterable, Iterator, List, Mapping, Optional, Union
 
 import chromadb
 import yaml
@@ -24,6 +13,7 @@ from chromadb.types import Collection
 from chromadb.utils import embedding_functions
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
+from oaklib.utilities.iterator_utils import chunk
 from pydantic import BaseModel
 
 from curate_gpt.store.db_adapter import (
@@ -59,7 +49,9 @@ class ChromaDBAdapter(DBAdapter):
         if not self.path:
             self.path = "./db"
         logger.info(f"Using ChromaDB at {self.path}")
-        self.client = chromadb.PersistentClient(path=self.path, settings=Settings(allow_reset=True))
+        self.client = chromadb.PersistentClient(
+            path=str(self.path), settings=Settings(allow_reset=True)
+        )
 
     def _text(self, obj: OBJECT, text_field: Union[str, Callable]):
         if text_field is None or (isinstance(text_field, str) and text_field not in obj):
@@ -174,35 +166,25 @@ class ChromaDBAdapter(DBAdapter):
             embedding_function=ef,
             metadata=cm_dict,
         )
-        if not isinstance(objs, list):
-            if isinstance(objs, Iterable):
-                # TODO: iterate in chunks
-                objs = list(objs)
-            else:
-                objs = [objs]
         if self._is_openai(collection_obj) and batch_size is None:
             batch_size = 100
+        if batch_size is None:
+            batch_size = 100000
         if text_field is None:
             text_field = self.text_lookup
         id_field = self.identifier_field(collection)
-        logger.info(f"Preparing texts...")
-        i = 0
-        while i < len(objs):
-            logger.info(f"Preparing batch from position {i}...")
-            # see https://github.com/chroma-core/chroma/issues/709
-            if batch_size:
-                next_objs = objs[i : i + batch_size]
-                i += batch_size
-            else:
-                next_objs = objs
-                i = len(objs)
+        # see https://github.com/chroma-core/chroma/issues/709
+        num_objs = len(objs) if isinstance(objs, list) else "?"
+        for next_objs in chunk(objs, batch_size):
+            next_objs = list(next_objs)
+            logger.info("Preparing batch from position ...")
             docs = [self._text(o, text_field) for o in next_objs]
             logger.debug(f"Example doc (tf={text_field}): {docs[0]}")
-            logger.info(f"Preparing metadatas...")
+            logger.info("Preparing metadatas...")
             metadatas = [self._object_metadata(o) for o in next_objs]
-            logger.info(f"Preparing ids...")
+            logger.info("Preparing ids...")
             ids = [self._id(o, id_field) for o in next_objs]
-            logger.info(f"Inserting {len(next_objs)} / {len(objs)} objects into {collection}")
+            logger.info(f"Inserting {len(next_objs)} / {num_objs} objects into {collection}")
             method = getattr(collection_obj, method_name)
             method(
                 documents=docs,
@@ -247,6 +229,8 @@ class ChromaDBAdapter(DBAdapter):
         collection_obj.delete()
 
     def _unjson(self, obj: Mapping):
+        if not obj:
+            raise ValueError(f"Cannot convert {obj} to dict")
         return json.loads(obj["_json"])
 
     def list_collection_names(self) -> List[str]:
@@ -268,7 +252,7 @@ class ChromaDBAdapter(DBAdapter):
         """
         try:
             collection_obj = self.client.get_collection(name=collection_name)
-        except Exception as e:
+        except Exception:
             return None
         cm = CollectionMetadata(**collection_obj.metadata)
         if include_derived:
@@ -359,9 +343,9 @@ class ChromaDBAdapter(DBAdapter):
             query_texts = [text]
         else:
             query_texts = [""]
-        results = collection.query(
-            query_texts=query_texts, where=where, n_results=limit, include=include, **kwargs
-        )
+        if limit is not None:
+            kwargs["n_results"] = limit
+        results = collection.query(query_texts=query_texts, where=where, include=include, **kwargs)
         metadatas = results["metadatas"][0]
         distances = results["distances"][0]
         documents = results["documents"][0]
@@ -374,6 +358,8 @@ class ChromaDBAdapter(DBAdapter):
                 embeddings_i = embeddings[i]
             else:
                 embeddings_i = None
+            if not metadatas[i]:
+                raise ValueError(f"Empty metadata for item {i} doc: {documents[i]}")
             yield self._unjson(metadatas[i]), distances[i], {
                 "embeddings": embeddings_i,
                 "document": documents[i],
@@ -389,7 +375,7 @@ class ChromaDBAdapter(DBAdapter):
     ) -> Iterator[SEARCH_RESULT]:
         if limit is None:
             limit = 10
-        logger.info(
+        logger.debug(
             f"diversified search RF={relevance_factor}, text={text}, limit={limit}, collection={collection}"
         )
         collection_obj = self.client.get_collection(name=collection)
@@ -412,7 +398,7 @@ class ChromaDBAdapter(DBAdapter):
 
     def find(
         self,
-        where: QUERY,
+        where: QUERY = None,
         projection: PROJECTION = None,
         **kwargs,
     ) -> Iterator[SEARCH_RESULT]:

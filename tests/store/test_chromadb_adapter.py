@@ -6,10 +6,10 @@ import yaml
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 from oaklib import get_adapter
 
-from curate_gpt import OntologyView
 from curate_gpt.store.chromadb_adapter import ChromaDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.view import ONTOLOGY_MODEL_PATH
+from curate_gpt.wrappers import OntologyWrapper
+from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_CHROMA_DB_PATH, OUTPUT_DIR
 
 EMPTY_DB_PATH = OUTPUT_DIR / "empty_db"
@@ -147,9 +147,9 @@ def test_embedding_function(simple_schema_manager):
     results_oai = list(db.search("fox", collection="openai"))
     assert len(results_ef) > 0
     assert len(results_oai) > 0
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         db.update_collection_metadata("default_ef", model="openai:")
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         db.update_collection_metadata("openai", model="all-MiniLM-L6-v2")
 
 
@@ -167,7 +167,7 @@ def test_ontology_matches(ontology_db):
     """
     adapter = get_adapter(str(INPUT_DIR / "go-nucleus.db"))
     # ontology_db.linkml_schema_path = ONTOLOGY_MODEL_PATH
-    view = OntologyView(adapter)
+    view = OntologyWrapper(oak_adapter=adapter)
     ontology_db.text_lookup = view.text_field
     ontology_db.insert(view.objects())
     # TODO
@@ -178,6 +178,19 @@ def test_ontology_matches(ontology_db):
     for obj, distance, _meta in results:
         print(f"## {i} DISTANCE: {distance}")
         print(yaml.dump(obj, sort_keys=False))
+
+
+def test_load_in_batches(ontology_db):
+    """
+    Tests ability to load in batches
+    """
+    adapter = get_adapter(str(INPUT_DIR / "go-nucleus.db"))
+    # ontology_db.linkml_schema_path = ONTOLOGY_MODEL_PATH
+    view = OntologyWrapper(oak_adapter=adapter)
+    ontology_db.text_lookup = view.text_field
+    ontology_db.insert(view.objects(), batch_size=10, collection="test")
+    objs = list(ontology_db.find(collection="test", limit=2000))
+    assert len(objs) > 100
 
 
 @pytest.fixture

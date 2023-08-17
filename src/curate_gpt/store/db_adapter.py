@@ -7,6 +7,7 @@ from typing import Dict, Iterable, Iterator, List, Optional, Tuple, Union
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
 
+from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.store.schema_proxy import SchemaProxy
 
 OBJECT = Union[YAMLRoot, BaseModel, Dict]
@@ -17,33 +18,6 @@ SEARCH_RESULT = Tuple[OBJECT, float, Optional[Dict]]
 
 
 logger = logging.getLogger(__name__)
-
-
-class CollectionMetadata(BaseModel):
-    """
-    Metadata about a collection.
-
-    This is an open class, so additional metadata can be added.
-    """
-
-    name: Optional[str] = None
-    """Name of the collection"""
-
-    description: Optional[str] = None
-    """Description of the collection"""
-
-    model: Optional[str] = None
-    """Name of any ML model"""
-
-    object_type: Optional[str] = None
-    """Type of object in the collection"""
-
-    # DEPRECATED
-    annotations: Optional[Dict] = None
-    """Additional metadata"""
-
-    object_count: Optional[int] = None
-    """Number of objects in the collection"""
 
 
 @dataclass
@@ -182,7 +156,7 @@ class DBAdapter(ABC):
 
     def find(
         self,
-        where: QUERY,
+        where: QUERY = None,
         projection: PROJECTION = None,
         collection: str = DEFAULT_COLLECTION,
         **kwargs,

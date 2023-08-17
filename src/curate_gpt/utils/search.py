@@ -1,6 +1,9 @@
+import logging
 from typing import List
 
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 
 def mmr_diversified_search(
@@ -41,7 +44,7 @@ def mmr_diversified_search(
         best_index = None
 
         # Loop over all documents
-        for idx, doc_vector in enumerate(document_vectors):
+        for idx, _doc_vector in enumerate(document_vectors):
             if idx not in selected_indices:
                 relevance = relevance_factor * similarities[idx]
                 diversity = 0
@@ -68,6 +71,9 @@ def mmr_diversified_search(
                     best_index = idx
 
         # Add the best document to the result and mark it as selected
+        if best_index is None:
+            logger.warning(f"No best index found over {len(document_vectors)} documents.")
+            continue
         result_indices.append(best_index)
         selected_indices.add(best_index)
 

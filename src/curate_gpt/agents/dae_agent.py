@@ -1,12 +1,12 @@
 """Retrieval Augmented Generation (RAG) Base Class."""
-import json
 import logging
 from dataclasses import dataclass
 from typing import Any, ClassVar, Dict, List, Union
 
 import yaml
 
-from curate_gpt.extract import AnnotatedObject, Extractor
+from curate_gpt.agents.base_agent import BaseAgent
+from curate_gpt.extract import AnnotatedObject
 from curate_gpt.store import DBAdapter
 
 logger = logging.getLogger(__name__)
@@ -23,21 +23,19 @@ def _dict2str(d: Dict[str, Any]) -> str:
 
 
 @dataclass
-class DatabaseAugmentedExtractor:
+class DatabaseAugmentedExtractor(BaseAgent):
     """
-    An agent to extract knowledge with augmentation from databases.
-    """
+    Retrieves objects in response to a query using a structured knowledge source.
 
-    kb_adapter: DBAdapter = None
-    """Adapter to structured knowledge base"""
+    This implements a standard knowledgebase retrieval augmented generation pattern;
+    the knowledge_source is queried for relevant objects; these are presented
+    as *examples* to a LLM query, via an extractor.
+    """
 
     document_adapter: DBAdapter = None
     """Adapter to supplementary knowledge in unstructured form."""
 
     document_adapter_collection: str = None
-
-    extractor: Extractor = None
-    """Engine for extracting structured records from in-context prompts"""
 
     default_target_class: ClassVar[str] = "Thing"
 
@@ -76,7 +74,10 @@ class DatabaseAugmentedExtractor:
         """
         extractor = self.extractor
         if not target_class:
-            target_class = self.kb_adapter.collection_metadata(collection).object_type
+            cm = self.knowledge_source.collection_metadata(collection)
+            if not cm:
+                raise ValueError(f"Invalid collection: {collection}")
+            target_class = cm.object_type
         if not target_class:
             target_class = self.default_target_class
         if context_property is None:
@@ -109,17 +110,19 @@ class DatabaseAugmentedExtractor:
 
         annotated_examples = []
         seed_search_term = seed if isinstance(seed, str) else yaml.safe_dump(seed, sort_keys=True)
-        for obj, _, obj_meta in self.kb_adapter.search(
+        for obj, _, _obj_meta in self.knowledge_source.search(
             seed_search_term,
             relevance_factor=self.relevance_factor,
             collection=collection,
             **kwargs,
         ):
-            ae = AnnotatedObject(object=obj, annotations={"text": gen_prompt_f(obj)})
+            text = gen_prompt_f(obj)
+            obj_predicted_part = {k: v for k, v in obj.items() if v and k not in context_properties}
+            ae = AnnotatedObject(object=obj_predicted_part, annotations={"text": text})
             annotated_examples.append(ae)
         docs = []
         if self.document_adapter:
-            for obj, _, obj_meta in self.document_adapter.search(
+            for _obj, _, obj_meta in self.document_adapter.search(
                 seed_search_term,
                 limit=self.background_document_limit,
                 collection=self.document_adapter_collection,

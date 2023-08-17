@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import yaml
 
@@ -31,11 +31,13 @@ def select_from_options_prompt(
     if prompt_template is None:
         if query is None:
             raise ValueError("Either query or prompt_template must be specified.")
-        prompt_template = "I will first give background facts, then ask a question. Use the background fact to answer\n"
+        prompt_template = "I will first give background facts, then ask a question."
+        prompt_template += "Use the background fact to answer\n"
         prompt_template += "---\nBackground facts:\n"
         prompt_template += "\n {join(texts)}"
         prompt_template += "\n\n"
-        prompt_template += "I will ask a question and you will answer as best as possible, citing the references above.\n"
+        prompt_template += "I will ask a question and you will answer as best as possible,"
+        prompt_template += "citing the references above.\n"
         prompt_template += "Write references in square brackets, e.g. [1].\n"
         prompt_template += (
             "For additional facts you are sure of but a reference is not found, write [?].\n"
@@ -47,7 +49,7 @@ def select_from_options_prompt(
         objects = {}
         texts = []
         current_length = 0
-        for obj, _, obj_meta in kb_results:
+        for obj, _, _obj_meta in kb_results:
             i += 1
             obj_text = yaml.dump({k: v for k, v in obj.items() if v}, sort_keys=False)
             references[str(i)] = obj_text

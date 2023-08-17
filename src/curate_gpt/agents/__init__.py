@@ -1,3 +1,8 @@
-from .mapper import Mapper
+"""CurateGPT Agents.
 
-__all__ = ["Mapper"]
+These chain together different search and generate components.
+"""
+
+from .mapping_agent import MappingAgent
+
+__all__ = ["MappingAgent", "ChatEngine"]

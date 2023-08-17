@@ -1,22 +1,14 @@
 """Chat with a KB."""
-import json
 import logging
-import re
 import time
-from collections import defaultdict
-from dataclasses import dataclass
-from typing import Any, ClassVar, Dict, Iterator, List, Optional
+from dataclasses import dataclass, field
+from typing import ClassVar, Dict, List
 
 import requests
-import yaml
+import requests_cache
 from eutils import Client
-from pydantic import BaseModel
 
-from curate_gpt.agents.chat import ChatEngine, ChatResponse
-from curate_gpt.extract import AnnotatedObject, Extractor
-from curate_gpt.store import DBAdapter
-from curate_gpt.store.db_adapter import SEARCH_RESULT
-from curate_gpt.virtualstore.dbview import DBView
+from curate_gpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 
@@ -29,14 +21,25 @@ PUBMED_EMBEDDING_MODEL = "openai:"
 
 
 @dataclass
-class PubmedView(DBView):
+class PubmedWrapper(BaseWrapper):
     """
-    An agent to pull from pubmed.
+    A wrapper to provide a search facade over PubMed.
+
+    This is a dynamic wrapper: it can be used as a search facade,
+    but cannot be ingested in whole.
     """
 
     name: ClassVar[str] = "pubmed"
 
     eutils_client: Client = None
+
+    session: requests.Session = field(default_factory=lambda: requests.Session())
+
+    _uses_cache: bool = False
+
+    def set_cache(self, name: str) -> None:
+        self.session = requests_cache.CachedSession(name)
+        self._uses_cache = True
 
     def external_search(self, text: str, expand: bool = True, **kwargs) -> List:
         if expand:
@@ -69,19 +72,18 @@ class PubmedView(DBView):
         if not pubmed_ids:
             logger.warning(f"No results with {search_term}")
             if expand:
-                logger.info(f"Trying again without expansion")
+                logger.info("Trying again without expansion")
                 return self.external_search(text, expand=False, **kwargs)
             else:
                 logger.error(f"Failed to find results for {text}")
                 return []
 
         logger.info(f"Found {len(pubmed_ids)} results: {pubmed_ids}")
+        return self.objects_by_ids(pubmed_ids)
 
-        efetch_params = {
-            "db": "pubmed",
-            "id": ",".join(pubmed_ids),  # Combine PubMed IDs into a comma-separated string
-            "retmode": "json",
-        }
+    def objects_by_ids(self, object_ids: List[str]) -> Dict:
+        pubmed_ids = [x.replace("PMID:", "") for x in object_ids]
+        session = self.session
 
         # Parameters for the efetch request
         efetch_params = {
@@ -90,7 +92,9 @@ class PubmedView(DBView):
             "rettype": "medline",
             "retmode": "text",
         }
-        efetch_response = requests.get(EFETCH_URL, params=efetch_params)
+        if not self._uses_cache:
+            time.sleep(0.25)
+        efetch_response = session.get(EFETCH_URL, params=efetch_params)
         medline_records = efetch_response.text
 
         # Parsing titles and abstracts from the MEDLINE records
