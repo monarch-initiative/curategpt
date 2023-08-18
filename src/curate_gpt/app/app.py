@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 import yaml
+from pydantic import BaseModel
 from scipy.spatial import distance_matrix
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -31,6 +32,8 @@ SEARCH = "Search"
 CLUSTER_SEARCH = "Cluster Search"
 MATCH = "Match"
 INSERT = "Insert"
+CURATE = "Curate"
+ADD_TO_CART = "Add to Cart"
 EXTRACT = "Extract"
 CITESEEK = "CiteSeek"
 CART = "Cart"
@@ -65,9 +68,17 @@ option = st.sidebar.selectbox(
 )
 
 
+def filtered_collection_names() -> List[str]:
+    return [c for c in db.list_collection_names() if not c.endswith("_cached")]
+
+
+if 'cart' not in st.session_state:
+    st.session_state.cart = []
+
+
 collection = st.sidebar.selectbox(
     "Choose collection",
-    list(db.list_collection_names()) + [WIKIPEDIA, PUBMED],
+    filtered_collection_names() + [WIKIPEDIA, PUBMED],
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
@@ -101,11 +112,12 @@ background_collection = st.sidebar.selectbox(
     """,
 )
 
+st.sidebar.markdown(f"Cart: {len(st.session_state.cart)} items")
+
 st.sidebar.markdown("Developed by the Monarch Initiative")
 
 
 def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
-    source = None
     knowledge_source_collection = None
     if collection == PUBMED:
         source = PubmedWrapper(local_store=db, extractor=extractor)
@@ -257,15 +269,24 @@ elif option == SEARCH:
                                  """,
     )
 
+    # Check for session state variables
+    if "search_results" not in st.session_state:
+        st.session_state.search_results = []
+
     if st.button("Search"):
+        results = db.search(
+            search_query, collection=collection, relevance_factor=relevance_factor, include=["*"]
+        )
+        st.session_state.search_results = list(results)
+
+    if st.session_state.search_results:
+        results = st.session_state.search_results
         cm = db.collection_metadata(collection, include_derived=True)
         if cm:
             st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
         else:
             st.write(f"Dynamic search over {collection}...")
-        results = db.search(
-            search_query, collection=collection, relevance_factor=relevance_factor, include=["*"]
-        )
+
 
         def _flat(obj: dict, limit=40) -> dict:
             if not obj:
@@ -281,6 +302,14 @@ elif option == SEARCH:
         ]
         html = html_table(rows)
         st.write(html, unsafe_allow_html=True)
+
+        for i, (obj, _distance, _doc) in enumerate(results):
+            st.write(f"## Result {i+1}")
+            st.code(yaml.dump(obj, sort_keys=False))
+            if st.button(f"Add to cart {i+1}"):
+                st.session_state.cart.append(obj)
+                st.success("Document added to cart!")
+
 
 elif option == CLUSTER_SEARCH:
     st.subheader(f"Cluster Search documents in *{collection}*")
@@ -498,9 +527,22 @@ elif option == CHAT:
     st.write("Examples:")
     st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
 
+    if "results" not in st.session_state:
+        st.session_state.results = []
+
     if st.button(CHAT):
         response = ask_chatbot(query)
+        st.session_state.results = [response]
+
+    if st.session_state.results:
+        response = st.session_state.results[0]
         st.markdown(response.formatted_body)
+        add_button = st.button("Add to your cart")
+        if add_button:
+            logger.error("Adding to cart")
+            st.session_state.cart.append(response)
+            st.write("Added to cart!")
+
         st.markdown("## References")
         for ref, text in response.references.items():
             st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
@@ -567,7 +609,15 @@ elif option == CITESEEK:
                     st.code(text, language="yaml")
 
 elif option == CART:
-    st.subheader("Coming soon!")
+    st.subheader("Your items")
+    for i, item in enumerate(st.session_state.cart):
+        st.write(f"## Item {i}")
+        if isinstance(item, BaseModel):
+            item = item.dict()
+        if isinstance(item, dict):
+            st.code(yaml.dump(item, sort_keys=False), language="yaml")
+        else:
+            st.write(str(item))
 
 elif option == EXAMPLES:
     cc = get_case_collection()

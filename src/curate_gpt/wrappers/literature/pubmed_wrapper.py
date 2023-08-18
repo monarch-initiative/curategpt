@@ -15,10 +15,6 @@ logger = logging.getLogger(__name__)
 ESEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
-PUBMED_COLLECTION_NAME = "pubmed_api_cached"
-PUBMED_TEMP_COLLECTION_NAME = "__pubmed_temp__"
-PUBMED_EMBEDDING_MODEL = "openai:"
-
 
 @dataclass
 class PubmedWrapper(BaseWrapper):
@@ -81,7 +77,7 @@ class PubmedWrapper(BaseWrapper):
         logger.info(f"Found {len(pubmed_ids)} results: {pubmed_ids}")
         return self.objects_by_ids(pubmed_ids)
 
-    def objects_by_ids(self, object_ids: List[str]) -> Dict:
+    def objects_by_ids(self, object_ids: List[str]) -> List[Dict]:
         pubmed_ids = [x.replace("PMID:", "") for x in object_ids]
         session = self.session
 

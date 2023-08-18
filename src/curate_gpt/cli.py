@@ -1,5 +1,6 @@
 """Command line interface for curate-gpt."""
 import csv
+import gzip
 import json
 import logging
 from pathlib import Path
@@ -158,22 +159,27 @@ def index(
     if glob:
         files = [str(gf) for f in files for gf in Path().glob(f)]
     if view:
-        proxy_object = get_wrapper(view)
+        wrapper = get_wrapper(view)
         if not object_type:
-            object_type = proxy_object.default_object_type
+            object_type = wrapper.default_object_type
         if not description:
             description = f"{object_type} objects loaded from {str(files)[0:30]}"
     else:
-        proxy_object = None
+        wrapper = None
+    if collect:
+        raise NotImplementedError
     for file in files:
         logging.debug(f"Indexing {file}")
-        if proxy_object:
-            proxy_object.source_locator = file
-            objs = list(proxy_object.objects())
+        if wrapper:
+            wrapper.source_locator = file
+            objs = list(wrapper.objects())
         elif file.endswith(".json"):
             objs = json.load(open(file))
         elif file.endswith(".csv"):
             objs = list(csv.DictReader(open(file)))
+        elif file.endswith(".tsv.gz"):
+            with gzip.open(file, "rt") as f:
+                objs = list(csv.DictReader(f, delimiter="\t"))
         elif file.endswith(".tsv"):
             objs = list(csv.DictReader(open(file), delimiter="\t"))
         else:
