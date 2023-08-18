@@ -359,7 +359,8 @@ class ChromaDBAdapter(DBAdapter):
             else:
                 embeddings_i = None
             if not metadatas[i]:
-                raise ValueError(f"Empty metadata for item {i} doc: {documents[i]}")
+                logger.error(f"Empty metadata for item {i} [num: {len(metadatas)}] doc: {documents[i]}")
+                continue
             yield self._unjson(metadatas[i]), distances[i], {
                 "embeddings": embeddings_i,
                 "document": documents[i],
@@ -383,6 +384,7 @@ class ChromaDBAdapter(DBAdapter):
         ef = self._embedding_function(metadata["model"])
         query_embedding = ef([text])
         kwargs["include"] = ["metadatas", "documents", "distances", "embeddings"]
+        logger.debug(f"Diversified search for '{text}' in {collection}, limit={limit}, kwargs={kwargs}")
         ranked_results = list(self.search(text, limit=limit * 10, collection=collection, **kwargs))
         if not ranked_results:
             return

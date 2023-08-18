@@ -3,6 +3,7 @@ import shutil
 import time
 
 from curate_gpt import ChromaDBAdapter
+from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.agents.dae_agent import DatabaseAugmentedExtractor
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers import PubmedWrapper
@@ -44,4 +45,15 @@ def test_pubmed_chat():
     db.reset()
     pubmed = PubmedWrapper(local_store=db, extractor=extractor)
     response = pubmed.chat("what diseases are associated with acinar cells of the salivary gland")
+    print(response)
+
+
+def test_pubmed_chat2():
+    shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
+    db = ChromaDBAdapter(str(TEMP_PUBMED_DB))
+    extractor = BasicExtractor()
+    db.reset()
+    pubmed = PubmedWrapper(local_store=db, extractor=extractor)
+    chat = ChatAgent(knowledge_source=pubmed, extractor=extractor)
+    response = chat.chat("what diseases are associated with acinar cells of the salivary gland")
     print(response)
