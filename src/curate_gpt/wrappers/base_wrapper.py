@@ -34,12 +34,15 @@ class BaseWrapper(ABC):
 
     default_object_type = "Publication"
 
+    search_limit_multiplier: ClassVar[int] = 3
+
     def search(
         self,
         text: str,
         collection: str = None,
         cache: bool = True,
         expand: bool = True,
+        limit: Optional[int] = None,
         external_search_limit: Optional[int] = None,
         **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
@@ -52,9 +55,10 @@ class BaseWrapper(ABC):
         :return:
         """
         logger.info(f"Searching for {text}")
-        ext_kwargs = {k: v for k, v in kwargs.items() if k != "limit"}
+        if external_search_limit is None and limit is not None:
+            external_search_limit = limit * self.search_limit_multiplier
         parsed_data = self.external_search(
-            text, expand=expand, limit=external_search_limit, **ext_kwargs
+            text, expand=expand, limit=external_search_limit, **kwargs
         )
         db = self.local_store
         if db is None:
@@ -71,7 +75,7 @@ class BaseWrapper(ABC):
             object_type="Publication",
             description=f"Special cache for {self.name} searches",
         )
-        yield from db.search(text, collection=collection, **kwargs)
+        yield from db.search(text, collection=collection, limit=limit, **kwargs)
 
     def objects(
         self, collection: str = None, object_ids: Iterable[str] = None, **kwargs
@@ -86,7 +90,7 @@ class BaseWrapper(ABC):
         """
         raise NotImplementedError
 
-    def external_search(self, text: str, expand: bool = True, **kwargs) -> List:
+    def external_search(self, text: str, expand: bool = True, **kwargs) -> List[Dict]:
         """
         Search an external source and return the results.
 

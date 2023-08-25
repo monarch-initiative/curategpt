@@ -17,7 +17,6 @@ from oaklib.utilities.iterator_utils import chunk
 from pydantic import BaseModel
 
 from curate_gpt.store.db_adapter import (
-    DEFAULT_COLLECTION,
     OBJECT,
     PROJECTION,
     QUERY,
@@ -36,7 +35,7 @@ class ChromaDBAdapter(DBAdapter):
     An Adapter that wraps a ChromaDB client
     """
 
-    # model: str = field(default="all-MiniLM-L6-v2")
+    name: ClassVar[str] = "chromadb"
     default_model = "all-MiniLM-L6-v2"
     client: API = None
     id_field: str = field(default="id")
@@ -50,8 +49,11 @@ class ChromaDBAdapter(DBAdapter):
             self.path = "./db"
         logger.info(f"Using ChromaDB at {self.path}")
         self.client = chromadb.PersistentClient(
-            path=str(self.path), settings=Settings(allow_reset=True)
+            path=str(self.path), settings=Settings(allow_reset=True, anonymized_telemetry=False)
         )
+
+    def _get_collection_object(self, collection: str = None):
+        return self.client.get_collection(name=self._get_collection(collection))
 
     def _text(self, obj: OBJECT, text_field: Union[str, Callable]):
         if text_field is None or (isinstance(text_field, str) and text_field not in obj):
@@ -92,7 +94,11 @@ class ChromaDBAdapter(DBAdapter):
 
     def _object_metadata(self, obj: OBJECT):
         """
-        Transform an object into metadata suitable for storage in chromadb
+        Transform an object into metadata suitable for storage in chromadb.
+
+        chromadb does not allow nested objects, so in addition to storing the
+        top level keys that are primitive, we also store a json representation
+        of the entire object at the top level with the key "_json".
 
         :param obj:
         :return:
@@ -105,7 +111,7 @@ class ChromaDBAdapter(DBAdapter):
 
     def reset(self):
         """
-        Reset the database.
+        Reset/delete the database.
         """
         self.client.reset()
 
@@ -120,7 +126,8 @@ class ChromaDBAdapter(DBAdapter):
             raise ValueError("Model must be specified")
         if model.startswith("openai:"):
             return embedding_functions.OpenAIEmbeddingFunction(
-                api_key=os.environ.get("OPENAI_API_KEY"), model_name="text-embedding-ada-002"
+                api_key=os.environ.get("OPENAI_API_KEY"),
+                model_name="text-embedding-ada-002",
             )
         return embedding_functions.SentenceTransformerEmbeddingFunction(model_name=model)
 
@@ -134,7 +141,7 @@ class ChromaDBAdapter(DBAdapter):
     def _insert_or_update(
         self,
         objs: Union[OBJECT, Iterable[OBJECT]],
-        collection: str = DEFAULT_COLLECTION,
+        collection: str = None,
         batch_size: int = None,
         method_name="add",
         object_type: str = None,
@@ -151,6 +158,7 @@ class ChromaDBAdapter(DBAdapter):
         :return:
         """
         client = self.client
+        collection = self._get_collection(collection)
         cm = self.collection_metadata(collection)
         if model is None:
             if cm:
@@ -212,7 +220,7 @@ class ChromaDBAdapter(DBAdapter):
         """
         self._insert_or_update(objs, method_name="upsert", **kwargs)
 
-    def remove_collection(self, collection: str = DEFAULT_COLLECTION, exists_ok=False, **kwargs):
+    def remove_collection(self, collection: str = None, exists_ok=False, **kwargs):
         """
         Remove a collection from the database.
 
@@ -242,7 +250,7 @@ class ChromaDBAdapter(DBAdapter):
         return [c.name for c in self.client.list_collections()]
 
     def collection_metadata(
-        self, collection_name: Optional[str] = DEFAULT_COLLECTION, include_derived=False, **kwargs
+        self, collection_name: Optional[str] = None, include_derived=False, **kwargs
     ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for a collection.
@@ -250,6 +258,7 @@ class ChromaDBAdapter(DBAdapter):
         :param collection_name:
         :return:
         """
+        collection_name = self._get_collection(collection_name)
         try:
             collection_obj = self.client.get_collection(name=collection_name)
         except Exception:
@@ -281,6 +290,7 @@ class ChromaDBAdapter(DBAdapter):
         :param kwargs:
         :return:
         """
+        collection_name = self._get_collection(collection_name)
         metadata = self.collection_metadata(collection_name=collection_name)
         if metadata is None:
             metadata = CollectionMetadata(**kwargs)
@@ -311,7 +321,7 @@ class ChromaDBAdapter(DBAdapter):
         self,
         text: str = None,
         where: QUERY = None,
-        collection: str = DEFAULT_COLLECTION,
+        collection: str = None,
         limit=10,
         include=None,
         relevance_factor: float = None,
@@ -333,7 +343,10 @@ class ChromaDBAdapter(DBAdapter):
         if "*" in include:
             include = ["metadatas", "documents", "distances", "embeddings"]
         client = self.client
-        collection = client.get_collection(name=collection)
+        # Note: with chromadb it is necessary to get the collection again;
+        # the first time we do not know the embedding function, but do not
+        # want to accidentally set it
+        collection = client.get_collection(name=self._get_collection(collection))
         metadata = collection.metadata
         collection = client.get_collection(
             name=collection.name, embedding_function=self._embedding_function(metadata["model"])
@@ -342,10 +355,19 @@ class ChromaDBAdapter(DBAdapter):
         if text:
             query_texts = [text]
         else:
-            query_texts = [""]
+            # TODO: use get()
+            query_texts = ["any"]
         if limit is not None:
             kwargs["n_results"] = limit
-        results = collection.query(query_texts=query_texts, where=where, include=include, **kwargs)
+        logger.debug(
+            f"Query texts: {query_texts} where: {where} include: {include}, kwargs={kwargs}"
+        )
+        if query_texts == ["any"] and "n_results" not in kwargs and False:
+            results = collection.get(where=where, include=include, **kwargs)
+        else:
+            results = collection.query(
+                query_texts=query_texts, where=where, include=include, **kwargs
+            )
         metadatas = results["metadatas"][0]
         distances = results["distances"][0]
         documents = results["documents"][0]
@@ -359,10 +381,37 @@ class ChromaDBAdapter(DBAdapter):
             else:
                 embeddings_i = None
             if not metadatas[i]:
-                logger.error(f"Empty metadata for item {i} [num: {len(metadatas)}] doc: {documents[i]}")
+                logger.error(
+                    f"Empty metadata for item {i} [num: {len(metadatas)}] doc: {documents[i]}"
+                )
                 continue
             yield self._unjson(metadatas[i]), distances[i], {
                 "embeddings": embeddings_i,
+                "document": documents[i],
+            }
+
+    def find(
+        self,
+        where: QUERY = None,
+        projection: PROJECTION = None,
+        collection: str = None,
+        **kwargs,
+    ) -> Iterator[SEARCH_RESULT]:
+        # TODO: use get
+        # yield from self.search("", where=where, collection=collection, **kwargs)
+        # return
+        client = self.client
+        collection_obj = client.get_collection(name=self._get_collection(collection))
+        results = collection_obj.get(where=where, **kwargs)
+        metadatas = results["metadatas"]
+        documents = results["documents"]
+        for i in range(0, len(documents)):
+            if not metadatas[i]:
+                logger.error(
+                    f"Empty metadata for item {i} [num: {len(metadatas)}] doc: {documents[i]}"
+                )
+                continue
+            yield self._unjson(metadatas[i]), 0.0, {
                 "document": documents[i],
             }
 
@@ -371,7 +420,7 @@ class ChromaDBAdapter(DBAdapter):
         text: str = None,
         limit: int = None,
         relevance_factor=0.5,
-        collection: str = DEFAULT_COLLECTION,
+        collection: str = None,
         **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         if limit is None:
@@ -379,12 +428,14 @@ class ChromaDBAdapter(DBAdapter):
         logger.debug(
             f"diversified search RF={relevance_factor}, text={text}, limit={limit}, collection={collection}"
         )
-        collection_obj = self.client.get_collection(name=collection)
+        collection_obj = self._get_collection_object(collection)
         metadata = collection_obj.metadata
         ef = self._embedding_function(metadata["model"])
         query_embedding = ef([text])
         kwargs["include"] = ["metadatas", "documents", "distances", "embeddings"]
-        logger.debug(f"Diversified search for '{text}' in {collection}, limit={limit}, kwargs={kwargs}")
+        logger.debug(
+            f"Diversified search for '{text}' in {collection}, limit={limit}, kwargs={kwargs}"
+        )
         ranked_results = list(self.search(text, limit=limit * 10, collection=collection, **kwargs))
         if not ranked_results:
             return
@@ -397,14 +448,6 @@ class ChromaDBAdapter(DBAdapter):
         )
         for i in reranked_indices:
             yield ranked_results[i]
-
-    def find(
-        self,
-        where: QUERY = None,
-        projection: PROJECTION = None,
-        **kwargs,
-    ) -> Iterator[SEARCH_RESULT]:
-        yield from self.search("", where=where, **kwargs)
 
     def matches(self, obj: OBJECT, **kwargs) -> Iterator[SEARCH_RESULT]:
         """
@@ -419,7 +462,7 @@ class ChromaDBAdapter(DBAdapter):
         logger.info(f"Query term: {text}")
         yield from self.search(text, **kwargs)
 
-    def lookup(self, id: str, collection: str = DEFAULT_COLLECTION, **kwargs) -> OBJECT:
+    def lookup(self, id: str, collection: str = None, **kwargs) -> OBJECT:
         """
         Lookup an object by its ID.
 
@@ -428,7 +471,7 @@ class ChromaDBAdapter(DBAdapter):
         :return:
         """
         client = self.client
-        collection = client.get_or_create_collection(name=collection)
+        collection = client.get_or_create_collection(name=self._get_collection(collection))
         results = collection.get([id], include=["metadatas"])
         return self._unjson(results["metadatas"][0])
 
@@ -446,10 +489,11 @@ class ChromaDBAdapter(DBAdapter):
         if collection.metadata.get("model", "").startswith("openai:"):
             return True
 
-    def peek(self, collection: str = DEFAULT_COLLECTION, limit=5, **kwargs) -> Iterator[OBJECT]:
-        c = self.client.get_collection(name=collection)
-        logger.debug(f"Peeking at {collection}")
+    def peek(self, collection: str = None, limit=5, **kwargs) -> Iterator[OBJECT]:
+        c = self.client.get_collection(name=self._get_collection(collection))
+        logger.debug(f"Peeking at {collection} limit={limit}")
         results = c.peek(limit=limit)
+        logger.debug(f"Got {len(results)} results")
         # TODO: DRY
         metadatas = results["metadatas"]
         for i in range(0, len(metadatas)):

@@ -39,6 +39,9 @@ class OntologyWrapper(BaseWrapper):
     default_max_search_results: int = 500
     fetch_definitions: bool = field(default=True)
     fetch_relationships: bool = field(default=True)
+    relationships_as_fields: bool = field(default=False)
+
+    branches: List[str] = None
 
     def __post_init__(self):
         """Initialize."""
@@ -65,17 +68,34 @@ class OntologyWrapper(BaseWrapper):
         :return:
         """
         adapter = self.oak_adapter
-        entities = list(object_ids if object_ids else adapter.entities())
+        entities = list(adapter.entities())
+
+        if self.branches:
+            if not isinstance(adapter, OboGraphInterface):
+                raise ValueError(f"OAK adapter {self.oak_adapter} does not support branches")
+            selected_ids = []
+            for branch in self.branches:
+                selected_ids.extend(list(adapter.descendants([branch], predicates=[IS_A])))
+            selected_ids = list(set(selected_ids))
+        elif object_ids:
+            selected_ids = list(object_ids)
+        else:
+            selected_ids = list(entities)
+        logger.info(f"Found {len(selected_ids)} selected ids")
+        # need to fetch ALL labels in store, even if not selected,
+        # as may be used in references
         labels = {e: lbl for e, lbl in adapter.labels(entities, allow_none=False)}
+        logger.info(f"Found {len(labels)} labels")
         definitions = {}
         if self.fetch_definitions:
-            for chunked_entities in chunk(entities, 100):
+            for chunked_entities in chunk(selected_ids, 100):
                 for id, defn, _ in adapter.definitions(chunked_entities):
                     definitions[id] = defn
         relationships = defaultdict(list)
         if self.fetch_relationships:
             for sub, pred, obj in adapter.relationships():
-                relationships[sub].append((pred, obj))
+                if sub in entities:
+                    relationships[sub].append((pred, obj))
         self.id_to_shorthand = {}
         self.shorthand_to_id = {}
         for id, lbl in labels.items():
@@ -89,14 +109,26 @@ class OntologyWrapper(BaseWrapper):
         self._objects_by_curie = {}
         self._objects_by_shorthand = {}
         for id, shorthand in self.id_to_shorthand.items():
+            if id not in selected_ids:
+                continue
             obj = OntologyClass(
                 id=shorthand,
                 label=labels[id],
-                relationships=[
-                    Relationship(predicate=self._as_shorthand(pred), target=self._as_shorthand(obj))
-                    for pred, obj in relationships.get(id, [])
-                ],
+                original_id=id,
             )
+            for pred, tgt in relationships.get(id, []):
+                k = self._as_shorthand(pred)
+                k = k.replace("rdfs:", "")
+                if self.relationships_as_fields:
+                    if not hasattr(obj, k):
+                        setattr(obj, k, [])
+                    getattr(obj, k).append(self._as_shorthand(tgt))
+                else:
+                    if not obj.relationships:
+                        obj.relationships = []
+                    obj.relationships.append(
+                        Relationship(predicate=k, target=self._as_shorthand(tgt))
+                    )
             if id in definitions:
                 obj.definition = definitions[id]
             self._objects_by_curie[id] = obj
@@ -104,12 +136,12 @@ class OntologyWrapper(BaseWrapper):
         if isinstance(adapter, OboGraphInterface):
             for ldef in adapter.logical_definitions():
                 shorthand = self._as_shorthand(ldef.definedClassId)
-                obj = self._objects_by_curie.get(shorthand, None)
+                obj = self._objects_by_curie.get(ldef.definedClassId, None)
                 if obj is None:
                     continue
                 obj.logical_definition = [
-                    Relationship(predicate=IS_A, target=self._as_shorthand(obj))
-                    for pred, obj in ldef.genusIds
+                    Relationship(predicate=IS_A, target=self._as_shorthand(g))
+                    for g in ldef.genusIds
                 ] + [
                     Relationship(
                         predicate=self._as_shorthand(r.propertyId),

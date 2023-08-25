@@ -1,13 +1,15 @@
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests
 from oaklib import BasicOntologyInterface, get_adapter
 
 from curate_gpt.formatters.format_utils import camelify
-from curate_gpt.wrappers import BaseWrapper, PubmedWrapper
+from curate_gpt.wrappers import BaseWrapper
+from curate_gpt.wrappers.literature import PubmedWrapper
 
 BASE_URL = "https://go-public.s3.amazonaws.com/files/"
 INDEX_URL = "https://go-public.s3.amazonaws.com/files/gocam-models.json"
@@ -27,6 +29,13 @@ def _cls(obj: Dict) -> str:
         toks = obj["label"].split(" ")
         return toks[0]
     return camelify(obj["label"])
+
+
+@lru_cache
+def _relation_id(p: str) -> str:
+    ro_adapter = get_adapter("sqlite:obo:ro")
+    lbl = ro_adapter.label(p)
+    return camelify(lbl) if lbl else p
 
 
 def _annotations(obj: Dict) -> Dict:
@@ -58,9 +67,12 @@ class GOCAMWrapper(BaseWrapper):
 
     pubmed_wrapper: PubmedWrapper = None
 
+    ro_adapter: BasicOntologyInterface = None
+
     def __post_init__(self):
         self.pubmed_wrapper = PubmedWrapper()
         self.pubmed_wrapper.set_cache("gocam_pubmed_cache")
+        self.ro_adapter = get_adapter("sqlite:obo:ro")
 
     def objects(
         self, collection: str = None, object_ids: Optional[Iterable[str]] = None, **kwargs
@@ -148,6 +160,29 @@ class GOCAMWrapper(BaseWrapper):
                 continue
             for a in activities_by_mf_id.get(s, []):
                 a["location"] = individual_to_term[o]
+
+        for p, facts in facts_by_property.items():
+            for fact in facts:
+                s, o = fact["subject"], fact["object"]
+                sas = activities_by_mf_id.get(s, [])
+                oas = activities_by_mf_id.get(o, [])
+                if not sas or not oas:
+                    continue
+                if individual_to_type.get(s, None) != "MolecularFunction":
+                    continue
+                if individual_to_type.get(o, None) != "MolecularFunction":
+                    continue
+                sa = sas[0]
+                oa = oas[0]
+                if "relationships" not in sa:
+                    sa["relationships"] = []
+                rel = {
+                    "type": _relation_id(p),
+                    "target_gene": oa["gene"],
+                    "target_activity": oa["activity"],
+                }
+                if rel not in sa["relationships"]:
+                    sa["relationships"].append(rel)
         pmids = {a["reference"] for a in activities if "reference" in a}
         pmids = [p for p in pmids if p and p.startswith("PMID")]
         pubs = self.pubmed_wrapper.objects_by_ids(pmids)

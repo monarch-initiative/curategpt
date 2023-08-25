@@ -17,5 +17,6 @@ index-%-issues:
 index-phenopackets:
 	$(RUN) curategpt index -p $(DB_PATH) -c phenopackets_384_oai -m openai: --object-type Phenopacket --description "Phenopackets from https://zenodo.org/record/3905420" data/phenopackets/*.json
 
+# (head -1 data/monarch-kg-lite.tsv && tail -n +2 data/monarch-kg-lite.tsv | sort -u)
 data/monarch-kg-lite.tsv:
 	 gzip -dc ~/Downloads/monarch-kg-denormalized-edges.tsv.gz | csvcut -t -c subject_label,predicate,object_label,subject_category,object_category | perl -npe "s@biolink:@@g" > $@

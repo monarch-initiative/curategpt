@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 
 
 class Relationship(BaseModel):
@@ -14,7 +14,7 @@ class Relationship(BaseModel):
     target: str
 
 
-class OntologyClass(BaseModel):
+class OntologyClass(BaseModel, extra=Extra.allow):
     """
     An ontology class.
 
@@ -27,6 +27,7 @@ class OntologyClass(BaseModel):
     aliases: List[str] = None
     relationships: List[Relationship] = None
     logical_definition: List[Relationship] = None
+    original_id: str = None
 
 
 class Ontology(BaseModel):

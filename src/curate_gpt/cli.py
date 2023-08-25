@@ -10,21 +10,26 @@ import click
 import yaml
 from click_default_group import DefaultGroup
 from oaklib import get_adapter
+from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
+from curate_gpt.evaluation.evaluation_datamodel import Task
+from curate_gpt.evaluation.runner import run_task
+from curate_gpt.evaluation.splitter import stratify_collection
 
 __all__ = [
     "main",
 ]
 
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
-from curate_gpt.agents.dae_agent import DatabaseAugmentedExtractor
+from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
 from curate_gpt.agents.evidence_agent import EvidenceAgent
-from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedExtractorEvaluator
+from curate_gpt.evaluation.calc_statistics import calculate_metrics, evaluate_predictions
+from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.utils.metrics import calculate_metrics, evaluate_predictions
-from curate_gpt.wrappers import BaseWrapper, OntologyWrapper, get_wrapper
+from curate_gpt.wrappers import BaseWrapper, get_wrapper
+from curate_gpt.wrappers.ontology import OntologyWrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from llm import UnknownModelError, get_plugins
 from llm.cli import load_conversation
@@ -41,11 +46,11 @@ relevance_factor_option = click.option(
 limit_option = click.option(
     "-l", "--limit", default=10, show_default=True, help="Number of results to return."
 )
-reset_option = click.option(
-    "--reset/--no-reset",
+replace_option = click.option(
+    "--replace/--no-replace",
     default=False,
     show_default=True,
-    help="Reset the database before indexing.",
+    help="replace the database before indexing.",
 )
 append_option = click.option(
     "--append/--no-append", default=False, show_default=True, help="Append to the database."
@@ -64,19 +69,23 @@ description_option = click.option(
 
 def show_chat_response(response: ChatResponse, show_references: bool = True):
     """Show a chat response."""
-    print("# Response:")
+    print("# Response:\n")
     click.echo(response.formatted_body)
-    print("# Raw:")
+    print("\n\n# Raw:\n")
     click.echo(response.body)
     if show_references:
-        print("# References:")
+        print("\n# References:\n")
         for ref, ref_text in response.references.items():
-            print(f"## {ref}")
+            print(f"\n## {ref}\n")
+            print("```yaml")
             print(ref_text)
+            print("```")
         print("# Uncited:")
         for ref, ref_text in response.uncited_references.items():
-            print(f"## {ref}")
+            print(f"\n## {ref}\n")
+            print("```yaml")
             print(ref_text)
+            print("```")
 
 
 @click.group(
@@ -109,7 +118,7 @@ def main(verbose: int, quiet: bool):
 
 @main.command()
 @path_option
-@reset_option
+@append_option
 @collection_option
 @model_option
 @click.option("--text-field")
@@ -133,7 +142,7 @@ def main(verbose: int, quiet: bool):
 def index(
     files,
     path,
-    reset: bool,
+    append: bool,
     text_field,
     collection,
     model,
@@ -154,8 +163,6 @@ def index(
     """
     db = ChromaDBAdapter(path, **kwargs)
     db.text_lookup = text_field
-    if reset:
-        db.reset()
     if glob:
         files = [str(gf) for f in files for gf in Path().glob(f)]
     if view:
@@ -168,11 +175,14 @@ def index(
         wrapper = None
     if collect:
         raise NotImplementedError
+    if not append:
+        if collection in db.list_collection_names():
+            db.remove_collection(collection)
     for file in files:
         logging.debug(f"Indexing {file}")
         if wrapper:
             wrapper.source_locator = file
-            objs = list(wrapper.objects())
+            objs = wrapper.objects()  # iterator
         elif file.endswith(".json"):
             objs = json.load(open(file))
         elif file.endswith(".csv"):
@@ -184,7 +194,7 @@ def index(
             objs = list(csv.DictReader(open(file), delimiter="\t"))
         else:
             objs = yaml.safe_load(open(file))
-        if not isinstance(objs, list):
+        if isinstance(objs, (dict, BaseModel)):
             objs = [objs]
         db.insert(objs, model=model, collection=collection, batch_size=batch_size)
     db.update_collection_metadata(
@@ -293,11 +303,13 @@ def generate(
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
-    rage = DatabaseAugmentedExtractor(knowledge_source=db, extractor=extractor)
+    rage = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
         rage.document_adapter = ChromaDBAdapter(docstore_path)
         rage.document_adapter_collection = docstore_collection
-    ao = rage.generate_extract(
+    if ":" in query:
+        query = yaml.safe_load(query)
+    ao = rage.complete(
         query, context_property=query_property, rules=rule, **filtered_kwargs
     )
     print(yaml.dump(ao.object, sort_keys=False))
@@ -312,6 +324,11 @@ def generate(
     "-F",
     required=True,
     help="Comma separated list of fields to predict in the test.",
+)
+@click.option(
+    "--mask-fields",
+    "-M",
+    help="Comma separated list of fields to mask in the test.",
 )
 @model_option
 @limit_option
@@ -352,7 +369,9 @@ def generate_evaluate(
     model,
     schema,
     test_collection,
+    num_tests,
     hold_back_fields,
+    mask_fields,
     rule: List[str],
     **kwargs,
 ):
@@ -375,35 +394,210 @@ def generate_evaluate(
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
-    rage = DatabaseAugmentedExtractor(knowledge_source=db, extractor=extractor)
+    rage = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
         rage.document_adapter = ChromaDBAdapter(docstore_path)
         rage.document_adapter_collection = docstore_collection
     hold_back_fields = hold_back_fields.split(",")
-    evaluator = DatabaseAugmentedExtractorEvaluator(agent=rage, hold_back_fields=hold_back_fields)
-    results = evaluator.evaluate(test_collection, **kwargs)
+    mask_fields = mask_fields.split(",") if mask_fields else []
+    evaluator = DatabaseAugmentedCompletionEvaluator(
+        agent=rage, fields_to_predict=hold_back_fields, fields_to_mask=mask_fields
+    )
+    results = evaluator.evaluate(test_collection, num_tests=num_tests, **kwargs)
     print(yaml.dump(results.dict(), sort_keys=False))
-    raise ValueError("STOP")
-    # db.find(where={}, collection=test_collection)
-    test_objs = db.peek(test_collection, limit=10000)
-    for test_obj in test_objs:
-        query_obj = {k: v for k, v in test_obj.items() if k not in hold_back_fields}
-        print(f"## Query: {query_obj}")
-        ao = rage.generate_extract(query_obj, rules=rule, **filtered_kwargs)
-        print("## Expected:")
-        print(yaml.dump(test_obj, sort_keys=False))
-        print("## Prediction:")
-        print(yaml.dump(ao.object, sort_keys=False))
-        outcomes = []
-        for f in hold_back_fields:
-            outcomes.extend(
-                list(evaluate_predictions(ao.object.get(f, None), test_obj.get(f, None)))
-            )
-        metrics = calculate_metrics(outcomes)
-        print("## Scores")
-        print(yaml.dump(metrics.dict(), sort_keys=False))
-        # for diff in diffs:
-        #    print(f" * Diff: {diff}")
+
+
+@main.command()
+@path_option
+@collection_option
+@click.option(
+    "-C/--no-C",
+    "--conversation/--no-conversation",
+    default=False,
+    show_default=True,
+    help="Whether to run in conversation mode.",
+)
+@model_option
+@limit_option
+@click.option("--field-to-predict", "-F", help="Field to predict")
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@click.option(
+    "--generate-background/--no-generate-background",
+    default=False,
+    show_default=True,
+    help="Whether to generate background knowledge.",
+)
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@click.option(
+    "--id-file",
+    "-i",
+    type=click.File("r"),
+    help="File to read ids from.",
+)
+@click.option(
+    "--missing-only/--no-missing-only",
+    default=True,
+    show_default=True,
+    help="Only generate missing values.",
+)
+@schema_option
+def generate_all(
+    path,
+    collection,
+    docstore_path,
+    docstore_collection,
+    conversation,
+    rule: List[str],
+    model,
+    field_to_predict,
+    schema,
+    id_file,
+    **kwargs,
+):
+    """Generate missing values for all objects
+
+    Example:
+
+        curategpt generate  -c obo_go TODO
+    """
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    dae = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        dae.document_adapter = ChromaDBAdapter(docstore_path)
+        dae.document_adapter_collection = docstore_collection
+    object_ids = None
+    if id_file:
+        object_ids = [line.strip() for line in id_file.readlines()]
+    it = dae.generate_all(
+        collection=collection,
+        field_to_predict=field_to_predict,
+        rules=rule,
+        object_ids=object_ids,
+        **filtered_kwargs,
+    )
+    for pred in it:
+        print(yaml.dump(pred.dict(), sort_keys=False))
+
+
+@main.command()
+@path_option
+@collection_option
+@click.option(
+    "--hold-back-fields",
+    "-F",
+    help="Comma separated list of fields to predict in the test.",
+)
+@click.option(
+    "--mask-fields",
+    "-M",
+    help="Comma separated list of fields to mask in the test.",
+)
+@model_option
+@limit_option
+@click.option(
+    "--generate-background/--no-generate-background",
+    default=False,
+    show_default=True,
+    help="Whether to generate background knowledge.",
+)
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@click.option(
+    "--report-file",
+    "-o",
+    type=click.File("w"),
+    help="File to write report to.",
+)
+@click.option(
+    "--num-tests",
+    default=10000,
+    show_default=True,
+    help="Number (max) of tests to run.",
+)
+@click.option(
+    "--working-directory",
+    "-W",
+    help="Working directory to use.",
+)
+@click.option(
+    "--fresh/--no-fresh",
+    default=False,
+    show_default=True,
+    help="Whether to rebuild test/train collections.",
+)
+@click.argument("tasks", nargs=-1)
+def evaluate(
+    tasks,
+    working_directory,
+    path,
+    model,
+    num_tests,
+    hold_back_fields,
+    mask_fields,
+    rule: List[str],
+    collection,
+    **kwargs,
+):
+    """Evaluate given a task configuration.
+
+    Example:
+
+        curategpt evaluate src/curate_gpt/conf/tasks/bio-ont.tasks.yaml
+    """
+    normalized_tasks = []
+    for task in tasks:
+        if ":" in task:
+            task = yaml.safe_load(task)
+        else:
+            task = yaml.safe_load(open(task))
+        if isinstance(task, list):
+            normalized_tasks.extend(task)
+        else:
+            normalized_tasks.append(task)
+    for task in normalized_tasks:
+        task_obj = Task(**task)
+        if path:
+            task_obj.path = path
+        if working_directory:
+            task_obj.working_directory = working_directory
+        if collection:
+            task_obj.source_collection = collection
+        if model:
+            task_obj.model_name = model
+        if hold_back_fields:
+            task_obj.hold_back_fields = hold_back_fields.split(",")
+        if mask_fields:
+            task_obj.mask_fields = mask_fields.split(",")
+        if rule:
+            # TODO
+            task_obj.rules = rule
+        result = run_task(task_obj, **kwargs)
+        print(yaml.dump(result.dict(), sort_keys=False))
 
 
 @main.command()
@@ -510,17 +704,32 @@ def collections():
 
 @collections.command(name="list")
 @click.option(
+    "--minimal/--no-minimal",
+    default=False,
+    show_default=True,
+    help="Whether to show minimal information.",
+)
+@click.option(
+    "--derived/--no-derived",
+    default=True,
+    show_default=True,
+    help="Whether to show derived information.",
+)
+@click.option(
     "--peek/--no-peek",
     default=False,
     show_default=True,
     help="Whether to peek at the first few entries of the collection.",
 )
 @path_option
-def list_collections(path, peek: bool):
+def list_collections(path, peek: bool, minimal: bool, derived: bool):
     """List all collections."""
     db = ChromaDBAdapter(path)
     for cn in db.collections():
-        cm = db.collection_metadata(cn, include_derived=True)
+        if minimal:
+            print(f"## Collection: {cn}")
+            continue
+        cm = db.collection_metadata(cn, include_derived=derived)
         c = db.client.get_or_create_collection(cn)
         print(f"## Collection: {cn} N={c.count()} meta={c.metadata} // {cm}")
         if peek:
@@ -536,6 +745,77 @@ def delete_collection(path, collection):
     """Delete a collections."""
     db = ChromaDBAdapter(path)
     db.remove_collection(collection)
+
+
+@collections.command(name="peek")
+@collection_option
+@limit_option
+@path_option
+def peek_collection(path, collection, **kwargs):
+    """Inspect a collections."""
+    logging.info(f"Peeking at {collection} in {path}")
+    db = ChromaDBAdapter(path)
+    for obj in db.peek(collection, **kwargs):
+        print(yaml.dump(obj, sort_keys=False))
+
+
+@collections.command(name="split")
+@collection_option
+@model_option
+@click.option(
+    "--num-training",
+    type=click.INT,
+    help="Number of training examples to keep.",
+)
+@click.option(
+    "--num-testing",
+    type=click.INT,
+    help="Number of testing examples to keep.",
+)
+@click.option(
+    "--num-validation",
+    default=0,
+    show_default=True,
+    type=click.INT,
+    help="Number of validation examples to keep.",
+)
+@click.option(
+    "--ratio",
+    type=click.FLOAT,
+    help="Ratio of training to testing examples.",
+)
+@click.option(
+    "--fields-to-predict",
+    "-F",
+    required=True,
+    help="Comma separated list of fields to predict in the test. Candidate objects must have these fields.",
+)
+@click.option(
+    "--output-path",
+    "-o",
+    required=True,
+    help="Path to write the new store.",
+)
+@path_option
+def split_collection(path, collection, output_path, model, **kwargs):
+    """
+    Split a collection into test/train/validation.
+
+    Example:
+
+        curategpt -v collections split -c hp --num-training 10 --num-testing 20 -o hp_split
+
+    This can be run as a pre-processing step for generate-evaluate.
+    """
+    db = ChromaDBAdapter(path)
+    sc = stratify_collection(db, collection, **kwargs)
+    output_db = ChromaDBAdapter(output_path)
+    for sn in ["training", "testing", "validation"]:
+        cn = f"{collection}_{sn}"
+        output_db.remove_collection(cn, exists_ok=True)
+        objs = getattr(sc, f"{sn}_set", [])
+        logging.info(f"Writing {len(objs)} objects to {cn}")
+        output_db.insert(objs, collection=cn, model=model)
 
 
 @collections.command(name="set")
@@ -555,18 +835,20 @@ def ontology():
 
 @ontology.command(name="index")
 @path_option
-@reset_option
 @collection_option
 @model_option
 @append_option
+@click.option(
+    "--branches",
+    "-b",
+    help="Comma separated list node IDs representing branches to index.",
+)
 @click.option(
     "--index-fields",
     help="Fields to index; comma sepatrated",
 )
 @click.argument("ont")
-def index_ontology_command(
-    ont, path, reset: bool, collection, append, model, index_fields, **kwargs
-):
+def index_ontology_command(ont, path, collection, append, model, index_fields, branches, **kwargs):
     """Index an ontology.
 
     Example:
@@ -576,13 +858,13 @@ def index_ontology_command(
     """
     oak_adapter = get_adapter(ont)
     view = OntologyWrapper(oak_adapter=oak_adapter)
+    if branches:
+        view.branches = branches.split(",")
     db = ChromaDBAdapter(path, **kwargs)
     db.text_lookup = view.text_field
     if index_fields:
         fields = index_fields.split(",")
         db.text_lookup = lambda obj: " ".join([str(getattr(obj, f, "")) for f in fields])
-    if reset:
-        db.reset()
     if not append:
         db.remove_collection(collection, exists_ok=True)
     db.insert(view.objects(), collection=collection, model=model)
@@ -620,14 +902,15 @@ def view_search(query, view, model, **kwargs):
 @view.command(name="ask")
 @click.option("--view", "-V")
 @click.option("--source-locator")
+@limit_option
 @model_option
 @click.argument("query")
-def view_ask(query, view, model, **kwargs):
+def view_ask(query, view, model, limit, **kwargs):
     """Ask a knowledge source wrapper."""
     vstore: BaseWrapper = get_wrapper(view)
     vstore.extractor = BasicExtractor(model_name=model)
     chatbot = ChatAgent(knowledge_source=vstore)
-    response = chatbot.chat(query)
+    response = chatbot.chat(query, limit=limit)
     show_chat_response(response, True)
 
 

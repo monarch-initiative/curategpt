@@ -15,7 +15,10 @@ logger = logging.getLogger(__name__)
 ESEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
+RATE_LIMIT_DELAY = 1.0
 
+
+# TODO: rewrite to subclass EUtilsWrapper
 @dataclass
 class PubmedWrapper(BaseWrapper):
     """
@@ -58,8 +61,10 @@ class PubmedWrapper(BaseWrapper):
             "retmode": "json",
         }
 
-        time.sleep(0.5)
+        # Note: we don't cache this call as there could be many
+        # different search terms
         response = requests.get(ESEARCH_URL, params=params)
+        time.sleep(RATE_LIMIT_DELAY)
         data = response.json()
 
         # Extract PubMed IDs from the response
@@ -78,8 +83,9 @@ class PubmedWrapper(BaseWrapper):
         return self.objects_by_ids(pubmed_ids)
 
     def objects_by_ids(self, object_ids: List[str]) -> List[Dict]:
-        pubmed_ids = [x.replace("PMID:", "") for x in object_ids]
+        pubmed_ids = sorted([x.replace("PMID:", "") for x in object_ids])
         session = self.session
+        logger.debug(f"Using session: {session} [cached: {self._uses_cache} for {pubmed_ids}")
 
         # Parameters for the efetch request
         efetch_params = {
@@ -88,9 +94,16 @@ class PubmedWrapper(BaseWrapper):
             "rettype": "medline",
             "retmode": "text",
         }
-        if not self._uses_cache:
-            time.sleep(0.25)
         efetch_response = session.get(EFETCH_URL, params=efetch_params)
+        if not self._uses_cache or not efetch_response.from_cache:
+            # throttle if not using cache or if not cached
+            logger.debug(f"Sleeping for {RATE_LIMIT_DELAY} seconds")
+            time.sleep(RATE_LIMIT_DELAY)
+        if not efetch_response.ok:
+            logger.error(f"Failed to fetch data for {pubmed_ids}")
+            raise ValueError(
+                f"Failed to fetch data for {pubmed_ids} using {session} and {efetch_params}"
+            )
         medline_records = efetch_response.text
 
         # Parsing titles and abstracts from the MEDLINE records

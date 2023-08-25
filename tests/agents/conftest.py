@@ -10,4 +10,5 @@ from tests import INPUT_DBS
 def go_test_chroma_db() -> ChromaDBAdapter:
     db = ChromaDBAdapter(str(INPUT_DBS / "go-nucleus-chroma"))
     db.schema_proxy = SchemaProxy(ONTOLOGY_MODEL_PATH)
+    db.set_collection("test")
     return db

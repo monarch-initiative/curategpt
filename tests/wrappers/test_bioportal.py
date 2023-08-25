@@ -29,6 +29,7 @@ def vstore() -> OntologyWrapper:
     return view
 
 
+@pytest.mark.skip(reason="OAK bp wrapper doesn't support definitions yets")
 def test_oak_search(vstore):
     results = list(
         vstore.search(

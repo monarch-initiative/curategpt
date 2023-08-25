@@ -4,9 +4,9 @@ import time
 
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.chat_agent import ChatAgent
-from curate_gpt.agents.dae_agent import DatabaseAugmentedExtractor
+from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
 from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers import PubmedWrapper
+from curate_gpt.wrappers.literature import PubmedWrapper
 from tests import OUTPUT_DIR
 
 TEMP_PUBMED_DB = OUTPUT_DIR / "pmid_tmp"
@@ -16,6 +16,13 @@ TEMP_PUBMED_DB = OUTPUT_DIR / "pmid_tmp"
 logging.basicConfig()
 logger = logging.root
 logger.setLevel(logging.DEBUG)
+
+
+def test_pubmed_by_id():
+    extractor = BasicExtractor()
+    pubmed = PubmedWrapper(extractor=extractor)
+    objs = pubmed.objects_by_ids(["12754706"])
+    assert len(objs) == 1
 
 
 def test_pubmed_search():
@@ -31,24 +38,14 @@ def test_pubmed_search():
     time.sleep(0.5)
     results2 = list(pubmed.search(top_result["title"]))
     assert len(results2) > 0
-    dalek = DatabaseAugmentedExtractor(knowledge_source=db, extractor=extractor)
-    ao = dalek.generate_extract(
+    dalek = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    ao = dalek.complete(
         "the role of acinar cells of the salivary gland in disease", context_property="title"
     )
     print(ao.object)
 
 
 def test_pubmed_chat():
-    shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_PUBMED_DB))
-    extractor = BasicExtractor()
-    db.reset()
-    pubmed = PubmedWrapper(local_store=db, extractor=extractor)
-    response = pubmed.chat("what diseases are associated with acinar cells of the salivary gland")
-    print(response)
-
-
-def test_pubmed_chat2():
     shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
     db = ChromaDBAdapter(str(TEMP_PUBMED_DB))
     extractor = BasicExtractor()
