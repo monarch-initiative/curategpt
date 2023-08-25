@@ -29,8 +29,8 @@ from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvalu
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.wrappers import BaseWrapper, get_wrapper
-from curate_gpt.wrappers.ontology import OntologyWrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+from curate_gpt.wrappers.ontology import OntologyWrapper
 from llm import UnknownModelError, get_plugins
 from llm.cli import load_conversation
 
@@ -309,9 +309,7 @@ def generate(
         rage.document_adapter_collection = docstore_collection
     if ":" in query:
         query = yaml.safe_load(query)
-    ao = rage.complete(
-        query, context_property=query_property, rules=rule, **filtered_kwargs
-    )
+    ao = rage.complete(query, context_property=query_property, rules=rule, **filtered_kwargs)
     print(yaml.dump(ao.object, sort_keys=False))
 
 

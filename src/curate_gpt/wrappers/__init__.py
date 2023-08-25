@@ -38,20 +38,21 @@ def get_all_subclasses(cls):
 
 def get_wrapper(name: str, **kwargs) -> BaseWrapper:
     # NOTE: ORDER DEPENDENT. TODO: fix this
-    from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
     from curate_gpt.wrappers.clinical.clinvar_wrapper import ClinVarWrapper
-    from curate_gpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
     from curate_gpt.wrappers.clinical.hpoa_by_pub_wrapper import HPOAByPubWrapper
+    from curate_gpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
     from curate_gpt.wrappers.general.google_drive_wrapper import GoogleDriveWrapper
     from curate_gpt.wrappers.investigation.ncbi_bioproject_wrapper import NCBIBioprojectWrapper
     from curate_gpt.wrappers.investigation.ncbi_biosample_wrapper import NCBIBiosampleWrapper
     from curate_gpt.wrappers.investigation.nmdc_wrapper import NMDCWrapper
     from curate_gpt.wrappers.literature.bioc_wrapper import BiocWrapper
     from curate_gpt.wrappers.literature.pmc_wrapper import PMCWrapper
+    from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
     from curate_gpt.wrappers.literature.wikipedia_wrapper import WikipediaWrapper
     from curate_gpt.wrappers.ontology.bioportal_wrapper import BioportalWrapper
     from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
     from curate_gpt.wrappers.sysbio.gocam_wrapper import GOCAMWrapper
+
     for c in get_all_subclasses(BaseWrapper):
         if c.name == name:
             return c(**kwargs)

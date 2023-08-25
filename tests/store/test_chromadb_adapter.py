@@ -8,8 +8,7 @@ from oaklib import get_adapter
 
 from curate_gpt.store.chromadb_adapter import ChromaDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.wrappers.ontology import OntologyWrapper
-from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH
+from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_CHROMA_DB_PATH, OUTPUT_DIR
 
 EMPTY_DB_PATH = OUTPUT_DIR / "empty_db"

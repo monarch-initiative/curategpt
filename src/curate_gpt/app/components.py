@@ -3,8 +3,8 @@ from typing import List
 
 import streamlit as st
 from matplotlib import pyplot as plt
-
-
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 DEFAULT_LIMIT_SLIDER_HELP = """
 Examples that are similar to your query are picked from the selected
@@ -14,15 +14,13 @@ for the model you selected.
 """
 
 
-
 class DimensionalityReductionOptions(str, Enum):
     PCA = "PCA"
     TSNE = "t-SNE"
     UMAP = "UMAP"
 
 
-def limit_slider_component(name="Max examples",
-                           tooltip=DEFAULT_LIMIT_SLIDER_HELP):
+def limit_slider_component(name="Max examples", tooltip=DEFAULT_LIMIT_SLIDER_HELP):
     return st.slider(
         name,
         min_value=0,

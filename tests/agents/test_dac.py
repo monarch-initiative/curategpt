@@ -19,9 +19,7 @@ def test_object_completion(go_test_chroma_db, query_term, query_property):
     # extractor = OpenAIExtractor()
     extractor.schema_proxy = go_test_chroma_db.schema_proxy
     dae = DatabaseAugmentedCompletion(knowledge_source=go_test_chroma_db, extractor=extractor)
-    ao = dae.complete(
-        query_term, target_class="OntologyClass", context_property=query_property
-    )
+    ao = dae.complete(query_term, target_class="OntologyClass", context_property=query_property)
     print("RESULT:")
     print(yaml.dump(ao.object, sort_keys=False))
 
@@ -43,7 +41,9 @@ def test_de_novo(go_test_chroma_db):
     ao = dae.complete(
         {},
         target_class="OntologyClass",
-        rules=["create a term for the envelope that surrounds a thylakoid (a membrane-bounded compartment)"],
+        rules=[
+            "create a term for the envelope that surrounds a thylakoid (a membrane-bounded compartment)"
+        ],
     )
     print("RESULT:")
     print(yaml.dump(ao.object, sort_keys=False))

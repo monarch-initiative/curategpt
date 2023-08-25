@@ -112,7 +112,10 @@ class DatabaseAugmentedStructuredExtraction(BaseAgent):
             min_obj = {
                 k: v
                 for k, v in obj.items()
-                if v and isinstance(v, str) and k not in fields_to_mask and (not fields_to_predict or k in fields_to_predict)
+                if v
+                and isinstance(v, str)
+                and k not in fields_to_mask
+                and (not fields_to_predict or k in fields_to_predict)
             }
             if not min_obj:
                 continue
@@ -134,7 +137,9 @@ class DatabaseAugmentedStructuredExtraction(BaseAgent):
                 docs.append(obj_text)
         if generate_background:
             # prompt = f"Generate a comprehensive description about the {target_class} with {context_property} = {seed}"
-            response = extractor.model.prompt(f"Describe the {target_class} in the following text: {text}")
+            response = extractor.model.prompt(
+                f"Describe the {target_class} in the following text: {text}"
+            )
             if docs is None:
                 docs = []
             docs.append(response.text())
