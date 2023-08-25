@@ -8,7 +8,8 @@ import yaml
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.evidence_agent import EvidenceAgent
 from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers import BaseWrapper, PubmedWrapper, WikipediaWrapper
+from curate_gpt.wrappers import BaseWrapper
+from curate_gpt.wrappers.literature import PubmedWrapper, WikipediaWrapper
 from tests import OUTPUT_DIR
 
 TEMP_PUBMED_DB = OUTPUT_DIR / "pmid_tmp"

@@ -76,7 +76,7 @@ class ChatAgent(BaseAgent):
                 self.extractor = self.knowledge_source.extractor
             else:
                 raise ValueError("Extractor must be set.")
-        logger.info(f"Chat: {query} on {self.knowledge_source} kwargs: {kwargs}")
+        logger.info(f"Chat: {query} on {self.knowledge_source} kwargs: {kwargs}, limit: {limit}")
         if collection is None:
             collection = self.knowledge_source_collection
         kwargs["collection"] = collection

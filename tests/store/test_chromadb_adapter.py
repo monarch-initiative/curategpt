@@ -8,45 +8,11 @@ from oaklib import get_adapter
 
 from curate_gpt.store.chromadb_adapter import ChromaDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.wrappers import OntologyWrapper
+from curate_gpt.wrappers.ontology import OntologyWrapper
 from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_CHROMA_DB_PATH, OUTPUT_DIR
 
 EMPTY_DB_PATH = OUTPUT_DIR / "empty_db"
-
-texts = [
-    "The quick brown fox jumps over the lazy dog",
-    "canine",
-    "vulpine",
-    "let sleeping dogs lie",
-    "chicken",
-    "wings",
-    "airplane",
-]
-
-combo_texts = [
-    "pineapple helicopter 1",
-    "pineapple helicopter 2",
-    "apple helicopter",
-    "guava airplane",
-    "mango airplane",
-    "papaya train",
-    "banana train",
-    "zucchini firetruck",
-    "apple train",
-    "orange lorry",
-    "orange lorry chimney",
-    "orange lorry window",
-    "pineapple ship chimney",
-    "cheese helicopter",
-    "parmesan firefighter",
-    "parmesan firefighter 5",
-    "cheddar doctor",
-    "swiss doctor",
-    "helicopter apple",
-    "chopper apple",
-    "helicopter golden delicious",
-]
 
 
 def terms_to_objects(terms: list[str]) -> list[Dict]:
@@ -79,13 +45,13 @@ def simple_schema_manager() -> SchemaProxy:
     return SchemaProxy(sb.schema)
 
 
-def test_store(simple_schema_manager):
+def test_store(simple_schema_manager, example_texts):
     db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
     db.schema_proxy = simple_schema_manager
     db.client.reset()
     assert db.list_collection_names() == []
     collection = "test"
-    objs = terms_to_objects(texts)
+    objs = terms_to_objects(example_texts)
     db.insert(objs, collection=collection)
     md = db.collection_metadata(collection)
     md.description = "test collection"
@@ -118,9 +84,24 @@ def test_store(simple_schema_manager):
     limit = 5
     results2 = list(db.find({}, limit=5, collection=collection))
     assert len(results2) == limit
+    results2 = list(db.find({}, limit=10000000, collection=collection))
+    assert len(results2) > limit
 
 
-def test_embedding_function(simple_schema_manager):
+def test_autoschema(example_texts):
+    db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
+    db.client.reset()
+    collection = "auto"
+    objs = terms_to_objects(example_texts)
+    db.insert(objs, collection=collection)
+    print(db.schema_proxy)
+    fields = db.field_names(collection=collection)
+    assert "text" in fields
+    fields2 = db.field_names(collection=collection)
+    assert fields == fields2
+
+
+def test_embedding_function(simple_schema_manager, example_texts):
     """
     Tests having two collections with different models and embedding functions.
 
@@ -129,7 +110,7 @@ def test_embedding_function(simple_schema_manager):
     """
     db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
     db.reset()
-    objs = terms_to_objects(texts)
+    objs = terms_to_objects(example_texts)
     db.insert(objs[1:])
     db.insert(objs[1:], collection="default_ef", model=None)
     db.insert(objs[1:], collection="openai", model="openai:")
@@ -158,6 +139,19 @@ def ontology_db() -> ChromaDBAdapter:
     db = ChromaDBAdapter(str(INPUT_DBS / "go-nucleus-chroma"))
     db.schema_proxy = SchemaProxy(ONTOLOGY_MODEL_PATH)
     db.client.reset()
+    # db.default_model = "openai:"
+    return db
+
+
+@pytest.fixture
+def loaded_ontology_db(ontology_db) -> ChromaDBAdapter:
+    db = ontology_db
+    adapter = get_adapter(str(INPUT_DIR / "go-nucleus.db"))
+    # ontology_db.linkml_schema_path = ONTOLOGY_MODEL_PATH
+    view = OntologyWrapper(oak_adapter=adapter)
+    ontology_db.text_lookup = view.text_field
+    ontology_db.insert(view.objects(), collection="terms_go")
+    ontology_db.text_lookup = "label"
     return db
 
 
@@ -180,6 +174,28 @@ def test_ontology_matches(ontology_db):
         print(yaml.dump(obj, sort_keys=False))
 
 
+@pytest.mark.parametrize(
+    "where,num_expected,limit",
+    [
+        ({"id": {"$eq": "NuclearMembrane"}}, 1, None),
+        ({"id": {"$eq": "NuclearMembrane"}}, 1, 100000),
+        # ({"aliases": {"$eq": None}}, 1, None),
+        ({}, 10, 10),
+        ({}, 1, 1),
+        ({}, 280, None),
+    ],
+)
+def test_where_queries(loaded_ontology_db, where, num_expected, limit):
+    """
+    Tests use of where clauses
+    """
+    db = loaded_ontology_db
+    results = list(db.find(where=where, limit=limit, collection="terms_go"))
+    # for r in results:
+    #    logger.debug(r)
+    assert len(results) == num_expected
+
+
 def test_load_in_batches(ontology_db):
     """
     Tests ability to load in batches
@@ -194,11 +210,11 @@ def test_load_in_batches(ontology_db):
 
 
 @pytest.fixture
-def combo_db() -> ChromaDBAdapter:
+def combo_db(example_combo_texts) -> ChromaDBAdapter:
     db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
     db.client.reset()
     collection = "test"
-    objs = terms_to_objects(combo_texts)
+    objs = terms_to_objects(example_combo_texts)
     db.insert(objs, collection=collection)
     return db
 

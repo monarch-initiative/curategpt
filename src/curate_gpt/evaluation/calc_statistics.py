@@ -1,29 +1,12 @@
-from enum import Enum
 from typing import Any, Iterator, List, Tuple, Union
 
 import yaml
-from pydantic import BaseModel
 
-
-class ClassificationOutcome(str, Enum):
-    TRUE_POSITIVE = "True Positive"
-    TRUE_NEGATIVE = "True Negative"
-    FALSE_POSITIVE = "False Positive"
-    FALSE_NEGATIVE = "False Negative"
-
-
-class AggregationMethod(Enum):
-    MACRO = "macro"
-    MICRO = "micro"
-    WEIGHTED = "weighted"
-
-
-class ClassificationMetrics(BaseModel):
-    precision: float
-    recall: float
-    f1_score: float
-    accuracy: float
-    specificity: float
+from curate_gpt.evaluation.evaluation_datamodel import (
+    AggregationMethod,
+    ClassificationMetrics,
+    ClassificationOutcome,
+)
 
 
 def calculate_metrics(
@@ -62,6 +45,20 @@ def _normalize(obj: Any) -> str:
 
 
 def evaluate_predictions(obj1: Any, obj2: Any) -> Iterator[Tuple[ClassificationOutcome, str]]:
+    """
+    Evaluate a prediction compared to an expected value.
+
+    Where the prediction and the expected value are lists, the results are each
+    true positive, true negative, false positive.
+
+    Where the prediction and the expected value are scalars, these are treated as if
+    they are lists, thus a correct prediction is a true positive, and no false positives
+    or negatives; an incorrect prediction is a false positive and a false negative.
+
+    :param obj1:
+    :param obj2:
+    :return:
+    """
     if isinstance(obj1, list) and isinstance(obj2, list):
         set1 = {_normalize(obj) for obj in obj1}
         set2 = {_normalize(obj) for obj in obj2}
@@ -79,6 +76,16 @@ def evaluate_predictions(obj1: Any, obj2: Any) -> Iterator[Tuple[ClassificationO
 def aggregate_metrics(
     metrics_list: List[ClassificationMetrics], method: AggregationMethod = AggregationMethod.MACRO
 ):
+    """
+    Aggregate a list of metrics.
+
+    Note that if the evaluation task is for a single labels rather than lists,
+    then this is trivially just the proportion of correct predictions.
+
+    :param metrics_list:
+    :param method:
+    :return:
+    """
     if method == AggregationMethod.MACRO:
         return ClassificationMetrics(
             precision=sum(m.precision for m in metrics_list) / len(metrics_list),

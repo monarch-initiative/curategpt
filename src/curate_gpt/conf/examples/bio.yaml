@@ -43,6 +43,11 @@ cases:
   input: "magnetoencephalography"
   property: label
   background: github_issues_obi
+- source: go
+  mode: GENERATE
+  input: "magnetoencephalography"
+  property: label
+  background: github_issues_obi
 - source: phenopackets
   mode: CHAT
   input: "What are some examples of patients with liver failure or abnormal liver enzymes?"
@@ -61,3 +66,6 @@ cases:
 - source: nmdc
   mode: CHAT
   input: "What locations are freshwater lake or river samples typically taken from?"
+- source: gocam
+  mode: CHAT
+  input: "what are some targets of kinases in pathways involving cell division?"

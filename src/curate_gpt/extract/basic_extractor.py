@@ -45,7 +45,8 @@ class BasicExtractor(Extractor):
                 prompt += "---\n"
             prompt += "Examples:\n\n"
             for example in examples:
-                prompt += f"##\nText: {example.text}\n"
+                if example.text:
+                    prompt += f"##\nText: {example.text}\n"
                 prompt += f"Response: {self.serialize(example)}\n"
             prompt += f"\n##\nText: {text}\n\n"
             prompt += "Response: "

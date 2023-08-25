@@ -2,7 +2,7 @@
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Iterable, Iterator, List, Optional, Tuple, Union
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Tuple, Union
 
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
@@ -23,22 +23,52 @@ logger = logging.getLogger(__name__)
 @dataclass
 class DBAdapter(ABC):
     """
-    Base class for adapters
+    Base class for stores.
+
+    This base class provides a common interface for a wide variety of document or object stores.
+    The interface is intended to closely mimic the kind of interface found for document stores
+    such as mongoDB or vector databases such as ChromaDB, but the intention is that can be
+    used for SQL databases, SPARQL endpoints, or even file systems.
+
+    The store allows for storage and retrieval of *objects* which are arbitrary dictionary
+    objects, equivalient to a JSON object.
+
+    Objects are partitioned into *collections*, which maps to the equivalent concept in
+    MongoDB and ChromaDB.
+
+    >>> store = get_store("in_memory")
+    >>> store.insert({"name": "John", "age": 42}, collection="people")
+
+    If you are used to working with MongoDB and ChromaDB APIs directly, one difference is that
+    here we do not provide a separate Collection object, everything is handled through the
+    store object. You can optionally bind a store object to a collection, which effectively
+    gives you a collection object:
+
+    >>> store = get_store("in_memory")
+    >>> store.set_collection("people")
+    >>> store.insert({"name": "John", "age": 42})
+
+    TODO: decide if this is the final interface
     """
 
     path: str = None
     """Path to a location where the database is stored or disk or the network."""
 
-    # pydantic_model: Optional[BaseModel] = None
-    # """Pydantic model"""
+    name: ClassVar[str] = "base"
 
     schema_proxy: Optional[SchemaProxy] = None
     """Schema manager"""
 
+    collection: Optional[str] = None
+    """Default collection"""
+
+    # _field_names_by_collection: Dict[str, Optional[List[str]]] = field(default_factory=dict)
+    _field_names_by_collection: Dict[str, Optional[List[str]]] = None
+
+    ## CUD operations
+
     @abstractmethod
-    def insert(
-        self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = DEFAULT_COLLECTION, **kwargs
-    ):
+    def insert(self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, **kwargs):
         """
         Insert an object or list of objects into the store.
 
@@ -47,9 +77,7 @@ class DBAdapter(ABC):
         :return:
         """
 
-    def update(
-        self, objs: Union[OBJECT, List[OBJECT]], collection: str = DEFAULT_COLLECTION, **kwargs
-    ):
+    def update(self, objs: Union[OBJECT, List[OBJECT]], collection: str = None, **kwargs):
         """
         Update an object or list of objects in the store.
 
@@ -59,9 +87,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    def upsert(
-        self, objs: Union[OBJECT, List[OBJECT]], collection: str = DEFAULT_COLLECTION, **kwargs
-    ):
+    def upsert(self, objs: Union[OBJECT, List[OBJECT]], collection: str = None, **kwargs):
         """
         Upsert an object or list of objects in the store.
 
@@ -71,7 +97,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    def delete(self, id: str, collection: str = DEFAULT_COLLECTION, **kwargs):
+    def delete(self, id: str, collection: str = None, **kwargs):
         """
         Delete an object by its ID.
 
@@ -80,6 +106,8 @@ class DBAdapter(ABC):
         :return:
         """
         raise NotImplementedError
+
+    ## View operations
 
     def create_view(self, view_name: str, collection: str, expression: QUERY, **kwargs):
         """
@@ -90,7 +118,26 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    def remove_collection(self, collection: str = DEFAULT_COLLECTION, exists_ok=False, **kwargs):
+    ## Collection operations
+
+    def set_collection(self, collection: str):
+        """
+        Set the current collection.
+
+        :param collection:
+        :return:
+        """
+        self.collection = collection
+
+    def _get_collection(self, collection: Optional[str] = None):
+        if collection is not None:
+            return collection
+        elif self.collection is not None:
+            return self.collection
+        else:
+            return DEFAULT_COLLECTION
+
+    def remove_collection(self, collection: str = None, exists_ok=False, **kwargs):
         """
         Remove a collection from the database.
 
@@ -109,7 +156,7 @@ class DBAdapter(ABC):
 
     @abstractmethod
     def collection_metadata(
-        self, collection_name: Optional[str] = DEFAULT_COLLECTION, include_derived=False, **kwargs
+        self, collection_name: Optional[str] = None, include_derived=False, **kwargs
     ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for a collection.
@@ -140,9 +187,11 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
+    ## Query operations
+
     @abstractmethod
     def search(
-        self, text: str, where: QUERY = None, collection: str = DEFAULT_COLLECTION, **kwargs
+        self, text: str, where: QUERY = None, collection: str = None, **kwargs
     ) -> Iterator[SEARCH_RESULT]:
         """
         Query the database for a text string.
@@ -158,7 +207,7 @@ class DBAdapter(ABC):
         self,
         where: QUERY = None,
         projection: PROJECTION = None,
-        collection: str = DEFAULT_COLLECTION,
+        collection: str = None,
         **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         """
@@ -182,7 +231,7 @@ class DBAdapter(ABC):
         """
 
     @abstractmethod
-    def lookup(self, id: str, collection: str = DEFAULT_COLLECTION, **kwargs) -> OBJECT:
+    def lookup(self, id: str, collection: str = None, **kwargs) -> OBJECT:
         """
         Lookup an object by its ID.
 
@@ -192,7 +241,7 @@ class DBAdapter(ABC):
         """
 
     @abstractmethod
-    def peek(self, collection: str = DEFAULT_COLLECTION, limit=5, **kwargs) -> Iterator[OBJECT]:
+    def peek(self, collection: str = None, limit=5, **kwargs) -> Iterator[OBJECT]:
         """
         Peek at first N objects in a collection.
 
@@ -201,6 +250,8 @@ class DBAdapter(ABC):
         :return:
         """
         raise NotImplementedError
+
+    ## Schema operations
 
     def identifier_field(self, collection: str = None) -> str:
         if self.schema_proxy and self.schema_proxy.schemaview:
@@ -221,8 +272,21 @@ class DBAdapter(ABC):
         :param collection:
         :return:
         """
-        obj = self.peek(collection=collection, limit=1)
-        if obj:
-            return list(obj.keys())
+        # TODO: use schema proxy if set
+        if not self._field_names_by_collection:
+            self._field_names_by_collection = {}
+        collection = self._get_collection(collection)
+        if collection not in self._field_names_by_collection:
+            logger.debug(f"Getting field names for {collection}")
+            objs = self.peek(collection=collection, limit=1)
+            if not objs:
+                raise ValueError(f"Collection {collection} is empty")
+            fields = []
+            for obj in objs:
+                for f in obj:
+                    if f not in fields:
+                        fields.append(f)
+            self._field_names_by_collection[collection] = fields
         else:
-            raise ValueError(f"Collection {collection} is empty")
+            logger.debug(f"Using cached field names for {collection}")
+        return self._field_names_by_collection[collection]
