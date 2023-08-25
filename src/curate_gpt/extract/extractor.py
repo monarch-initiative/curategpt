@@ -3,7 +3,7 @@ import logging
 from abc import ABC, abstractmethod
 from copy import copy
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from linkml_runtime import SchemaView
 from pydantic import BaseModel as BaseModel

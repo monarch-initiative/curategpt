@@ -14,10 +14,14 @@ from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.agents.evidence_agent import EvidenceAgent
-from curate_gpt.app.components import limit_slider_component, vectors_to_fig, DimensionalityReductionOptions
+from curate_gpt.app.components import (
+    DimensionalityReductionOptions,
+    limit_slider_component,
+    vectors_to_fig,
+)
 from curate_gpt.app.helper import get_applicable_examples, get_case_collection
 from curate_gpt.app.state import get_state
-from curate_gpt.extract import RecursiveExtractor, OpenAIExtractor
+from curate_gpt.extract import OpenAIExtractor, RecursiveExtractor
 from curate_gpt.wrappers import BaseWrapper
 from curate_gpt.wrappers.literature import WikipediaWrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
@@ -32,7 +36,7 @@ CLUSTER_SEARCH = "Cluster Search"
 MATCH = "Match"
 CURATE = "Curate"
 INSERT = "Insert"  # deprecated
-#CURATE = "Curate"
+# CURATE = "Curate"
 ADD_TO_CART = "Add to Cart"
 EXTRACT = "Extract"
 CITESEEK = "CiteSeek"
@@ -50,8 +54,6 @@ logger = logging.getLogger(__name__)
 state = get_state(st)
 db = state.db
 cart = state.cart
-
-
 
 
 st.title("CurateGPT! _alpha_")
@@ -86,7 +88,8 @@ option_selected = st.sidebar.selectbox(
 )
 option = state.page or option_selected
 logger.error(f"Selected {option_selected}; sp={state.page}; opt={option}")
-#logger.error(f"State: {state}")
+# logger.error(f"State: {state}")
+
 
 def filtered_collection_names() -> List[str]:
     return [c for c in db.list_collection_names() if not c.endswith("_cached")]
@@ -123,7 +126,8 @@ extraction_strategy = st.sidebar.selectbox(
     extract information from text.
     Note that both OpenAI functions and SPIRES require
     a schema to have been pre-loaded.
-    """)
+    """,
+)
 
 if extraction_strategy == "Basic":
     extractor = BasicExtractor()
@@ -399,10 +403,10 @@ elif option == SEARCH:
                                  """,
     )
 
-    #if not hasattr(st.session_state, "add_to_cart_index"):
+    # if not hasattr(st.session_state, "add_to_cart_index"):
     #    st.session_state.add_to_cart_index = None
 
-    #if False and st.session_state.add_to_cart_index is not None:
+    # if False and st.session_state.add_to_cart_index is not None:
     #    # add object from first result
     #    obj = page_state.results[st.session_state.add_to_cart_index][0]
     #    cart.add(obj)
@@ -410,7 +414,7 @@ elif option == SEARCH:
     #    st.session_state.add_to_cart_index = None  # Reset
     #    st.success("Document added to cart!!!!!")
 
-    #elif st.button("Search"):
+    # elif st.button("Search"):
     if st.button("Search"):
         results = db.search(
             search_query, collection=collection, relevance_factor=relevance_factor, include=["*"]
