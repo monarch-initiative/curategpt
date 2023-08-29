@@ -34,9 +34,6 @@ class GoogleDriveWrapper(BaseWrapper):
 
     default_doc_types = ["application/vnd.google-apps.document"]
 
-    max_text_length = 3000
-    text_overlap = 200
-
     service: Any = None
 
     search_limit_multiplier: ClassVar[int] = 1
@@ -106,29 +103,6 @@ class GoogleDriveWrapper(BaseWrapper):
             )
         return self.split_objects(objs)
 
-    def split_objects(self, objects: List[Dict]) -> List[Dict]:
-        """
-        Split objects with text above a certain length into multiple objects.
-
-        :param objects:
-        :return:
-        """
-        new_objects = []
-        for obj in objects:
-            if len(obj["text"]) > self.max_text_length:
-                obj_id = obj["id"]
-                text = obj["text"]
-                n = 0
-                while text:
-                    new_obj = obj.copy()
-                    n += 1
-                    new_obj["id"] = f"{obj_id}#{n}"
-                    new_obj["text"] = text[: self.max_text_length + self.text_overlap]
-                    new_objects.append(new_obj)
-                    text = text[self.max_text_length :]
-            else:
-                new_objects.append(obj)
-        return new_objects
 
     def objects_by_ids(self, object_ids: List[str]) -> List[Dict]:
         files = [{"id: object_id"} for object_id in object_ids]

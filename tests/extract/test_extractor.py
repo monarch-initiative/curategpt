@@ -117,3 +117,23 @@ def test_extract(extractor_type, kwargs, num_examples, schema_manager):
     print(
         f"{extractor_type} {kwargs} {num_examples} SUCCESSES: {len(successes)} FAILURES: {len(failures)}"
     )
+
+
+@pytest.mark.parametrize("input,output",
+[
+    ('{"x": 1}', {"x": 1}),
+    ('blah {"x": 1}', {"x": 1}),
+    ('blah {"x": 1} blah', {"x": 1}),
+    ('blah {"x": {"y": 1}} blah', {"x": {"y": 1}}),
+    ("{", {}),
+    ("foo", {}),
+])
+def test_deserialize(input, output):
+    """Test that the basic extractor can deserialize a json object.
+
+    Ensures that is capable of handling some of the prefixual junk that
+    some models provide
+    """
+    ex = BasicExtractor()
+    ao = ex.deserialize(input)
+    assert ao.object == output

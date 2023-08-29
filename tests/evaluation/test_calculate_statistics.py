@@ -19,13 +19,13 @@ all_metrics = []
         (["x"], ["y"], 0, 1, 1),
         ([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], 5, 0, 0),
         (["x", "y"], ["y"], 1, 1, 0),
-        ({}, {}, 1, 0, 0),
-        ({"x": 1}, {}, 0, 1, 1),
+        ({}, {}, 0, 0, 0),
+        ({"x": 1}, {}, 0, 1, 0),
         ([{"x": 1}], [{}], 0, 1, 1),
         ([{"x": 1, "y": 2}], [{"y": 2, "x": 1}], 1, 0, 0),
     ],
 )
-def test_simple_compare(obj1, obj2, tps, fps, fns):
+def test_calc_statistics(obj1, obj2, tps, fps, fns):
     print(obj1, obj2)
     outcomes = [outcome for outcome, _ in evaluate_predictions(obj1, obj2)]
     atp = outcomes.count(ClassificationOutcome.TRUE_POSITIVE)

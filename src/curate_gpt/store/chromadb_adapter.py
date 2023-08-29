@@ -65,10 +65,11 @@ class ChromaDBAdapter(DBAdapter):
             t = obj[text_field]
         else:
             t = getattr(obj, text_field)
+        t = t.strip()
         if not t:
-            raise ValueError(f"Text field {text_field} is empty for {obj}")
+            raise ValueError(f"Text field {text_field} is empty for {type(obj)} : {obj}")
         if len(t) > self.default_max_document_length:
-            logger.warning(f"Truncating text field {text_field} for {obj}")
+            logger.warning(f"Truncating text field {text_field} for {str(obj)[0:100]}...")
             t = t[: self.default_max_document_length]
         return t
 
@@ -228,13 +229,11 @@ class ChromaDBAdapter(DBAdapter):
         :param exists_ok:
         :return:
         """
-        try:
-            collection_obj = self.client.get_collection(name=collection)
-        except Exception as e:
+        if not any(cn for cn in self.list_collection_names() if cn == collection):
             if not exists_ok:
-                raise e
+                raise ValueError(f"Collection {collection} does not exist")
             return
-        collection_obj.delete()
+        self.client.delete_collection(name=collection)
 
     def _unjson(self, obj: Mapping):
         if not obj:

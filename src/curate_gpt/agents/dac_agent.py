@@ -58,7 +58,7 @@ class DatabaseAugmentedCompletion(BaseAgent):
     relevance_factor: float = 0.5
     """Relevance factor for diversifying search results using MMR."""
 
-    max_background_document_size: int = 1000
+    max_background_document_size: int = 2000
     """TODO: more sophisticated way to estimate size of background document."""
 
     background_document_limit: int = 3

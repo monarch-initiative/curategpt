@@ -21,12 +21,14 @@ class BaseWrapper(ABC):
     A virtual store that implements a view over some remote or external source.
     """
 
+    source_locator: Optional[Union[str, Path]] = None
+
     local_store: DBAdapter = None
     """Adapter to local knowledge base used to cache results."""
 
     extractor: Extractor = None
 
-    source_locator: Optional[Union[str, Path]] = None
+
 
     name: ClassVar[str] = "__dbview__"
 
@@ -35,6 +37,9 @@ class BaseWrapper(ABC):
     default_object_type = "Publication"
 
     search_limit_multiplier: ClassVar[int] = 3
+
+    max_text_length = 3000
+    text_overlap = 200
 
     def search(
         self,
@@ -146,3 +151,27 @@ class BaseWrapper(ABC):
             return f"__{self.name}_temp__"
         else:
             return self.name + "_api_cached"
+
+    def split_objects(self, objects: List[Dict], text_field="text", id_field="id") -> List[Dict]:
+        """
+        Split objects with text above a certain length into multiple objects.
+
+        :param objects:
+        :return:
+        """
+        new_objects = []
+        for obj in objects:
+            if len(obj[text_field]) > self.max_text_length:
+                obj_id = obj[id_field]
+                text = obj[text_field]
+                n = 0
+                while text:
+                    new_obj = obj.copy()
+                    n += 1
+                    new_obj[id_field] = f"{obj_id}#{n}"
+                    new_obj[text_field] = text[: self.max_text_length + self.text_overlap]
+                    new_objects.append(new_obj)
+                    text = text[self.max_text_length :]
+            else:
+                new_objects.append(obj)
+        return new_objects
