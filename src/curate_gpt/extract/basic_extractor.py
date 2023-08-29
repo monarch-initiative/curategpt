@@ -1,6 +1,7 @@
 """Basic Extractor that is purely example driven."""
 import json
 import logging
+import re
 from copy import copy
 from dataclasses import dataclass
 from typing import List
@@ -76,7 +77,12 @@ class BasicExtractor(Extractor):
         try:
             return AnnotatedObject(object=json.loads(text))
         except Exception as e:
+            match = re.search(r"\{.*\}", text)
+            if match:
+                if match.group() != text:
+                    return self.deserialize(match.group())
             if self.raise_error_if_unparsable:
                 raise e
             else:
+                logger.warning(f"Could not parse {text}")
                 return AnnotatedObject(object={})

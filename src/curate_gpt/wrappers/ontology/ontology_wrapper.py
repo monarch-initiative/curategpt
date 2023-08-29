@@ -2,10 +2,12 @@
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional
+from typing import Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Any
 
+from curate_gpt import DBAdapter
 from oaklib import BasicOntologyInterface
 from oaklib.datamodels.search import SearchConfiguration
+import oaklib.datamodels.obograph as og
 from oaklib.datamodels.vocabulary import IS_A
 from oaklib.interfaces import OboGraphInterface, SearchInterface
 from oaklib.types import CURIE
@@ -16,6 +18,7 @@ from curate_gpt.wrappers.base_wrapper import BaseWrapper
 from curate_gpt.wrappers.ontology.ontology import OntologyClass, Relationship
 
 logger = logging.getLogger(__name__)
+
 
 
 @dataclass
@@ -169,3 +172,47 @@ class OntologyWrapper(BaseWrapper):
         """
         # TODO: decouple from OntologyClass
         return lambda obj: obj.label if isinstance(obj, OntologyClass) else obj.get("label")
+
+    def retrieve_shorthand_to_id_from_store(self, store: DBAdapter) -> Mapping[str, str]:
+        if not self.shorthand_to_id:
+            for obj, _, __ in store.find({}):
+                self.shorthand_to_id[obj["id"]] = obj["original_id"]
+        return self.shorthand_to_id
+
+    def from_object(self, obj: Dict[str, Any], store: DBAdapter, **kwargs) -> og.Graph:
+        """
+        Convert an object from the store to the view representation.
+
+        reverse transform of `as_object`
+
+        :param object:
+        :param kwargs:
+        :return:
+        """
+        m = self.retrieve_shorthand_to_id_from_store(store)
+        id = obj["original_id"]
+        node = og.Node(
+            id=id,
+            lbl=obj["label"],
+        )
+        edges = []
+        for rel in obj["relationships"]:
+            tgt = rel["target"]
+            if tgt in m:
+                tgt = m[tgt]
+            else:
+                logger.warning(f"Could not find {tgt} in {m}")
+            pred = rel["predicate"]
+            if pred in m:
+                pred = m[pred]
+            else:
+                logger.warning(f"Could not find {pred} in {m}")
+            edge = og.Edge(
+                sub=id,
+                obj=tgt,
+                pred=pred,
+            )
+            edges.append(edge)
+        graph = og.Graph(id="tmp",
+                         nodes=[node], edges=edges)
+        return graph

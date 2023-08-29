@@ -3,17 +3,19 @@ import csv
 import gzip
 import json
 import logging
+import sys
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 
 import click
+import pandas as pd
 import yaml
 from click_default_group import DefaultGroup
 from oaklib import get_adapter
 from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
-from curate_gpt.evaluation.evaluation_datamodel import Task
+from curate_gpt.evaluation.evaluation_datamodel import Task, StratifiedCollection
 from curate_gpt.evaluation.runner import run_task
 from curate_gpt.evaluation.splitter import stratify_collection
 
@@ -43,6 +45,12 @@ collection_option = click.option("-c", "--collection", help="Collection within t
 relevance_factor_option = click.option(
     "--relevance-factor", type=click.FLOAT, help="Relevance factor for search."
 )
+generate_background_option = click.option(
+    "--generate-background/--no-generate-background",
+    default=False,
+    show_default=True,
+    help="Whether to generate background knowledge.",
+)
 limit_option = click.option(
     "-l", "--limit", default=10, show_default=True, help="Number of results to return."
 )
@@ -65,7 +73,14 @@ description_option = click.option(
     "--description",
     help="Description of the collection.",
 )
-
+init_with_option = click.option(
+    "--init-with",
+    "-I",
+    help="YAML string for initialzation of main wrapper object.",
+)
+batch_size_option = click.option(
+    "--batch-size", default=None, show_default=True, type=click.INT, help="Batch size for indexing."
+)
 
 def show_chat_response(response: ChatResponse, show_references: bool = True):
     """Show a chat response."""
@@ -135,9 +150,7 @@ def main(verbose: int, quiet: bool):
 @click.option(
     "--collect/--no-collect", default=False, show_default=True, help="Whether to collect files."
 )
-@click.option(
-    "--batch-size", default=None, show_default=True, type=click.INT, help="Batch size for indexing."
-)
+@batch_size_option
 @click.argument("files", nargs=-1)
 def index(
     files,
@@ -207,16 +220,26 @@ def index(
 @collection_option
 @limit_option
 @relevance_factor_option
+@click.option(
+    "--show-documents/--no-show-documents",
+    default=False,
+    show_default=True,
+    help="Whether to show documents/text (e.g. for chromadb).",
+)
 @click.argument("query")
-def search(query, path, collection, **kwargs):
+def search(query, path, collection, show_documents, **kwargs):
     """Query a database."""
     db = ChromaDBAdapter(path)
     results = db.search(query, collection=collection, **kwargs)
     i = 0
-    for obj, distance, _ in results:
+    for obj, distance, meta in results:
         i += 1
         print(f"## {i} DISTANCE: {distance}")
         print(yaml.dump(obj, sort_keys=False))
+        if show_documents:
+            print("```")
+            print(meta)
+            print("```")
 
 
 @main.command()
@@ -258,12 +281,7 @@ def matches(id, path, collection):
     help="Path to a docstore to for additional unstructured knowledge.",
 )
 @click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
-@click.option(
-    "--generate-background/--no-generate-background",
-    default=False,
-    show_default=True,
-    help="Whether to generate background knowledge.",
-)
+@generate_background_option
 @click.option(
     "--rule",
     multiple=True,
@@ -355,7 +373,7 @@ def generate(
 )
 @click.option(
     "--num-tests",
-    default=10000,
+    default=None,
     show_default=True,
     help="Number (max) of tests to run.",
 )
@@ -532,8 +550,8 @@ def generate_all(
     help="File to write report to.",
 )
 @click.option(
-    "--num-tests",
-    default=10000,
+    "--num-testing",
+    default=None,
     show_default=True,
     help="Number (max) of tests to run.",
 )
@@ -548,13 +566,15 @@ def generate_all(
     show_default=True,
     help="Whether to rebuild test/train collections.",
 )
+@generate_background_option
 @click.argument("tasks", nargs=-1)
 def evaluate(
     tasks,
     working_directory,
     path,
     model,
-    num_tests,
+    generate_background,
+    num_testing,
     hold_back_fields,
     mask_fields,
     rule: List[str],
@@ -591,11 +611,85 @@ def evaluate(
             task_obj.hold_back_fields = hold_back_fields.split(",")
         if mask_fields:
             task_obj.mask_fields = mask_fields.split(",")
+        if num_testing is not None:
+            task_obj.num_testing = int(num_testing)
+        if generate_background:
+            task_obj.generate_background = generate_background
         if rule:
             # TODO
             task_obj.rules = rule
         result = run_task(task_obj, **kwargs)
         print(yaml.dump(result.dict(), sort_keys=False))
+
+@main.command()
+@click.option("--collections", required=True)
+@click.option("--models", default="gpt-3.5-turbo")
+@click.option("--fields-to-mask", default="id,original_id")
+@click.option("--fields-to-predict", required=True)
+@click.option("--num-testing", default=50, show_default=True)
+@click.option("--background", default="false", show_default=True)
+def evaluation_config(collections, models, fields_to_mask, fields_to_predict, background, **kwargs):
+    tasks = []
+    for collection in collections.split(","):
+        for model in models.split(","):
+            for fp in fields_to_predict.split(","):
+                for bg in background.split(","):
+                    tc = Task(
+                        source_db_path="db",
+                        target_db_path="db",
+                        model_name=model,
+                        source_collection=collection,
+                        fields_to_predict=[fp],
+                        fields_to_mask=fields_to_mask.split(","),
+                        generate_background=json.loads(bg),
+                        stratified_collection=StratifiedCollection(
+                            training_set_collection=f"{collection}_training",
+                            testing_set_collection=f"{collection}_testing",
+                        ),
+                        **kwargs,
+                    )
+                    tasks.append(tc.dict(exclude_unset=True))
+    print(yaml.dump(tasks, sort_keys=False))
+
+
+@main.command()
+@click.option(
+    "--include-expected/--no-include-expected",
+    "-E",
+    default=False, show_default=True,
+)
+@click.argument("files", nargs=-1)
+def evaluation_compare(files, include_expected=False):
+    """Compare evaluation results."""
+    dfs = []
+    predicted_cols = []
+    other_cols = []
+    differentia_col = "method"
+    for f in files:
+        df = pd.read_csv(f, sep="\t", comment="#")
+        df[differentia_col] = f
+        if include_expected:
+            include_expected = False
+            base_df = df.copy()
+            base_df[differentia_col] = "source"
+            for c in base_df.columns:
+                if c.startswith("expected_"):
+                    new_col = c.replace("expected_", "predicted_")
+                    base_df[new_col] = base_df[c]
+            dfs.append(base_df)
+        dfs.append(df)
+        for c in df.columns:
+            if c in predicted_cols or c in other_cols:
+                continue
+            if c.startswith("predicted_"):
+                predicted_cols.append(c)
+            else:
+                other_cols.append(c)
+    df = pd.concat(dfs)
+    #df = pd.melt(df, id_vars=["masked_id", "file"], value_vars=["predicted_definition"])
+    df = pd.melt(df, id_vars=list(other_cols), value_vars=list(predicted_cols))
+    df = df.sort_values(by=list(other_cols))
+    df.to_csv(sys.stdout, sep="\t", index=False)
 
 
 @main.command()
@@ -778,6 +872,11 @@ def peek_collection(path, collection, **kwargs):
     help="Number of validation examples to keep.",
 )
 @click.option(
+    "--test-id-file",
+    type=click.File("r"),
+    help="File containing IDs of test objects.",
+)
+@click.option(
     "--ratio",
     type=click.FLOAT,
     help="Ratio of training to testing examples.",
@@ -795,17 +894,21 @@ def peek_collection(path, collection, **kwargs):
     help="Path to write the new store.",
 )
 @path_option
-def split_collection(path, collection, output_path, model, **kwargs):
+def split_collection(path, collection, output_path, model, test_id_file, **kwargs):
     """
     Split a collection into test/train/validation.
 
     Example:
 
-        curategpt -v collections split -c hp --num-training 10 --num-testing 20 -o hp_split
+        curategpt -v collections split -c hp --num-training 10 --num-testing 20
+
+    The above populates 2 new collections: hp_training and hp_testing.
 
     This can be run as a pre-processing step for generate-evaluate.
     """
     db = ChromaDBAdapter(path)
+    if test_id_file:
+        kwargs["testing_identifiers"] = [line.strip().split("\t")[0] for line in test_id_file]
     sc = stratify_collection(db, collection, **kwargs)
     output_db = ChromaDBAdapter(output_path)
     for sn in ["training", "testing", "validation"]:
@@ -862,7 +965,11 @@ def index_ontology_command(ont, path, collection, append, model, index_fields, b
     db.text_lookup = view.text_field
     if index_fields:
         fields = index_fields.split(",")
-        db.text_lookup = lambda obj: " ".join([str(getattr(obj, f, "")) for f in fields])
+        #print(f"Indexing fields: {fields}")
+        def _text_lookup(obj: Dict):
+            vals = [str(obj.get(f)) for f in fields if f in obj]
+            return " ".join(vals)
+        db.text_lookup = _text_lookup
     if not append:
         db.remove_collection(collection, exists_ok=True)
     db.insert(view.objects(), collection=collection, model=model)
@@ -875,10 +982,24 @@ def view():
 
 
 @view.command(name="objects")
-@click.option("--view")
+@click.option("--view",
+              "-V",
+              required=True,
+              help="Name of the wrapper to use."
+              )
 @click.option("--source-locator")
-def view_objects(view, **kwargs):
-    """View objects in a virtual store."""
+@init_with_option
+def view_objects(view, init_with, **kwargs):
+    """View objects in a virtual store.
+
+    Example:
+
+        curategpt view objects -V filesystem --init-with "root_directory: /path/to/data"
+
+    """
+    if init_with:
+        for k, v in yaml.safe_load(init_with).items():
+            kwargs[k] = v
     vstore = get_wrapper(view, **kwargs)
     for obj in vstore.objects():
         print(yaml.dump(obj, sort_keys=False))
@@ -888,13 +1009,41 @@ def view_objects(view, **kwargs):
 @click.option("--view", "-V")
 @click.option("--source-locator")
 @model_option
+@init_with_option
 @click.argument("query")
-def view_search(query, view, model, **kwargs):
+def view_search(query, view, model, init_with, **kwargs):
     """Search in a virtual store."""
-    vstore: BaseWrapper = get_wrapper(view)
+    if init_with:
+        for k, v in yaml.safe_load(init_with).items():
+            kwargs[k] = v
+    vstore: BaseWrapper = get_wrapper(view, **kwargs)
     vstore.extractor = BasicExtractor(model_name=model)
     for obj, _dist, _ in vstore.search(query):
         print(yaml.dump(obj, sort_keys=False))
+
+
+@view.command(name="index")
+@path_option
+@collection_option
+@click.option("--view", "-V")
+@click.option("--source-locator")
+@batch_size_option
+@model_option
+@init_with_option
+@append_option
+def view_index(view, path, append, collection, model, init_with, batch_size, **kwargs):
+    """Populate an index from a view."""
+    if init_with:
+        for k, v in yaml.safe_load(init_with).items():
+            kwargs[k] = v
+    wrapper: BaseWrapper = get_wrapper(view, **kwargs)
+    store = ChromaDBAdapter(path)
+    if not append:
+        if collection in store.list_collection_names():
+            store.remove_collection(collection)
+    objs = wrapper.objects()
+    store.insert(objs, model=model, collection=collection, batch_size=batch_size)
+
 
 
 @view.command(name="ask")

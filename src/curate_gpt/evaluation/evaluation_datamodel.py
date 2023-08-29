@@ -10,10 +10,13 @@ class StratifiedCollection(BaseModel):
     A collection of objects that have been split into training, test, and validation sets.
     """
 
-    source: str
-    training_set: List[Dict]
-    testing_set: List[Dict]
+    source: str = None
+    training_set: List[Dict] = None
+    testing_set: List[Dict] = None
     validation_set: Optional[List[Dict]] = None
+    training_set_collection: Optional[str] = None
+    testing_set_collection: Optional[str] = None
+    validation_set_collection: Optional[str] = None
 
 
 class ClassificationOutcome(str, Enum):
@@ -35,6 +38,10 @@ class ClassificationMetrics(BaseModel):
     f1_score: float
     accuracy: float
     specificity: float
+    true_positives: int = None,
+    true_negatives: int = None,
+    false_positives: int = None,
+    false_negatives: int = None,
 
 
 class Task(BaseModel):
@@ -44,6 +51,7 @@ class Task(BaseModel):
 
     model_name: str = "gpt-3.5-turbo"
     embedding_model_name: str = "openai:"
+    generate_background: bool = False
     task_started: Optional[str] = None
     task_finished: Optional[str] = None
     executed_on: Optional[str] = None
@@ -52,8 +60,8 @@ class Task(BaseModel):
     source_db_path: Optional[str] = None
     target_db_path: Optional[str] = None
     source_collection: Optional[str] = None
-    num_training: int = 100
-    num_testing: int = 100
+    num_training: int = None
+    num_testing: int = None
     num_validation: int = 0
     stratified_collection: Optional[StratifiedCollection] = None
     fields_to_mask: Optional[List[str]] = None
@@ -69,6 +77,6 @@ class Task(BaseModel):
         model = self.model_name.replace(":", "")
         em_model = self.embedding_model_name.replace(":", "")
         return (
-            f"{self.source_collection}-P{pred}-M{mask}-"
+            f"{self.source_collection}-P{pred}-M{mask}-BG{self.generate_background}-"
             f"Tr{self.num_training}-Te{self.num_testing}-M{model}-EM{em_model}"
         )

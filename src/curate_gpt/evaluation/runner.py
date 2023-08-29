@@ -1,3 +1,4 @@
+import csv
 import logging
 import platform
 from copy import deepcopy
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def run_task(
-    task: Task, report_path=None, report_file: TextIO = None, fresh=False, **kwargs
+    task: Task, report_path=None, report_file: TextIO = None, report_tsv_file: TextIO = None, fresh=False, **kwargs
 ) -> Task:
     """
     Evaluate the agent on a test collection.
@@ -48,18 +49,27 @@ def run_task(
     if task.target_db_path is None:
         task.target_db_path = str(wd / "db")
     target_path = task.target_db_path
+    if not target_path:
+        raise ValueError("Target database path must be specified")
     logger.info(f"Stratifying collection {task.source_collection} from {task.source_db_path}")
     db = ChromaDBAdapter(task.source_db_path)
-    sc = stratify_collection_to_store(
-        db,
-        task.source_collection,
-        output_path=target_path,
-        num_training=task.num_training,
-        num_testing=task.num_testing,
-        num_validation=task.num_validation,
-        embedding_model=task.embedding_model_name,
-        force=fresh,
-    )
+    if task.stratified_collection:
+        sc = task.stratified_collection
+        sc_dict = {
+            "training": sc.training_set_collection,
+            "testing": sc.testing_set_collection,
+        }
+    else:
+        sc_dict = stratify_collection_to_store(
+            db,
+            task.source_collection,
+            output_path=target_path,
+            num_training=task.num_training,
+            num_testing=task.num_testing,
+            num_validation=task.num_validation,
+            embedding_model=task.embedding_model_name,
+            force=fresh,
+        )
     logger.debug(f"Stratified collection: {sc}")
     tdb = ChromaDBAdapter(target_path)
     # set start time to current time (ISO format)
@@ -82,11 +92,18 @@ def run_task(
         report_file = open(wd / f"{task.id}.log.yaml", "w")
     report_file.write("## Task\n")
     report_file.write(yaml.dump(task.dict(), sort_keys=False))
+    if report_tsv_file is None:
+        report_tsv_file = open(wd / f"{task.id}.results.tsv", "w")
+        commented_yaml = yaml.dump(task.dict(), sort_keys=False)
+        lines = [f"# {line}\n" for line in commented_yaml.splitlines()]
+        report_tsv_file.write("".join(lines))
     results = evaluator.evaluate(
-        test_collection=sc["testing"],
+        test_collection=sc_dict["testing"],
         num_tests=task.num_testing,
-        collection=sc["training"],
+        collection=sc_dict["training"],
         report_file=report_file,
+        report_tsv_file=report_tsv_file,
+        generate_background=task.generate_background,
         **kwargs,
     )
     task.results = results

@@ -1,4 +1,6 @@
+import csv
 import logging
+from copy import copy
 from dataclasses import dataclass, field
 from typing import List, TextIO
 
@@ -31,6 +33,7 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
         test_collection: str,
         num_tests: int = None,
         report_file: TextIO = None,
+        report_tsv_file: TextIO = None,
         working_directory: str = None,
         **kwargs,
     ) -> ClassificationMetrics:
@@ -63,6 +66,7 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
         if not test_objs:
             raise ValueError(f"No test objects found in collection {test_collection}")
         n = 0
+        results_dictwriter = None
         for test_obj in test_objs:
             test_obj_query = {
                 k: v
@@ -95,5 +99,27 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
                 report_file.write(f"## Predicted:\n{yaml.dump(ao.object)}\n---\n")
                 report_file.write(f"## Metrics:\n{yaml.dump(metrics.dict())}\n---\n")
                 report_file.write(f"## Aggregated:\n{yaml.dump(aggregated.dict())}\n---\n")
+            if report_tsv_file:
+                row = {}
+                for k, v in test_obj.items():
+                    if k in self.fields_to_predict:
+                        row[f"expected_{k}"] = v
+                    elif k in self.fields_to_mask:
+                        row[f"masked_{k}"] = v
+                    else:
+                        row[f"feature_{k}"] = v
+                for f in self.fields_to_predict:
+                    row[f"predicted_{f}"] = ao.object.get(f, None)
+                    #row[f"expected_{f}"] = test_obj.get(f, None)
+                for k, v in metrics.dict().items():
+                    row[f"metric_{k}"] = v
+                if n == 1:
+
+                    results_dictwriter = csv.DictWriter(report_tsv_file, fieldnames=list(row.keys()), delimiter="\t")
+                    results_dictwriter.writeheader()
+                if not results_dictwriter:
+                    raise AssertionError("results_dictwriter not initialized")
+                results_dictwriter.writerow(row)
+                report_tsv_file.flush()
         aggregated = aggregate_metrics(all_metrics)
         return aggregated

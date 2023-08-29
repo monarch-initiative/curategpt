@@ -1,9 +1,13 @@
 """Abstract DB adapter."""
+import json
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Tuple, Union
+from pathlib import Path
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Tuple, Union, TextIO
 
+import yaml
+from jsonlines import jsonlines
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
 
@@ -14,10 +18,24 @@ OBJECT = Union[YAMLRoot, BaseModel, Dict]
 QUERY = Union[str, YAMLRoot, BaseModel, Dict]
 PROJECTION = Union[str, List[str]]
 DEFAULT_COLLECTION = "default"
-SEARCH_RESULT = Tuple[OBJECT, float, Optional[Dict]]
+SEARCH_RESULT = Tuple[Dict, float, Optional[Dict]]
+FILE_LIKE = Union[str, TextIO, Path]
 
 
 logger = logging.getLogger(__name__)
+
+
+def _get_file(file: Optional[FILE_LIKE] = None, mode="r") -> Optional[TextIO]:
+    if file is None:
+        return None
+    if isinstance(file, Path):
+        file = str(file)
+    if isinstance(file, str):
+        return open(file, mode)
+    elif isinstance(file, TextIO):
+        return file
+    else:
+        raise TypeError(f"Unknown file type: {type(file)}")
 
 
 @dataclass
@@ -254,6 +272,7 @@ class DBAdapter(ABC):
     ## Schema operations
 
     def identifier_field(self, collection: str = None) -> str:
+        # TODO: use collection
         if self.schema_proxy and self.schema_proxy.schemaview:
             fields = []
             for s in self.schema_proxy.schemaview.all_slots(attributes=True).values():
@@ -264,6 +283,9 @@ class DBAdapter(ABC):
                     raise ValueError(f"Multiple identifier fields: {fields}")
                 return fields[0]
         return "id"
+
+    def label_field(self, collection: str = None) -> str:
+        return "label"
 
     def field_names(self, collection: str = None) -> List[str]:
         """
@@ -290,3 +312,49 @@ class DBAdapter(ABC):
         else:
             logger.debug(f"Using cached field names for {collection}")
         return self._field_names_by_collection[collection]
+
+    # Loading and dumping
+    def dump(self, collection: str = None, to_file: FILE_LIKE = None, metadata_to_file: FILE_LIKE = None, format=None, **kwargs):
+        """
+        Dump the database to a file.
+
+        :param collection:
+        :param kwargs:
+        :return:
+        """
+        to_file = _get_file(to_file, "w")
+        metadata_to_file = _get_file(metadata_to_file, "w")
+        collection = self._get_collection(collection)
+        metadata = self.collection_metadata(collection)
+        if format is None:
+            format = "json"
+        objects = self.find(collection=collection, **kwargs)
+        streaming = True
+        if format == "jsonl":
+            writer = jsonlines.Writer(to_file)
+            writer.write_all(objects)
+            writer.close()
+        elif format == "yamlblock":
+            for obj in objects:
+                to_file.write("---\n")
+                yaml.dump(obj, to_file)
+        else:
+            streaming = False
+            database = {"metadata": metadata, "objects": list(objects)}
+            if format == "json":
+                json.dump(database, to_file)
+            elif format == "yaml":
+                yaml.dump(database, to_file)
+            else:
+                raise ValueError(f"Unknown format {format}")
+        if streaming:
+            if not metadata_to_file:
+                raise ValueError("Streaming dump requires metadata_to_file")
+            if format == "jsonl":
+                metadata_to_file.write(json.dumps(metadata))
+            elif format == "yamlblock":
+                metadata_to_file.write(yaml.dump(metadata))
+
+
+
+

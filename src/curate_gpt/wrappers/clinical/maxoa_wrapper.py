@@ -10,7 +10,8 @@ from typing import ClassVar, Dict, Iterable, Iterator, Optional, TextIO
 import requests
 from oaklib import BasicOntologyInterface, get_adapter
 
-from curate_gpt.wrappers import BaseWrapper, PubmedWrapper
+from curate_gpt.wrappers import BaseWrapper
+from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,10 @@ def stream_filtered_lines(response):
 def hpo_ont_adapter():
     return get_adapter("sqlite:obo:hp")
 
+@lru_cache
+def maxo_ont_adapter():
+    return get_adapter("sqlite:obo:maxp")
+
 
 @lru_cache
 def term_label(identifier: str) -> str:
@@ -50,50 +55,57 @@ def term_label(identifier: str) -> str:
 
 
 @dataclass
-class HPOAWrapper(BaseWrapper):
+class MAXOAWrapper(BaseWrapper):
     """
     A wrapper over HPOA
 
     """
 
-    name: ClassVar[str] = "hpoa"
+    name: ClassVar[str] = "maxoa"
 
-    source_url: ClassVar[str] = "http://purl.obolibrary.org/obo/hp/hpoa/phenotype.hpoa"
+    source_url: ClassVar[str] = ("https://raw.githubusercontent.com/monarch-initiative/"
+                                 "maxo-annotations/master/annotations/maxo-annotations.tsv")
 
     expand_publications: bool = True
 
     _label_adapter: BasicOntologyInterface = None
 
-    default_object_type = "DiseasePhenotypeAssociation"
+    default_object_type = "DiseaseTreatmentAssociation"
 
-    pubmed_wrapper: "PubmedWrapper" = None
+    pubmed_wrapper: PubmedWrapper = None
 
-    group_by_publication: bool = False
+    group_by_publication: bool = True
 
     def __post_init__(self):
-        from curate_gpt.wrappers import PubmedWrapper
+        from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 
         self.pubmed_wrapper = PubmedWrapper()
+        # reuse hpoa cache
         self.pubmed_wrapper.set_cache("hpoa_pubmed_cache")
 
     def objects(
-        self, collection: str = None, object_ids: Optional[Iterable[str]] = None, url=None, **kwargs
+        self, collection: str = None, object_ids: Optional[Iterable[str]] = None, source_locator=None, **kwargs
     ) -> Iterator[Dict]:
         # open a file handle from a URL using requests
-        if url is None:
-            url = self.source_url
-        logger.info(f"Fetching {url}")
-        with requests.get(url, stream=True) as response:
-            response.raise_for_status()  # Raise an error for failed requests
-            reader = DictReader(stream_filtered_lines(response), delimiter="\t")
-            yield from self.objects_from_rows(reader)
+        if source_locator is None:
+            source_locator = self.source_locator
+        if source_locator.startswith("http"):
+            logger.info(f"Fetching {url}")
+            with requests.get(url, stream=True) as response:
+                response.raise_for_status()  # Raise an error for failed requests
+                reader = DictReader(stream_filtered_lines(response), delimiter="\t")
+                yield from self.objects_from_rows(reader)
+        else:
+            with open(source_locator) as file:
+                reader = DictReader(filter(filter_header, file), delimiter="\t")
+                yield from self.objects_from_rows(reader)
 
     def objects_from_rows(self, rows: Iterable[Dict]) -> Iterator[Dict]:
         by_pub = {}
         for row in rows:
             row = {MAP.get(k, k): v for k, v in row.items()}
             row["phenotype_label"] = term_label(row["phenotype"])
-            refs = [ref for ref in row["reference"].split(";") if ref != "PMID:UNKNOWN"]
+            refs = [ref for ref in row["citation"].split(";") if ref != "PMID:UNKNOWN"]
             if self.expand_publications:
                 pmids = [ref for ref in refs if ref.startswith("PMID")]
                 logger.debug(f"Expanding {refs}, pmids={pmids}")
