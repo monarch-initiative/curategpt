@@ -1,6 +1,5 @@
 """Simple default adapter for a object store."""
 import logging
-from abc import abstractmethod
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Union
 
@@ -43,7 +42,7 @@ class InMemoryAdapter(DBAdapter):
 
     collection_index: CollectionIndex = field(default_factory=CollectionIndex)
 
-    ## CUD operations
+    # CUD operations
 
     def _get_collection_object(self, collection_name: str) -> Collection:
         """
@@ -105,7 +104,7 @@ class InMemoryAdapter(DBAdapter):
         collection_obj = self._get_collection_object(collection)
         collection_obj.delete(id, self.identifier_field())
 
-    ## Collection operations
+    # Collection operations
 
     def remove_collection(self, collection: str = None, exists_ok=False, **kwargs):
         """
@@ -165,7 +164,7 @@ class InMemoryAdapter(DBAdapter):
         """
         raise NotImplementedError
 
-    ## Query operations
+    # Query operations
 
     def search(
         self, text: str, where: QUERY = None, collection: str = None, **kwargs

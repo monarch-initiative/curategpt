@@ -125,7 +125,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    ## View operations
+    # View operations
 
     def create_view(self, view_name: str, collection: str, expression: QUERY, **kwargs):
         """
@@ -136,7 +136,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    ## Collection operations
+    # Collection operations
 
     def set_collection(self, collection: str):
         """
@@ -205,7 +205,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    ## Query operations
+    # Query operations
 
     @abstractmethod
     def search(
@@ -269,7 +269,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    ## Schema operations
+    # Schema operations
 
     def identifier_field(self, collection: str = None) -> str:
         # TODO: use collection

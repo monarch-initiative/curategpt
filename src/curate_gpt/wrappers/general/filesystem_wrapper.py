@@ -3,9 +3,8 @@ import glob
 import logging
 import os
 from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
-from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional
+from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 from curate_gpt.wrappers.base_wrapper import BaseWrapper
 
@@ -39,7 +38,7 @@ class FilesystemWrapper(BaseWrapper):
             files = glob.glob(os.path.join(path, "**", self.glob), recursive=True)
         else:
             files = []
-            for dirpath, dirnames, filenames in os.walk(path):
+            for dirpath, _dirnames, filenames in os.walk(path):
                 for filename in filenames:
                     files.append(os.path.join(dirpath, filename))
         import textract

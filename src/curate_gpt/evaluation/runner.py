@@ -1,19 +1,17 @@
-import csv
 import logging
 import platform
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import TextIO, Union
+from typing import TextIO
 
 import yaml
-from pydantic import BaseModel
 
 from curate_gpt import BasicExtractor, ChromaDBAdapter
 from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
 from curate_gpt.evaluation.evaluation_datamodel import Task
-from curate_gpt.evaluation.splitter import stratify_collection, stratify_collection_to_store
+from curate_gpt.evaluation.splitter import stratify_collection_to_store
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +62,7 @@ def run_task(
             "training": sc.training_set_collection,
             "testing": sc.testing_set_collection,
         }
+        logger.debug(f"Stratified collection: {sc}")
     else:
         sc_dict = stratify_collection_to_store(
             db,
@@ -75,7 +74,6 @@ def run_task(
             embedding_model=task.embedding_model_name,
             force=fresh,
         )
-    logger.debug(f"Stratified collection: {sc}")
     tdb = ChromaDBAdapter(target_path)
     # set start time to current time (ISO format)
     task.task_started = str(datetime.now())

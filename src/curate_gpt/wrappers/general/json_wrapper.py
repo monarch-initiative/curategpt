@@ -1,11 +1,8 @@
 """Wrapper for JSON (or YAML) documents."""
-import glob
 import json
 import logging
-import os
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional
+from dataclasses import dataclass
+from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import yaml
 from jsonpath_ng import parse

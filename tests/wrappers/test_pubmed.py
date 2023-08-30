@@ -4,7 +4,6 @@ import time
 
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.chat_agent import ChatAgent
-from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature import PubmedWrapper
 from tests import OUTPUT_DIR
@@ -38,11 +37,6 @@ def test_pubmed_search():
     time.sleep(0.5)
     results2 = list(pubmed.search(top_result["title"]))
     assert len(results2) > 0
-    dalek = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
-    ao = dalek.complete(
-        "the role of acinar cells of the salivary gland in disease", context_property="title"
-    )
-    print(ao.object)
 
 
 def test_pubmed_chat():

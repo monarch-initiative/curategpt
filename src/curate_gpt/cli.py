@@ -11,31 +11,28 @@ import click
 import pandas as pd
 import yaml
 from click_default_group import DefaultGroup
+from llm import UnknownModelError, get_plugins
+from llm.cli import load_conversation
 from oaklib import get_adapter
 from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
-from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
-from curate_gpt.evaluation.runner import run_task
-from curate_gpt.evaluation.splitter import stratify_collection
-
-__all__ = [
-    "main",
-]
-
-from llm import UnknownModelError, get_plugins
-from llm.cli import load_conversation
-
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
 from curate_gpt.agents.evidence_agent import EvidenceAgent
-from curate_gpt.evaluation.calc_statistics import calculate_metrics, evaluate_predictions
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
+from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
+from curate_gpt.evaluation.runner import run_task
+from curate_gpt.evaluation.splitter import stratify_collection
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.wrappers import BaseWrapper, get_wrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from curate_gpt.wrappers.ontology import OntologyWrapper
+
+__all__ = [
+    "main",
+]
 
 # logger = logging.getLogger(__name__)
 
@@ -405,7 +402,7 @@ def generate_evaluate(
     else:
         schema_manager = None
 
-    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    # filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
     extractor = BasicExtractor()
     if model:
         extractor.model_name = model

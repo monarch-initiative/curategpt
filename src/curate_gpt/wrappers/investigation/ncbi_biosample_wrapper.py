@@ -34,6 +34,9 @@ class NCBIBiosampleWrapper(EUtilsWrapper):
             sample["title"] = d["Title"]
             sample["organism"] = d["Organism"]["@taxonomy_name"]
             sample["package"] = s["Package"]["@display_name"]
+            if not s["Attributes"]:
+                logger.warning(f"Skipping sample with no attributes: {s}")
+                continue
             for a in s["Attributes"]["Attribute"]:
                 if isinstance(a, str):
                     logger.warning(f"Skipping attribute: {a} in {s['Attributes']}")
