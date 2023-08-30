@@ -5,7 +5,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
 
 import click
 import pandas as pd
@@ -15,13 +15,16 @@ from oaklib import get_adapter
 from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
-from curate_gpt.evaluation.evaluation_datamodel import Task, StratifiedCollection
+from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
 from curate_gpt.evaluation.runner import run_task
 from curate_gpt.evaluation.splitter import stratify_collection
 
 __all__ = [
     "main",
 ]
+
+from llm import UnknownModelError, get_plugins
+from llm.cli import load_conversation
 
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
@@ -33,8 +36,6 @@ from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.wrappers import BaseWrapper, get_wrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from curate_gpt.wrappers.ontology import OntologyWrapper
-from llm import UnknownModelError, get_plugins
-from llm.cli import load_conversation
 
 # logger = logging.getLogger(__name__)
 
@@ -81,6 +82,7 @@ init_with_option = click.option(
 batch_size_option = click.option(
     "--batch-size", default=None, show_default=True, type=click.INT, help="Batch size for indexing."
 )
+
 
 def show_chat_response(response: ChatResponse, show_references: bool = True):
     """Show a chat response."""
@@ -621,6 +623,7 @@ def evaluate(
         result = run_task(task_obj, **kwargs)
         print(yaml.dump(result.dict(), sort_keys=False))
 
+
 @main.command()
 @click.option("--collections", required=True)
 @click.option("--models", default="gpt-3.5-turbo")
@@ -656,7 +659,8 @@ def evaluation_config(collections, models, fields_to_mask, fields_to_predict, ba
 @click.option(
     "--include-expected/--no-include-expected",
     "-E",
-    default=False, show_default=True,
+    default=False,
+    show_default=True,
 )
 @click.argument("files", nargs=-1)
 def evaluation_compare(files, include_expected=False):
@@ -686,7 +690,7 @@ def evaluation_compare(files, include_expected=False):
             else:
                 other_cols.append(c)
     df = pd.concat(dfs)
-    #df = pd.melt(df, id_vars=["masked_id", "file"], value_vars=["predicted_definition"])
+    # df = pd.melt(df, id_vars=["masked_id", "file"], value_vars=["predicted_definition"])
     df = pd.melt(df, id_vars=list(other_cols), value_vars=list(predicted_cols))
     df = df.sort_values(by=list(other_cols))
     df.to_csv(sys.stdout, sep="\t", index=False)
@@ -853,6 +857,13 @@ def peek_collection(path, collection, **kwargs):
 
 @collections.command(name="split")
 @collection_option
+@click.option(
+    "--derived-collection-base",
+    help=(
+        "Base name for derived collections. Will be suffixed with _train, _test, _val."
+        "If not provided, will use the same name as the original collection."
+    ),
+)
 @model_option
 @click.option(
     "--num-training",
@@ -894,7 +905,9 @@ def peek_collection(path, collection, **kwargs):
     help="Path to write the new store.",
 )
 @path_option
-def split_collection(path, collection, output_path, model, test_id_file, **kwargs):
+def split_collection(
+    path, collection, derived_collection_base, output_path, model, test_id_file, **kwargs
+):
     """
     Split a collection into test/train/validation.
 
@@ -908,11 +921,17 @@ def split_collection(path, collection, output_path, model, test_id_file, **kwarg
     """
     db = ChromaDBAdapter(path)
     if test_id_file:
-        kwargs["testing_identifiers"] = [line.strip().split("\t")[0] for line in test_id_file]
+        kwargs["testing_identifiers"] = [line.strip().split()[0] for line in test_id_file]
+        logging.info(
+            f"Using {len(kwargs['testing_identifiers'])} testing identifiers from {test_id_file.name}"
+        )
+        logging.info(f"First 10: {kwargs['testing_identifiers'][:10]}")
     sc = stratify_collection(db, collection, **kwargs)
     output_db = ChromaDBAdapter(output_path)
+    if not derived_collection_base:
+        derived_collection_base = collection
     for sn in ["training", "testing", "validation"]:
-        cn = f"{collection}_{sn}"
+        cn = f"{derived_collection_base}_{sn}"
         output_db.remove_collection(cn, exists_ok=True)
         objs = getattr(sc, f"{sn}_set", [])
         logging.info(f"Writing {len(objs)} objects to {cn}")
@@ -965,10 +984,12 @@ def index_ontology_command(ont, path, collection, append, model, index_fields, b
     db.text_lookup = view.text_field
     if index_fields:
         fields = index_fields.split(",")
-        #print(f"Indexing fields: {fields}")
+
+        # print(f"Indexing fields: {fields}")
         def _text_lookup(obj: Dict):
             vals = [str(obj.get(f)) for f in fields if f in obj]
             return " ".join(vals)
+
         db.text_lookup = _text_lookup
     if not append:
         db.remove_collection(collection, exists_ok=True)
@@ -982,11 +1003,7 @@ def view():
 
 
 @view.command(name="objects")
-@click.option("--view",
-              "-V",
-              required=True,
-              help="Name of the wrapper to use."
-              )
+@click.option("--view", "-V", required=True, help="Name of the wrapper to use.")
 @click.option("--source-locator")
 @init_with_option
 def view_objects(view, init_with, **kwargs):
@@ -1043,7 +1060,6 @@ def view_index(view, path, append, collection, model, init_with, batch_size, **k
             store.remove_collection(collection)
     objs = wrapper.objects()
     store.insert(objs, model=model, collection=collection, batch_size=batch_size)
-
 
 
 @view.command(name="ask")

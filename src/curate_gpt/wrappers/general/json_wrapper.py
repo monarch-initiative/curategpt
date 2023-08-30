@@ -5,7 +5,7 @@ import logging
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Iterator, Iterable, Optional
+from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional
 
 import yaml
 from jsonpath_ng import parse
@@ -30,7 +30,7 @@ class JSONWrapper(BaseWrapper):
     path_expression: str = None
 
     def objects(
-            self, collection: str = None, object_ids: Optional[Iterable[str]] = None, **kwargs
+        self, collection: str = None, object_ids: Optional[Iterable[str]] = None, **kwargs
     ) -> Iterator[Dict]:
         path = self.source_locator
 

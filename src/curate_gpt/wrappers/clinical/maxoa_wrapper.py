@@ -4,7 +4,6 @@ from copy import deepcopy
 from csv import DictReader
 from dataclasses import dataclass
 from functools import lru_cache
-from io import StringIO
 from typing import ClassVar, Dict, Iterable, Iterator, Optional, TextIO
 
 import requests
@@ -44,6 +43,7 @@ def stream_filtered_lines(response):
 def hpo_ont_adapter():
     return get_adapter("sqlite:obo:hp")
 
+
 @lru_cache
 def maxo_ont_adapter():
     return get_adapter("sqlite:obo:maxp")
@@ -63,8 +63,10 @@ class MAXOAWrapper(BaseWrapper):
 
     name: ClassVar[str] = "maxoa"
 
-    source_url: ClassVar[str] = ("https://raw.githubusercontent.com/monarch-initiative/"
-                                 "maxo-annotations/master/annotations/maxo-annotations.tsv")
+    source_url: ClassVar[str] = (
+        "https://raw.githubusercontent.com/monarch-initiative/"
+        "maxo-annotations/master/annotations/maxo-annotations.tsv"
+    )
 
     expand_publications: bool = True
 
@@ -84,7 +86,11 @@ class MAXOAWrapper(BaseWrapper):
         self.pubmed_wrapper.set_cache("hpoa_pubmed_cache")
 
     def objects(
-        self, collection: str = None, object_ids: Optional[Iterable[str]] = None, source_locator=None, **kwargs
+        self,
+        collection: str = None,
+        object_ids: Optional[Iterable[str]] = None,
+        source_locator=None,
+        **kwargs,
     ) -> Iterator[Dict]:
         # open a file handle from a URL using requests
         if source_locator is None:

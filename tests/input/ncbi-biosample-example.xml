@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<BioSampleSet>
+  <BioSample access="controlled-access" publication_date="2023-07-28T03:32:24.213" last_update="2023-07-29T03:31:32.790" submission_date="2023-07-28T03:32:24.213" id="36735719" accession="SAMN36735719">
+    <Ids>
+      <Id db="BioSample" is_primary="1">SAMN36735719</Id>
+      <Id db="dbGaP" db_label="Sample name" is_hidden="1">3328-208</Id>
+    </Ids>
+    <Description>
+      <Title>Non-tumor DNA sample from SALIVA of a human male participant in the dbGaP study "Genetic Causes of Congenital Anosmia"</Title>
+      <Organism taxonomy_id="9606" taxonomy_name="Homo sapiens"/>
+    </Description>
+    <Owner>
+      <Name abbreviation="NCBI"/>
+    </Owner>
+    <Models>
+      <Model>Generic</Model>
+    </Models>
+    <Package display_name="Generic">Generic.1.0</Package>
+    <Attributes>
+      <Attribute attribute_name="gap_accession" harmonized_name="gap_accession" display_name="gap accession">phs003328</Attribute>
+      <Attribute attribute_name="submitter handle" harmonized_name="submitter_handle" display_name="submitter handle">NIDCD_CongenitalAnosmia</Attribute>
+      <Attribute attribute_name="biospecimen repository" harmonized_name="biospecimen_repository" display_name="biospecimen repository">NIDCD_CongenitalAnosmia</Attribute>
+      <Attribute attribute_name="study name" harmonized_name="study_name" display_name="study name">Genetic Causes of Congenital Anosmia</Attribute>
+      <Attribute attribute_name="study design" harmonized_name="study_design" display_name="study design">Family/Twin/Trios</Attribute>
+      <Attribute attribute_name="biospecimen repository sample id" harmonized_name="biospecimen_repository_sample_id" display_name="biospecimen repository sample id">208</Attribute>
+      <Attribute attribute_name="submitted sample id" harmonized_name="submitted_sample_id" display_name="submitted sample id">208</Attribute>
+      <Attribute attribute_name="submitted subject id" harmonized_name="submitted_subject_id" display_name="submitted subject id">208</Attribute>
+      <Attribute attribute_name="gap_sample_id" harmonized_name="gap_sample_id" display_name="gap sample id">5636602</Attribute>
+      <Attribute attribute_name="gap_subject_id" harmonized_name="gap_subject_id" display_name="gap subject id">4617263</Attribute>
+      <Attribute attribute_name="sex" harmonized_name="sex" display_name="sex">male</Attribute>
+      <Attribute attribute_name="study disease" harmonized_name="study_disease" display_name="study disease">Congenital anosmia</Attribute>
+      <Attribute attribute_name="body site" harmonized_name="tissue" display_name="tissue">SALIVA</Attribute>
+      <Attribute attribute_name="histological type" harmonized_name="histological_type" display_name="histological type">SALIVA</Attribute>
+      <Attribute attribute_name="analyte type" harmonized_name="analyte_type" display_name="analyte type">DNA</Attribute>
+      <Attribute attribute_name="is tumor" harmonized_name="is_tumor" display_name="is tumor">No</Attribute>
+      <Attribute attribute_name="subject is affected" harmonized_name="subject_is_affected" display_name="subject is affected">Yes</Attribute>
+    </Attributes>
+    <Status status="live" when="2023-07-29T03:28:24"/>
+  </BioSample>
+  <BioSample access="controlled-access" publication_date="2023-07-28T03:32:19.590" last_update="2023-07-29T03:31:27.247" submission_date="2023-07-28T03:32:19.590" id="36735706" accession="SAMN36735706">
+    <Ids>
+      <Id db="BioSample" is_primary="1">SAMN36735706</Id>
+      <Id db="dbGaP" db_label="Sample name" is_hidden="1">3328-42.178</Id>
+    </Ids>
+    <Description>
+      <Title>Non-tumor DNA sample from SALIVA of a human female participant in the dbGaP study "Genetic Causes of Congenital Anosmia"</Title>
+      <Organism taxonomy_id="9606" taxonomy_name="Homo sapiens"/>
+    </Description>
+    <Owner>
+      <Name abbreviation="NCBI"/>
+    </Owner>
+    <Models>
+      <Model>Generic</Model>
+    </Models>
+    <Package display_name="Generic">Generic.1.0</Package>
+    <Attributes>
+      <Attribute attribute_name="gap_accession" harmonized_name="gap_accession" display_name="gap accession">phs003328</Attribute>
+      <Attribute attribute_name="submitter handle" harmonized_name="submitter_handle" display_name="submitter handle">NIDCD_CongenitalAnosmia</Attribute>
+      <Attribute attribute_name="biospecimen repository" harmonized_name="biospecimen_repository" display_name="biospecimen repository">NIDCD_CongenitalAnosmia</Attribute>
+      <Attribute attribute_name="study name" harmonized_name="study_name" display_name="study name">Genetic Causes of Congenital Anosmia</Attribute>
+      <Attribute attribute_name="study design" harmonized_name="study_design" display_name="study design">Family/Twin/Trios</Attribute>
+      <Attribute attribute_name="biospecimen repository sample id" harmonized_name="biospecimen_repository_sample_id" display_name="biospecimen repository sample id">42.178</Attribute>
+      <Attribute attribute_name="submitted sample id" harmonized_name="submitted_sample_id" display_name="submitted sample id">42.178</Attribute>
+      <Attribute attribute_name="submitted subject id" harmonized_name="submitted_subject_id" display_name="submitted subject id">178</Attribute>
+      <Attribute attribute_name="gap_sample_id" harmonized_name="gap_sample_id" display_name="gap sample id">5636667</Attribute>
+      <Attribute attribute_name="gap_subject_id" harmonized_name="gap_subject_id" display_name="gap subject id">4617237</Attribute>
+      <Attribute attribute_name="sex" harmonized_name="sex" display_name="sex">female</Attribute>
+      <Attribute attribute_name="study disease" harmonized_name="study_disease" display_name="study disease">Congenital anosmia</Attribute>
+      <Attribute attribute_name="body site" harmonized_name="tissue" display_name="tissue">SALIVA</Attribute>
+      <Attribute attribute_name="histological type" harmonized_name="histological_type" display_name="histological type">SALIVA</Attribute>
+      <Attribute attribute_name="analyte type" harmonized_name="analyte_type" display_name="analyte type">DNA</Attribute>
+      <Attribute attribute_name="is tumor" harmonized_name="is_tumor" display_name="is tumor">No</Attribute>
+      <Attribute attribute_name="subject is affected" harmonized_name="subject_is_affected" display_name="subject is affected">Yes</Attribute>
+    </Attributes>
+    <Status status="live" when="2023-07-29T03:28:24"/>
+  </BioSample>
+</BioSampleSet>

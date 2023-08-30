@@ -1,12 +1,11 @@
 """Chat with a Google Drive."""
 import logging
 import os
+from dataclasses import dataclass
 from time import sleep
+from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional
 
 import requests
-from dataclasses import dataclass
-from typing import Any, ClassVar, Dict, List, Iterator, Optional, Iterable
-
 import requests_cache
 import yaml
 from pydantic import BaseModel
@@ -21,6 +20,7 @@ class Comment(BaseModel):
     user: str = None
     body: str = None
 
+
 class Issue(BaseModel):
     id: str
     number: int = None
@@ -32,8 +32,9 @@ class Issue(BaseModel):
     assignees: List[str] = None
     created_at: str = None
     body: str = None
-    #pull_request: str = None
+    # pull_request: str = None
     comments: List[Comment] = None
+
 
 def get_token(token: str = None) -> str:
     if token:
@@ -93,22 +94,27 @@ class GitHubWrapper(BaseWrapper):
             self._repo_description = repo_data.get("description")
         return self._repo_description
 
-    def external_search(self, text: str, expand: bool = True, limit=None, token:str = None, **kwargs) -> List[Dict]:
+    def external_search(
+        self, text: str, expand: bool = True, limit=None, token: str = None, **kwargs
+    ) -> List[Dict]:
         token = get_token(token)
         if limit is None:
             limit = 10
         if expand:
             logger.info(f"Expanding search term: {text} to create query")
             model = self.extractor.model
-            q = ("I will give you a piece of text."
-                 "You will generate a semi-colon separated list of the 3 most relevant terms"
-                 f" to search the {self.owner}/{self.repo} repo on GitHub."
-                 "Keep this list minimal and precise. Use semi-colons to separate terms."
-                 "Use terms that within the domain of the repo."
-                 f"The description of the repo is: {self.repo_description}.\n"
-                 f"\n---\nHere is the text:\n{text}")
+            q = (
+                "I will give you a piece of text."
+                "You will generate a semi-colon separated list of the 3 most relevant terms"
+                f" to search the {self.owner}/{self.repo} repo on GitHub."
+                "Keep this list minimal and precise. Use semi-colons to separate terms."
+                "Use terms that within the domain of the repo."
+                f"The description of the repo is: {self.repo_description}.\n"
+                f"\n---\nHere is the text:\n{text}"
+            )
             response = model.prompt(
-                q, system="You are an agent to expand query terms to search github. ALWAYS SEPARATE WITH SEMI-COLONS"
+                q,
+                system="You are an agent to expand query terms to search github. ALWAYS SEPARATE WITH SEMI-COLONS",
             )
             terms = [f'"{x.strip()}"' for x in response.text().split(";")]
             search_term = " OR ".join(terms[:3])
@@ -134,18 +140,19 @@ class GitHubWrapper(BaseWrapper):
         return all_issues
 
     def objects(
-            self, collection: str = None, object_ids: Optional[Iterable[str]] = None, token: str = None, **kwargs
+        self,
+        collection: str = None,
+        object_ids: Optional[Iterable[str]] = None,
+        token: str = None,
+        **kwargs,
     ) -> Iterator[Dict]:
         session = self.session
         token = get_token(token)
         url = f"https://api.github.com/repos/{self.owner}/{self.repo}/issues"
-        headers = {
-            "Authorization": f"token {token}",
-            "Accept": "application/vnd.github.v3+json"
-        }
+        headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github.v3+json"}
         params = {
             "state": "all",  # To fetch both open and closed issues
-            "per_page": 100  # Fetch 100 results per page (max allowed)
+            "per_page": 100,  # Fetch 100 results per page (max allowed)
         }
 
         while url:
@@ -164,10 +171,10 @@ class GitHubWrapper(BaseWrapper):
 
     def issue_comments(self, issue_number: str) -> Iterator[Dict]:
         session = self.session
-        url = f"https://api.github.com/repos/{self.owner}/{self.repo}/issues/{issue_number}/comments"
-        params = {
-            "per_page": 100
-        }
+        url = (
+            f"https://api.github.com/repos/{self.owner}/{self.repo}/issues/{issue_number}/comments"
+        )
+        params = {"per_page": 100}
 
         while url:
             response = session.get(url, headers=self.headers, params=params)
@@ -187,9 +194,14 @@ class GitHubWrapper(BaseWrapper):
             created_at=obj.get("created_at"),
             type="pull_request" if obj.get("pull_request") else "issue",
             body=obj.get("body"),
-            #pull_request=pr.get("url") if pr else None,
-            comments=[Comment(id=comment.get("url"), user=comment.get("user").get("login"), body=comment.get("body")) for comment in obj.get("comments")]
+            # pull_request=pr.get("url") if pr else None,
+            comments=[
+                Comment(
+                    id=comment.get("url"),
+                    user=comment.get("user").get("login"),
+                    body=comment.get("body"),
+                )
+                for comment in obj.get("comments")
+            ],
         )
         return issue
-
-

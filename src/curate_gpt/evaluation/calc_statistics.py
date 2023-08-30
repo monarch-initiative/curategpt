@@ -29,8 +29,15 @@ def calculate_metrics(
     specificity = tn / (tn + fp) if tn + fp > 0 else 0
 
     return ClassificationMetrics(
-        precision=precision, recall=recall, f1_score=f1, accuracy=accuracy, specificity=specificity,
-        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn,
+        precision=precision,
+        recall=recall,
+        f1_score=f1,
+        accuracy=accuracy,
+        specificity=specificity,
+        true_positives=tp,
+        true_negatives=tn,
+        false_positives=fp,
+        false_negatives=fn,
     )
 
 
@@ -94,10 +101,18 @@ def aggregate_metrics(
             f1_score=sum(m.f1_score for m in metrics_list) / len(metrics_list),
             accuracy=sum(m.accuracy for m in metrics_list) / len(metrics_list),
             specificity=sum(m.specificity for m in metrics_list) / len(metrics_list),
-            true_positives=sum(m.true_positives for m in metrics_list if m.true_positives is not None),
-            true_negatives=sum(m.true_negatives for m in metrics_list if m.true_negatives is not None),
-            false_positives=sum(m.false_positives for m in metrics_list if m.false_positives is not None),
-            false_negatives=sum(m.false_negatives for m in metrics_list if m.false_negatives is not None),
+            true_positives=sum(
+                m.true_positives for m in metrics_list if m.true_positives is not None
+            ),
+            true_negatives=sum(
+                m.true_negatives for m in metrics_list if m.true_negatives is not None
+            ),
+            false_positives=sum(
+                m.false_positives for m in metrics_list if m.false_positives is not None
+            ),
+            false_negatives=sum(
+                m.false_negatives for m in metrics_list if m.false_negatives is not None
+            ),
         )
     elif method == AggregationMethod.MICRO:
         total_tp = sum(m.precision * (m.recall * (m.precision + m.f1_score)) for m in metrics_list)

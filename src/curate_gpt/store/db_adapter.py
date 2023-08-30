@@ -4,7 +4,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Tuple, Union, TextIO
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Tuple, Union
 
 import yaml
 from jsonlines import jsonlines
@@ -83,7 +83,7 @@ class DBAdapter(ABC):
     # _field_names_by_collection: Dict[str, Optional[List[str]]] = field(default_factory=dict)
     _field_names_by_collection: Dict[str, Optional[List[str]]] = None
 
-    ## CUD operations
+    # CUD operations
 
     @abstractmethod
     def insert(self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, **kwargs):
@@ -314,7 +314,14 @@ class DBAdapter(ABC):
         return self._field_names_by_collection[collection]
 
     # Loading and dumping
-    def dump(self, collection: str = None, to_file: FILE_LIKE = None, metadata_to_file: FILE_LIKE = None, format=None, **kwargs):
+    def dump(
+        self,
+        collection: str = None,
+        to_file: FILE_LIKE = None,
+        metadata_to_file: FILE_LIKE = None,
+        format=None,
+        **kwargs,
+    ):
         """
         Dump the database to a file.
 
@@ -354,7 +361,3 @@ class DBAdapter(ABC):
                 metadata_to_file.write(json.dumps(metadata))
             elif format == "yamlblock":
                 metadata_to_file.write(yaml.dump(metadata))
-
-
-
-

@@ -1,18 +1,13 @@
-import logging
-import shutil
+from pathlib import Path
 
-import pytest
-from oaklib import get_adapter
-
-from curate_gpt import ChromaDBAdapter
-from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers import get_wrapper
-from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
-from tests import INPUT_DIR, OUTPUT_DIR
 
+THIS = Path(__file__).name
 
 
 def test_filesystem_objects():
-    wrapper = get_wrapper("filesystem")
-    for obj in wrapper.objects():
-        print(obj)
+    root = Path(__file__).absolute().parent
+    wrapper = get_wrapper("filesystem", root_directory=root)
+    objs = list(wrapper.objects())
+    assert len(objs) > 1
+    assert len([obj for obj in objs if obj["name"] == THIS]) == 1

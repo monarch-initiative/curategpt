@@ -38,10 +38,10 @@ class ClassificationMetrics(BaseModel):
     f1_score: float
     accuracy: float
     specificity: float
-    true_positives: int = None,
-    true_negatives: int = None,
-    false_positives: int = None,
-    false_negatives: int = None,
+    true_positives: int = (None,)
+    true_negatives: int = (None,)
+    false_positives: int = (None,)
+    false_negatives: int = (None,)
 
 
 class Task(BaseModel):

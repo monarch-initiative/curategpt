@@ -42,7 +42,12 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
     from curate_gpt.wrappers.clinical.hpoa_by_pub_wrapper import HPOAByPubWrapper
     from curate_gpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
     from curate_gpt.wrappers.clinical.maxoa_wrapper import MAXOAWrapper
+    from curate_gpt.wrappers.general.filesystem_wrapper import FilesystemWrapper
+    from curate_gpt.wrappers.general.github_wrapper import GitHubWrapper
     from curate_gpt.wrappers.general.google_drive_wrapper import GoogleDriveWrapper
+    from curate_gpt.wrappers.general.gspread_wrapper import GSpreadWrapper
+    from curate_gpt.wrappers.general.json_wrapper import JSONWrapper
+    from curate_gpt.wrappers.general.linkml_schema_wrapper import LinkMLSchemarapper
     from curate_gpt.wrappers.investigation.ncbi_bioproject_wrapper import NCBIBioprojectWrapper
     from curate_gpt.wrappers.investigation.ncbi_biosample_wrapper import NCBIBiosampleWrapper
     from curate_gpt.wrappers.investigation.nmdc_wrapper import NMDCWrapper
@@ -53,10 +58,6 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
     from curate_gpt.wrappers.ontology.bioportal_wrapper import BioportalWrapper
     from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
     from curate_gpt.wrappers.sysbio.gocam_wrapper import GOCAMWrapper
-    from curate_gpt.wrappers.general.filesystem_wrapper import FilesystemWrapper
-    from curate_gpt.wrappers.general.json_wrapper import JSONWrapper
-    from curate_gpt.wrappers.general.linkml_schema_wrapper import LinkMLSchemarapper
-    from curate_gpt.wrappers.general.github_wrapper import GitHubWrapper
 
     for c in get_all_subclasses(BaseWrapper):
         if c.name == name:

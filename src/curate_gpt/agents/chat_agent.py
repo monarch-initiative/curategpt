@@ -5,12 +5,12 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 import yaml
+from llm import Conversation
 from pydantic import BaseModel
 
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
 from curate_gpt.wrappers import BaseWrapper
-from llm import Conversation
 
 logger = logging.getLogger(__name__)
 
