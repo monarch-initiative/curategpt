@@ -1987,6 +1987,22 @@ docs = ["Sphinx", "docutils (<0.18)"]
 test = ["faulthandler", "objgraph", "psutil"]
 
 [[package]]
+name = "gspread"
+version = "5.10.0"
+description = "Google Spreadsheets Python API"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "gspread-5.10.0-py3-none-any.whl", hash = "sha256:f58b15d950ef5c45c8607edb3687188d5a543f2b66242f9c26fbb0d2cf36169d"},
+    {file = "gspread-5.10.0.tar.gz", hash = "sha256:2b6bba6dc111580170346a9bcd1893e0e8c52f67a9e537caec7b7a1e27c14435"},
+]
+
+[package.dependencies]
+google-auth = ">=1.12.0"
+google-auth-oauthlib = ">=0.4.1"
+
+[[package]]
 name = "h11"
 version = "0.14.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -3264,6 +3280,74 @@ pydantic = ">=1.10.2,<3.0.0"
 pyyaml = "*"
 rdflib = ">=6.0.0"
 requests = "*"
+
+[[package]]
+name = "llm"
+version = "0.8"
+description = "A CLI utility and Python library for interacting with Large Language Models, including OpenAI, PaLM and local models installed on your own machine."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "llm-0.8-py3-none-any.whl", hash = "sha256:9867376b2d5581e82647ec5e7815f13d9fc236cdc358d3057ba814837dfaf7e6"},
+    {file = "llm-0.8.tar.gz", hash = "sha256:551020e3b5b34f4fd9f753708b93f5c46c05d43b92783ab8f38c7579a299feaf"},
+]
+
+[package.dependencies]
+click = "*"
+click-default-group-wheel = "*"
+openai = "*"
+pip = "*"
+pluggy = "*"
+pydantic = ">=1.10.2"
+python-ulid = "*"
+PyYAML = "*"
+setuptools = "*"
+sqlite-utils = ">=3.35.0"
+
+[package.extras]
+test = ["black", "cogapp", "mypy", "pytest", "requests-mock", "ruff", "types-PyYAML", "types-click", "types-requests"]
+
+[[package]]
+name = "llm-gpt4all"
+version = "0.1.1"
+description = "Plugin for LLM adding support for GPT4ALL models"
+category = "main"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "llm-gpt4all-0.1.1.tar.gz", hash = "sha256:9cc1f03c03c28430ff160eb80587c7aed0cc814ed2fb0abd21d0308925b6a55f"},
+    {file = "llm_gpt4all-0.1.1-py3-none-any.whl", hash = "sha256:08162207729d9677254e564734548bfba046f4176cff17a05d05fc9c95b25a61"},
+]
+
+[package.dependencies]
+gpt4all = "*"
+httpx = "*"
+llm = ">=0.5"
+
+[package.extras]
+test = ["pytest"]
+
+[[package]]
+name = "llm-replicate"
+version = "0.2"
+description = "LLM plugin for models hosted on Replicate"
+category = "main"
+optional = false
+python-versions = ">3.7"
+files = [
+    {file = "llm-replicate-0.2.tar.gz", hash = "sha256:9510956361801b144e082e2dc2d3f5aab84aee1a9ece259839496421e070f2f8"},
+    {file = "llm_replicate-0.2-py3-none-any.whl", hash = "sha256:ed37d5d49f865b0db9b5a6bbfacbacfcde7cd81b16522e50d7b9adbf62bbbefe"},
+]
+
+[package.dependencies]
+llm = "*"
+packaging = "*"
+requests = "*"
+requests-mock = "*"
+
+[package.extras]
+test = ["pytest"]
 
 [[package]]
 name = "lxml"
@@ -4599,6 +4683,18 @@ files = [
 [package.extras]
 docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-removed-in", "sphinxext-opengraph"]
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
+
+[[package]]
+name = "pip"
+version = "23.2.1"
+description = "The PyPA recommended tool for installing Python packages."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pip-23.2.1-py3-none-any.whl", hash = "sha256:7ccf472345f20d35bdc9d1841ff5f313260c2c33fe417f48c30ac46cccabf5be"},
+    {file = "pip-23.2.1.tar.gz", hash = "sha256:fb0bd5435b3200c602b5bf61d2d43c2f13c02e29c1707567ae7fbc514eb9faf2"},
+]
 
 [[package]]
 name = "platformdirs"
@@ -6138,6 +6234,26 @@ mongodb = ["pymongo (>=3)"]
 redis = ["redis (>=3)"]
 security = ["itsdangerous (>=2.0)"]
 yaml = ["pyyaml (>=5.4)"]
+
+[[package]]
+name = "requests-mock"
+version = "1.11.0"
+description = "Mock out responses from the requests package"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "requests-mock-1.11.0.tar.gz", hash = "sha256:ef10b572b489a5f28e09b708697208c4a3b2b89ef80a9f01584340ea357ec3c4"},
+    {file = "requests_mock-1.11.0-py2.py3-none-any.whl", hash = "sha256:f7fae383f228633f6bececebdab236c478ace2284d6292c6e7e2867b9ab74d15"},
+]
+
+[package.dependencies]
+requests = ">=2.3,<3"
+six = "*"
+
+[package.extras]
+fixture = ["fixtures"]
+test = ["fixtures", "mock", "purl", "pytest", "requests-futures", "sphinx", "testtools"]
 
 [[package]]
 name = "requests-oauthlib"
@@ -8736,4 +8852,4 @@ docs = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9, !=3.9.7"
-content-hash = "3a238fa8577fbac1d4bc6fbf7ade65c45a83b98fdae2b7f798e505864cc45e99"
+content-hash = "11e7c94c6156921a81e263191e3260ec2e073833ec4096f1e6e0dfe5258554fe"

@@ -103,7 +103,6 @@ class GoogleDriveWrapper(BaseWrapper):
             )
         return self.split_objects(objs)
 
-
     def objects_by_ids(self, object_ids: List[str]) -> List[Dict]:
         files = [{"id: object_id"} for object_id in object_ids]
         return self.objects_from_files(files)

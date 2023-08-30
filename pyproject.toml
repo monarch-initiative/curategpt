@@ -43,6 +43,10 @@ textract = "1.5.0"
 jsonpath-ng = "^1.5.3"
 pygithub = "^1.59.1"
 jsonlines = "^3.1.0"
+llm = "^0.8"
+llm-replicate = "^0.2"
+llm-gpt4all = "^0.1.1"
+gspread = "^5.10.0"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7.1.2"

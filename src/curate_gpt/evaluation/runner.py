@@ -19,7 +19,12 @@ logger = logging.getLogger(__name__)
 
 
 def run_task(
-    task: Task, report_path=None, report_file: TextIO = None, report_tsv_file: TextIO = None, fresh=False, **kwargs
+    task: Task,
+    report_path=None,
+    report_file: TextIO = None,
+    report_tsv_file: TextIO = None,
+    fresh=False,
+    **kwargs,
 ) -> Task:
     """
     Evaluate the agent on a test collection.

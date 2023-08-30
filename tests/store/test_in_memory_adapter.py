@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 import pytest
 from linkml_runtime.utils.schema_builder import SchemaBuilder

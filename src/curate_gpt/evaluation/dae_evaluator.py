@@ -110,12 +110,13 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
                         row[f"feature_{k}"] = v
                 for f in self.fields_to_predict:
                     row[f"predicted_{f}"] = ao.object.get(f, None)
-                    #row[f"expected_{f}"] = test_obj.get(f, None)
+                    # row[f"expected_{f}"] = test_obj.get(f, None)
                 for k, v in metrics.dict().items():
                     row[f"metric_{k}"] = v
                 if n == 1:
-
-                    results_dictwriter = csv.DictWriter(report_tsv_file, fieldnames=list(row.keys()), delimiter="\t")
+                    results_dictwriter = csv.DictWriter(
+                        report_tsv_file, fieldnames=list(row.keys()), delimiter="\t"
+                    )
                     results_dictwriter.writeheader()
                 if not results_dictwriter:
                     raise AssertionError("results_dictwriter not initialized")

@@ -43,11 +43,15 @@ def test_oak_index(vstore):
     db.reset()
     wrapper = OntologyWrapper(oak_adapter=adapter, local_store=db, extractor=BasicExtractor())
     db.insert(wrapper.objects())
-    g = wrapper.from_object({"id": "Nucleus",
-                               "label": "nucleus",
-                               "relationships": [{"predicate": "rdfs:subClassOf", "target": "Organelle"}],
-                               "original_id": "GO:0005634"},
-                            store=db)
+    g = wrapper.from_object(
+        {
+            "id": "Nucleus",
+            "label": "nucleus",
+            "relationships": [{"predicate": "rdfs:subClassOf", "target": "Organelle"}],
+            "original_id": "GO:0005634",
+        },
+        store=db,
+    )
     print(g.nodes)
     print(g.edges)
 

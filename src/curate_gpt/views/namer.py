@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Iterable, Iterator, Tuple, Any
+from typing import Any, Iterable, Iterator, List, Tuple
 
 from curate_gpt import DBAdapter
 
@@ -11,6 +11,7 @@ class Namer:
 
     TODO: use caching
     """
+
     stores: List[DBAdapter]
 
     def map_object(self, obj: Any, paths: List[List[str]], forward=True) -> Any:
@@ -46,15 +47,21 @@ class Namer:
         """
         fetches mappings
         """
-        yield from self._query_mappings(ids, self.store.identifier_field(), self.store.label_field())
+        yield from self._query_mappings(
+            ids, self.store.identifier_field(), self.store.label_field()
+        )
 
     def names_to_ids(self, names: Iterable[str]) -> Iterator[Tuple[str, str]]:
         """
         fetches mappings
         """
-        yield from self._query_mappings(names, self.store.label_field(), self.store.identifier_field())
+        yield from self._query_mappings(
+            names, self.store.label_field(), self.store.identifier_field()
+        )
 
-    def _query_mappings(self, from_vals: List[str], from_field: str, to_field: str) -> Iterator[Tuple[str, str]]:
+    def _query_mappings(
+        self, from_vals: List[str], from_field: str, to_field: str
+    ) -> Iterator[Tuple[str, str]]:
         """
         fetches mappings
         """
@@ -73,5 +80,3 @@ class Namer:
                 if to_val:
                     yield from_val, to_val
                     from_vals.pop(from_val)
-
-

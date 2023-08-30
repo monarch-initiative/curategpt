@@ -1,6 +1,6 @@
 import logging
 import random
-from typing import Dict, List, Union, Optional, Any
+from typing import Any, Dict, List, Optional, Union
 
 from curate_gpt import ChromaDBAdapter, DBAdapter
 from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection
@@ -60,25 +60,31 @@ def stratify_collection(
     random.shuffle(objs)
     if testing_identifiers:
         logger.info(f"Taking from {len(testing_identifiers)} identifiers for testing set")
+
         def _is_in_test_set(obj: dict) -> bool:
             for fld in [store.identifier_field(collection), "original_id"]:
                 if fld in obj and obj[fld] in testing_identifiers:
                     return True
             return False
+
         testing_set = [obj for obj in objs if _is_in_test_set(obj)]
         if not testing_set:
             raise ValueError(f"No testing objects found with identifiers: {testing_identifiers}")
         training_set = [obj for obj in objs if not _is_in_test_set(obj)]
         if num_testing:
             if len(testing_set) < num_testing:
-                raise ValueError(f"Only {len(testing_set)} testing objects found with identifiers: {testing_identifiers}")
+                raise ValueError(
+                    f"Only {len(testing_set)} testing objects found with identifiers: {testing_identifiers}"
+                )
             testing_set = testing_set[:num_testing]
             logging.info(f"Using {len(testing_set)} testing objects")
         validation_set = []
     else:
         training_set = objs[:num_training]
         testing_set = objs[num_training : num_training + num_testing]
-        validation_set = objs[num_training + num_testing : num_training + num_testing + num_validation]
+        validation_set = objs[
+            num_training + num_testing : num_training + num_testing + num_validation
+        ]
     logger.info(f"Training set size: {len(training_set)}")
     logger.info(f"Testing set size: {len(testing_set)}")
     logger.info(f"Validation set size: {len(validation_set)}")

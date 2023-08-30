@@ -28,8 +28,6 @@ class BaseWrapper(ABC):
 
     extractor: Extractor = None
 
-
-
     name: ClassVar[str] = "__dbview__"
 
     default_embedding_model = "openai:"
