@@ -95,7 +95,7 @@ class EUtilsWrapper(BaseWrapper, ABC):
         # Parameters for the efetch request
         efetch_params = {
             "db": self.eutils_db,
-            "id": ",".join(object_ids),  # Combine biosample IDs into a comma-separated string
+            "id": ",".join(object_ids),  # Combine  IDs into a comma-separated string
             "retmode": "xml",
         }
         # if not self._uses_cache:
@@ -103,9 +103,9 @@ class EUtilsWrapper(BaseWrapper, ABC):
         tool = self.fetch_tool
         efetch_response = session.get(EFETCH_URL.format(tool=tool), params=efetch_params)
         if not efetch_response.ok:
-            logger.error(f"Failed to fetch data for {biosample_ids}")
+            logger.error(f"Failed to fetch data for {object_ids}")
             raise ValueError(
-                f"Failed to fetch data for {biosample_ids} using {session} and {efetch_params}"
+                f"Failed to fetch data for {object_ids} using {session} and {efetch_params}"
             )
         results = xmltodict.parse(efetch_response.text)
         return self.objects_from_dict(results)

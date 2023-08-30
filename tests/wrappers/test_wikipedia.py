@@ -5,7 +5,6 @@ import time
 import yaml
 
 from curate_gpt import ChromaDBAdapter
-from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature import WikipediaWrapper
 from tests import OUTPUT_DIR

@@ -1,9 +1,8 @@
-"""Retrieval Augmented Generation (RAG) Base Class."""
+"""Autocomplete objects using RAG."""
 import logging
 from dataclasses import dataclass, field
-from typing import Any, ClassVar, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 
-import yaml
 from pydantic import BaseModel
 
 from curate_gpt.agents.base_agent import BaseAgent

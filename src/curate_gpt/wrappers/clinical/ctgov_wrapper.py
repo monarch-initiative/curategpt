@@ -1,17 +1,14 @@
 """Chat with a KB."""
 import logging
 from dataclasses import dataclass
-from typing import ClassVar, Dict, Iterable, Iterator, List, Optional
+from typing import ClassVar, Dict, List
 
-from oaklib import BasicOntologyInterface, get_adapter
+from oaklib import BasicOntologyInterface
 from pytrials.client import ClinicalTrials
 
 from curate_gpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
-
-
-RMAP = {"CID": "induces"}
 
 
 @dataclass
@@ -29,4 +26,6 @@ class ClinicalTrialsWrapper(BaseWrapper):
 
     def external_search(self, text: str, expand: bool = True, **kwargs) -> List[Dict]:
         ct = ClinicalTrials()
+        logger.info(ct)
         # TODO
+        return []

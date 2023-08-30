@@ -96,8 +96,8 @@ class MAXOAWrapper(BaseWrapper):
         if source_locator is None:
             source_locator = self.source_locator
         if source_locator.startswith("http"):
-            logger.info(f"Fetching {url}")
-            with requests.get(url, stream=True) as response:
+            logger.info(f"Fetching {source_locator}")
+            with requests.get(source_locator, stream=True) as response:
                 response.raise_for_status()  # Raise an error for failed requests
                 reader = DictReader(stream_filtered_lines(response), delimiter="\t")
                 yield from self.objects_from_rows(reader)

@@ -34,5 +34,6 @@ class PMCWrapper(EUtilsWrapper):
         raise NotImplementedError()
 
         objs = []
-        articles = results["pmc-articleset"]["article"]
+        # TODO
+        # _articles = results["pmc-articleset"]["article"]
         return objs

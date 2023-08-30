@@ -1,14 +1,8 @@
 """Wrapper for LinkML Schema documents."""
-import glob
-import json
 import logging
-import os
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional
+from dataclasses import dataclass
+from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
-import yaml
-from jsonpath_ng import parse
 from linkml_runtime import SchemaView
 from linkml_runtime.dumpers import json_dumper
 
