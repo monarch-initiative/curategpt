@@ -47,6 +47,7 @@ llm = "^0.8"
 llm-replicate = "^0.2"
 llm-gpt4all = "^0.1.1"
 gspread = "^5.10.0"
+defusedxml = "^0.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7.1.2"

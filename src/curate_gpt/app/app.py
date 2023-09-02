@@ -30,15 +30,13 @@ PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"
 
 CHAT = "Chat"
-GENERATE = "Extract"
+EXTRACT = "Extract"
 SEARCH = "Search"
 CLUSTER_SEARCH = "Cluster Search"
 MATCH = "Match"
 CURATE = "Curate"
-INSERT = "Insert"  # deprecated
-# CURATE = "Curate"
 ADD_TO_CART = "Add to Cart"
-EXTRACT = "Extract"
+# EXTRACT = "Extract"
 CITESEEK = "CiteSeek"
 CART = "Cart"
 HELP = "Help"
@@ -65,7 +63,7 @@ PAGES = [
     CLUSTER_SEARCH,
     CHAT,
     CURATE,
-    GENERATE,
+    EXTRACT,
     CITESEEK,
     MATCH,
     CART,
@@ -203,60 +201,6 @@ def html_table(rows: List[dict]) -> str:
     html_content += "</table>"
     return html_content
 
-
-if option == INSERT:
-    page_state = state.get_page_state(INSERT)
-    st.subheader(f"Insert new document in {collection}")
-    inputs = {}
-    logger.error(f"FINDING FIELD NAMES: {collection}  // {db._field_names_by_collection}")
-    for f in db.field_names(collection=collection):
-        inputs[f] = st.text_input(f"{f}")
-    logger.error("FOUND FIELD NAMES")
-
-    extractor.model_name = model_name
-
-    if st.button("Autocomplete"):
-        daca = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
-        if background_collection != NO_BACKGROUND_SELECTED:
-            if background_collection == PUBMED:
-                daca.document_adapter = PubmedWrapper(local_store=db, extractor=extractor)
-                daca.collection = None
-            elif background_collection == WIKIPEDIA:
-                daca.document_adapter = WikipediaWrapper(local_store=db, extractor=extractor)
-                daca.collection = None
-            else:
-                daca.document_adapter = db
-                daca.document_adapter_collection = background_collection
-        st.write(f"Generating using: **{extractor.model_name}** using *{collection}* for examples")
-        if background_collection:
-            st.write(f"Using background knowledge from: *{background_collection}*")
-        # rules = [instructions] if instructions else None
-        page_state.predicted_object = daca.complete(
-            inputs,
-            # generate_background=generate_background,
-            collection=collection,
-            # rules=rules,
-            # limit=examples_limit,
-        )
-
-    if page_state.predicted_object:
-        created = page_state.predicted_object
-        obj = created.object
-        st.subheader("Created object")
-        # st.write("<pre>" + yaml.dump(obj, sort_keys=False) + "</pre>", unsafe_allow_html=True)
-        st.code(yaml.dump(obj, sort_keys=False), language="yaml")
-        add_button = st.button(f"Add to {collection}")
-        if add_button:
-            db.insert([obj], collection=collection)
-            st.write("Added!!!")
-        st.subheader("Debug info")
-        st.write("Prompt:")
-        st.code(created.annotations["prompt"])
-
-    if st.button("Insert"):
-        # data = {"name": name, "age": age, "email": email}
-        db.insert([inputs], collection=collection)
-        st.success("Document inserted successfully!")
 
 if option == CURATE:
     page_state = state.get_page_state(CURATE)
@@ -520,8 +464,8 @@ elif option == CLUSTER_SEARCH:
         fig = vectors_to_fig(labels, np.array(vectors), method=method)
         st.pyplot(fig)
 
-elif option == GENERATE:
-    page_state = state.get_page_state(GENERATE)
+elif option == EXTRACT:
+    page_state = state.get_page_state(EXTRACT)
     st.subheader("Extract object", help="Extract a structured object from text.")
     st.write(f"Examples will be drawn from **{collection}**")
     if background_collection != NO_BACKGROUND_SELECTED:
@@ -546,10 +490,10 @@ elif option == GENERATE:
 
     examples_limit = limit_slider_component()
 
-    examples = get_applicable_examples(collection, GENERATE)
+    examples = get_applicable_examples(collection, EXTRACT)
     extractor.model_name = model_name
 
-    if st.button(GENERATE):
+    if st.button(EXTRACT):
         dase = DatabaseAugmentedStructuredExtraction(knowledge_source=db, extractor=extractor)
         if background_collection != NO_BACKGROUND_SELECTED:
             if background_collection == PUBMED:
@@ -630,6 +574,10 @@ elif option == CHAT:
         for ref, text in response.references.items():
             st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
             st.code(text, language="yaml")
+            if st.button(f"Add to cart {ref}"):
+                # TODO: unpack
+                cart.add({"text": text, "id": ref})
+                st.success("Document added to cart!")
         if response.uncited_references:
             st.markdown("## Uncited references")
             st.caption(
@@ -769,4 +717,4 @@ elif option == HELP:
     st.write("When this is used as a source, the pubmed API is called with a relevancy search.")
     st.write("These results are then combined with others to answer the query.")
     st.write("### What is the 'background' collection?")
-    st.write(f"This is used only by '{GENERATE}' to provide additional context.")
+    st.write(f"This is used only by '{EXTRACT}' to provide additional context.")

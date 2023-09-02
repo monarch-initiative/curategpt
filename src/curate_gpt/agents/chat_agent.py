@@ -16,7 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 class ChatResponse(BaseModel):
-    """Response from chat engine."""
+    """Response from chat engine.
+
+    TODO: Rename class to indicate that it is provenance-enabled chat
+    """
 
     body: str
     """Text of response."""

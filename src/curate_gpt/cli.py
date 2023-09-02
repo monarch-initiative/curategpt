@@ -11,7 +11,7 @@ import click
 import pandas as pd
 import yaml
 from click_default_group import DefaultGroup
-from llm import UnknownModelError, get_plugins
+from llm import UnknownModelError, get_model, get_plugins
 from llm.cli import load_conversation
 from oaklib import get_adapter
 from pydantic import BaseModel
@@ -19,6 +19,7 @@ from pydantic import BaseModel
 from curate_gpt import ChromaDBAdapter, __version__
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
+from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.agents.evidence_agent import EvidenceAgent
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
 from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
@@ -272,7 +273,174 @@ def matches(id, path, collection):
 @model_option
 @limit_option
 @click.option(
+    "--fields-to-predict",
+    multiple=True,
+)
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@generate_background_option
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@schema_option
+@click.option(
+    "--input",
+    "-i",
+    default=None,
+    help="Input file to extract.",
+)
+@click.argument("text", nargs=-1)
+def extract(
+    text,
+    input,
+    path,
+    docstore_path,
+    docstore_collection,
+    conversation,
+    rule: List[str],
+    model,
+    schema,
+    **kwargs,
+):
+    """Extract."""
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    agent = DatabaseAugmentedStructuredExtraction(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        agent.document_adapter = ChromaDBAdapter(docstore_path)
+        agent.document_adapter_collection = docstore_collection
+    if not text:
+        if not input:
+            raise ValueError("Must provide either text or input file.")
+        text = list(open(input).readlines())
+    text = "\n".join(text)
+    ao = agent.extract(text, rules=rule, **filtered_kwargs)
+    print(yaml.dump(ao.object, sort_keys=False))
+
+
+@main.command()
+@path_option
+@collection_option
+@click.option(
+    "-C/--no-C",
+    "--conversation/--no-conversation",
+    default=False,
+    show_default=True,
+    help="Whether to run in conversation mode.",
+)
+@model_option
+@limit_option
+@click.option(
+    "--fields-to-predict",
+    multiple=True,
+)
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@generate_background_option
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@click.option(
+    "--output-directory",
+    "-o",
+    required=True,
+)
+@schema_option
+@click.option(
+    "--pubmed-id-file",
+)
+@click.argument("ids", nargs=-1)
+def extract_from_pubmed(
+    ids,
+    pubmed_id_file,
+    output_directory,
+    path,
+    docstore_path,
+    docstore_collection,
+    conversation,
+    rule: List[str],
+    model,
+    schema,
+    **kwargs,
+):
+    """Extract."""
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    agent = DatabaseAugmentedStructuredExtraction(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        agent.document_adapter = ChromaDBAdapter(docstore_path)
+        agent.document_adapter_collection = docstore_collection
+    if not ids:
+        if not pubmed_id_file:
+            raise ValueError("Must provide either text or input file.")
+        ids = [x.strip() for x in open(pubmed_id_file).readlines()]
+    pmw = PubmedWrapper()
+    output_directory = Path(output_directory)
+    output_directory.mkdir(exist_ok=True, parents=True)
+    for pmid in ids:
+        pmid_esc = pmid.replace(":", "_")
+        text = pmw.fetch_full_text(pmid)
+        ao = agent.extract(text, rules=rule, **filtered_kwargs)
+        with open(output_directory / f"{pmid_esc}.yaml", "w") as f:
+            f.write(yaml.dump(ao.object, sort_keys=False))
+        with open(output_directory / f"{pmid_esc}.txt", "w") as f:
+            f.write(text)
+
+
+@main.command()
+@path_option
+@collection_option
+@click.option(
+    "-C/--no-C",
+    "--conversation/--no-conversation",
+    default=False,
+    show_default=True,
+    help="Whether to run in conversation mode.",
+)
+@model_option
+@limit_option
+@click.option(
     "-P", "--query-property", default="label", show_default=True, help="Property to use for query."
+)
+@click.option(
+    "--fields-to-predict",
+    multiple=True,
 )
 @click.option(
     "--docstore-path",
@@ -288,7 +456,7 @@ def matches(id, path, collection):
 )
 @schema_option
 @click.argument("query")
-def generate(
+def complete(
     query,
     path,
     docstore_path,
@@ -300,7 +468,7 @@ def generate(
     schema,
     **kwargs,
 ):
-    """Generate an entry from a query using RAGE.
+    """Generate an entry from a query using object completion.
 
     Example:
 
@@ -320,14 +488,108 @@ def generate(
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
-    rage = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    dac = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
-        rage.document_adapter = ChromaDBAdapter(docstore_path)
-        rage.document_adapter_collection = docstore_collection
+        dac.document_adapter = ChromaDBAdapter(docstore_path)
+        dac.document_adapter_collection = docstore_collection
     if ":" in query:
         query = yaml.safe_load(query)
-    ao = rage.complete(query, context_property=query_property, rules=rule, **filtered_kwargs)
+    ao = dac.complete(query, context_property=query_property, rules=rule, **filtered_kwargs)
     print(yaml.dump(ao.object, sort_keys=False))
+
+
+@main.command()
+@path_option
+@collection_option
+@click.option(
+    "-C/--no-C",
+    "--conversation/--no-conversation",
+    default=False,
+    show_default=True,
+    help="Whether to run in conversation mode.",
+)
+@model_option
+@limit_option
+@click.option("--field-to-predict", "-F", help="Field to predict")
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@click.option(
+    "--generate-background/--no-generate-background",
+    default=False,
+    show_default=True,
+    help="Whether to generate background knowledge.",
+)
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@click.option(
+    "--id-file",
+    "-i",
+    type=click.File("r"),
+    help="File to read ids from.",
+)
+@click.option(
+    "--missing-only/--no-missing-only",
+    default=True,
+    show_default=True,
+    help="Only generate missing values.",
+)
+@schema_option
+def complete_all(
+    path,
+    collection,
+    docstore_path,
+    docstore_collection,
+    conversation,
+    rule: List[str],
+    model,
+    field_to_predict,
+    schema,
+    id_file,
+    **kwargs,
+):
+    """Generate missing values for all objects
+
+    Example:
+
+        curategpt generate  -c obo_go TODO
+    """
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    dae = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        dae.document_adapter = ChromaDBAdapter(docstore_path)
+        dae.document_adapter_collection = docstore_collection
+    object_ids = None
+    if id_file:
+        object_ids = [line.strip() for line in id_file.readlines()]
+    it = dae.generate_all(
+        collection=collection,
+        field_to_predict=field_to_predict,
+        rules=rule,
+        object_ids=object_ids,
+        **filtered_kwargs,
+    )
+    for pred in it:
+        print(yaml.dump(pred.dict(), sort_keys=False))
 
 
 @main.command()
@@ -420,100 +682,6 @@ def generate_evaluate(
     )
     results = evaluator.evaluate(test_collection, num_tests=num_tests, **kwargs)
     print(yaml.dump(results.dict(), sort_keys=False))
-
-
-@main.command()
-@path_option
-@collection_option
-@click.option(
-    "-C/--no-C",
-    "--conversation/--no-conversation",
-    default=False,
-    show_default=True,
-    help="Whether to run in conversation mode.",
-)
-@model_option
-@limit_option
-@click.option("--field-to-predict", "-F", help="Field to predict")
-@click.option(
-    "--docstore-path",
-    default=None,
-    help="Path to a docstore to for additional unstructured knowledge.",
-)
-@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
-@click.option(
-    "--generate-background/--no-generate-background",
-    default=False,
-    show_default=True,
-    help="Whether to generate background knowledge.",
-)
-@click.option(
-    "--rule",
-    multiple=True,
-    help="Rule to use for generating background knowledge.",
-)
-@click.option(
-    "--id-file",
-    "-i",
-    type=click.File("r"),
-    help="File to read ids from.",
-)
-@click.option(
-    "--missing-only/--no-missing-only",
-    default=True,
-    show_default=True,
-    help="Only generate missing values.",
-)
-@schema_option
-def generate_all(
-    path,
-    collection,
-    docstore_path,
-    docstore_collection,
-    conversation,
-    rule: List[str],
-    model,
-    field_to_predict,
-    schema,
-    id_file,
-    **kwargs,
-):
-    """Generate missing values for all objects
-
-    Example:
-
-        curategpt generate  -c obo_go TODO
-    """
-    db = ChromaDBAdapter(path)
-    if schema:
-        schema_manager = SchemaProxy(schema)
-    else:
-        schema_manager = None
-
-    # TODO: generalize
-    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
-    extractor = BasicExtractor()
-    if model:
-        extractor.model_name = model
-    if schema_manager:
-        db.schema_proxy = schema
-        extractor.schema_proxy = schema_manager
-    dae = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
-    if docstore_path or docstore_collection:
-        dae.document_adapter = ChromaDBAdapter(docstore_path)
-        dae.document_adapter_collection = docstore_collection
-    object_ids = None
-    if id_file:
-        object_ids = [line.strip() for line in id_file.readlines()]
-    it = dae.generate_all(
-        collection=collection,
-        field_to_predict=field_to_predict,
-        rules=rule,
-        object_ids=object_ids,
-        **filtered_kwargs,
-    )
-    for pred in it:
-        print(yaml.dump(pred.dict(), sort_keys=False))
 
 
 @main.command()
@@ -691,6 +859,30 @@ def evaluation_compare(files, include_expected=False):
     df = pd.melt(df, id_vars=list(other_cols), value_vars=list(predicted_cols))
     df = df.sort_values(by=list(other_cols))
     df.to_csv(sys.stdout, sep="\t", index=False)
+
+
+@main.command()
+@click.option(
+    "--system",
+    "-s",
+    help="System gpt prompt to use.",
+)
+@click.option(
+    "--prompt",
+    "-p",
+    default="What is the definition of {column}?",
+)
+@model_option
+@click.argument("file")
+def multiprompt(file, model, system, prompt):
+    if model is None:
+        model = "gpt-3.5-turbo"
+    model_obj = get_model(model)
+    with open(file) as f:
+        for row in csv.DictReader(f, delimiter="\t"):
+            resp = model_obj.prompt(system=system, prompt=prompt.format(**row)).text()
+            resp = resp.replace("\n", " ")
+            print("\t".join(list(row.values()) + [resp]))
 
 
 @main.command()
@@ -1023,16 +1215,17 @@ def view_objects(view, init_with, **kwargs):
 @click.option("--view", "-V")
 @click.option("--source-locator")
 @model_option
+@limit_option
 @init_with_option
 @click.argument("query")
-def view_search(query, view, model, init_with, **kwargs):
+def view_search(query, view, model, init_with, limit, **kwargs):
     """Search in a virtual store."""
     if init_with:
         for k, v in yaml.safe_load(init_with).items():
             kwargs[k] = v
     vstore: BaseWrapper = get_wrapper(view, **kwargs)
     vstore.extractor = BasicExtractor(model_name=model)
-    for obj, _dist, _ in vstore.search(query):
+    for obj, _dist, _ in vstore.search(query, limit=limit):
         print(yaml.dump(obj, sort_keys=False))
 
 
