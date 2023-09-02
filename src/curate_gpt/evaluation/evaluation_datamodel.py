@@ -57,9 +57,11 @@ class Task(BaseModel):
     executed_on: Optional[str] = None
     agent: Optional[str] = "dae"
     extractor: Optional[str] = "BasicExtractor"
+    method: Optional[str] = None
     source_db_path: Optional[str] = None
     target_db_path: Optional[str] = None
     source_collection: Optional[str] = None
+    additional_collections: Optional[List[str]] = None
     num_training: int = None
     num_testing: int = None
     num_validation: int = 0
@@ -71,12 +73,15 @@ class Task(BaseModel):
     results: Optional[ClassificationMetrics] = None
 
     @property
-    def id(self):
+    def id(self) -> str:
         pred = ".".join(self.fields_to_predict) if self.fields_to_predict else ""
         mask = ".".join(self.fields_to_mask) if self.fields_to_mask else ""
         model = self.model_name.replace(":", "")
         em_model = self.embedding_model_name.replace(":", "")
-        return (
+        id = (
             f"{self.source_collection}-P{pred}-M{mask}-BG{self.generate_background}-"
             f"Tr{self.num_training}-Te{self.num_testing}-M{model}-EM{em_model}"
         )
+        if self.method:
+            id += f"-Mth{self.method}"
+        return id

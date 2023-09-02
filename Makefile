@@ -75,6 +75,9 @@ load-github-envo:
 load-github-obi:
 	$(CURATE) -v view index -p $(DB_PATH) -c gh_obi -m openai:  --view github --init-with "{repo: obi-ontology/obi}"
 
+load-github-mondo:
+	$(CURATE) -v view index -p $(DB_PATH) -c gh_obi -m openai:  --view github --init-with "{repo: monarch-initiative/mondo}"
+
 list:
 	$(CURATE) collections list -p $(DB_PATH)
 

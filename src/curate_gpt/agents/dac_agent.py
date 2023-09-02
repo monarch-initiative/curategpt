@@ -150,7 +150,13 @@ class DatabaseAugmentedCompletion(BaseAgent):
             # training example input
             input_text = generate_input_str(obj)
             # training example output
-            obj_predicted_part = {k: v for k, v in obj.items() if v and k not in feature_fields}
+            obj_predicted_part = {
+                k: v
+                for k, v in obj.items()
+                if v
+                and k not in feature_fields
+                and (not fields_to_predict or k in fields_to_predict)
+            }
             if not obj_predicted_part:
                 logger.warning(
                     f"Skipping; Candidate example lacked predictable properties: {obj}; "

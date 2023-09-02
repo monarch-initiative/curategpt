@@ -84,6 +84,12 @@ def run_task(
     agent = DatabaseAugmentedCompletion(
         knowledge_source=tdb, knowledge_source_collection="", extractor=extractor
     )
+    if task.additional_collections:
+        if len(task.additional_collections) > 1:
+            raise NotImplementedError("Only one additional collection is supported")
+        agent.document_adapter = tdb
+        agent.document_collection = task.additional_collections[0]
+    # TODO: use the task object directly in the evaluator
     evaluator = DatabaseAugmentedCompletionEvaluator(
         agent=agent, fields_to_predict=task.fields_to_predict, fields_to_mask=task.fields_to_mask
     )

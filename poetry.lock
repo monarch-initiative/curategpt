@@ -1140,7 +1140,7 @@ files = [
 name = "defusedxml"
 version = "0.7.1"
 description = "XML bomb protection for Python stdlib modules"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 files = [
@@ -8852,4 +8852,4 @@ docs = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9, !=3.9.7"
-content-hash = "11e7c94c6156921a81e263191e3260ec2e073833ec4096f1e6e0dfe5258554fe"
+content-hash = "0f96a1230f86217d58ae4a9d7ff4088333e8ade3932c975a42f9227d066655ce"

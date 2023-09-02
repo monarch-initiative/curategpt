@@ -73,7 +73,12 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
                 if k not in self.fields_to_predict and k not in self.fields_to_mask
             }
             logger.debug(f"## Query: {test_obj_query}")
-            ao = agent.complete(test_obj_query, **kwargs)
+            ao = agent.complete(
+                test_obj_query,
+                fields_to_predict=self.fields_to_predict,
+                fields_to_mask=self.fields_to_mask,
+                **kwargs,
+            )
             logger.debug(f"## Expected: {test_obj}")
             logger.debug(f"## Prediction: {ao.object}")
             outcomes = []

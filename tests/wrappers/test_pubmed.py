@@ -24,6 +24,22 @@ def test_pubmed_by_id():
     assert len(objs) == 1
 
 
+def test_pubmed_to_pmc():
+    extractor = BasicExtractor()
+    pubmed = PubmedWrapper(extractor=extractor)
+    pmcid = pubmed.fetch_pmcid("PMID:35663206")
+    assert pmcid == "PMC:PMC9159873"
+
+
+def test_full_text():
+    extractor = BasicExtractor()
+    pubmed = PubmedWrapper(extractor=extractor)
+    txt = pubmed.fetch_full_text("PMID:35663206")
+    print(len(txt))
+    print(txt[0:100])
+    print(txt)
+
+
 def test_pubmed_search():
     shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
     db = ChromaDBAdapter(str(TEMP_PUBMED_DB))

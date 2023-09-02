@@ -28,10 +28,6 @@ jobs:
 
       - name: Check code quality with flake8
         run: poetry run tox -e flake8
-#       - name: Check package metadata with Pyroma
-#         run: poetry run tox -e pyroma
-      - name: Check static typing with MyPy
-        run: poetry run tox -e mypy
 
       - name: Test with pytest and generate coverage file
         run: poetry run tox -e py

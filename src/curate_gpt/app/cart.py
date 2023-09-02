@@ -10,6 +10,8 @@ class CartItem(BaseModel):
 
     object: Union[Dict, BaseModel]
     object_type: Optional[str] = None
+    source: Optional[str] = None
+    metadata: Optional[Dict] = None
 
 
 class Cart(BaseModel):
@@ -23,9 +25,16 @@ class Cart(BaseModel):
     def size(self):
         return len(self.items)
 
-    def add(self, item: Union[CartItem, Dict]):
+    def add(self, item: Union[CartItem, BaseModel, Dict]):
         if isinstance(item, dict):
             item = CartItem(object=item)
+        if not isinstance(item, CartItem):
+            if isinstance(item, BaseModel):
+                item = CartItem(object=item.dict())
+            elif isinstance(item, str):
+                item = CartItem(object={"text": item})
+            else:
+                raise ValueError(f"Invalid cart item: {item}")
         self.items.append(item)
 
     def remove(self, item: CartItem):
