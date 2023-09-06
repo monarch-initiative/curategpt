@@ -1,0 +1,71 @@
+cases:
+- source: cl
+  mode: CHAT
+  input: "What neurotransmitter is released by the hippocampus?"
+  domains:
+    - neuroscience
+    - cell types
+  answers:
+    - matches: glutamate
+      reference: GlutamateSecretion
+- source: cl
+  mode: CHAT
+  input: "What cells synthesize catecholamine?"
+- source: cl
+  mode: GENERATE
+  input: "VIP-expressing neurons in the neocortex?"
+- source: pubmed
+  mode: CHAT
+  input: "what neurons express VIP?"
+  domains:
+    - neuroscience
+    - cell types
+- source: github_issue_obi
+  mode: CHAT
+  input: "what are some new term requests for electrophysiology terms?"
+- source: pubmed
+  mode: CHAT
+  input: "what is the role of the hippocampus in memory?"
+- source: envo
+  mode: GENERATE
+  input: "Undersea volcano"
+  property: label
+  background: pubmed
+  domains:
+      - geology
+      - environment
+- source: obi
+  mode: GENERATE
+  input: "magnetoencephalography"
+  property: label
+- source: obi
+  mode: GENERATE
+  input: "magnetoencephalography"
+  property: label
+  background: github_issues_obi
+- source: go
+  mode: GENERATE
+  input: "magnetoencephalography"
+  property: label
+  background: github_issues_obi
+- source: phenopackets
+  mode: CHAT
+  input: "What are some examples of patients with liver failure or abnormal liver enzymes?"
+- source: phenopackets
+  mode: CHAT
+  input: "what are the genes implicated in patients with liver enzyme abnormalities?"
+- source: pubmed
+  mode: CHAT
+  input: "what are some genes involved in liver abnormalities?"
+- source: uberon
+  mode: CHAT
+  input: "what is the path taken by the jugular vein?"
+- source: envo
+  mode: CHAT
+  input: "what are some of the anthropogenic contributions to pollution?"
+- source: nmdc
+  mode: CHAT
+  input: "What locations are freshwater lake or river samples typically taken from?"
+- source: gocam
+  mode: CHAT
+  input: "what are some targets of kinases in pathways involving cell division?"
