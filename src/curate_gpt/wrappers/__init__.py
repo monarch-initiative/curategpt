@@ -62,6 +62,7 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
     from curate_gpt.wrappers.ontology.bioportal_wrapper import BioportalWrapper  # noqa
     from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper  # noqa
     from curate_gpt.wrappers.sysbio.gocam_wrapper import GOCAMWrapper  # noqa
+    from curate_gpt.wrappers.legal.reusabledata_wrapper import ReusableDataWrapper  # noqa
 
     for c in get_all_subclasses(BaseWrapper):
         if c.name == name:
