@@ -50,7 +50,7 @@ load-maxoa:
 # note: assumes local checkout in sibling directory;
 # in future it should pull this from the web
 load-rdp:
-	$(CURATE) index --view reusabledata -c datasets_rdp  --source-locator ../reusabledata/data-sources/ -m openai:
+	$(CURATE) index --view reusabledata -c datasets_rdp -m openai:
 
 ## -- Generate --
 
