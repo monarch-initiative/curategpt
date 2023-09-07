@@ -45,29 +45,22 @@ class ReusableDataWrapper(BaseWrapper):
         self, collection: str = None, object_ids: Optional[Iterable[str]] = None, **kwargs
     ) -> Iterator[Dict]:
         session = requests_cache.CachedSession("reusabledata")
-        path = self.source_locator or "."
-        if self.glob:
-            files = glob.glob(os.path.join(path, "**", self.glob), recursive=True)
-        else:
-            files = []
-            for dirpath, _dirnames, filenames in os.walk(path):
-                for filename in filenames:
-                    files.append(os.path.join(dirpath, filename))
-        for file_name in files:
-            if not file_name.endswith(".yaml"):
-                continue
-            obj = yaml.safe_load(open(file_name))
+
+        path = self.source_locator or "https://reusabledata.org/data.json"
+        objs = requests.get(path).json()
+        for obj in objs:
+            obj_id = obj["id"]
             license_link = obj.get("license-link", None)
             if license_link:
-                if license_link in ["TODO", "https://", "inconsistent", "https://civic.genome.wustl.edu/about", "https://www.supfam.org/about", "ftp://ftp.nextprot.org/pub/README", "ftp://ftp.jcvi.org/pub/data/TIGRFAMs/COPYRIGHT"]:
-                    logger.warning(f"base link {license_link} for {file_name}")
+                if license_link in ["TODO", "https://", "inconsistent", "https://civic.genome.wustl.edu/about", "http://www.supfam.org/about", "ftp://ftp.nextprot.org/pub/README", "ftp://ftp.jcvi.org/pub/data/TIGRFAMs/COPYRIGHT"]:
+                    logger.warning(f"base link {license_link} for {obj_id}")
                     continue
                 if license_link.startswith("ftp://"):
                     license_link = license_link.replace("ftp://", "http://")
-                logger.info(f"{file_name} license url: {license_link}")
+                logger.info(f"{obj_id} license url: {license_link}")
                 response = session.get(license_link)
                 if not response.ok:
-                    logger.warning(f"bad link {license_link} for {file_name}")
+                    logger.warning(f"bad link {license_link} for {obj_id}")
                     continue
                 data = response.text
                 soup = BeautifulSoup(data, 'html.parser')
