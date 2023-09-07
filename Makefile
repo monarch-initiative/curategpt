@@ -47,6 +47,11 @@ load-hpoa-by-pub:
 load-maxoa:
 	$(CURATE) -v index --batch-size 10 -V maxoa  -c maxoa -m openai: data/maxoa.tsv
 
+# note: assumes local checkout in sibling directory;
+# in future it should pull this from the web
+load-rdp:
+	$(CURATE) index --view reusabledata -c datasets_rdp -m openai:
+
 ## -- Generate --
 
 load-generic-%:
