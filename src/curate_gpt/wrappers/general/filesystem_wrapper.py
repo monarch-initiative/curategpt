@@ -43,7 +43,7 @@ class FilesystemWrapper(BaseWrapper):
                     files.append(os.path.join(dirpath, filename))
         import textract
 
-        for file in files:
+        for file in set(files):
             try:
                 # Extract text from the file
                 ex = file.split(".")[-1]

@@ -177,7 +177,7 @@ def index(
     db = ChromaDBAdapter(path, **kwargs)
     db.text_lookup = text_field
     if glob:
-        files = [str(gf) for f in files for gf in Path().glob(f)]
+        files = [str(gf.absolute()) for f in files for gf in Path().glob(f) if gf.is_file()]
     if view:
         wrapper = get_wrapper(view)
         if not object_type:

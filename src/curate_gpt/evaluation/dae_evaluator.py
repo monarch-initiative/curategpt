@@ -66,6 +66,9 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
             raise ValueError(f"No test objects found in collection {test_collection}")
         n = 0
         results_dictwriter = None
+        field_names = []
+        for test_obj in test_objs:
+            field_names.extend([k for k in test_obj.keys() if k not in field_names])
         for test_obj in test_objs:
             test_obj_query = {
                 k: v
@@ -79,8 +82,8 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
                 fields_to_mask=self.fields_to_mask,
                 **kwargs,
             )
-            logger.debug(f"## Expected: {test_obj}")
-            logger.debug(f"## Prediction: {ao.object}")
+            logger.debug(f"--- Expected: {test_obj}")
+            logger.debug(f"--- Prediction: {ao.object}")
             outcomes = []
             for f in self.fields_to_predict:
                 outcomes.extend(
@@ -118,13 +121,14 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
                 for k, v in metrics.dict().items():
                     row[f"metric_{k}"] = v
                 if n == 1:
+                    field_names.extend([k for k in row.keys() if k not in field_names])
                     results_dictwriter = csv.DictWriter(
-                        report_tsv_file, fieldnames=list(row.keys()), delimiter="\t"
+                        report_tsv_file, fieldnames=field_names, delimiter="\t"
                     )
                     results_dictwriter.writeheader()
                 if not results_dictwriter:
                     raise AssertionError("results_dictwriter not initialized")
-                results_dictwriter.writerow(row)
+                results_dictwriter.writerow({k: v for k, v in row.items() if k in field_names})
                 report_tsv_file.flush()
         aggregated = aggregate_metrics(all_metrics)
         return aggregated

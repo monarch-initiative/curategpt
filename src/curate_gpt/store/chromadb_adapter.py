@@ -430,6 +430,12 @@ class ChromaDBAdapter(DBAdapter):
         collection_obj = self._get_collection_object(collection)
         metadata = collection_obj.metadata
         ef = self._embedding_function(metadata["model"])
+        if len(text) > self.default_max_document_length:
+            logger.warning(
+                f"Text too long ({len(text)}), truncating to {self.default_max_document_length}"
+            )
+            text = text[: self.default_max_document_length]
+
         query_embedding = ef([text])
         kwargs["include"] = ["metadatas", "documents", "distances", "embeddings"]
         logger.debug(
