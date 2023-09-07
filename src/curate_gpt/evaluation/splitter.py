@@ -44,7 +44,7 @@ def stratify_collection(
         if not num_training:
             raise ValueError("Must specify either num_training or num_test")
         if num_training + num_testing > size:
-            raise ValueError("num_training + num_test must be less than size")
+            raise ValueError(f"num_training + num_test must be less than size {size}")
     # objs = list(store.peek(collection, limit=num_training + num_testing + num_validation))
     logger.info(f"Stratifying collection {collection} where={where}")
     if where:

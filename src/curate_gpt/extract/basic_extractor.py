@@ -28,7 +28,7 @@ class BasicExtractor(Extractor):
         examples: List[AnnotatedObject] = None,
         background_text: str = None,
         rules: List[str] = None,
-        min_examples=3,
+        min_examples=1,
         **kwargs,
     ) -> AnnotatedObject:
         logger.debug(f"Basic extractor: {text}, {len(examples)} examples")
@@ -75,7 +75,13 @@ class BasicExtractor(Extractor):
     def deserialize(self, text: str) -> AnnotatedObject:
         logger.debug(f"Parsing {text}")
         try:
-            return AnnotatedObject(object=json.loads(text))
+            obj = json.loads(text)
+            if isinstance(obj, str):
+                if self.raise_error_if_unparsable:
+                    raise ValueError(f"Could not parse {text}")
+                else:
+                    obj = {}
+            return AnnotatedObject(object=obj)
         except Exception as e:
             match = re.search(r"\{.*\}", text)
             if match:

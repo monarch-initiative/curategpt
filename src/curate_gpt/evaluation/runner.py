@@ -88,7 +88,7 @@ def run_task(
         if len(task.additional_collections) > 1:
             raise NotImplementedError("Only one additional collection is supported")
         agent.document_adapter = tdb
-        agent.document_collection = task.additional_collections[0]
+        agent.document_adapter_collection = task.additional_collections[0]
     # TODO: use the task object directly in the evaluator
     evaluator = DatabaseAugmentedCompletionEvaluator(
         agent=agent, fields_to_predict=task.fields_to_predict, fields_to_mask=task.fields_to_mask
@@ -106,6 +106,7 @@ def run_task(
         commented_yaml = yaml.dump(task.dict(), sort_keys=False)
         lines = [f"# {line}\n" for line in commented_yaml.splitlines()]
         report_tsv_file.write("".join(lines))
+    logger.info(f"Evaluating agent {agent} on collection {sc_dict['testing']}")
     results = evaluator.evaluate(
         test_collection=sc_dict["testing"],
         num_tests=task.num_testing,
@@ -115,6 +116,7 @@ def run_task(
         generate_background=task.generate_background,
         **kwargs,
     )
+    logger.info("Collecting results...")
     task.results = results
     # set finish time to current time (ISO format)
     task.task_finished = str(datetime.now())

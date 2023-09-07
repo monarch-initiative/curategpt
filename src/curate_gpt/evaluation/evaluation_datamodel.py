@@ -84,4 +84,6 @@ class Task(BaseModel):
         )
         if self.method:
             id += f"-Mth{self.method}"
+        if self.additional_collections:
+            id += f"-AC{'-'.join(self.additional_collections)}"
         return id
