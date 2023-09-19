@@ -15,6 +15,7 @@ __all__ = [
     "BioportalWrapper",
     "NMDCWrapper",
     "GOCAMWrapper",
+    "AllianceGeneWrapper",
     "NCBIBiosampleWrapper",
     "NCBIBioprojectWrapper",
     "ClinVarWrapper",
@@ -61,7 +62,8 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
     from curate_gpt.wrappers.literature.wikipedia_wrapper import WikipediaWrapper  # noqa
     from curate_gpt.wrappers.ontology.bioportal_wrapper import BioportalWrapper  # noqa
     from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper  # noqa
-    from curate_gpt.wrappers.sysbio.gocam_wrapper import GOCAMWrapper  # noqa
+    from curate_gpt.wrappers.bio.gocam_wrapper import GOCAMWrapper  # noqa
+    from curate_gpt.wrappers.bio.alliance_gene_wrapper import AllianceGeneWrapper  # noqa
     from curate_gpt.wrappers.legal.reusabledata_wrapper import ReusableDataWrapper  # noqa
 
     for c in get_all_subclasses(BaseWrapper):
