@@ -21,6 +21,7 @@ from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.agents.evidence_agent import EvidenceAgent
+from curate_gpt.agents.summarization_agent import SummarizationAgent
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
 from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
 from curate_gpt.evaluation.runner import run_task
@@ -974,6 +975,42 @@ def citeseek(query, path, collection, model, show_references, _continue, convers
         for ref, ref_text in response.references.items():
             print(f"## {ref}")
             print(ref_text)
+
+
+@main.command()
+@collection_option
+@path_option
+@model_option
+@click.option("--view", "-V",  help="Name of the wrapper to use.")
+@click.option("--name-field", help="Field for names.")
+@click.option("--description-field", help="Field for names.")
+@click.option("--system-prompt", help="System gpt prompt to use.")
+@click.argument("ids", nargs=-1)
+def summarize(ids, path, collection, model, view, **kwargs):
+    """Summarize a list of objects.
+
+    Retrieves objects by ID from a knowledge source or wrapper and summarizes them.
+
+    Example:
+
+      curategpt summarize --model llama-2-7b-chat -V alliance_gene \
+        --name-field symbol --description-field automatedGeneSynopsis \
+        --system-prompt "What functions do these genes share?" \
+        HGNC:3239 HGNC:7632 HGNC:4458 HGNC:9439 HGNC:29427 \
+        HGNC:1160  HGNC:26270 HGNC:24682 HGNC:7225 HGNC:13797 \
+        HGNC:9118  HGNC:6396  HGNC:9179 HGNC:25358
+    """
+    db = ChromaDBAdapter(path)
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    if view:
+        db = get_wrapper(view)
+    agent = SummarizationAgent(db, extractor=extractor, knowledge_source_collection=collection)
+    response = agent.summarize(ids, **kwargs)
+    print("# Response:")
+    click.echo(response)
+
 
 
 @main.command()

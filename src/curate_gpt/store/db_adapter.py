@@ -258,6 +258,17 @@ class DBAdapter(ABC):
         :return:
         """
 
+    def lookup_multiple(self, ids: List[str], **kwargs) -> Iterator[OBJECT]:
+        """
+        Lookup an object by its ID.
+
+        :param id:
+        :param collection:
+        :return:
+        """
+        yield from [self.lookup(id, **kwargs) for id in ids]
+
+
     @abstractmethod
     def peek(self, collection: str = None, limit=5, **kwargs) -> Iterator[OBJECT]:
         """
