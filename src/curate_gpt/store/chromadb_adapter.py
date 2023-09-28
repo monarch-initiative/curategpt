@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import time
 from dataclasses import dataclass, field
 from typing import Callable, ClassVar, Iterable, Iterator, List, Mapping, Optional, Union
 
@@ -176,6 +177,7 @@ class ChromaDBAdapter(DBAdapter):
             metadata=cm_dict,
         )
         if self._is_openai(collection_obj) and batch_size is None:
+            # TODO: see https://github.com/chroma-core/chroma/issues/709
             batch_size = 100
         if batch_size is None:
             batch_size = 100000
@@ -184,10 +186,19 @@ class ChromaDBAdapter(DBAdapter):
         id_field = self.identifier_field(collection)
         # see https://github.com/chroma-core/chroma/issues/709
         num_objs = len(objs) if isinstance(objs, list) else "?"
+        cumulative_len = 0
         for next_objs in chunk(objs, batch_size):
             next_objs = list(next_objs)
             logger.info("Preparing batch from position ...")
             docs = [self._text(o, text_field) for o in next_objs]
+            docs_len = sum([len(d) for d in docs])
+            cumulative_len += docs_len
+            # TODO: use tiktoken to get a better estimate
+            if self._is_openai(collection_obj) and cumulative_len > 3000000:
+                logger.warning(f"Cumulative length = {cumulative_len}, pausing ...")
+                # TODO: this is too conservative; it should be based on time of start of batch
+                time.sleep(60)
+                cumulative_len = 0
             logger.debug(f"Example doc (tf={text_field}): {docs[0]}")
             logger.info("Preparing metadatas...")
             metadatas = [self._object_metadata(o) for o in next_objs]
@@ -257,13 +268,16 @@ class ChromaDBAdapter(DBAdapter):
         :param collection_name:
         :return:
         """
+        logger.info(f"Getting metadata for {collection_name}")
         collection_name = self._get_collection(collection_name)
         try:
+            logger.info(f"Getting collection object {collection_name}")
             collection_obj = self.client.get_collection(name=collection_name)
         except Exception:
             return None
         cm = CollectionMetadata(**collection_obj.metadata)
         if include_derived:
+            logger.info(f"Getting object count for {collection_name}")
             cm.object_count = collection_obj.count()
         return cm
 

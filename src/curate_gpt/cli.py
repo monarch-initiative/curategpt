@@ -1012,7 +1012,6 @@ def summarize(ids, path, collection, model, view, **kwargs):
     click.echo(response)
 
 
-
 @main.command()
 def plugins():
     "List installed plugins"
