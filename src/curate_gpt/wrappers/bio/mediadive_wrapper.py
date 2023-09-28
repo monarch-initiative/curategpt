@@ -69,6 +69,10 @@ class MediaDiveWrapper(BaseWrapper):
             obj = data["medium"]
             # TODO: Finalize after https://github.com/biopragmatics/bioregistry/issues/941
             obj["id"] = f"mediadive.medium:{obj['id']}"
-            obj["solutions"] = data["solutions"]
+            solutions = data.get("solutions", {})
+            if solutions:
+                obj["solutions"] = solutions
+            else:
+                logger.warning(f"No solutions for {object_id}")
             yield obj
 
