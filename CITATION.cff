@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "O'Neil"
+  given-names: "Shawn"
+  orcid: "https://orcid.org/0000-0001-6220-7080"
+- family-names: "Mungall"
+  given-names: "Chris"
+  orcid: "https://orcid.org/0000-0002-6601-2165"
+title: "Curate-GPT"
+doi: 10.5281/zenodo.8388002
+date-released: 2023-08-01
+url: "https://github.com/monarch-initiative/curate-gpt"
