@@ -62,7 +62,6 @@ The following are also supported:
 - GOCAMs
 - MAXOA files
 
-
 ## Using the command line
 
 ```bash
