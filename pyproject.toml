@@ -23,7 +23,6 @@ sentence-transformers = ">=2.2.2"
 pymongo = ">=4.4.1"
 linkml-runtime = "*"
 python-ulid = "^1.1.0"
-replicate = "^0.11.0"
 sqlite-utils = "^3.34"
 gpt4all = "^1.0.8"
 httpx = "^0.24.1"
@@ -44,7 +43,6 @@ jsonpath-ng = "^1.5.3"
 pygithub = "^1.59.1"
 jsonlines = "^3.1.0"
 llm = "^0.8"
-llm-replicate = "^0.2"
 llm-gpt4all = "^0.1.1"
 gspread = "^5.10.0"
 defusedxml = "^0.7.1"
@@ -98,6 +96,3 @@ reverse_relative = true
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
 
-# copied from llm-replicate
-[project.entry-points.llm]
-replicate = "llm_replicate"
