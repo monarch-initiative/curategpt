@@ -1,6 +1,11 @@
 # CurateGPT
 
-See [notebooks](notebooks) for examples.
+CurateGPT is a prototype web application and framework for performing general purpose AI-guided curation
+and curation-related operations over *collections* of objects.
+
+
+See also the app on [curategpt.io](https://curategpt.io) (note: this is sometimes down, and may only have a
+subset of the functionality of the local app)
 
 ## Installation
 
@@ -28,7 +33,7 @@ The flagship application is ontology curation, so to build an index for an OBO o
 make ont-cl
 ```
 
-This request an OpenAI key
+This requires an OpenAI key.
 
 (You can build indexes using an open embedding model, modify the command to leave off
 the `-m` option, but this is not recommended as currently oai embeddings seem to work best).
@@ -38,6 +43,13 @@ To load the default ontologies:
 
 ```
 make all
+```
+
+Note that by default this loads into a collection set stored at `stagedb`, whereas the app works off
+of `db`. You can copy the collection set to the db with:
+
+```
+cp -r stagedb db
 ```
 
 You can load an arbitrary json, yaml, or csv file:
@@ -61,6 +73,12 @@ The following are also supported:
 - HPOA files
 - GOCAMs
 - MAXOA files
+- Many more
+
+## Notebooks
+
+- See [notebooks](notebooks) for examples.
+
 
 ## Using the command line
 

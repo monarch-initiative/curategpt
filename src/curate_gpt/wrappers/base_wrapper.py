@@ -34,6 +34,8 @@ class BaseWrapper(ABC):
 
     default_object_type = "Publication"
 
+    prefix: ClassVar[str] = None
+
     search_limit_multiplier: ClassVar[int] = 3
 
     max_text_length = 3000
@@ -173,3 +175,12 @@ class BaseWrapper(ABC):
             else:
                 new_objects.append(obj)
         return new_objects
+
+    def create_curie(self, local_id: str) -> str:
+        """
+        Create a CURIE for the given local ID.
+
+        :param local_id:
+        :return:
+        """
+        return f"{self.prefix}:{local_id}"

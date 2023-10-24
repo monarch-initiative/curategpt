@@ -415,18 +415,26 @@ class ChromaDBAdapter(DBAdapter):
         # return
         client = self.client
         collection_obj = client.get_collection(name=self._get_collection(collection))
+        logger.debug(f"Finding: {collection} W={where} kwargs={kwargs}")
         results = collection_obj.get(where=where, **kwargs)
         metadatas = results["metadatas"]
         documents = results["documents"]
+        if "embeddings" in results:
+            embeddings = results["embeddings"]
+        else:
+            embeddings = None
         for i in range(0, len(documents)):
             if not metadatas[i]:
                 logger.error(
                     f"Empty metadata for item {i} [num: {len(metadatas)}] doc: {documents[i]}"
                 )
                 continue
-            yield self._unjson(metadatas[i]), 0.0, {
+            obj = self._unjson(metadatas[i]), 0.0, {
                 "document": documents[i],
             }
+            if embeddings:
+                obj[2]["_embeddings"] = embeddings[i]
+            yield obj
 
     def diversified_search(
         self,
@@ -517,3 +525,25 @@ class ChromaDBAdapter(DBAdapter):
         metadatas = results["metadatas"]
         for i in range(0, len(metadatas)):
             yield self._unjson(metadatas[i])
+
+    def dump_then_load(self, collection: str = None, target: DBAdapter = None):
+        """
+        Dump a collection to a file, then load it into another database.
+
+        :param collection:
+        :param target:
+        :return:
+        """
+        client = self.client
+        collection_obj = client.get_collection(name=self._get_collection(collection))
+        if not isinstance(target, ChromaDBAdapter):
+            raise ValueError("Target must be a ChromaDBAdapter")
+        cm = self.collection_metadata(collection)
+        ef = self._embedding_function(cm.model)
+        target_collection_obj = target.client.get_or_create_collection(
+            name=collection,
+            embedding_function=ef,
+            metadata=cm.dict(exclude_none=True),
+        )
+        result = collection_obj.get(include=["metadatas", "documents", "embeddings"])
+        target_collection_obj.add(**result)

@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 class LinkMLSchemarapper(BaseWrapper):
     """
     A wrapper over linkml schema documents.
+
+    Each object is a schema element (class, slot, type, enum)
     """
 
     name: ClassVar[str] = "linkml_schema"
@@ -32,4 +34,6 @@ class LinkMLSchemarapper(BaseWrapper):
         elt_types = ["classes", "slots", "types", "enums"]
         for elt_type in elt_types:
             for elt in getattr(schema, elt_type, {}).values():
-                yield json_dumper.to_dict(elt)
+                obj = json_dumper.to_dict(elt)
+                obj["@type"] = type(elt).__name__
+                yield obj

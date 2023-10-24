@@ -66,6 +66,7 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
     from curate_gpt.wrappers.bio.alliance_gene_wrapper import AllianceGeneWrapper  # noqa
     from curate_gpt.wrappers.bio.mediadive_wrapper import MediaDiveWrapper  # noqa
     from curate_gpt.wrappers.bio.bacdive_wrapper import BacDiveWrapper  # noqa
+    from curate_gpt.wrappers.bio.reactome_wrapper import ReactomeWrapper  # noqa
     from curate_gpt.wrappers.legal.reusabledata_wrapper import ReusableDataWrapper  # noqa
 
     for c in get_all_subclasses(BaseWrapper):

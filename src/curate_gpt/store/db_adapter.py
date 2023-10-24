@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Tuple, Union
 
 import yaml
+from click.utils import LazyFile
 from jsonlines import jsonlines
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
@@ -33,6 +34,8 @@ def _get_file(file: Optional[FILE_LIKE] = None, mode="r") -> Optional[TextIO]:
     if isinstance(file, str):
         return open(file, mode)
     elif isinstance(file, TextIO):
+        return file
+    elif isinstance(file, LazyFile):
         return file
     else:
         raise TypeError(f"Unknown file type: {type(file)}")
@@ -231,8 +234,9 @@ class DBAdapter(ABC):
         """
         Query the database.
 
-        :param text:
         :param collection:
+        :param where:
+        :param projection:
         :param kwargs:
         :return:
         """
@@ -331,6 +335,7 @@ class DBAdapter(ABC):
         to_file: FILE_LIKE = None,
         metadata_to_file: FILE_LIKE = None,
         format=None,
+        include=None,
         **kwargs,
     ):
         """
@@ -346,7 +351,12 @@ class DBAdapter(ABC):
         metadata = self.collection_metadata(collection)
         if format is None:
             format = "json"
-        objects = self.find(collection=collection, **kwargs)
+        if not include:
+            include = ["embeddings", "documents", "metadatas"]
+            #include = ["embeddings", "documents", "metadatas"]
+        if not isinstance(include, list):
+            include = list(include)
+        objects = self.find(collection=collection, include=include, **kwargs)
         streaming = True
         if format == "jsonl":
             writer = jsonlines.Writer(to_file)
@@ -372,3 +382,13 @@ class DBAdapter(ABC):
                 metadata_to_file.write(json.dumps(metadata))
             elif format == "yamlblock":
                 metadata_to_file.write(yaml.dump(metadata))
+
+    def dump_then_load(self, collection: str = None, target: "DBAdapter" = None):
+        """
+        Dump a collection to a file, then load it into another database.
+
+        :param collection:
+        :param target:
+        :return:
+        """
+        raise NotImplementedError
