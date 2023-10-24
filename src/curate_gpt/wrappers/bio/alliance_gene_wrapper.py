@@ -22,7 +22,9 @@ BASE_URL = "https://www.alliancegenome.org/api"
 @dataclass
 class AllianceGeneWrapper(BaseWrapper):
     """
-    A wrapper over a Alliance (AGR) gene files.
+    A wrapper over a Alliance (AGR) gene API.
+
+    In future this may be extended to other objects.
     """
 
     name: ClassVar[str] = "alliance_gene"
@@ -74,6 +76,9 @@ class AllianceGeneWrapper(BaseWrapper):
 
         for gene_id in gene_ids:
             response = session.get(f"{BASE_URL}/gene/{gene_id}")
+            if response.status_code == 400:
+                # unknown gene
+                continue
             response.raise_for_status()
             obj = response.json()
             yield obj

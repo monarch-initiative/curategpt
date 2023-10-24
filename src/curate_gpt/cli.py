@@ -1073,11 +1073,37 @@ def delete_collection(path, collection):
 @limit_option
 @path_option
 def peek_collection(path, collection, **kwargs):
-    """Inspect a collections."""
+    """Inspect a collection."""
     logging.info(f"Peeking at {collection} in {path}")
     db = ChromaDBAdapter(path)
     for obj in db.peek(collection, **kwargs):
         print(yaml.dump(obj, sort_keys=False))
+
+
+@collections.command(name="dump")
+@collection_option
+@click.option("-o", "--output", type=click.File("w"), default="-")
+@click.option("--metadata_to_file", type=click.File("w"), default=None)
+@click.option("--format", "-t", default="json", show_default=True)
+@click.option("--include", "-I", multiple=True, help="Include a field.")
+@path_option
+def dump_collection(path, collection, output, **kwargs):
+    """Dump a collection to disk."""
+    logging.info(f"Dumping {collection} in {path}")
+    db = ChromaDBAdapter(path)
+    db.dump(collection, to_file=output, **kwargs)
+
+
+@collections.command(name="copy")
+@collection_option
+@click.option("--target-path")
+@path_option
+def copy_collection(path, collection, target_path, **kwargs):
+    """Copy a collection from one path to another."""
+    logging.info(f"Copying {collection} in {path} to {target_path}")
+    db = ChromaDBAdapter(path)
+    target = ChromaDBAdapter(target_path)
+    db.dump_then_load(collection, target=target, **kwargs)
 
 
 @collections.command(name="split")

@@ -5,7 +5,7 @@ DB_PATH = stagedb
 
 ONTS = cl uberon obi go envo hp mp mondo po to oba agro fbbt nbo chebi vo peco
 TRACKERS = cl uberon obi  envo hp mondo go
-
+DBS = gocam reactome bacdive mediadive alliance_gene maxoa hpoa hpoa_by_pub gocam reactome
 
 all: index_all_ont
 
@@ -33,30 +33,40 @@ apidoc:
 ## -- Sample Datasets --
 
 load-biosamples_nmdc:
-    $(CURATE) index -V nmdc  -c $@ -m openai: API
+    $(CURATE) index -p $(DB_PATH) -V nmdc  -c $@ -m openai: API
 
 ## -- Annotation Files --
 
 load-hpoa:
-	$(CURATE) -v index --batch-size 10 -V hpoa  -c hpoa -m openai: URL
+	$(CURATE) -v index -p $(DB_PATH) --batch-size 10 -V hpoa  -c hpoa -m openai: URL
 
 load-hpoa-by-pub:
-	$(CURATE) -v index --batch-size 5 -V hpoa_by_pub  -c hpoa_by_pub -m openai: URL
+	$(CURATE) -v index -p $(DB_PATH) --batch-size 5 -V hpoa_by_pub  -c hpoa_by_pub -m openai: URL
 
 # note: maxoa repo still private, must be downloaded
 load-maxoa:
-	$(CURATE) -v index --batch-size 10 -V maxoa  -c maxoa -m openai: data/maxoa.tsv
+	$(CURATE) -v index -p $(DB_PATH) --batch-size 10 -V maxoa  -c maxoa -m openai: data/maxoa.tsv
 
 # note: assumes local checkout in sibling directory;
 # in future it should pull this from the web
 load-rdp:
-	$(CURATE) index --view reusabledata -c datasets_rdp -m openai:
+	$(CURATE) index -p $(DB_PATH) --view reusabledata -c datasets_rdp -m openai:
 
-## -- Generate --
+
+## -- Generic --
 
 load-generic-%:
 	$(CURATE) -v view index --view $@ --batch-size 10 -c $* -m openai: WEB
 
+load-db-%:
+	$(CURATE) -v view index -p $(DB_PATH) --view $* -c $* -m openai: 
+
+
+load-bacdive:
+	$(CURATE) -v view index -p $(DB_PATH) -m openai: -c strain_bacdive -V bacdive --source-locator ~/Downloads/bacdive_strains.json
+
+load-cdr:
+	$(CURATE) -v index -p $(DB_PATH) -V bioc -c cdr_test -m openai: data/CDR_TestSet.BioC.xml.gz
 
 ## -- GitHub issues --
 
@@ -82,6 +92,9 @@ load-github-obi:
 
 load-github-mondo:
 	$(CURATE) -v view index -p $(DB_PATH) -c gh_obi -m openai:  --view github --init-with "{repo: monarch-initiative/mondo}"
+
+load-github-maxo:
+	$(CURATE) -v view index -p $(DB_PATH) -c gh_maxo -m openai:  --view github --init-with "{repo: monarch-initiative/MAxO}"
 
 list:
 	$(CURATE) collections list -p $(DB_PATH)

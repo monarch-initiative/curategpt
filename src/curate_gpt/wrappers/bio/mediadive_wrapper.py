@@ -1,15 +1,9 @@
-import gzip
-import os
-import requests
 import logging
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests_cache
-from bs4 import BeautifulSoup
-from glob import glob
 
-import yaml
 from oaklib import BasicOntologyInterface, get_adapter
 
 from curate_gpt.wrappers import BaseWrapper

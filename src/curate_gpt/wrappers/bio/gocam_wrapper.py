@@ -22,7 +22,11 @@ OCCURS_IN = "BFO:0000066"
 logger = logging.getLogger(__name__)
 
 
-def _cls(obj: Dict) -> str:
+def _cls(obj: Dict) -> Optional[str]:
+    if obj.get("type", None) == "complement":
+        return None
+    if "id" not in obj:
+        raise ValueError(f"No ID for {obj}")
     id = obj["id"]
     pfx = id.split(":")[0]
     if pfx in ["UniProtKB", "MGI", "ZFIN", "SGD"]:
@@ -98,6 +102,7 @@ class GOCAMWrapper(BaseWrapper):
         sources = set()
         for i in individuals:
             typs = [_cls(x) for x in i.get("root-type", [])]
+            typs = [x for x in typs if x]
             typ = None
             for t in typs:
                 if t in MAIN_TYPES:
@@ -108,6 +113,7 @@ class GOCAMWrapper(BaseWrapper):
                 continue
             individual_to_type[i["id"]] = typ
             terms = [_cls(x) for x in i.get("type", [])]
+            terms = [x for x in terms if x]
             if len(terms) > 1:
                 logger.warning(f"Multiple terms for {i}: {terms}")
             if not terms:

@@ -21,6 +21,7 @@ class BacDiveWrapper(BaseWrapper):
     """
 
     name: ClassVar[str] = "bacdive"
+    prefix = "bacdive"
     default_object_type = "OrganismTaxon"
     format: str = None
     path_expression: str = None
@@ -39,7 +40,7 @@ class BacDiveWrapper(BaseWrapper):
         general = obj["General"]
         name_info = obj["Name and taxonomic classification"]
         new_obj = {}
-        new_obj["id"] = f"bacdive:{general['BacDive-ID']}"
+        new_obj["id"] = self.create_curie(general['BacDive-ID'])
         new_obj["name"] = name_info.get("full scientific name", None)
         if not new_obj["name"]:
             new_obj["name"] = name_info["LPSN"].get("scientific name", None)
