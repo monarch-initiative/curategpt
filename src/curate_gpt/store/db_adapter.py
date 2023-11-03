@@ -57,6 +57,7 @@ class DBAdapter(ABC):
     Objects are partitioned into *collections*, which maps to the equivalent concept in
     MongoDB and ChromaDB.
 
+    >>> from curate_gpt.store import get_store
     >>> store = get_store("in_memory")
     >>> store.insert({"name": "John", "age": 42}, collection="people")
 
@@ -65,6 +66,7 @@ class DBAdapter(ABC):
     store object. You can optionally bind a store object to a collection, which effectively
     gives you a collection object:
 
+    >>> from curate_gpt.store import get_store
     >>> store = get_store("in_memory")
     >>> store.set_collection("people")
     >>> store.insert({"name": "John", "age": 42})
@@ -92,6 +94,10 @@ class DBAdapter(ABC):
     def insert(self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, **kwargs):
         """
         Insert an object or list of objects into the store.
+
+        >>> from curate_gpt.store import get_store
+        >>> store = get_store("in_memory")
+        >>> store.insert([{"name": "John", "age": 42}], collection="people")
 
         :param objs:
         :param collection:
@@ -134,6 +140,8 @@ class DBAdapter(ABC):
         """
         Create a view in the database.
 
+        TODO
+
         :param view:
         :return:
         """
@@ -144,6 +152,22 @@ class DBAdapter(ABC):
     def set_collection(self, collection: str):
         """
         Set the current collection.
+
+        If this is set, then all subsequent operations will be performed on this collection, unless
+        overridden.
+
+        This allows the following
+
+        >>> from curate_gpt.store import get_store
+        >>> store = get_store("in_memory")
+        >>> store.set_collection("people")
+        >>> store.insert([{"name": "John", "age": 42}])
+
+        to be written in place of
+
+        >>> from curate_gpt.store import get_store
+        >>> store = get_store("in_memory")
+        >>> store.insert([{"name": "John", "age": 42}], collection="people")
 
         :param collection:
         :return:
@@ -172,7 +196,7 @@ class DBAdapter(ABC):
         """
         List all collections in the database.
 
-        :return:
+        :return: names of collections
         """
 
     @abstractmethod
@@ -192,6 +216,12 @@ class DBAdapter(ABC):
     ):
         """
         Set the metadata for a collection.
+
+        >>> from curate_gpt.store import get_store
+        >>> from curate_gpt.store import CollectionMetadata
+        >>> store = get_store("in_memory")
+        >>> cm = CollectionMetadata(name="People", description="People in the database")
+        >>> store.set_collection_metadata("people", cm)
 
         :param collection_name:
         :return:
@@ -217,6 +247,17 @@ class DBAdapter(ABC):
         """
         Query the database for a text string.
 
+        >>> from curate_gpt.store import get_store
+        >>> store = get_store("chromadb", "db")
+        >>> for obj, distance, info in store.search("forebrain neurons", collection="ont_cl"):
+        ...     obj_id = obj["id"]
+        ...     # print at precision of 2 decimal places
+        ...     print(f"{obj_id} {distance:.2f}")
+        <BLANKLINE>
+        ...
+        NeuronOfTheForebrain 0.28
+        ...
+
         :param text:
         :param collection:
         :param where:
@@ -233,6 +274,10 @@ class DBAdapter(ABC):
     ) -> Iterator[SEARCH_RESULT]:
         """
         Query the database.
+
+        >>> from curate_gpt.store import get_store
+        >>> store = get_store("chromadb", "db")
+        >>> objs = list(store.find({"name": "NeuronOfTheForebrain"}, collection="ont_cl"))
 
         :param collection:
         :param where:

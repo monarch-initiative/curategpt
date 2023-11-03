@@ -1,6 +1,6 @@
 cases:
 - source: cl
-  mode: CHAT
+  mode: Chat
   input: "What neurotransmitter is released by the hippocampus?"
   domains:
     - neuroscience

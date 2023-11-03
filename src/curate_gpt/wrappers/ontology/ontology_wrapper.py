@@ -26,7 +26,9 @@ class OntologyWrapper(BaseWrapper):
     A wrapper to pull from ontologies using OAK.
 
     This wrapper can be used either with static sources (e.g. an ontology file)
-    or dynamic (pubmed)
+    or dynamic (pubmed).
+
+    The data model is a simple JSON/Dict structure
     """
 
     name: ClassVar[str] = "oaklib"
@@ -136,7 +138,7 @@ class OntologyWrapper(BaseWrapper):
             self._objects_by_curie[id] = obj
         # for id, alias in adapter.alias_relationships():
         if isinstance(adapter, OboGraphInterface):
-            for ldef in adapter.logical_definitions():
+            for ldef in adapter.logical_definitions(adapter.entities()):
                 shorthand = self._as_shorthand(ldef.definedClassId)
                 obj = self._objects_by_curie.get(ldef.definedClassId, None)
                 if obj is None:
@@ -174,11 +176,16 @@ class OntologyWrapper(BaseWrapper):
 
     def retrieve_shorthand_to_id_from_store(self, store: DBAdapter) -> Mapping[str, str]:
         if not self.shorthand_to_id:
+            self.shorthand_to_id = {}
             for obj, _, __ in store.find({}):
                 self.shorthand_to_id[obj["id"]] = obj["original_id"]
         return self.shorthand_to_id
 
-    def from_object(self, obj: Dict[str, Any], store: DBAdapter, **kwargs) -> og.Graph:
+    def unwrap_object(self, obj: Dict[str, Any], store: DBAdapter, **kwargs) -> og.Graph:
+        return self.unwrap_objects([obj], store, **kwargs)
+
+
+    def unwrap_objects(self, objs: Iterable[Dict[str, Any]], store: DBAdapter, drop_dangling=False, **kwargs) -> og.GraphDocument:
         """
         Convert an object from the store to the view representation.
 
@@ -189,28 +196,53 @@ class OntologyWrapper(BaseWrapper):
         :return:
         """
         m = self.retrieve_shorthand_to_id_from_store(store)
-        id = obj["original_id"]
-        node = og.Node(
-            id=id,
-            lbl=obj["label"],
-        )
-        edges = []
-        for rel in obj["relationships"]:
-            tgt = rel["target"]
-            if tgt in m:
-                tgt = m[tgt]
-            else:
-                logger.warning(f"Could not find {tgt} in {m}")
-            pred = rel["predicate"]
-            if pred in m:
-                pred = m[pred]
-            else:
-                logger.warning(f"Could not find {pred} in {m}")
-            edge = og.Edge(
-                sub=id,
-                obj=tgt,
-                pred=pred,
+        graph = og.Graph(id="tmp", nodes=[], edges=[])
+        for obj in objs:
+            if not obj:
+                logger.warning(f"Skipping empty object {obj}")
+                continue
+            id = obj.get("original_id", None)
+            if not id:
+                logger.warning(f"Skipping empty id in {obj}")
+                continue
+            node = og.Node(
+                id=id,
+                lbl=obj.get("label", None),
+                type="CLASS",
             )
-            edges.append(edge)
-        graph = og.Graph(id="tmp", nodes=[node], edges=edges)
-        return graph
+            meta = {}
+            defn = obj.get("definition", None)
+            if defn:
+                meta["definition"] = {"val": defn}
+            node.meta = meta
+            graph.nodes.append(node)
+            for rel in obj.get("relationships", []):
+                tgt = rel.get("target", None)
+                if not tgt:
+                    logger.warning(f"Skipping empty target in {rel}")
+                    continue
+                if isinstance(tgt, list):
+                    logger.warning(f"Unexpected list: {tgt}")
+                    tgt = tgt[0]
+                if tgt in m:
+                    tgt = m[tgt]
+                else:
+                    if drop_dangling:
+                        logger.warning(f"Could not find {tgt}")
+                        continue
+                    else:
+                        tgt = tgt.replace(":", "_")
+                pred = rel["predicate"]
+                if pred in m:
+                    pred = m[pred]
+                else:
+                    logger.warning(f"Could not find {pred}")
+                if pred == "subClassOf":
+                    pred = "is_a"
+                edge = og.Edge(
+                    sub=id,
+                    obj=tgt,
+                    pred=pred,
+                )
+                graph.edges.append(edge)
+        return og.GraphDocument(graphs=[graph])

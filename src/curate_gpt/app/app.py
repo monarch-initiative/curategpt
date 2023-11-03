@@ -457,8 +457,11 @@ elif option == CLUSTER_SEARCH:
         )
         labels = []
         vectors = []
+        label_field = db.label_field(collection)
+        id_field = db.identifier_field(collection)
         for i, (obj, _distance, doc) in enumerate(results):
-            labels.append(obj.get("label", obj.get("id", f"Object {i}")))
+            # use label field preferentially, then id field, then numeric
+            labels.append(obj.get(label_field, obj.get(id_field, f"Object {i}")))
             vectors.append(np.array(doc["embeddings"]))
         distances = distance_matrix(vectors, vectors)
         fig = vectors_to_fig(labels, np.array(vectors), method=method)

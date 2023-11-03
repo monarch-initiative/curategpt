@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from enum import Enum
 from random import shuffle
-from typing import Any, Dict, Iterator, List, Optional, Union
+from typing import Any, Dict, Iterator, List, Optional, Union, Tuple
 
 import inflection
 import yaml
@@ -79,7 +79,7 @@ class MappingAgent(BaseAgent):
         """
         Match entities
 
-        :param text:
+        :param query:
         :param limit:
         :param randomize_order: randomize the order in which candidates are presented (mostly for testing purposes)
         :param kwargs:
@@ -174,7 +174,6 @@ class MappingAgent(BaseAgent):
             prompt += "\n\n"
             prompt += "Relationship:\n"
             model = self.extractor.model
-            print(prompt)
             response = model.prompt(prompt)
             response_text = response.text()
             if response_text in MappingPredicate.__members__:
@@ -182,5 +181,16 @@ class MappingAgent(BaseAgent):
             else:
                 pred = MappingPredicate.UNKNOWN
             m = Mapping(subject_id=query, object_id=result[0]["id"], predicate_id=pred)
-            print(m)
             yield m
+
+    def find_links(self, other_collection: str) -> Iterator[Tuple[str, str, str]]:
+        """
+        Find links between elements in this collection and another collection
+
+        :param other_collection:
+        :return:
+        """
+        # TODO
+        for obj, _, info in self.knowledge_source.find(collection=other_collection, include = ["embeddings", "documents", "metadatas"]):
+            embeddings = info["embeddings"]
+            self.knowledge_source.find(embeddings, limit=10)

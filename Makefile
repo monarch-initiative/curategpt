@@ -3,7 +3,7 @@ CURATE = $(RUN) curategpt
 
 DB_PATH = stagedb
 
-ONTS = cl uberon obi go envo hp mp mondo po to oba agro fbbt nbo chebi vo peco
+ONTS = cl uberon obi go envo hp mp mondo po to oba agro fbbt nbo chebi vo peco maxo
 TRACKERS = cl uberon obi  envo hp mondo go
 DBS = gocam reactome bacdive mediadive alliance_gene maxoa hpoa hpoa_by_pub gocam reactome
 
@@ -61,6 +61,10 @@ load-generic-%:
 load-db-%:
 	$(CURATE) -v view index -p $(DB_PATH) --view $* -c $* -m openai: 
 
+load-linkml-w3id-%:
+	$(CURATE) view index --view linkml_schema -c schema_$* -m openai: --source-locator https://w3id.org/$*/$*.yaml
+
+load-mixs: load-linkml-w3id-mixs
 
 load-bacdive:
 	$(CURATE) -v view index -p $(DB_PATH) -m openai: -c strain_bacdive -V bacdive --source-locator ~/Downloads/bacdive_strains.json

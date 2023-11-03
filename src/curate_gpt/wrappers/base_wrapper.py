@@ -184,3 +184,25 @@ class BaseWrapper(ABC):
         :return:
         """
         return f"{self.prefix}:{local_id}"
+
+    def wrap_object(self, obj: Dict) -> Iterator[Dict]:
+        """
+        Convert an object from the source representation to the store representation.
+
+        :param obj:
+        :return:
+        """
+        raise NotImplementedError
+
+    def unwrap_object(self, obj: Dict[str, Any], store: DBAdapter, **kwargs) -> Any:
+        """
+        Convert an object from the store to the source representation.
+
+        reverse transform of `as_object`
+
+        :param obj:
+        :param store:
+        :param kwargs:
+        :return:
+        """
+        raise NotImplementedError

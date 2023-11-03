@@ -25,7 +25,7 @@ from curate_gpt.store.db_adapter import (
     CollectionMetadata,
     DBAdapter,
 )
-from curate_gpt.utils.search import mmr_diversified_search
+from curate_gpt.utils.vector_algorithms import mmr_diversified_search
 
 logger = logging.getLogger(__name__)
 
@@ -417,12 +417,14 @@ class ChromaDBAdapter(DBAdapter):
         collection_obj = client.get_collection(name=self._get_collection(collection))
         logger.debug(f"Finding: {collection} W={where} kwargs={kwargs}")
         results = collection_obj.get(where=where, **kwargs)
+        logger.debug("Found items")
         metadatas = results["metadatas"]
         documents = results["documents"]
         if "embeddings" in results:
             embeddings = results["embeddings"]
         else:
             embeddings = None
+        logger.debug(f"Found {len(documents)} items")
         for i in range(0, len(documents)):
             if not metadatas[i]:
                 logger.error(
@@ -546,4 +548,17 @@ class ChromaDBAdapter(DBAdapter):
             metadata=cm.dict(exclude_none=True),
         )
         result = collection_obj.get(include=["metadatas", "documents", "embeddings"])
-        target_collection_obj.add(**result)
+        if not result["ids"]:
+            raise ValueError("No ids found")
+        if not result["embeddings"]:
+            raise ValueError("No embeddings found")
+        i = 0
+        batch_size = 5000
+        while i < len(result["ids"]):
+            logger.debug(f"Dumping {i} of {len(result['ids'])}")
+            batched_obj = {}
+            for k in ["ids", "metadatas", "documents", "embeddings"]:
+                batched_obj[k] = result[k][i: i + batch_size]
+            target_collection_obj.add(**batched_obj)
+            i += batch_size
+
