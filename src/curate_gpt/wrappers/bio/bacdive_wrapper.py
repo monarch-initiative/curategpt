@@ -34,9 +34,9 @@ class BacDiveWrapper(BaseWrapper):
         with open(path) as file:
             data = json.load(file)
             for obj in data.values():
-                yield from self.from_object(obj)
+                yield from self.wrap_object(obj)
 
-    def from_object(self, obj: Dict) -> Iterator[Dict]:
+    def wrap_object(self, obj: Dict) -> Iterator[Dict]:
         general = obj["General"]
         name_info = obj["Name and taxonomic classification"]
         new_obj = {}

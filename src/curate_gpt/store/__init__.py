@@ -17,9 +17,10 @@ in the future.
 
 from .chromadb_adapter import ChromaDBAdapter
 from .db_adapter import DBAdapter
+from .metadata import CollectionMetadata
 from .schema_proxy import SchemaProxy
 
-__all__ = ["DBAdapter", "ChromaDBAdapter", "SchemaProxy", "get_store"]
+__all__ = ["DBAdapter", "ChromaDBAdapter", "SchemaProxy", "CollectionMetadata", "get_store"]
 
 
 def get_all_subclasses(cls):
@@ -30,12 +31,12 @@ def get_all_subclasses(cls):
     ]
 
 
-def get_store(name: str, **kwargs) -> DBAdapter:
+def get_store(name: str, *args, **kwargs) -> DBAdapter:
     from .in_memory_adapter import InMemoryAdapter  # noqa F401
 
     # noqa I005
 
     for c in get_all_subclasses(DBAdapter):
         if c.name == name:
-            return c(**kwargs)
+            return c(*args, **kwargs)
     raise ValueError(f"Unknown view {name}, not found in {get_all_subclasses(DBAdapter)}")

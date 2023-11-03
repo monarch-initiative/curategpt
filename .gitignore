@@ -1,7 +1,7 @@
 *.pem
 db/
 proddb/
-notebooks/db/
+notebooks/command-line/db/
 *_cache.sqlite
 
 # Byte-compiled / optimized / DLL files

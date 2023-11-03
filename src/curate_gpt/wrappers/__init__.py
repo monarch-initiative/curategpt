@@ -18,6 +18,7 @@ __all__ = [
     "AllianceGeneWrapper",
     "NCBIBiosampleWrapper",
     "NCBIBioprojectWrapper",
+    "OBOFormatWrapper",
     "ClinVarWrapper",
     "PMCWrapper",
     "HPOAWrapper",
@@ -56,12 +57,14 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
         NCBIBiosampleWrapper,
     )
     from curate_gpt.wrappers.investigation.nmdc_wrapper import NMDCWrapper  # noqa
+    from curate_gpt.wrappers.investigation.ess_deepdive_wrapper import ESSDeepDiveWrapper  # noqa
     from curate_gpt.wrappers.literature.bioc_wrapper import BiocWrapper  # noqa
     from curate_gpt.wrappers.literature.pmc_wrapper import PMCWrapper  # noqa
     from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper  # noqa
     from curate_gpt.wrappers.literature.wikipedia_wrapper import WikipediaWrapper  # noqa
     from curate_gpt.wrappers.ontology.bioportal_wrapper import BioportalWrapper  # noqa
     from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper  # noqa
+    from curate_gpt.wrappers.ontology.oboformat_wrapper import OBOFormatWrapper  # noqa
     from curate_gpt.wrappers.bio.gocam_wrapper import GOCAMWrapper  # noqa
     from curate_gpt.wrappers.bio.alliance_gene_wrapper import AllianceGeneWrapper  # noqa
     from curate_gpt.wrappers.bio.mediadive_wrapper import MediaDiveWrapper  # noqa

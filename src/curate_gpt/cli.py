@@ -5,12 +5,14 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Union, Any
 
 import click
 import pandas as pd
 import yaml
 from click_default_group import DefaultGroup
+from linkml_runtime.dumpers import yaml_dumper, json_dumper
+from linkml_runtime.utils.yamlutils import YAMLRoot
 from llm import UnknownModelError, get_model, get_plugins
 from llm.cli import load_conversation
 from oaklib import get_adapter
@@ -26,8 +28,10 @@ from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvalu
 from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
 from curate_gpt.evaluation.runner import run_task
 from curate_gpt.evaluation.splitter import stratify_collection
+from curate_gpt.extract import AnnotatedObject
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
+from curate_gpt.utils.vectordb_operations import match_collections
 from curate_gpt.wrappers import BaseWrapper, get_wrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from curate_gpt.wrappers.ontology import OntologyWrapper
@@ -36,12 +40,47 @@ __all__ = [
     "main",
 ]
 
+
+def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml") -> None:
+    """
+    Dump an object to stdout.
+
+    :param obj:
+    :param format:
+    :return:
+    """
+    if isinstance(obj, str):
+        print(obj)
+        return
+    if isinstance(obj, AnnotatedObject):
+        obj = obj.object
+    if isinstance(obj, BaseModel):
+        obj = obj.dict()
+    if isinstance(obj, YAMLRoot):
+        obj = json_dumper.to_dict(obj)
+    if format is None or format == "yaml":
+        ser = yaml.dump(obj, sort_keys=False)
+    elif format == "json":
+        ser = json.dumps(obj, indent=2)
+    elif format == "blob":
+        ser = list(obj.values())[0]
+    else:
+        raise ValueError(f"Unknown format {format}")
+    print(ser)
+
 # logger = logging.getLogger(__name__)
 
 path_option = click.option("-p", "--path", help="Path to a file or directory for database.")
-model_option = click.option("-m", "--model", help="Model to use for generation, e.g. gpt-4.")
+model_option = click.option("-m", "--model", help="Model to use for generation or embedding, e.g. gpt-4.")
 schema_option = click.option("-s", "--schema", help="Path to schema.")
 collection_option = click.option("-c", "--collection", help="Collection within the database.")
+output_format_option = click.option(
+    "-t",
+    "--output-format",
+    type=click.Choice(["yaml", "json", "blob", "csv"]),
+    default="yaml",
+    help="Output format for results.",
+)
 relevance_factor_option = click.option(
     "--relevance-factor", type=click.FLOAT, help="Relevance factor for search."
 )
@@ -192,6 +231,8 @@ def index(
     if not append:
         if collection in db.list_collection_names():
             db.remove_collection(collection)
+    if model is None:
+        model = "openai:"
     for file in files:
         logging.debug(f"Indexing {file}")
         if wrapper:
@@ -229,7 +270,7 @@ def index(
 )
 @click.argument("query")
 def search(query, path, collection, show_documents, **kwargs):
-    """Query a database."""
+    """Search a collection using embedding search."""
     db = ChromaDBAdapter(path)
     results = db.search(query, collection=collection, **kwargs)
     i = 0
@@ -242,6 +283,83 @@ def search(query, path, collection, show_documents, **kwargs):
             print(meta)
             print("```")
 
+
+@main.command(name="all-by-all")
+@path_option
+@collection_option
+@limit_option
+@relevance_factor_option
+@click.option(
+    "--other-collection",
+    "-X",
+    help="Other collection to compare against.",
+)
+@click.option(
+    "--other-path",
+    "-P",
+    help="Path for other collection (defaults to main path).",
+)
+@click.option(
+    "--threshold",
+    type=click.FLOAT,
+    help="Cosine smilarity threshold for matches.",
+)
+@click.option(
+    "--ids-only/--no-ids-only",
+    default=False,
+    show_default=True,
+    help="Whether to show only ids.",
+)
+@click.option(
+    "--left-field",
+    "-L",
+    multiple=True,
+    help="Field to show from left collection.",
+)
+@click.option(
+    "--right-field",
+    "-R",
+    multiple=True,
+    help="Field to show from right collection.",
+)
+
+@output_format_option
+def all_by_all(path, collection, other_collection, other_path, threshold, ids_only, output_format, left_field, right_field, **kwargs):
+    """Match two collections."""
+    db = ChromaDBAdapter(path)
+    if other_path is None:
+        other_path = path
+    other_db = ChromaDBAdapter(other_path)
+    results = match_collections(db, collection, other_collection, other_db)
+    def _obj(obj: Dict, is_left=False) -> Any:
+        if ids_only:
+            obj = {"id": obj["id"]}
+        if is_left and left_field:
+            return {f"left_{k}": obj[k] for k in left_field}
+        if not is_left and right_field:
+            return {f"right_{k}": obj[k] for k in right_field}
+        side = "left" if is_left else "right"
+        obj = {f"{side}_{k}": v for k, v in obj.items()}
+        return obj
+    i = 0
+    for obj1, obj2, sim in results:
+        if threshold and sim < threshold:
+            continue
+        i += 1
+        obj1 = _obj(obj1, is_left=True)
+        obj2 = _obj(obj2, is_left=False)
+        row = {**obj1, **obj2, "similarity": sim}
+        if output_format == "csv":
+            if i == 1:
+                fieldnames = list(row.keys())
+                dw = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
+                dw.writeheader()
+            dw.writerow({k: v for k, v in row.items() if k in fieldnames})
+            continue
+
+        print(f"\n## Match {i} COSINE SIMILARITY: {sim}")
+        dump(obj1, output_format)
+        dump(obj2, output_format)
 
 @main.command()
 @path_option
@@ -296,6 +414,7 @@ def matches(id, path, collection):
     default=None,
     help="Input file to extract.",
 )
+@output_format_option
 @click.argument("text", nargs=-1)
 def extract(
     text,
@@ -307,6 +426,7 @@ def extract(
     rule: List[str],
     model,
     schema,
+    output_format,
     **kwargs,
 ):
     """Extract."""
@@ -334,7 +454,7 @@ def extract(
         text = list(open(input).readlines())
     text = "\n".join(text)
     ao = agent.extract(text, rules=rule, **filtered_kwargs)
-    print(yaml.dump(ao.object, sort_keys=False))
+    dump(ao.object, format=output_format)
 
 
 @main.command()
@@ -456,6 +576,7 @@ def extract_from_pubmed(
     help="Rule to use for generating background knowledge.",
 )
 @schema_option
+@output_format_option
 @click.argument("query")
 def complete(
     query,
@@ -467,6 +588,7 @@ def complete(
     model,
     query_property,
     schema,
+    output_format,
     **kwargs,
 ):
     """Generate an entry from a query using object completion.
@@ -474,6 +596,8 @@ def complete(
     Example:
 
         curategpt generate  -c obo_go "umbelliferose biosynthetic process"
+
+    If the string looks like yaml (if it has a ':') then it will be parsed as yaml.
     """
     db = ChromaDBAdapter(path)
     if schema:
@@ -496,8 +620,88 @@ def complete(
     if ":" in query:
         query = yaml.safe_load(query)
     ao = dac.complete(query, context_property=query_property, rules=rule, **filtered_kwargs)
-    print(yaml.dump(ao.object, sort_keys=False))
+    dump(ao.object, format=output_format)
 
+
+@main.command()
+@path_option
+@collection_option
+@click.option(
+    "-C/--no-C",
+    "--conversation/--no-conversation",
+    default=False,
+    show_default=True,
+    help="Whether to run in conversation mode.",
+)
+@model_option
+@limit_option
+@click.option(
+    "-P", "--query-property", default="label", show_default=True, help="Property to use for query."
+)
+@click.option(
+    "--fields-to-predict",
+    multiple=True,
+)
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@generate_background_option
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@schema_option
+@output_format_option
+@click.argument("input_file")
+def complete_multiple(
+    input_file,
+    path,
+    docstore_path,
+    docstore_collection,
+    conversation,
+    rule: List[str],
+    model,
+    query_property,
+    schema,
+    output_format,
+    **kwargs,
+):
+    """Generate an entry from a query using object completion for multiple objects.
+
+    Example:
+
+        curategpt generate  -c obo_go terms.txt
+    """
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    dac = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        dac.document_adapter = ChromaDBAdapter(docstore_path)
+        dac.document_adapter_collection = docstore_collection
+    with open(input_file) as f:
+        queries = [l.strip() for l in f.readlines()]
+        for query in queries:
+            if ":" in query:
+                query = yaml.safe_load(query)
+            ao = dac.complete(query, context_property=query_property, rules=rule, **filtered_kwargs)
+            print("---")
+            dump(ao.object, format=output_format)
 
 @main.command()
 @path_option
@@ -1194,7 +1398,7 @@ def split_collection(
 @path_option
 @click.argument("metadata_yaml")
 def set_collection_metadata(path, collection, metadata_yaml):
-    """Delete a collections."""
+    """Set metadata for a collection."""
     db = ChromaDBAdapter(path)
     db.update_collection_metadata(collection, **yaml.safe_load(metadata_yaml))
 
@@ -1250,7 +1454,7 @@ def index_ontology_command(ont, path, collection, append, model, index_fields, b
 
 @main.group()
 def view():
-    "Virtual store"
+    "Virtual store/wrapper"
 
 
 @view.command(name="objects")
@@ -1271,6 +1475,31 @@ def view_objects(view, init_with, **kwargs):
     vstore = get_wrapper(view, **kwargs)
     for obj in vstore.objects():
         print(yaml.dump(obj, sort_keys=False))
+
+
+@view.command(name="unwrap")
+@click.option("--view", "-V", required=True, help="Name of the wrapper to use.")
+@click.option("--source-locator")
+@path_option
+@collection_option
+@output_format_option
+@click.argument("input_file")
+def unwrap_objects(input_file, view, path, collection, output_format, **kwargs):
+    """Unwrap objects back to source schema.
+
+    Example:
+
+        TODO
+
+    """
+    vstore = get_wrapper(view, **kwargs)
+    store = ChromaDBAdapter(path)
+    store.set_collection(collection)
+    with open(input_file) as f:
+        objs = yaml.safe_load_all(f)
+        unwrapped = vstore.unwrap_objects(objs, store=store)
+        dump(unwrapped, output_format)
+
 
 
 @view.command(name="search")

@@ -40,9 +40,9 @@ class JSONWrapper(BaseWrapper):
                 obj = yaml.safe_load(file)
             else:
                 raise ValueError(f"Unknown format {format}")
-        yield from self.from_object(obj)
+        yield from self.wrap_object(obj)
 
-    def from_object(self, obj: Dict) -> Iterator[Dict]:
+    def wrap_object(self, obj: Dict) -> Iterator[Dict]:
         jsonpath_expression = parse(self.path_expression)
         for match in jsonpath_expression.find(obj):
             yield match.value
