@@ -7,21 +7,61 @@ and curation-related operations over *collections* of objects.
 See also the app on [curategpt.io](https://curategpt.io) (note: this is sometimes down, and may only have a
 subset of the functionality of the local app)
 
+
 ## Installation
+
+You will first need to [install Poetry](https://python-poetry.org/docs/#installation).
+
+Then clone this repo 
+
+```
+git clone https://github.com/monarch-initiative/curate-gpt.git
+cd curate-gpt
+```
+
+and install the dependencies:
+
 
 ```
 poetry install
 ```
+
+In order to get the best performance from CurateGPT, we recommend getting an OpenAI API key, and setting it:
+
+```
+export OPENAI_API_KEY=<your key>
+```
+
+(for members of Monarch: ask on Slack if you would like to use the group key)
+
+## Loading example data and running the app
+
+You initially start with an empty database. You can load whatever you like into this
+database! Any JSON, YAML, or CSV is accepted.
+
+CurateGPT comes with *wrappers* for some existing local and remote sources, including
+ontologies. The [Makefile](Makefile) contains some examples of how to load these. You can
+load any ontology using the `ont-<name>` target, e.g.:
+
+```
+make ont-cl
+```
+
+This loads CL (via OAK) into a collection called `ont_cl`
+
+Note that by default this loads into a collection set stored at `stagedb`, whereas the app works off
+of `db`. You can copy the collection set to the db with:
+
+```
+cp -r stagedb db
+```
+
 
 You can then run the streamlit app with:
 
 ```
 make app
 ```
-
-However, you will need some indexes to get started. TODO: provide ready-made downloads
-
-For now, you must create your own, see below.
 
 ## Building Indexes
 
@@ -45,6 +85,8 @@ To load the default ontologies:
 make all
 ```
 
+(this may take some time)
+
 To load different databases:
 
 ```
@@ -53,18 +95,14 @@ make load-db-reactome
 ```
 
 
-Note that by default this loads into a collection set stored at `stagedb`, whereas the app works off
-of `db`. You can copy the collection set to the db with:
-
-```
-cp -r stagedb db
-```
 
 You can load an arbitrary json, yaml, or csv file:
 
 ```
 curategpt view index -c my_foo foo.json
 ```
+
+(you will need to do this in the poetry shell)
 
 To load a GitHub repo of issues:
 
