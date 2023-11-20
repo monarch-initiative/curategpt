@@ -25,6 +25,13 @@ class AnnotatedObject(BaseModel):
     key_values: Dict[str, "AnnotatedObject"] = {}
 
     def as_single_object(self) -> Dict[str, Any]:
+        """
+        Return as a standard dictionary object.
+
+        Each annotation is prefixed with an underscore.
+
+        :return: dictionary object
+        """
         object = copy(self.object)
         for key, value in self.annotations.items():
             object[f"_{key}"] = value
@@ -34,6 +41,11 @@ class AnnotatedObject(BaseModel):
 
     @property
     def text(self) -> Optional[str]:
+        """
+        Get the text annotation of the object.
+
+        :return:
+        """
         return self.annotations.get("text", None)
 
 

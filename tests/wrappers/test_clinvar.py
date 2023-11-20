@@ -7,7 +7,7 @@ import yaml
 
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.chat_agent import ChatAgent
-from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.clinical.clinvar_wrapper import ClinVarWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
@@ -45,7 +45,7 @@ def test_clinvar_search(wrapper):
 
 
 def test_clinvar_chat(wrapper):
-    extractor = DatabaseAugmentedCompletion()
+    extractor = DragonAgent()
     extractor = BasicExtractor()
     chat = ChatAgent(knowledge_source=wrapper, extractor=extractor)
     response = chat.chat("what are the major variants and genes underpinning Crohn's disease?")

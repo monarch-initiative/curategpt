@@ -8,7 +8,7 @@ from typing import TextIO
 import yaml
 
 from curate_gpt import BasicExtractor, ChromaDBAdapter
-from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
 from curate_gpt.evaluation.evaluation_datamodel import Task
 from curate_gpt.evaluation.splitter import stratify_collection_to_store
@@ -81,7 +81,7 @@ def run_task(
     task.executed_on = (
         f"{platform.system()}-{platform.release()}-{platform.version()}-{platform.machine()}"
     )
-    agent = DatabaseAugmentedCompletion(
+    agent = DragonAgent(
         knowledge_source=tdb, knowledge_source_collection="", extractor=extractor
     )
     if task.additional_collections:

@@ -8,7 +8,7 @@ from typing import Callable, ClassVar, Iterable, Iterator, List, Mapping, Option
 
 import chromadb
 import yaml
-from chromadb import API, Settings
+from chromadb import ClientAPI as API, Settings
 from chromadb.api import EmbeddingFunction
 from chromadb.types import Collection
 from chromadb.utils import embedding_functions

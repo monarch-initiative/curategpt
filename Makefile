@@ -30,6 +30,9 @@ app:
 apidoc:
 	$(RUN) sphinx-apidoc -f -M -o docs/ src/curate_gpt/ && cd docs && $(RUN) make html
 
+%-doctest: %
+	$(RUN) python -m doctest --option ELLIPSIS --option NORMALIZE_WHITESPACE $<
+
 ## -- Sample Datasets --
 
 load-biosamples_nmdc:

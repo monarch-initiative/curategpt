@@ -4,7 +4,7 @@ These chain together different search and generate components.
 """
 
 from .chat_agent import ChatAgent
-from .dac_agent import DatabaseAugmentedCompletion
+from .dragon_agent import DragonAgent
 from .mapping_agent import MappingAgent
 
-__all__ = ["MappingAgent", "ChatAgent", "DatabaseAugmentedCompletion"]
+__all__ = ["MappingAgent", "ChatAgent", "DragonAgent"]

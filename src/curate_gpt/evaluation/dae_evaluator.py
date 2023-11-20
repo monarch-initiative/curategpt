@@ -5,7 +5,7 @@ from typing import List, TextIO
 
 import yaml
 
-from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.evaluation.base_evaluator import BaseEvaluator
 from curate_gpt.evaluation.calc_statistics import (
     aggregate_metrics,
@@ -23,7 +23,7 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
     Retrieves objects in response to a query using a structured knowledge source.
     """
 
-    agent: DatabaseAugmentedCompletion = None
+    agent: DragonAgent = None
     fields_to_predict: List[str] = field(default_factory=list)
     fields_to_mask: List[str] = field(default_factory=list)
 

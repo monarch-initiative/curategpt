@@ -20,7 +20,8 @@ from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
-from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
+from curate_gpt.agents.concept_recognition_agent import ConceptRecognitionAgent, AnnotationMethod
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.agents.evidence_agent import EvidenceAgent
 from curate_gpt.agents.summarization_agent import SummarizationAgent
@@ -382,6 +383,86 @@ def matches(id, path, collection):
 @main.command()
 @path_option
 @collection_option
+@model_option
+@limit_option
+@click.option(
+    "--identifier-field",
+    "-I",
+    help="Field to use as identifier (defaults to id).",
+)
+@click.option(
+    "--label-field",
+    "-L",
+    help="Field to use as label (defaults to label).",
+)
+@click.option(
+    "-l", "--limit", default=50, show_default=True, help="Number of candidate terms."
+)
+@click.option(
+    "--input-file",
+    "-i",
+    type=click.File("r"),
+    help="Input file (one text per line).",
+)
+@click.option(
+    "--split-sentences/--no-split-sentences",
+    "-s/-S",
+    default=False,
+    show_default=True,
+    help="Whether to split sentences.",
+)
+# choose from options in AnnotationMethod
+@click.option(
+    "--method",
+    "-M",
+    default=AnnotationMethod.INLINE.value,
+    show_default=True,
+    type=click.Choice([m for m in AnnotationMethod]),
+    help="Annotation method.",
+)
+@click.option(
+    "--prefix",
+    multiple=True,
+    help="Prefix(es) for candidate IDs.",
+)
+@click.option(
+    "--category",
+    multiple=True,
+    help="Category/ies for candidate IDs.",
+)
+
+@click.argument("texts", nargs=-1)
+def annotate(texts, path, model, collection, input_file, split_sentences, category, prefix, identifier_field, label_field, **kwargs):
+    """Concept recognition."""
+    db = ChromaDBAdapter(path)
+    extractor = BasicExtractor()
+    if input_file:
+        texts = [line.strip() for line in input_file]
+    if model:
+        extractor.model_name = model
+    # TODO: persist this in the database
+    cr = ConceptRecognitionAgent(knowledge_source=db, extractor=extractor)
+    if prefix:
+        cr.prefixes = list(prefix)
+    categories = list(category) if category else None
+    if identifier_field:
+        cr.identifier_field = identifier_field
+    if label_field:
+        cr.label_field = label_field
+    if split_sentences:
+        new_texts = []
+        for text in texts:
+            for sentence in text.split("."):
+                new_texts.append(sentence.strip())
+        texts = new_texts
+    for text in texts:
+        ao = cr.annotate(text, collection=collection, categories=categories, **kwargs)
+        dump(ao)
+        print(f"---\n")
+
+@main.command()
+@path_option
+@collection_option
 @click.option(
     "-C/--no-C",
     "--conversation/--no-conversation",
@@ -613,7 +694,7 @@ def complete(
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
-    dac = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    dac = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
         dac.document_adapter = ChromaDBAdapter(docstore_path)
         dac.document_adapter_collection = docstore_collection
@@ -690,7 +771,7 @@ def complete_multiple(
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
-    dac = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    dac = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
         dac.document_adapter = ChromaDBAdapter(docstore_path)
         dac.document_adapter_collection = docstore_collection
@@ -779,7 +860,7 @@ def complete_all(
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
-    dae = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    dae = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
         dae.document_adapter = ChromaDBAdapter(docstore_path)
         dae.document_adapter_collection = docstore_collection
@@ -876,7 +957,7 @@ def generate_evaluate(
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
-    rage = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+    rage = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
         rage.document_adapter = ChromaDBAdapter(docstore_path)
         rage.document_adapter_collection = docstore_collection
