@@ -1,7 +1,7 @@
 import pytest
 import yaml
 
-from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.extract.basic_extractor import BasicExtractor
 
@@ -30,7 +30,7 @@ def test_object_completion(go_test_chroma_db, text):
 
 def test_predict_missing(go_test_chroma_db):
     extractor = BasicExtractor()
-    dae = DatabaseAugmentedCompletion(knowledge_source=go_test_chroma_db, extractor=extractor)
+    dae = DragonAgent(knowledge_source=go_test_chroma_db, extractor=extractor)
     n = 0
     for row in dae.generate_all(collection="test", field_to_predict="definition"):
         n += 1
@@ -41,7 +41,7 @@ def test_predict_missing(go_test_chroma_db):
 
 def test_de_novo(go_test_chroma_db):
     extractor = BasicExtractor()
-    dae = DatabaseAugmentedCompletion(knowledge_source=go_test_chroma_db, extractor=extractor)
+    dae = DragonAgent(knowledge_source=go_test_chroma_db, extractor=extractor)
     ao = dae.complete(
         {},
         target_class="OntologyClass",

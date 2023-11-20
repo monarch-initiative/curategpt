@@ -11,7 +11,7 @@ from scipy.spatial import distance_matrix
 from curate_gpt import BasicExtractor
 from curate_gpt.agents import MappingAgent
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
-from curate_gpt.agents.dac_agent import DatabaseAugmentedCompletion
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.agents.evidence_agent import EvidenceAgent
 from curate_gpt.app.components import (
@@ -241,7 +241,7 @@ if option == CURATE:
     examples_limit = limit_slider_component()
 
     if st.button("Suggest"):
-        daca = DatabaseAugmentedCompletion(knowledge_source=db, extractor=extractor)
+        daca = DragonAgent(knowledge_source=db, extractor=extractor)
         if background_collection != NO_BACKGROUND_SELECTED:
             # TODO: DRY
             if background_collection == PUBMED:
