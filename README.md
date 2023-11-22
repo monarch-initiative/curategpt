@@ -1,5 +1,8 @@
 # CurateGPT
 
+[![DOI](https://zenodo.org/badge/645996391.svg)](https://zenodo.org/doi/10.5281/zenodo.8293691)
+
+
 CurateGPT is a prototype web application and framework for performing general purpose AI-guided curation
 and curation-related operations over *collections* of objects.
 
