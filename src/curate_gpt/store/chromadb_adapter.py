@@ -16,6 +16,8 @@ from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk
 from pydantic import BaseModel
+from requests.exceptions import ConnectionError, RequestException
+
 
 from curate_gpt.store.db_adapter import (
     OBJECT,
@@ -205,12 +207,12 @@ class ChromaDBAdapter(DBAdapter):
             logger.info("Preparing ids...")
             ids = [self._id(o, id_field) for o in next_objs]
             logger.info(f"Inserting {len(next_objs)} / {num_objs} objects into {collection}")
-            method = getattr(collection_obj, method_name)
-            method(
-                documents=docs,
-                metadatas=metadatas,
-                ids=ids,
-            )
+            try:
+                self.exponential_backoff_request(
+                    lambda: getattr(collection_obj, method_name)(documents=docs, metadatas=metadatas, ids=ids))
+            except Exception as e:
+                logger.error(f"Failed to process batch after retries: {e}")
+                break
 
     def update(self, objs: Union[OBJECT, List[OBJECT]], **kwargs):
         """
@@ -221,6 +223,23 @@ class ChromaDBAdapter(DBAdapter):
         :return:
         """
         self._insert_or_update(objs, method_name="update", **kwargs)
+
+    def exponential_backoff_request(self, method, *args, **kwargs):
+        max_retries = 100
+        wait_time = 2
+
+        for attempt in range(max_retries):
+            try:
+                logger.info(f"Attempt {attempt + 1}/{max_retries} for batch operation.")
+                return method(*args, **kwargs)
+            except (ConnectionError, RequestException) as e:
+                if attempt == max_retries - 1:
+                    logger.error(f"Failed to process batch after {attempt + 1} retries: {e}")
+                    raise
+                logger.warning(
+                    f"Request failed with error {e}, retrying in {wait_time} seconds (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait_time)
+                wait_time *= 2
 
     def upsert(self, objs: Union[OBJECT, List[OBJECT]], **kwargs):
         """
