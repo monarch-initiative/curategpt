@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
+
     """
     Retrieves objects in response to a query using a structured knowledge source.
     """

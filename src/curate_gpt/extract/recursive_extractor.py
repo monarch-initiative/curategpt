@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class RecursiveExtractor(Extractor):
+
     """
     Extractor that recursively extracts objects from text.
 

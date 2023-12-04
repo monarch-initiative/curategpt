@@ -56,6 +56,7 @@ def term_label(identifier: str) -> str:
 
 @dataclass
 class MAXOAWrapper(BaseWrapper):
+
     """
     A wrapper over HPOA
 

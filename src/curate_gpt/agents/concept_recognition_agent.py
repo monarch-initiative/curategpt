@@ -1,15 +1,12 @@
 """Annotation (Concept Recognition) in texts."""
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, ClassVar, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
-import yaml
 from pydantic import BaseModel
 
 from curate_gpt.agents.base_agent import BaseAgent
-from curate_gpt.extract import AnnotatedObject
-from curate_gpt.store import DBAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +15,7 @@ CONCEPT = Tuple[str, str]
 
 
 class Span(BaseModel):
+
     """An individual span of text containing a single concept."""
 
     text: str
@@ -36,6 +34,7 @@ class Span(BaseModel):
 
 
 class GroundingResult(BaseModel):
+
     """Result of grounding text."""
 
     input_text: str
@@ -49,6 +48,7 @@ class GroundingResult(BaseModel):
 
 
 class AnnotationMethod(str, Enum):
+
     """Strategy or algorithm used for CR."""
 
     INLINE = "inline"
@@ -62,6 +62,7 @@ class AnnotationMethod(str, Enum):
 
 
 class AnnotatedText(BaseModel):
+
     """In input text annotated with concept instances."""
 
     input_text: str

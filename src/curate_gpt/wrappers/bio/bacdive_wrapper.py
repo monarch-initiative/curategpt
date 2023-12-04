@@ -4,9 +4,6 @@ import logging
 from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
-import yaml
-from jsonpath_ng import parse
-
 from curate_gpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)
@@ -14,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class BacDiveWrapper(BaseWrapper):
+
     """
     A wrapper over a bacdive json files.
 

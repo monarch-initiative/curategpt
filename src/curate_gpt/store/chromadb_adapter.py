@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ChromaDBAdapter(DBAdapter):
+
     """
     An Adapter that wraps a ChromaDB client
     """
@@ -316,7 +317,7 @@ class ChromaDBAdapter(DBAdapter):
                     raise ValueError(f"Cannot change model from {prev_model} to {metadata.model}")
                 else:
                     logger.info(
-                        f"Changing (empy collection) model from {prev_model} to {metadata.model}"
+                        f"Changing (empty collection) model from {prev_model} to {metadata.model}"
                     )
         # self.set_collection_metadata(collection_name=collection_name, metadata=metadata)
         if metadata.name:

@@ -1,4 +1,5 @@
-"""CurateGPT: A framework semi-assisted curation of knowledge bases.
+"""
+CurateGPT: A framework semi-assisted curation of knowledge bases.
 
 Architecture
 ============

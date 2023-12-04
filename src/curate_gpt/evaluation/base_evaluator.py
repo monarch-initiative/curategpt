@@ -8,9 +8,8 @@ from curate_gpt.evaluation.evaluation_datamodel import ClassificationMetrics
 
 @dataclass
 class BaseEvaluator(ABC):
-    """
-    Base class for evaluators.
-    """
+
+    """Base class for evaluators."""
 
     agent: BaseAgent = None
 

@@ -39,6 +39,7 @@ def extract_text_from_xml(xml_content):
 # TODO: rewrite to subclass EUtilsWrapper
 @dataclass
 class PubmedWrapper(BaseWrapper):
+
     """
     A wrapper to provide a search facade over PubMed.
 

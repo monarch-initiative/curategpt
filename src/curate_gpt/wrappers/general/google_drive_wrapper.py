@@ -20,6 +20,7 @@ SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 @dataclass
 class GoogleDriveWrapper(BaseWrapper):
+
     """
     A wrapper to provide a search facade over Wikipedia.
 

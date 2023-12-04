@@ -1,16 +1,10 @@
 """Chat with a KB."""
-import gzip
 import logging
-import os
 from dataclasses import dataclass, field
-from glob import glob
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
-import requests
 import requests_cache
-import yaml
-from bs4 import BeautifulSoup
-from oaklib import BasicOntologyInterface, get_adapter
+from oaklib import BasicOntologyInterface
 
 from curate_gpt.wrappers import BaseWrapper
 
@@ -21,6 +15,7 @@ BASE_URL = "https://www.alliancegenome.org/api"
 
 @dataclass
 class AllianceGeneWrapper(BaseWrapper):
+
     """
     A wrapper over a Alliance (AGR) gene API.
 

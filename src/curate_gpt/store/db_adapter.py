@@ -43,6 +43,7 @@ def _get_file(file: Optional[FILE_LIKE] = None, mode="r") -> Optional[TextIO]:
 
 @dataclass
 class DBAdapter(ABC):
+
     """
     Base class for stores.
 
@@ -140,8 +141,8 @@ class DBAdapter(ABC):
         """
         Create a view in the database.
 
-        TODO
-
+        Todo:
+        ----
         :param view:
         :return:
         """

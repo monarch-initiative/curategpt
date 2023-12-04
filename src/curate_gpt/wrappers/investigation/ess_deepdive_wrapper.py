@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 from time import sleep
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
-import requests
 import requests_cache
 
 from curate_gpt.wrappers import BaseWrapper
@@ -55,6 +54,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ESSDeepDiveWrapper(BaseWrapper):
+
     """
     A wrapper over the ESSDeepDive API.
     """

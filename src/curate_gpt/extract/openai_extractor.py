@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class OpenAIExtractor(Extractor):
+
     """
     Extractor that uses OpenAI functions.
     """

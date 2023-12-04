@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ClinVarWrapper(EUtilsWrapper):
+
     """
     A wrapper to provide a search facade over NCBI clinvar.
 

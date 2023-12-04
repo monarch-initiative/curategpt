@@ -68,16 +68,17 @@ def mmr_diversified_search(
     """
     Perform diversified search using Maximal Marginal Relevance (MMR).
 
-    Parameters:
+    Parameters
+    ----------
     - query_vector: The vector representing the query.
     - document_vectors: The vectors representing the documents.
     - lambda_: Balance parameter between relevance and diversity.
     - top_n: Number of results to return. If None, return all.
 
-    Returns:
+    Returns
+    -------
     - List of indices representing the diversified order of documents.
     """
-
     # If no specific number of results is specified, return all
     if top_n is None:
         top_n = len(document_vectors)

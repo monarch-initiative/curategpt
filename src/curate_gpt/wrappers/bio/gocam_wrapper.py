@@ -59,6 +59,7 @@ MAIN_TYPES = [
 
 @dataclass
 class GOCAMWrapper(BaseWrapper):
+
     """
     An view over a GO CAM source.
     """

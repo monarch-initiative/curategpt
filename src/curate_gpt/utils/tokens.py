@@ -8,7 +8,8 @@ logger = logging.getLogger(__name__)
 
 
 def max_tokens_by_model(model_id: Optional[str] = None):
-    """Return the maximum number of tokens allowed by a model.
+    """
+    Return the maximum number of tokens allowed by a model.
 
     TODO: return precise values, currently an estimate.
     """
@@ -21,7 +22,8 @@ def max_tokens_by_model(model_id: Optional[str] = None):
 
 
 def estimate_num_tokens(messages: List[str], model="gpt-4"):
-    """Return the number of tokens used by a list of messages.
+    """
+    Return the number of tokens used by a list of messages.
 
     Note: this is an estimate
     """

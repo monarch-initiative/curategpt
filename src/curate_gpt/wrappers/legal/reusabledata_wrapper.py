@@ -1,16 +1,12 @@
 """Chat with a KB."""
-import gzip
 import logging
-import os
-from dataclasses import dataclass, field
-from glob import glob
+from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests
 import requests_cache
-import yaml
 from bs4 import BeautifulSoup
-from oaklib import BasicOntologyInterface, get_adapter
+from oaklib import BasicOntologyInterface
 
 from curate_gpt.wrappers import BaseWrapper
 
@@ -19,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ReusableDataWrapper(BaseWrapper):
+
     """
     A wrapper over a reusabledata.org yaml files.
 

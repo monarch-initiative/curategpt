@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ClinicalTrialsWrapper(BaseWrapper):
+
     """
     A wrapper over a clinicaltrials.gov.
 

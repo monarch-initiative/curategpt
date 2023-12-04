@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class FilesystemWrapper(BaseWrapper):
+
     """
     A wrapper over a filesystem.
 

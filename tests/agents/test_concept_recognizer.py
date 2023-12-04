@@ -1,6 +1,5 @@
 import pytest
 import yaml
-
 from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
 from curate_gpt.extract.basic_extractor import BasicExtractor
 

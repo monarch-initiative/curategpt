@@ -289,7 +289,7 @@ elif option == MATCH:
         help="Enter label of concept to match.",
     )
     relevant_fields = st.text_input(
-        "Relavant fields",
+        "Relevant fields",
         help="Comma-separated (e.g. label, definition).",
     )
     limit = st.slider(

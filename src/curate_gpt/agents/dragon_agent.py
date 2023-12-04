@@ -33,6 +33,7 @@ def _dict2str(d: Dict[str, Any]) -> str:
 
 @dataclass
 class DragonAgent(BaseAgent):
+
     """
     Retrieves objects in response to a query using a structured knowledge source.
 

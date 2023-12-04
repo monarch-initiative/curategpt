@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import Dict, List, Union
+from typing import List
 
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.wrappers import BaseWrapper
@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class SummarizationAgent(BaseAgent):
+
     """
     An agent to summarize entities
 
@@ -28,7 +29,7 @@ class SummarizationAgent(BaseAgent):
         Summarize a list of objects.
 
         Example:
-
+        -------
         >>> extractor = BasicExtractor()
         >>> wrapper = get_wrapper("alliance_gene")
         >>> agent = SummarizationAgent(wrapper, extractor=extractor)

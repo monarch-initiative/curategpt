@@ -34,6 +34,7 @@ class CollectionIndex(BaseModel):
 
 @dataclass
 class InMemoryAdapter(DBAdapter):
+
     """
     Simple in-memory adapter for a object store.
     """

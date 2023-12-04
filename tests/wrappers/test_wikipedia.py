@@ -3,10 +3,10 @@ import shutil
 import time
 
 import yaml
-
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature import WikipediaWrapper
+
 from tests import OUTPUT_DIR
 
 TEMP_Wikipedia_DB = OUTPUT_DIR / "wp_tmp"

@@ -1,8 +1,8 @@
 import pytest
 import yaml
-
 from curate_gpt.evaluation.evaluation_datamodel import Task
 from curate_gpt.evaluation.runner import run_task
+
 from tests import OUTPUT_DIR
 
 

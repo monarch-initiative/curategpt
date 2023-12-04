@@ -11,7 +11,7 @@ import click
 import pandas as pd
 import yaml
 from click_default_group import DefaultGroup
-from linkml_runtime.dumpers import json_dumper, yaml_dumper
+from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from llm import UnknownModelError, get_model, get_plugins
 from llm.cli import load_conversation
@@ -60,14 +60,14 @@ def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml") -> None:
     if isinstance(obj, YAMLRoot):
         obj = json_dumper.to_dict(obj)
     if format is None or format == "yaml":
-        ser = yaml.dump(obj, sort_keys=False)
+        set = yaml.dump(obj, sort_keys=False)
     elif format == "json":
-        ser = json.dumps(obj, indent=2)
+        set = json.dumps(obj, indent=2)
     elif format == "blob":
-        ser = list(obj.values())[0]
+        set = list(obj.values())[0]
     else:
         raise ValueError(f"Unknown format {format}")
-    print(ser)
+    print(set)
 
 
 # logger = logging.getLogger(__name__)
@@ -119,7 +119,7 @@ description_option = click.option(
 init_with_option = click.option(
     "--init-with",
     "-I",
-    help="YAML string for initialzation of main wrapper object.",
+    help="YAML string for initialization of main wrapper object.",
 )
 batch_size_option = click.option(
     "--batch-size", default=None, show_default=True, type=click.INT, help="Batch size for indexing."
@@ -156,7 +156,8 @@ def show_chat_response(response: ChatResponse, show_references: bool = True):
 @click.option("-q", "--quiet")
 @click.version_option(__version__)
 def main(verbose: int, quiet: bool):
-    """CLI for curate-gpt.
+    """
+    CLI for curate-gpt.
 
     :param verbose: Verbosity while running.
     :param quiet: Boolean to be quiet or verbose.
@@ -211,10 +212,11 @@ def index(
     collect,
     **kwargs,
 ):
-    """Index files.
+    """
+    Index files.
 
     Example:
-
+    -------
         curategpt index  -c doc files/*json
 
     """
@@ -483,7 +485,7 @@ def annotate(
     for text in texts:
         ao = cr.annotate(text, collection=collection, categories=categories, **kwargs)
         dump(ao)
-        print(f"---\n")
+        print("---\n")
 
 
 @main.command()
@@ -698,10 +700,11 @@ def complete(
     output_format,
     **kwargs,
 ):
-    """Generate an entry from a query using object completion.
+    """
+    Generate an entry from a query using object completion.
 
     Example:
-
+    -------
         curategpt generate  -c obo_go "umbelliferose biosynthetic process"
 
     If the string looks like yaml (if it has a ':') then it will be parsed as yaml.
@@ -777,10 +780,11 @@ def complete_multiple(
     output_format,
     **kwargs,
 ):
-    """Generate an entry from a query using object completion for multiple objects.
+    """
+    Generate an entry from a query using object completion for multiple objects.
 
     Example:
-
+    -------
         curategpt generate  -c obo_go terms.txt
     """
     db = ChromaDBAdapter(path)
@@ -867,10 +871,11 @@ def complete_all(
     id_file,
     **kwargs,
 ):
-    """Generate missing values for all objects
+    """
+    Generate missing values for all objects
 
     Example:
-
+    -------
         curategpt generate  -c obo_go TODO
     """
     db = ChromaDBAdapter(path)
@@ -965,10 +970,11 @@ def generate_evaluate(
     rule: List[str],
     **kwargs,
 ):
-    """Evaluate generate using a test set.
+    """
+    Evaluate generate using a test set.
 
     Example:
-
+    -------
         curategpt -v generate-evaluate -c cdr_training -T cdr_test -F statements -m gpt-4
     """
     db = ChromaDBAdapter(path)
@@ -1061,10 +1067,11 @@ def evaluate(
     collection,
     **kwargs,
 ):
-    """Evaluate given a task configuration.
+    """
+    Evaluate given a task configuration.
 
     Example:
-
+    -------
         curategpt evaluate src/curate_gpt/conf/tasks/bio-ont.tasks.yaml
     """
     normalized_tasks = []
@@ -1299,12 +1306,13 @@ def citeseek(query, path, collection, model, show_references, _continue, convers
 @click.option("--system-prompt", help="System gpt prompt to use.")
 @click.argument("ids", nargs=-1)
 def summarize(ids, path, collection, model, view, **kwargs):
-    """Summarize a list of objects.
+    """
+    Summarize a list of objects.
 
     Retrieves objects by ID from a knowledge source or wrapper and summarizes them.
 
     Example:
-
+    -------
       curategpt summarize --model llama-2-7b-chat -V alliance_gene \
         --name-field symbol --description-field automatedGeneSynopsis \
         --system-prompt "What functions do these genes share?" \
@@ -1475,7 +1483,7 @@ def split_collection(
     Split a collection into test/train/validation.
 
     Example:
-
+    -------
         curategpt -v collections split -c hp --num-training 10 --num-testing 20
 
     The above populates 2 new collections: hp_training and hp_testing.
@@ -1532,10 +1540,11 @@ def ontology():
 )
 @click.argument("ont")
 def index_ontology_command(ont, path, collection, append, model, index_fields, branches, **kwargs):
-    """Index an ontology.
+    """
+    Index an ontology.
 
     Example:
-
+    -------
         curategpt index-ontology  -c obo_hp $db/hp.db
 
     """
@@ -1570,10 +1579,11 @@ def view():
 @click.option("--source-locator")
 @init_with_option
 def view_objects(view, init_with, **kwargs):
-    """View objects in a virtual store.
+    """
+    View objects in a virtual store.
 
     Example:
-
+    -------
         curategpt view objects -V filesystem --init-with "root_directory: /path/to/data"
 
     """
@@ -1593,11 +1603,14 @@ def view_objects(view, init_with, **kwargs):
 @output_format_option
 @click.argument("input_file")
 def unwrap_objects(input_file, view, path, collection, output_format, **kwargs):
-    """Unwrap objects back to source schema.
+    """
+    Unwrap objects back to source schema.
 
     Example:
+    -------
 
-        TODO
+    Todo:
+    ----
 
     """
     vstore = get_wrapper(view, **kwargs)

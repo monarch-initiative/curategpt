@@ -16,6 +16,7 @@ BASE_URL = "https://en.wikipedia.org/w/api.php"
 
 @dataclass
 class WikipediaWrapper(BaseWrapper):
+
     """
     A wrapper to provide a search facade over Wikipedia.
 

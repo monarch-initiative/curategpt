@@ -7,6 +7,7 @@ from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
 
 @dataclass
 class BioportalWrapper(OntologyWrapper):
+
     """
     A wrapper over the Bioportal API.
 

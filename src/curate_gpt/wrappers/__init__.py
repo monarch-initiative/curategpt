@@ -1,4 +1,5 @@
-"""Wrappers on top of external data sources.
+"""
+Wrappers on top of external data sources.
 
 Wrappers allow for dynamic or static loading of an external data source
 into a store.

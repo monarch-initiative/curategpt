@@ -6,6 +6,7 @@ from curate_gpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
 
 @dataclass
 class HPOAByPubWrapper(HPOAWrapper):
+
     """
     A wrapper over HPOA grouping by publication
     """

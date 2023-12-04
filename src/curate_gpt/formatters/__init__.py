@@ -1,4 +1,5 @@
-"""Formats data objects for presentation to humans and machine agents.
+"""
+Formats data objects for presentation to humans and machine agents.
 
 Note: this package is not in heavy use just now.
 

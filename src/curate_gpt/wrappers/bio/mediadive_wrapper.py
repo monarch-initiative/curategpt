@@ -1,9 +1,9 @@
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests_cache
-from oaklib import BasicOntologyInterface, get_adapter
+from oaklib import BasicOntologyInterface
 
 from curate_gpt.wrappers import BaseWrapper
 
@@ -14,6 +14,7 @@ BASE_URL = "https://mediadive.dsmz.de/rest"
 
 @dataclass
 class MediaDiveWrapper(BaseWrapper):
+
     """
     A wrapper over MediaDive.
     """

@@ -1,4 +1,5 @@
-"""CurateGPT Extractors.
+"""
+CurateGPT Extractors.
 
 These handle connections to (remote or local) LLMs,
 and can also extract structured objects from text.

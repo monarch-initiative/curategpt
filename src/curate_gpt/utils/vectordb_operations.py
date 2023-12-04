@@ -32,7 +32,7 @@ def match_collections(
     right_vectors = [info["_embeddings"] for _, __, info in right_objs]
     logger.info(f"Computing cosine similarity for {len(left_vectors)} x {len(right_vectors)}")
     sim_matrix = compute_cosine_similarity(left_vectors, right_vectors)
-    logger.info(f"Finding top matches")
+    logger.info("Finding top matches")
     tm_ix, tm_vals = top_matches(sim_matrix)
     logger.info(f"Yielding {len(tm_ix)} matches")
     i = 0

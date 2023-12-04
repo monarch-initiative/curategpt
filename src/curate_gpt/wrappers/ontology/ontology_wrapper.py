@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class OntologyWrapper(BaseWrapper):
+
     """
     A wrapper to pull from ontologies using OAK.
 

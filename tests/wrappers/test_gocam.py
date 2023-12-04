@@ -2,8 +2,8 @@ import json
 
 import pytest
 import yaml
-
 from curate_gpt.wrappers.sysbio.gocam_wrapper import GOCAMWrapper
+
 from tests import INPUT_DIR
 
 

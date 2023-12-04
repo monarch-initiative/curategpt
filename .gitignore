@@ -136,3 +136,4 @@ dmypy.json
 
 # User defined
 stagedb/*
+*.rej

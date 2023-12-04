@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class BaseWrapper(ABC):
+
     """
     A virtual store that implements a view over some remote or external source.
     """

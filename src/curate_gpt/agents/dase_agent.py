@@ -33,6 +33,7 @@ def _dict2str(d: Dict[str, Any]) -> str:
 
 @dataclass
 class DatabaseAugmentedStructuredExtraction(BaseAgent):
+
     """
     Extracts structured objects from unstructured documents.
 
