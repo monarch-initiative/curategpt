@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from enum import Enum
 from random import shuffle
-from typing import Any, Dict, Iterator, List, Optional, Union, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import inflection
 import yaml
@@ -191,6 +191,8 @@ class MappingAgent(BaseAgent):
         :return:
         """
         # TODO
-        for obj, _, info in self.knowledge_source.find(collection=other_collection, include = ["embeddings", "documents", "metadatas"]):
+        for obj, _, info in self.knowledge_source.find(
+            collection=other_collection, include=["embeddings", "documents", "metadatas"]
+        ):
             embeddings = info["embeddings"]
             self.knowledge_source.find(embeddings, limit=10)

@@ -19,6 +19,7 @@ CONCEPT = Tuple[str, str]
 
 class Span(BaseModel):
     """An individual span of text containing a single concept."""
+
     text: str
 
     start: Optional[int] = None
@@ -32,6 +33,7 @@ class Span(BaseModel):
 
     is_suspect: bool = False
     """Potential hallucination due to ID/label mismatch."""
+
 
 class GroundingResult(BaseModel):
     """Result of grounding text."""
@@ -48,6 +50,7 @@ class GroundingResult(BaseModel):
 
 class AnnotationMethod(str, Enum):
     """Strategy or algorithm used for CR."""
+
     INLINE = "inline"
     """LLM creates an annotated document"""
 
@@ -153,7 +156,7 @@ def parse_annotations(text, marker_char: str = None) -> List[CONCEPT]:
     :return:
     """
     # First Pass: Extract text within [ ... ]
-    pattern1 = r'\[([^\]]+)\]'
+    pattern1 = r"\[([^\]]+)\]"
     matches = re.findall(pattern1, text)
 
     # Second Pass: Parse the last token of each match
@@ -163,7 +166,7 @@ def parse_annotations(text, marker_char: str = None) -> List[CONCEPT]:
         if marker_char:
             toks = match.split(marker_char)
             if len(toks) > 1:
-                annotation = ' '.join(toks[:-1]).strip()
+                annotation = " ".join(toks[:-1]).strip()
                 id = toks[-1].strip()
             else:
                 annotation = match
@@ -171,7 +174,7 @@ def parse_annotations(text, marker_char: str = None) -> List[CONCEPT]:
         else:
             words = match.split()
             if len(words) > 1 and ":" in words[-1]:
-                annotation = ' '.join(words[:-1])
+                annotation = " ".join(words[:-1])
                 id = words[-1]
             else:
                 annotation = match
@@ -198,14 +201,19 @@ def parse_spans(text: str, concept_dict: Dict[str, str] = None) -> List[Span]:
         concept_label = row[1].strip('"')
         mention_text = ",".join(row[2:])
         verified_concept_label = concept_dict.get(concept_id, None)
-        spans.append(Span(text=mention_text, concept_id=concept_id, concept_label=verified_concept_label,
-                          is_suspect=verified_concept_label != concept_label))
+        spans.append(
+            Span(
+                text=mention_text,
+                concept_id=concept_id,
+                concept_label=verified_concept_label,
+                is_suspect=verified_concept_label != concept_label,
+            )
+        )
     return spans
 
 
 @dataclass
 class ConceptRecognitionAgent(BaseAgent):
-
     identifier_field: str = None
     """Field to use as identifier for objects."""
 
@@ -225,16 +233,17 @@ class ConceptRecognitionAgent(BaseAgent):
         text: str,
         collection: str = None,
         categories: Optional[List[str]] = None,
-        include_category_in_search = True,
+        include_category_in_search=True,
         context: str = None,
         **kwargs,
     ) -> GroundingResult:
-
         system_prompt = GROUND_PROMPT
         query = text
         if include_category_in_search and categories:
             query += " Categories: " + ", ".join(categories)
-        concept_pairs, concept_prompt = self._label_id_pairs_prompt_section(query, collection, **kwargs)
+        concept_pairs, concept_prompt = self._label_id_pairs_prompt_section(
+            query, collection, **kwargs
+        )
         concept_dict = {c[0]: c[1] for c in concept_pairs}
         system_prompt += concept_prompt
         model = self.extractor.model
@@ -262,9 +271,14 @@ class ConceptRecognitionAgent(BaseAgent):
                     concept_label = concept_dict[concept_id]
                 else:
                     concept_label = None
-                span = Span(text=text, concept_id=concept_id, concept_label=concept_label, is_suspect=provided_concept_label != concept_label)
+                span = Span(
+                    text=text,
+                    concept_id=concept_id,
+                    concept_label=concept_label,
+                    is_suspect=provided_concept_label != concept_label,
+                )
                 spans.append(span)
-        #spans = parse_spans(response.text(), concept_dict)
+        # spans = parse_spans(response.text(), concept_dict)
         ann = GroundingResult(input_text=text, annotated_text=response.text(), spans=spans)
         return ann
 
@@ -296,12 +310,16 @@ class ConceptRecognitionAgent(BaseAgent):
         system_prompt = "Your job is to parse the supplied text, identifying instances of concepts "
         if len(categories) == 1:
             system_prompt += f" that represent some kind of {categories[0]}. "
-            system_prompt += ("Mark up the concepts in square brackets, "
-                              "preserving the original text inside the brackets. ")
+            system_prompt += (
+                "Mark up the concepts in square brackets, "
+                "preserving the original text inside the brackets. "
+            )
         else:
             system_prompt += " that represent one of the following categories: "
             system_prompt += ", ".join(categories)
-            system_prompt += "Mark up the concepts in square brackets, with the category after the pipe symbol, "
+            system_prompt += (
+                "Mark up the concepts in square brackets, with the category after the pipe symbol, "
+            )
             system_prompt += "Using the syntax [ORIGINAL TEXT | CATEGORY]."
         logger.debug(f"Prompting with: {text}")
         model = self.extractor.model
@@ -310,12 +328,24 @@ class ConceptRecognitionAgent(BaseAgent):
         anns = parse_annotations(marked_up_text, "|")
         spans = []
         for term, category in anns:
-            concept = self.ground_concept(term, collection, categories=[category] if category else None, context=text, **kwargs)
+            concept = self.ground_concept(
+                term,
+                collection,
+                categories=[category] if category else None,
+                context=text,
+                **kwargs,
+            )
             if not concept.spans:
                 logger.debug(f"Unable to ground concept {term} in category {category}")
                 continue
             main_span = concept.spans[0]
-            spans.append(Span(text=term, concept_id=main_span.concept_id, concept_label=main_span.concept_label))
+            spans.append(
+                Span(
+                    text=term,
+                    concept_id=main_span.concept_id,
+                    concept_label=main_span.concept_label,
+                )
+            )
         return AnnotatedText(
             input_text=text,
             annotated_text=marked_up_text,
@@ -329,9 +359,10 @@ class ConceptRecognitionAgent(BaseAgent):
         categories: List[str] = None,
         **kwargs,
     ) -> AnnotatedText:
-
         system_prompt = ANNOTATE_PROMPT
-        concept_pairs, concepts_prompt = self._label_id_pairs_prompt_section(text, collection, **kwargs)
+        concept_pairs, concepts_prompt = self._label_id_pairs_prompt_section(
+            text, collection, **kwargs
+        )
         concept_dict = {c[0]: c[1] for c in concept_pairs}
         system_prompt += concepts_prompt
         model = self.extractor.model
@@ -339,13 +370,11 @@ class ConceptRecognitionAgent(BaseAgent):
         response = model.prompt(text, system=system_prompt)
         anns = parse_annotations(response.text())
         logger.info(f"Anns: {anns}")
-        spans = [Span(text=ann[0], concept_id=ann[1], concept_label=concept_dict.get(ann[1], None)) for ann in anns]
-        return AnnotatedText(
-            input_text=text,
-            spans=spans,
-            annotated_text=response.text()
-        )
-
+        spans = [
+            Span(text=ann[0], concept_id=ann[1], concept_label=concept_dict.get(ann[1], None))
+            for ann in anns
+        ]
+        return AnnotatedText(input_text=text, spans=spans, annotated_text=response.text())
 
     def annotate_concept_list(
         self,
@@ -354,18 +383,28 @@ class ConceptRecognitionAgent(BaseAgent):
         categories: List[str] = None,
         **kwargs,
     ) -> AnnotatedText:
-
         system_prompt = MENTION_PROMPT
-        concept_pairs, concepts_prompt = self._label_id_pairs_prompt_section(text, collection, **kwargs)
+        concept_pairs, concepts_prompt = self._label_id_pairs_prompt_section(
+            text, collection, **kwargs
+        )
         concept_dict = {c[0]: c[1] for c in concept_pairs}
         system_prompt += concepts_prompt
         model = self.extractor.model
         logger.debug(f"Prompting with: {text}")
         response = model.prompt(text, system=system_prompt)
         spans = parse_spans(response.text(), concept_dict)
-        return AnnotatedText(input_text=text, summary=response.text(), spans=spans, prompt=system_prompt)
+        return AnnotatedText(
+            input_text=text, summary=response.text(), spans=spans, prompt=system_prompt
+        )
 
-    def _label_id_pairs_prompt_section(self, text:str, collection: str, prolog: str = None, relevance_factor: float = None, **kwargs) -> Tuple[List[CONCEPT], str]:
+    def _label_id_pairs_prompt_section(
+        self,
+        text: str,
+        collection: str,
+        prolog: str = None,
+        relevance_factor: float = None,
+        **kwargs,
+    ) -> Tuple[List[CONCEPT], str]:
         prompt = prolog
         if not prompt:
             prompt = "Here are the candidate concepts, as label // ConceptID pairs:\n"

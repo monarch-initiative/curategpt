@@ -4,10 +4,12 @@ from typing import Iterator, Tuple
 from curate_gpt import DBAdapter
 from curate_gpt.utils.vector_algorithms import compute_cosine_similarity, top_matches
 
-
 logger = logging.getLogger(__name__)
 
-def match_collections(db: DBAdapter, left_collection: str, right_collection: str, other_db: DBAdapter=None) -> Iterator[Tuple[dict, dict, float]]:
+
+def match_collections(
+    db: DBAdapter, left_collection: str, right_collection: str, other_db: DBAdapter = None
+) -> Iterator[Tuple[dict, dict, float]]:
     """
     Match every element in left collection with every element in right collection.
 

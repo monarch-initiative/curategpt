@@ -5,13 +5,13 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, List, Union, Any
+from typing import Any, Dict, List, Union
 
 import click
 import pandas as pd
 import yaml
 from click_default_group import DefaultGroup
-from linkml_runtime.dumpers import yaml_dumper, json_dumper
+from linkml_runtime.dumpers import json_dumper, yaml_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from llm import UnknownModelError, get_model, get_plugins
 from llm.cli import load_conversation
@@ -20,9 +20,9 @@ from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
-from curate_gpt.agents.concept_recognition_agent import ConceptRecognitionAgent, AnnotationMethod
-from curate_gpt.agents.dragon_agent import DragonAgent
+from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.evidence_agent import EvidenceAgent
 from curate_gpt.agents.summarization_agent import SummarizationAgent
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
@@ -69,10 +69,13 @@ def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml") -> None:
         raise ValueError(f"Unknown format {format}")
     print(ser)
 
+
 # logger = logging.getLogger(__name__)
 
 path_option = click.option("-p", "--path", help="Path to a file or directory for database.")
-model_option = click.option("-m", "--model", help="Model to use for generation or embedding, e.g. gpt-4.")
+model_option = click.option(
+    "-m", "--model", help="Model to use for generation or embedding, e.g. gpt-4."
+)
 schema_option = click.option("-s", "--schema", help="Path to schema.")
 collection_option = click.option("-c", "--collection", help="Collection within the database.")
 output_format_option = click.option(
@@ -323,15 +326,26 @@ def search(query, path, collection, show_documents, **kwargs):
     multiple=True,
     help="Field to show from right collection.",
 )
-
 @output_format_option
-def all_by_all(path, collection, other_collection, other_path, threshold, ids_only, output_format, left_field, right_field, **kwargs):
+def all_by_all(
+    path,
+    collection,
+    other_collection,
+    other_path,
+    threshold,
+    ids_only,
+    output_format,
+    left_field,
+    right_field,
+    **kwargs,
+):
     """Match two collections."""
     db = ChromaDBAdapter(path)
     if other_path is None:
         other_path = path
     other_db = ChromaDBAdapter(other_path)
     results = match_collections(db, collection, other_collection, other_db)
+
     def _obj(obj: Dict, is_left=False) -> Any:
         if ids_only:
             obj = {"id": obj["id"]}
@@ -342,6 +356,7 @@ def all_by_all(path, collection, other_collection, other_path, threshold, ids_on
         side = "left" if is_left else "right"
         obj = {f"{side}_{k}": v for k, v in obj.items()}
         return obj
+
     i = 0
     for obj1, obj2, sim in results:
         if threshold and sim < threshold:
@@ -361,6 +376,7 @@ def all_by_all(path, collection, other_collection, other_path, threshold, ids_on
         print(f"\n## Match {i} COSINE SIMILARITY: {sim}")
         dump(obj1, output_format)
         dump(obj2, output_format)
+
 
 @main.command()
 @path_option
@@ -395,9 +411,7 @@ def matches(id, path, collection):
     "-L",
     help="Field to use as label (defaults to label).",
 )
-@click.option(
-    "-l", "--limit", default=50, show_default=True, help="Number of candidate terms."
-)
+@click.option("-l", "--limit", default=50, show_default=True, help="Number of candidate terms.")
 @click.option(
     "--input-file",
     "-i",
@@ -430,9 +444,20 @@ def matches(id, path, collection):
     multiple=True,
     help="Category/ies for candidate IDs.",
 )
-
 @click.argument("texts", nargs=-1)
-def annotate(texts, path, model, collection, input_file, split_sentences, category, prefix, identifier_field, label_field, **kwargs):
+def annotate(
+    texts,
+    path,
+    model,
+    collection,
+    input_file,
+    split_sentences,
+    category,
+    prefix,
+    identifier_field,
+    label_field,
+    **kwargs,
+):
     """Concept recognition."""
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
@@ -459,6 +484,7 @@ def annotate(texts, path, model, collection, input_file, split_sentences, catego
         ao = cr.annotate(text, collection=collection, categories=categories, **kwargs)
         dump(ao)
         print(f"---\n")
+
 
 @main.command()
 @path_option
@@ -783,6 +809,7 @@ def complete_multiple(
             ao = dac.complete(query, context_property=query_property, rules=rule, **filtered_kwargs)
             print("---")
             dump(ao.object, format=output_format)
+
 
 @main.command()
 @path_option
@@ -1266,7 +1293,7 @@ def citeseek(query, path, collection, model, show_references, _continue, convers
 @collection_option
 @path_option
 @model_option
-@click.option("--view", "-V",  help="Name of the wrapper to use.")
+@click.option("--view", "-V", help="Name of the wrapper to use.")
 @click.option("--name-field", help="Field for names.")
 @click.option("--description-field", help="Field for names.")
 @click.option("--system-prompt", help="System gpt prompt to use.")
@@ -1580,7 +1607,6 @@ def unwrap_objects(input_file, view, path, collection, output_format, **kwargs):
         objs = yaml.safe_load_all(f)
         unwrapped = vstore.unwrap_objects(objs, store=store)
         dump(unwrapped, output_format)
-
 
 
 @view.command(name="search")

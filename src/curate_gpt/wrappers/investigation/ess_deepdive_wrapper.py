@@ -27,7 +27,9 @@ def _get_records_chunk(session: requests_cache.CachedSession, cursor=1, limit=20
         raise ValueError(f"Could not download records from {url}")
 
 
-def get_records(session: requests_cache.CachedSession, cursor=1, limit=200, maximum: int = None) -> Iterator[dict]:
+def get_records(
+    session: requests_cache.CachedSession, cursor=1, limit=200, maximum: int = None
+) -> Iterator[dict]:
     """
     Iterate through all records in ESSDeepDive and download them.
 
@@ -61,7 +63,9 @@ class ESSDeepDiveWrapper(BaseWrapper):
 
     default_object_type = "Class"
 
-    session: requests_cache.CachedSession = field(default_factory=lambda: requests_cache.CachedSession("ess_deepdive"))
+    session: requests_cache.CachedSession = field(
+        default_factory=lambda: requests_cache.CachedSession("ess_deepdive")
+    )
 
     limit: int = field(default=50)
 

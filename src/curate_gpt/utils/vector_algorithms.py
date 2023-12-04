@@ -47,7 +47,9 @@ def top_matches(cosine_similarity_matrix: np.ndarray) -> Tuple[np.ndarray, np.nd
     return top_match_indices, top_match_values
 
 
-def top_n_matches(cosine_similarity_matrix: np.ndarray, n: int=10) -> Tuple[np.ndarray, np.ndarray]:
+def top_n_matches(
+    cosine_similarity_matrix: np.ndarray, n: int = 10
+) -> Tuple[np.ndarray, np.ndarray]:
     # Find the indices that would sort each row in descending order
     sorted_indices = np.argsort(-cosine_similarity_matrix, axis=1)
 

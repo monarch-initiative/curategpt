@@ -171,7 +171,7 @@ class BaseWrapper(ABC):
                     new_obj[id_field] = f"{obj_id}#{n}"
                     new_obj[text_field] = text[: self.max_text_length + self.text_overlap]
                     new_objects.append(new_obj)
-                    text = text[self.max_text_length:]
+                    text = text[self.max_text_length :]
             else:
                 new_objects.append(obj)
         return new_objects

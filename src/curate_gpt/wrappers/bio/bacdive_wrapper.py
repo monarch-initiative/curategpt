@@ -40,7 +40,7 @@ class BacDiveWrapper(BaseWrapper):
         general = obj["General"]
         name_info = obj["Name and taxonomic classification"]
         new_obj = {}
-        new_obj["id"] = self.create_curie(general['BacDive-ID'])
+        new_obj["id"] = self.create_curie(general["BacDive-ID"])
         new_obj["name"] = name_info.get("full scientific name", None)
         if not new_obj["name"]:
             new_obj["name"] = name_info["LPSN"].get("scientific name", None)
@@ -55,4 +55,3 @@ class BacDiveWrapper(BaseWrapper):
                 break
         new_obj = {**new_obj, **obj}
         yield new_obj
-

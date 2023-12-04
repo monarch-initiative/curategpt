@@ -317,7 +317,6 @@ class DBAdapter(ABC):
         """
         yield from [self.lookup(id, **kwargs) for id in ids]
 
-
     @abstractmethod
     def peek(self, collection: str = None, limit=5, **kwargs) -> Iterator[OBJECT]:
         """
@@ -398,7 +397,7 @@ class DBAdapter(ABC):
             format = "json"
         if not include:
             include = ["embeddings", "documents", "metadatas"]
-            #include = ["embeddings", "documents", "metadatas"]
+            # include = ["embeddings", "documents", "metadatas"]
         if not isinstance(include, list):
             include = list(include)
         objects = self.find(collection=collection, include=include, **kwargs)

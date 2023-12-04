@@ -3,7 +3,6 @@ from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests_cache
-
 from oaklib import BasicOntologyInterface, get_adapter
 
 from curate_gpt.wrappers import BaseWrapper
@@ -11,6 +10,7 @@ from curate_gpt.wrappers import BaseWrapper
 logger = logging.getLogger(__name__)
 
 BASE_URL = "https://mediadive.dsmz.de/rest"
+
 
 @dataclass
 class MediaDiveWrapper(BaseWrapper):
@@ -69,4 +69,3 @@ class MediaDiveWrapper(BaseWrapper):
             else:
                 logger.warning(f"No solutions for {object_id}")
             yield obj
-

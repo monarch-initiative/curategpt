@@ -8,7 +8,8 @@ from typing import Callable, ClassVar, Iterable, Iterator, List, Mapping, Option
 
 import chromadb
 import yaml
-from chromadb import ClientAPI as API, Settings
+from chromadb import ClientAPI as API
+from chromadb import Settings
 from chromadb.api import EmbeddingFunction
 from chromadb.types import Collection
 from chromadb.utils import embedding_functions
@@ -431,9 +432,13 @@ class ChromaDBAdapter(DBAdapter):
                     f"Empty metadata for item {i} [num: {len(metadatas)}] doc: {documents[i]}"
                 )
                 continue
-            obj = self._unjson(metadatas[i]), 0.0, {
-                "document": documents[i],
-            }
+            obj = (
+                self._unjson(metadatas[i]),
+                0.0,
+                {
+                    "document": documents[i],
+                },
+            )
             if embeddings:
                 obj[2]["_embeddings"] = embeddings[i]
             yield obj
@@ -558,7 +563,6 @@ class ChromaDBAdapter(DBAdapter):
             logger.debug(f"Dumping {i} of {len(result['ids'])}")
             batched_obj = {}
             for k in ["ids", "metadatas", "documents", "embeddings"]:
-                batched_obj[k] = result[k][i: i + batch_size]
+                batched_obj[k] = result[k][i : i + batch_size]
             target_collection_obj.add(**batched_obj)
             i += batch_size
-
