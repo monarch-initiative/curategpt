@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class NCBIBioprojectWrapper(EUtilsWrapper):
+
     """
     A wrapper to provide a search facade over NCBI bioproject.
 

@@ -1,17 +1,12 @@
 """Chat with a KB."""
-import gzip
-import os
-import requests
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
+import requests
 import requests_cache
 from bs4 import BeautifulSoup
-from glob import glob
-
-import yaml
-from oaklib import BasicOntologyInterface, get_adapter
+from oaklib import BasicOntologyInterface
 
 from curate_gpt.wrappers import BaseWrapper
 
@@ -20,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ReusableDataWrapper(BaseWrapper):
+
     """
     A wrapper over a reusabledata.org yaml files.
 
@@ -52,7 +48,15 @@ class ReusableDataWrapper(BaseWrapper):
             obj_id = obj["id"]
             license_link = obj.get("license-link", None)
             if license_link:
-                if license_link in ["TODO", "https://", "inconsistent", "https://civic.genome.wustl.edu/about", "http://www.supfam.org/about", "ftp://ftp.nextprot.org/pub/README", "ftp://ftp.jcvi.org/pub/data/TIGRFAMs/COPYRIGHT"]:
+                if license_link in [
+                    "TODO",
+                    "https://",
+                    "inconsistent",
+                    "https://civic.genome.wustl.edu/about",
+                    "http://www.supfam.org/about",
+                    "ftp://ftp.nextprot.org/pub/README",
+                    "ftp://ftp.jcvi.org/pub/data/TIGRFAMs/COPYRIGHT",
+                ]:
                     logger.warning(f"base link {license_link} for {obj_id}")
                     continue
                 if license_link.startswith("ftp://"):
@@ -63,8 +67,7 @@ class ReusableDataWrapper(BaseWrapper):
                     logger.warning(f"bad link {license_link} for {obj_id}")
                     continue
                 data = response.text
-                soup = BeautifulSoup(data, 'html.parser')
+                soup = BeautifulSoup(data, "html.parser")
                 license_text = soup.get_text()
                 obj["license_text"] = license_text
             yield obj
-

@@ -1,7 +1,6 @@
 import pytest
 import yaml
-
-from curate_gpt.agents.concept_recognition_agent import ConceptRecognitionAgent, AnnotationMethod
+from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
 from curate_gpt.extract.basic_extractor import BasicExtractor
 
 
@@ -9,33 +8,36 @@ from curate_gpt.extract.basic_extractor import BasicExtractor
     "text,categories,prefixes,expected",
     [
         (
-                "A metabolic process that results in the breakdown of chemicals in vacuolar structures.",
-                ["BiologicalProcess", "SubcellularStructure"],
-                ["GO"],
-                ["GO:0044237", "GO:0005773"],
+            "A metabolic process that results in the breakdown of chemicals in vacuolar structures.",
+            ["BiologicalProcess", "SubcellularStructure"],
+            ["GO"],
+            ["GO:0044237", "GO:0005773"],
         ),
         (
-                "A metabolic process that results in the breakdown of chemicals in vacuolar structures.",
-                ["BiologicalProcess", "SubcellularStructure"],
-                ["FAKE"],
-                [],
+            "A metabolic process that results in the breakdown of chemicals in vacuolar structures.",
+            ["BiologicalProcess", "SubcellularStructure"],
+            ["FAKE"],
+            [],
         ),
         (
-                "Protoplasm",
-                None,
-                None,
-                ["GO:0005622"],
+            "Protoplasm",
+            None,
+            None,
+            ["GO:0005622"],
         ),
-(
-                "The photosynthetic membrane of plants and algae",
-                ["BiologicalProcess", "SubcellularStructure", "OrganismTaxon"],
-                None,
-                ["GO:0005622"],
+        (
+            "The photosynthetic membrane of plants and algae",
+            ["BiologicalProcess", "SubcellularStructure", "OrganismTaxon"],
+            None,
+            ["GO:0005622"],
         ),
     ],
 )
-@pytest.mark.parametrize("method", [AnnotationMethod.CONCEPT_LIST, AnnotationMethod.CONCEPT_LIST, AnnotationMethod.TWO_PASS])
-def test_concept_recognizer(go_test_chroma_db, text, categories,prefixes, expected, method):
+@pytest.mark.parametrize(
+    "method",
+    [AnnotationMethod.CONCEPT_LIST, AnnotationMethod.CONCEPT_LIST, AnnotationMethod.TWO_PASS],
+)
+def test_concept_recognizer(go_test_chroma_db, text, categories, prefixes, expected, method):
     limit = 50
     if method == AnnotationMethod.TWO_PASS:
         limit = 10
@@ -44,7 +46,9 @@ def test_concept_recognizer(go_test_chroma_db, text, categories,prefixes, expect
     cr.prefixes = prefixes
     cr.identifier_field = "original_id"
     print(f"## METHOD: {method} CATEGORY: {categories} PREFIXES: {prefixes}")
-    ann = cr.annotate(text, collection="terms_go", method=method, categories=categories, limit=limit)
+    ann = cr.annotate(
+        text, collection="terms_go", method=method, categories=categories, limit=limit
+    )
     print("RESULT:")
     print(yaml.dump(ann.dict(), sort_keys=False))
     overlap = len(set(ann.concepts).intersection(set(expected)))

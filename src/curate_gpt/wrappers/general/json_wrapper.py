@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class JSONWrapper(BaseWrapper):
+
     """
     A wrapper over a json (or yaml) document.
 

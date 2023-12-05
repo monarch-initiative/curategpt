@@ -9,6 +9,7 @@ from curate_gpt.wrappers import BaseWrapper
 
 @dataclass
 class EvidenceAgent(BaseAgent):
+
     """
     An agent to find evidence for an object by querying a reference source.
 

@@ -47,7 +47,9 @@ def top_matches(cosine_similarity_matrix: np.ndarray) -> Tuple[np.ndarray, np.nd
     return top_match_indices, top_match_values
 
 
-def top_n_matches(cosine_similarity_matrix: np.ndarray, n: int=10) -> Tuple[np.ndarray, np.ndarray]:
+def top_n_matches(
+    cosine_similarity_matrix: np.ndarray, n: int = 10
+) -> Tuple[np.ndarray, np.ndarray]:
     # Find the indices that would sort each row in descending order
     sorted_indices = np.argsort(-cosine_similarity_matrix, axis=1)
 
@@ -66,16 +68,17 @@ def mmr_diversified_search(
     """
     Perform diversified search using Maximal Marginal Relevance (MMR).
 
-    Parameters:
+    Parameters
+    ----------
     - query_vector: The vector representing the query.
     - document_vectors: The vectors representing the documents.
     - lambda_: Balance parameter between relevance and diversity.
     - top_n: Number of results to return. If None, return all.
 
-    Returns:
+    Returns
+    -------
     - List of indices representing the diversified order of documents.
     """
-
     # If no specific number of results is specified, return all
     if top_n is None:
         top_n = len(document_vectors)

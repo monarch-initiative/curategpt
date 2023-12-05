@@ -20,6 +20,7 @@ EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/{tool}.fcgi"
 
 @dataclass
 class EUtilsWrapper(BaseWrapper, ABC):
+
     """
     A wrapper to provide a search facade over NCBI Biosample.
 

@@ -6,10 +6,9 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 import httpx
+import llm
 import urllib3
 from gpt4all import GPT4All as _GPT4All
-
-import llm
 
 
 class GPT4All(_GPT4All):

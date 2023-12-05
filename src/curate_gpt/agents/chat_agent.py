@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 class ChatResponse(BaseModel):
-    """Response from chat engine.
+
+    """
+    Response from chat engine.
 
     TODO: Rename class to indicate that it is provenance-enabled chat
     """
@@ -38,6 +40,7 @@ class ChatResponse(BaseModel):
 
 
 def replace_references_with_links(text):
+    """Replace references with links."""
     pattern = r"\[(\d+)\]"
     replacement = lambda m: f"[{m.group(1)}](#ref-{m.group(1)})"
     return re.sub(pattern, replacement, text)
@@ -45,6 +48,7 @@ def replace_references_with_links(text):
 
 @dataclass
 class ChatAgent(BaseAgent):
+
     """
     An agent that allows chat to a knowledge source.
 

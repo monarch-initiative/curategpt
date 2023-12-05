@@ -30,3 +30,23 @@ Note: All the development must be done on a branch on your fork.
 ALSO NOTE: github.com lets you create a pull request from the main branch, automating the steps above.
 
 > A code review (which happens with both the contributor and the reviewer present) is required for contributing.
+
+### How to write a great issue
+
+Please review GitHub's overview article,
+["Tracking Your Work with Issues"][about-issues].
+
+<a id="great-pulls"></a>
+
+### How to create a great pull/merge request
+
+Please review GitHub's article, ["About Pull Requests"][about-pulls],
+and make your changes on a [new branch][about-branches].
+
+[about-branches]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches
+[about-issues]: https://docs.github.com/en/issues/tracking-your-work-with-issues/about-issues
+[about-pulls]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests
+[issues]: https://github.com/monarch-initiative/curate-gpt/issues/
+[pulls]: https://github.com/monarch-initiative/curate-gpt/pulls/
+
+We recommend also reading [GitHub Pull Requests: 10 Tips to Know](https://blog.mergify.com/github-pull-requests-10-tips-to-know/)

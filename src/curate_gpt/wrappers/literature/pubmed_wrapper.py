@@ -39,6 +39,7 @@ def extract_text_from_xml(xml_content):
 # TODO: rewrite to subclass EUtilsWrapper
 @dataclass
 class PubmedWrapper(BaseWrapper):
+
     """
     A wrapper to provide a search facade over PubMed.
 
@@ -222,7 +223,7 @@ class PubmedWrapper(BaseWrapper):
                     parsed_url = urlparse(download_url)
                     if parsed_url.scheme not in ["http", "https", "ftp"]:
                         continue
-                    urlretrieve(download_url, local_file_path) # noqa S310
+                    urlretrieve(download_url, local_file_path)  # noqa S310
 
                     # Open and extract the tar.gz file
                     with tarfile.open(local_file_path, "r:gz") as tar:

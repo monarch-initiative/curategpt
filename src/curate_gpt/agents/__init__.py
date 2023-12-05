@@ -1,4 +1,5 @@
-"""CurateGPT Agents.
+"""
+CurateGPT Agents.
 
 These chain together different search and generate components.
 """

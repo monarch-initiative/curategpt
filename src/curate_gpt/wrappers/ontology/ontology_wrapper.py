@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class OntologyWrapper(BaseWrapper):
+
     """
     A wrapper to pull from ontologies using OAK.
 
@@ -184,8 +185,9 @@ class OntologyWrapper(BaseWrapper):
     def unwrap_object(self, obj: Dict[str, Any], store: DBAdapter, **kwargs) -> og.Graph:
         return self.unwrap_objects([obj], store, **kwargs)
 
-
-    def unwrap_objects(self, objs: Iterable[Dict[str, Any]], store: DBAdapter, drop_dangling=False, **kwargs) -> og.GraphDocument:
+    def unwrap_objects(
+        self, objs: Iterable[Dict[str, Any]], store: DBAdapter, drop_dangling=False, **kwargs
+    ) -> og.GraphDocument:
         """
         Convert an object from the store to the view representation.
 

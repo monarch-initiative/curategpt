@@ -52,6 +52,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class NMDCWrapper(BaseWrapper):
+
     """
     A wrapper over the NMDC Biosample API.
     """

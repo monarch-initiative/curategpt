@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
-
-from curate_gpt.utils.search import mmr_diversified_search
+from curate_gpt.utils.vector_algorithms import mmr_diversified_search
 
 vectors = np.array(
     [

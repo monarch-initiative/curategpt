@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class CartItem(BaseModel):
+
     """
     A cart item is a single item in a cart
     """
@@ -15,6 +16,7 @@ class CartItem(BaseModel):
 
 
 class Cart(BaseModel):
+
     """
     A cart is a list of items that can be added to or removed from
     """

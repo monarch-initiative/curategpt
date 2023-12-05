@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from enum import Enum
 from random import shuffle
-from typing import Any, Dict, Iterator, List, Optional, Union, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import inflection
 import yaml
@@ -43,6 +43,7 @@ class MappingPredicate(str, Enum):
 
 
 class Mapping(BaseModel):
+
     """Response from chat engine."""
 
     subject_id: str
@@ -58,6 +59,7 @@ class MappingSet(BaseModel):
 
 @dataclass
 class MappingAgent(BaseAgent):
+
     """
     An agent to map/align entities.
     """
@@ -191,6 +193,8 @@ class MappingAgent(BaseAgent):
         :return:
         """
         # TODO
-        for obj, _, info in self.knowledge_source.find(collection=other_collection, include = ["embeddings", "documents", "metadatas"]):
+        for _, _, info in self.knowledge_source.find(
+            collection=other_collection, include=["embeddings", "documents", "metadatas"]
+        ):
             embeddings = info["embeddings"]
             self.knowledge_source.find(embeddings, limit=10)

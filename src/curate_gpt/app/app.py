@@ -11,8 +11,8 @@ from scipy.spatial import distance_matrix
 from curate_gpt import BasicExtractor
 from curate_gpt.agents import MappingAgent
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
-from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.evidence_agent import EvidenceAgent
 from curate_gpt.app.components import (
     DimensionalityReductionOptions,
@@ -289,7 +289,7 @@ elif option == MATCH:
         help="Enter label of concept to match.",
     )
     relevant_fields = st.text_input(
-        "Relavant fields",
+        "Relevant fields",
         help="Comma-separated (e.g. label, definition).",
     )
     limit = st.slider(

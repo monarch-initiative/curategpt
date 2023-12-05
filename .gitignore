@@ -135,4 +135,8 @@ dmypy.json
 .pyre/
 
 # User defined
+!tests/input/dbs/go-nucleus-chroma/*.sqlite3
 stagedb/*
+*.rej
+tests/input/dbs/go-nucleus-chroma/*/*.bin
+tests/output/*

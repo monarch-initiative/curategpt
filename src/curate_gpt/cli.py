@@ -5,13 +5,13 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, List, Union, Any
+from typing import Any, Dict, List, Union
 
 import click
 import pandas as pd
 import yaml
 from click_default_group import DefaultGroup
-from linkml_runtime.dumpers import yaml_dumper, json_dumper
+from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from llm import UnknownModelError, get_model, get_plugins
 from llm.cli import load_conversation
@@ -20,9 +20,9 @@ from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
-from curate_gpt.agents.concept_recognition_agent import ConceptRecognitionAgent, AnnotationMethod
-from curate_gpt.agents.dragon_agent import DragonAgent
+from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
+from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.evidence_agent import EvidenceAgent
 from curate_gpt.agents.summarization_agent import SummarizationAgent
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
@@ -60,19 +60,22 @@ def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml") -> None:
     if isinstance(obj, YAMLRoot):
         obj = json_dumper.to_dict(obj)
     if format is None or format == "yaml":
-        ser = yaml.dump(obj, sort_keys=False)
+        set = yaml.dump(obj, sort_keys=False)
     elif format == "json":
-        ser = json.dumps(obj, indent=2)
+        set = json.dumps(obj, indent=2)
     elif format == "blob":
-        ser = list(obj.values())[0]
+        set = list(obj.values())[0]
     else:
         raise ValueError(f"Unknown format {format}")
-    print(ser)
+    print(set)
+
 
 # logger = logging.getLogger(__name__)
 
 path_option = click.option("-p", "--path", help="Path to a file or directory for database.")
-model_option = click.option("-m", "--model", help="Model to use for generation or embedding, e.g. gpt-4.")
+model_option = click.option(
+    "-m", "--model", help="Model to use for generation or embedding, e.g. gpt-4."
+)
 schema_option = click.option("-s", "--schema", help="Path to schema.")
 collection_option = click.option("-c", "--collection", help="Collection within the database.")
 output_format_option = click.option(
@@ -116,7 +119,7 @@ description_option = click.option(
 init_with_option = click.option(
     "--init-with",
     "-I",
-    help="YAML string for initialzation of main wrapper object.",
+    help="YAML string for initialization of main wrapper object.",
 )
 batch_size_option = click.option(
     "--batch-size", default=None, show_default=True, type=click.INT, help="Batch size for indexing."
@@ -153,7 +156,8 @@ def show_chat_response(response: ChatResponse, show_references: bool = True):
 @click.option("-q", "--quiet")
 @click.version_option(__version__)
 def main(verbose: int, quiet: bool):
-    """CLI for curate-gpt.
+    """
+    CLI for curate-gpt.
 
     :param verbose: Verbosity while running.
     :param quiet: Boolean to be quiet or verbose.
@@ -208,10 +212,11 @@ def index(
     collect,
     **kwargs,
 ):
-    """Index files.
+    """
+    Index files.
 
     Example:
-
+    -------
         curategpt index  -c doc files/*json
 
     """
@@ -323,15 +328,26 @@ def search(query, path, collection, show_documents, **kwargs):
     multiple=True,
     help="Field to show from right collection.",
 )
-
 @output_format_option
-def all_by_all(path, collection, other_collection, other_path, threshold, ids_only, output_format, left_field, right_field, **kwargs):
+def all_by_all(
+    path,
+    collection,
+    other_collection,
+    other_path,
+    threshold,
+    ids_only,
+    output_format,
+    left_field,
+    right_field,
+    **kwargs,
+):
     """Match two collections."""
     db = ChromaDBAdapter(path)
     if other_path is None:
         other_path = path
     other_db = ChromaDBAdapter(other_path)
     results = match_collections(db, collection, other_collection, other_db)
+
     def _obj(obj: Dict, is_left=False) -> Any:
         if ids_only:
             obj = {"id": obj["id"]}
@@ -342,6 +358,7 @@ def all_by_all(path, collection, other_collection, other_path, threshold, ids_on
         side = "left" if is_left else "right"
         obj = {f"{side}_{k}": v for k, v in obj.items()}
         return obj
+
     i = 0
     for obj1, obj2, sim in results:
         if threshold and sim < threshold:
@@ -361,6 +378,7 @@ def all_by_all(path, collection, other_collection, other_path, threshold, ids_on
         print(f"\n## Match {i} COSINE SIMILARITY: {sim}")
         dump(obj1, output_format)
         dump(obj2, output_format)
+
 
 @main.command()
 @path_option
@@ -395,9 +413,7 @@ def matches(id, path, collection):
     "-L",
     help="Field to use as label (defaults to label).",
 )
-@click.option(
-    "-l", "--limit", default=50, show_default=True, help="Number of candidate terms."
-)
+@click.option("-l", "--limit", default=50, show_default=True, help="Number of candidate terms.")
 @click.option(
     "--input-file",
     "-i",
@@ -430,9 +446,20 @@ def matches(id, path, collection):
     multiple=True,
     help="Category/ies for candidate IDs.",
 )
-
 @click.argument("texts", nargs=-1)
-def annotate(texts, path, model, collection, input_file, split_sentences, category, prefix, identifier_field, label_field, **kwargs):
+def annotate(
+    texts,
+    path,
+    model,
+    collection,
+    input_file,
+    split_sentences,
+    category,
+    prefix,
+    identifier_field,
+    label_field,
+    **kwargs,
+):
     """Concept recognition."""
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
@@ -458,7 +485,8 @@ def annotate(texts, path, model, collection, input_file, split_sentences, catego
     for text in texts:
         ao = cr.annotate(text, collection=collection, categories=categories, **kwargs)
         dump(ao)
-        print(f"---\n")
+        print("---\n")
+
 
 @main.command()
 @path_option
@@ -672,10 +700,11 @@ def complete(
     output_format,
     **kwargs,
 ):
-    """Generate an entry from a query using object completion.
+    """
+    Generate an entry from a query using object completion.
 
     Example:
-
+    -------
         curategpt generate  -c obo_go "umbelliferose biosynthetic process"
 
     If the string looks like yaml (if it has a ':') then it will be parsed as yaml.
@@ -751,10 +780,11 @@ def complete_multiple(
     output_format,
     **kwargs,
 ):
-    """Generate an entry from a query using object completion for multiple objects.
+    """
+    Generate an entry from a query using object completion for multiple objects.
 
     Example:
-
+    -------
         curategpt generate  -c obo_go terms.txt
     """
     db = ChromaDBAdapter(path)
@@ -783,6 +813,7 @@ def complete_multiple(
             ao = dac.complete(query, context_property=query_property, rules=rule, **filtered_kwargs)
             print("---")
             dump(ao.object, format=output_format)
+
 
 @main.command()
 @path_option
@@ -840,10 +871,11 @@ def complete_all(
     id_file,
     **kwargs,
 ):
-    """Generate missing values for all objects
+    """
+    Generate missing values for all objects
 
     Example:
-
+    -------
         curategpt generate  -c obo_go TODO
     """
     db = ChromaDBAdapter(path)
@@ -938,10 +970,11 @@ def generate_evaluate(
     rule: List[str],
     **kwargs,
 ):
-    """Evaluate generate using a test set.
+    """
+    Evaluate generate using a test set.
 
     Example:
-
+    -------
         curategpt -v generate-evaluate -c cdr_training -T cdr_test -F statements -m gpt-4
     """
     db = ChromaDBAdapter(path)
@@ -1034,10 +1067,11 @@ def evaluate(
     collection,
     **kwargs,
 ):
-    """Evaluate given a task configuration.
+    """
+    Evaluate given a task configuration.
 
     Example:
-
+    -------
         curategpt evaluate src/curate_gpt/conf/tasks/bio-ont.tasks.yaml
     """
     normalized_tasks = []
@@ -1266,18 +1300,19 @@ def citeseek(query, path, collection, model, show_references, _continue, convers
 @collection_option
 @path_option
 @model_option
-@click.option("--view", "-V",  help="Name of the wrapper to use.")
+@click.option("--view", "-V", help="Name of the wrapper to use.")
 @click.option("--name-field", help="Field for names.")
 @click.option("--description-field", help="Field for names.")
 @click.option("--system-prompt", help="System gpt prompt to use.")
 @click.argument("ids", nargs=-1)
 def summarize(ids, path, collection, model, view, **kwargs):
-    """Summarize a list of objects.
+    """
+    Summarize a list of objects.
 
     Retrieves objects by ID from a knowledge source or wrapper and summarizes them.
 
     Example:
-
+    -------
       curategpt summarize --model llama-2-7b-chat -V alliance_gene \
         --name-field symbol --description-field automatedGeneSynopsis \
         --system-prompt "What functions do these genes share?" \
@@ -1448,7 +1483,7 @@ def split_collection(
     Split a collection into test/train/validation.
 
     Example:
-
+    -------
         curategpt -v collections split -c hp --num-training 10 --num-testing 20
 
     The above populates 2 new collections: hp_training and hp_testing.
@@ -1505,10 +1540,11 @@ def ontology():
 )
 @click.argument("ont")
 def index_ontology_command(ont, path, collection, append, model, index_fields, branches, **kwargs):
-    """Index an ontology.
+    """
+    Index an ontology.
 
     Example:
-
+    -------
         curategpt index-ontology  -c obo_hp $db/hp.db
 
     """
@@ -1543,10 +1579,11 @@ def view():
 @click.option("--source-locator")
 @init_with_option
 def view_objects(view, init_with, **kwargs):
-    """View objects in a virtual store.
+    """
+    View objects in a virtual store.
 
     Example:
-
+    -------
         curategpt view objects -V filesystem --init-with "root_directory: /path/to/data"
 
     """
@@ -1566,11 +1603,14 @@ def view_objects(view, init_with, **kwargs):
 @output_format_option
 @click.argument("input_file")
 def unwrap_objects(input_file, view, path, collection, output_format, **kwargs):
-    """Unwrap objects back to source schema.
+    """
+    Unwrap objects back to source schema.
 
     Example:
+    -------
 
-        TODO
+    Todo:
+    ----
 
     """
     vstore = get_wrapper(view, **kwargs)
@@ -1580,7 +1620,6 @@ def unwrap_objects(input_file, view, path, collection, output_format, **kwargs):
         objs = yaml.safe_load_all(f)
         unwrapped = vstore.unwrap_objects(objs, store=store)
         dump(unwrapped, output_format)
-
 
 
 @view.command(name="search")

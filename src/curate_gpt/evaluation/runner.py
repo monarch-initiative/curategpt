@@ -81,9 +81,7 @@ def run_task(
     task.executed_on = (
         f"{platform.system()}-{platform.release()}-{platform.version()}-{platform.machine()}"
     )
-    agent = DragonAgent(
-        knowledge_source=tdb, knowledge_source_collection="", extractor=extractor
-    )
+    agent = DragonAgent(knowledge_source=tdb, knowledge_source_collection="", extractor=extractor)
     if task.additional_collections:
         if len(task.additional_collections) > 1:
             raise NotImplementedError("Only one additional collection is supported")

@@ -1,4 +1,5 @@
-"""Adapters for different document stores.
+"""
+Adapters for different document stores.
 
 * Base class: :class:`DBAdapter`
 

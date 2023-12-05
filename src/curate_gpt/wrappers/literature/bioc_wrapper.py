@@ -17,6 +17,7 @@ RMAP = {"CID": "induces"}
 
 @dataclass
 class BiocWrapper(BaseWrapper):
+
     """
     A wrapper over a bioc source file.
 

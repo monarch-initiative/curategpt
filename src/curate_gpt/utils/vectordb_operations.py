@@ -4,10 +4,12 @@ from typing import Iterator, Tuple
 from curate_gpt import DBAdapter
 from curate_gpt.utils.vector_algorithms import compute_cosine_similarity, top_matches
 
-
 logger = logging.getLogger(__name__)
 
-def match_collections(db: DBAdapter, left_collection: str, right_collection: str, other_db: DBAdapter=None) -> Iterator[Tuple[dict, dict, float]]:
+
+def match_collections(
+    db: DBAdapter, left_collection: str, right_collection: str, other_db: DBAdapter = None
+) -> Iterator[Tuple[dict, dict, float]]:
     """
     Match every element in left collection with every element in right collection.
 
@@ -30,7 +32,7 @@ def match_collections(db: DBAdapter, left_collection: str, right_collection: str
     right_vectors = [info["_embeddings"] for _, __, info in right_objs]
     logger.info(f"Computing cosine similarity for {len(left_vectors)} x {len(right_vectors)}")
     sim_matrix = compute_cosine_similarity(left_vectors, right_vectors)
-    logger.info(f"Finding top matches")
+    logger.info("Finding top matches")
     tm_ix, tm_vals = top_matches(sim_matrix)
     logger.info(f"Yielding {len(tm_ix)} matches")
     i = 0

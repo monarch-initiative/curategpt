@@ -4,9 +4,6 @@ import logging
 from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
-import yaml
-from jsonpath_ng import parse
-
 from curate_gpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)
@@ -14,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class BacDiveWrapper(BaseWrapper):
+
     """
     A wrapper over a bacdive json files.
 
@@ -40,7 +38,7 @@ class BacDiveWrapper(BaseWrapper):
         general = obj["General"]
         name_info = obj["Name and taxonomic classification"]
         new_obj = {}
-        new_obj["id"] = self.create_curie(general['BacDive-ID'])
+        new_obj["id"] = self.create_curie(general["BacDive-ID"])
         new_obj["name"] = name_info.get("full scientific name", None)
         if not new_obj["name"]:
             new_obj["name"] = name_info["LPSN"].get("scientific name", None)
@@ -55,4 +53,3 @@ class BacDiveWrapper(BaseWrapper):
                 break
         new_obj = {**new_obj, **obj}
         yield new_obj
-

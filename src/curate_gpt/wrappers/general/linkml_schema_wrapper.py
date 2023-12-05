@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class LinkMLSchemarapper(BaseWrapper):
+
     """
     A wrapper over linkml schema documents.
 

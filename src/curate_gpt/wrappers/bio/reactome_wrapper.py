@@ -1,23 +1,17 @@
 """Chat with a KB."""
-import gzip
-import os
-import requests
 import logging
 from dataclasses import dataclass, field
-from typing import ClassVar, Dict, Iterable, Iterator, Optional, List
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional
 
 import requests_cache
-from bs4 import BeautifulSoup
-from glob import glob
-
-import yaml
-from oaklib import BasicOntologyInterface, get_adapter
+from oaklib import BasicOntologyInterface
 
 from curate_gpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 
 BASE_URL = "https://reactome.org/ContentService/data"
+
 
 def ids_from_tree(objs: List):
     """
@@ -77,6 +71,7 @@ OBJECT_FUNCTION_MAP = {
 
 @dataclass
 class ReactomeWrapper(BaseWrapper):
+
     """
     A wrapper over a Reactome API.
     """
@@ -91,7 +86,7 @@ class ReactomeWrapper(BaseWrapper):
 
     taxon_id: str = field(default="NCBITaxon:9606")
 
-    def object_ids(self, taxon_id: str=None, **kwargs) -> Iterator[str]:
+    def object_ids(self, taxon_id: str = None, **kwargs) -> Iterator[str]:
         """
         Get all object ids for a given taxon id
 
@@ -137,12 +132,13 @@ class ReactomeWrapper(BaseWrapper):
             response = session.get(f"{BASE_URL}/query/{local_id}")
             obj = response.json()
             summations = obj["summation"]
-            new_obj = {"id": object_id,
-                   "label": obj["displayName"],
-                    "speciesName": obj["speciesName"],
-                    "description": "\n".join([x["text"] for x in summations]),
-                   "type": obj["schemaClass"],
-                   }
+            new_obj = {
+                "id": object_id,
+                "label": obj["displayName"],
+                "speciesName": obj["speciesName"],
+                "description": "\n".join([x["text"] for x in summations]),
+                "type": obj["schemaClass"],
+            }
             for key, func in OBJECT_FUNCTION_MAP.items():
                 if key in obj:
                     new_obj[key] = [func(x) for x in obj[key] if isinstance(x, dict)]

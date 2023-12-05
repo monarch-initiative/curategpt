@@ -49,6 +49,7 @@ def term_label(identifier: str) -> str:
 
 @dataclass
 class HPOAWrapper(BaseWrapper):
+
     """
     A wrapper over HPOA
 

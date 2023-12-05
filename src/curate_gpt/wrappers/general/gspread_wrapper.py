@@ -16,6 +16,7 @@ SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 @dataclass
 class GSpreadWrapper(BaseWrapper):
+
     """
     A wrapper to provide a search facade over gspread layer onto google sheets.
 

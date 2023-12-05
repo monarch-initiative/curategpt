@@ -6,14 +6,15 @@ from copy import copy
 from dataclasses import dataclass
 from typing import List
 
-from .extractor import AnnotatedObject, Extractor
 from ..utils.tokens import estimate_num_tokens, max_tokens_by_model
+from .extractor import AnnotatedObject, Extractor
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class BasicExtractor(Extractor):
+
     """
     Extractor that is purely example driven.
     """

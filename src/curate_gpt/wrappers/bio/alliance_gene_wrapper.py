@@ -1,17 +1,10 @@
 """Chat with a KB."""
-import gzip
-import os
-import requests
 import logging
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests_cache
-from bs4 import BeautifulSoup
-from glob import glob
-
-import yaml
-from oaklib import BasicOntologyInterface, get_adapter
+from oaklib import BasicOntologyInterface
 
 from curate_gpt.wrappers import BaseWrapper
 
@@ -19,8 +12,10 @@ logger = logging.getLogger(__name__)
 
 BASE_URL = "https://www.alliancegenome.org/api"
 
+
 @dataclass
 class AllianceGeneWrapper(BaseWrapper):
+
     """
     A wrapper over a Alliance (AGR) gene API.
 
@@ -35,8 +30,7 @@ class AllianceGeneWrapper(BaseWrapper):
 
     taxon_id: str = field(default="NCBITaxon:9606")
 
-
-    def object_ids(self, taxon_id: str=None, **kwargs) -> Iterator[str]:
+    def object_ids(self, taxon_id: str = None, **kwargs) -> Iterator[str]:
         """
         Get all gene ids for a given taxon id
 
@@ -48,10 +42,13 @@ class AllianceGeneWrapper(BaseWrapper):
 
         if not taxon_id:
             taxon_id = self.taxon_id
-        response = session.get(f"{BASE_URL}/geneMap/geneIDs", params={
-            "taxonID": taxon_id,
-            "rows": 50000,
-        })
+        response = session.get(
+            f"{BASE_URL}/geneMap/geneIDs",
+            params={
+                "taxonID": taxon_id,
+                "rows": 50000,
+            },
+        )
         response.raise_for_status()
         gene_ids = response.text.split(",")
         yield from gene_ids
@@ -82,4 +79,3 @@ class AllianceGeneWrapper(BaseWrapper):
             response.raise_for_status()
             obj = response.json()
             yield obj
-

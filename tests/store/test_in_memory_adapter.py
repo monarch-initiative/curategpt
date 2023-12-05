@@ -1,11 +1,11 @@
 from typing import Dict
 
 import pytest
-from linkml_runtime.utils.schema_builder import SchemaBuilder
-
 from curate_gpt import DBAdapter
 from curate_gpt.store import get_store
 from curate_gpt.store.schema_proxy import SchemaProxy
+from linkml_runtime.utils.schema_builder import SchemaBuilder
+
 from tests import OUTPUT_DIR
 
 EMPTY_DB_PATH = OUTPUT_DIR / "empty_db"

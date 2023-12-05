@@ -47,6 +47,7 @@ def get_token(token: str = None) -> str:
 
 @dataclass
 class GitHubWrapper(BaseWrapper):
+
     """
     A wrapper to provide a search facade over GitHub.
 

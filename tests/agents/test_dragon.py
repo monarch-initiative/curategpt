@@ -1,6 +1,5 @@
 import pytest
 import yaml
-
 from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.extract.basic_extractor import BasicExtractor
 

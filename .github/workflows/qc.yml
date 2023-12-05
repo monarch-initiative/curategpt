@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.8", "3.9", "3.10" ]
+        python-version: [ "3.8", "3.11" ]
 
     steps:
       - uses: actions/checkout@v3.0.2
@@ -26,8 +26,11 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction
 
+      - name: Check common spelling errors
+        run: poetry run tox -e codespell
+
       - name: Check code quality with flake8
-        run: poetry run tox -e flake8
+        run: poetry run tox -e lint
 
       - name: Test with pytest and generate coverage file
         run: poetry run tox -e py
