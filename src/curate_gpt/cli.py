@@ -5,6 +5,7 @@ import json
 import os
 import logging
 import sys
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Union, Optional
 
@@ -1782,6 +1783,7 @@ def hpoa2phenopackets(output_dir, limit, hpoa_file, only_pubs_about_one_disease)
     :param output_dir: Directory to save the generated phenopackets.
     :param only_pubs_about_one_disease: Only make phenopackets for papers about a single disease
     """
+    output_dir = output_dir if output_dir else os.getcwd()
 
     hw = HPOAWrapper(group_by_publication=True)
     if hpoa_file:
@@ -1805,9 +1807,13 @@ def hpoa2phenopackets(output_dir, limit, hpoa_file, only_pubs_about_one_disease)
     for item in tqdm(items, desc="making phenopackets"):
         pmids = set([i['reference'] for i in item['associations']])
         if len(pmids) > 1:
-            raise "Got >1 PMID in item {item}"
+            warnings.warn(f"Got >1 PMID in item {item}")
+            continue
         pmid = list(pmids)[0]
         full_text = pubmed_wrapper.fetch_full_text(pmid)
+        if full_text is None:
+            warnings.warn(f"Couldn't find full text for {pmid}")
+            continue
         phenopacket = generate_phenopacket(full_text)
 
         # Save the phenopacket

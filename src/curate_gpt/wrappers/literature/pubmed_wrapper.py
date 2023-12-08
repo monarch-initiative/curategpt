@@ -3,6 +3,9 @@ import logging
 import tarfile
 import tempfile
 import time
+from xml.etree.ElementTree import ParseError
+
+import warnings
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, List, Optional
 from urllib.parse import urlparse
@@ -187,8 +190,11 @@ class PubmedWrapper(BaseWrapper):
         params = {"db": "pmc", "linkname": "pubmed_pmc", "id": pmid}
         url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi"
         response = session.get(url, params=params)
-        root = fromstring(response.content)
-
+        try:
+            root = fromstring(response.content)
+        except ParseError as e:
+            warnings.warn(f"Problem parsing XML content {e}")
+            return None
         pmcid = None
         for link_set in root.findall(".//LinkSet"):
             for link in link_set.findall(".//Link"):
@@ -203,6 +209,9 @@ class PubmedWrapper(BaseWrapper):
             pmcid = self.fetch_pmcid(object_id)
         else:
             pmcid = object_id
+        if pmcid is None:
+            warnings.warn(f"couldn't find entry for {object_id}")
+            return None
         # PMC is a banana - get rid of the PMC prefix as well as local prefix
         pmcid = pmcid.replace("PMC:", "")
         pmcid = pmcid.replace("PMC", "")
