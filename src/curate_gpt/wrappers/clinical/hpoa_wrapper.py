@@ -95,7 +95,7 @@ class HPOAWrapper(BaseWrapper):
 
     def objects_from_rows(self, rows: Iterable[Dict], retrieve_pubmed_data=True) -> Iterator[Dict]:
         by_pub = {}
-        for row in tqdm(rows):
+        for row in tqdm(rows, "getting objects from HPOA"):
             row = {MAP.get(k, k): v for k, v in row.items()}
             row["phenotype_label"] = term_label(row["phenotype"])
             refs = [ref for ref in row["reference"].split(";") if ref != "PMID:UNKNOWN"]
@@ -103,7 +103,7 @@ class HPOAWrapper(BaseWrapper):
                 pmids = [ref for ref in refs if ref.startswith("PMID")]
                 logger.debug(f"Expanding {refs}, pmids={pmids}")
                 if pmids:
-                    if retrieve_pubmed_data:  # seems to take ages, thus the if/else
+                    if retrieve_pubmed_data:  # for me this takes ages and fails often, thus the if/else
                         row["publications"] = self.pubmed_wrapper.objects_by_ids(pmids)
                         for pub in row["publications"]:
                             pub_id = pub["id"]

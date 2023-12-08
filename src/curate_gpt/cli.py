@@ -1774,32 +1774,47 @@ def pubmed2phenopacket(pmid, output_dir):
 @click.option("--output-dir", type=click.Path(), help="Directory to save the phenopackets")
 @click.option("--limit", type=click.INT, help="Stop at --limit entries")
 @click.option("--hpoa_file", type=click.Path(), help="Use this hpoa file instead of retrieving")
-def hpoa2phenopackets(output_dir, limit, hpoa_file):
+@click.option("--only_pubs_about_one_disease", type=click.BOOL, help="Only make phenopackets for papers about a single diseaes")
+def hpoa2phenopackets(output_dir, limit, hpoa_file, only_pubs_about_one_disease):
     """
     Fetch full text for PMIDs mentioned in HPOA and generate phenopackets.
-    :limit: stop after limit number of entries (for testing)
+    :param limit: stop after limit number of entries (for testing)
     :param output_dir: Directory to save the generated phenopackets.
+    :param only_pubs_about_one_disease: Only make phenopackets for papers about a single disease
     """
 
-    hw = HPOAWrapper(
-        group_by_publication=True
-    )
-    pubmed_wrapper = PubmedWrapper()
-
+    hw = HPOAWrapper(group_by_publication=True)
     if hpoa_file:
         with open(hpoa_file) as f:
             items = hw.objects_from_file(f, retrieve_pubmed_data=False)
     else:
-        items = hw.objects(retrieve_pubmed_data=False)
+        items = list(hw.objects(retrieve_pubmed_data=False))
 
-    full_text = pubmed_wrapper.fetch_full_text(pmid)
-    phenopacket = generate_phenopacket(full_text)
+    if only_pubs_about_one_disease:
+        # select items where there is only one OMIM disease mentioned in the paper.
+        # otherwise the 'correct' disease for each paper is ambiguous
+        items_with_one_correct_disease = []
+        for i in items:
+            if len(set(list([a['disease'] for a in i['associations']]))) == 1:
+                items_with_one_correct_disease.append(i)
+        items = items_with_one_correct_disease
 
-    # Save the phenopacket
-    output_path = Path(output_dir) / f"{pmid}_phenopacket.json"
-    with open(output_path, "w") as f:
-        json.dump(phenopacket, f)
-    click.echo(f"Phenopacket generated and saved to {output_path}")
+    # get papers and make phenopackets
+    pubmed_wrapper = PubmedWrapper()
+    items = items[:limit] if limit is not None else items
+    for item in tqdm(items, desc="making phenopackets"):
+        pmids = set([i['reference'] for i in item['associations']])
+        if len(pmids) > 1:
+            raise "Got >1 PMID in item {item}"
+        pmid = list(pmids)[0]
+        full_text = pubmed_wrapper.fetch_full_text(pmid)
+        phenopacket = generate_phenopacket(full_text)
+
+        # Save the phenopacket
+        output_path = Path(output_dir) / f"{pmid}_phenopacket.json"
+        with open(output_path, "w") as f:
+            json.dump(phenopacket, f)
+        click.echo(f"Phenopacket generated and saved to {output_path}")
 
 
 if __name__ == "__main__":
