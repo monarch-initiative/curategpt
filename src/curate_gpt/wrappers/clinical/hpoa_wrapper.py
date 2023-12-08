@@ -103,9 +103,8 @@ class HPOAWrapper(BaseWrapper):
                 pmids = [ref for ref in refs if ref.startswith("PMID")]
                 logger.debug(f"Expanding {refs}, pmids={pmids}")
                 if pmids:
-                    if retrieve_pubmed_data:
-                        pubs = self.pubmed_wrapper.objects_by_ids(pmids)  # this seems to take ages
-                        row["publications"] = pubs
+                    if retrieve_pubmed_data:  # seems to take ages, thus the if/else
+                        row["publications"] = self.pubmed_wrapper.objects_by_ids(pmids)
                         for pub in row["publications"]:
                             pub_id = pub["id"]
                             if pub_id not in by_pub:
@@ -116,11 +115,10 @@ class HPOAWrapper(BaseWrapper):
                                 {k: v for k, v in row.items() if k != "publications"}
                         )
                     else:
-                        row["publications"] = pubs
-                        for pub in row["publications"]:
-                            pub_id = pub["id"]
+                        row["publications"] = pmids
+                        for pub_id in row["publications"]:
                             if pub_id not in by_pub:
-                                by_pub[pub_id] = deepcopy(pub)
+                                by_pub[pub_id] = {}
                                 by_pub[pub_id]["associations"] = []
                                 logger.info(
                                     f"Adding {pub_id} to by_pub, {len(by_pub)} total")
