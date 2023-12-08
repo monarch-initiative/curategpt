@@ -1,5 +1,6 @@
 """Chat with a KB."""
 import logging
+from tqdm import tqdm
 from copy import deepcopy
 from csv import DictReader
 from dataclasses import dataclass
@@ -76,7 +77,12 @@ class HPOAWrapper(BaseWrapper):
         self.pubmed_wrapper.set_cache("hpoa_pubmed_cache")
 
     def objects(
-        self, collection: str = None, object_ids: Optional[Iterable[str]] = None, url=None, **kwargs
+        self,
+        collection: str = None,
+        object_ids: Optional[Iterable[str]] = None,
+        url=None,
+        retrieve_pubmed_data=True,
+        **kwargs
     ) -> Iterator[Dict]:
         # open a file handle from a URL using requests
         if url is None:
@@ -85,11 +91,11 @@ class HPOAWrapper(BaseWrapper):
         with requests.get(url, stream=True) as response:
             response.raise_for_status()  # Raise an error for failed requests
             reader = DictReader(stream_filtered_lines(response), delimiter="\t")
-            yield from self.objects_from_rows(reader)
+            yield from self.objects_from_rows(reader, retrieve_pubmed_data=retrieve_pubmed_data)
 
-    def objects_from_rows(self, rows: Iterable[Dict]) -> Iterator[Dict]:
+    def objects_from_rows(self, rows: Iterable[Dict], retrieve_pubmed_data=True) -> Iterator[Dict]:
         by_pub = {}
-        for row in rows:
+        for row in tqdm(rows):
             row = {MAP.get(k, k): v for k, v in row.items()}
             row["phenotype_label"] = term_label(row["phenotype"])
             refs = [ref for ref in row["reference"].split(";") if ref != "PMID:UNKNOWN"]
@@ -97,23 +103,39 @@ class HPOAWrapper(BaseWrapper):
                 pmids = [ref for ref in refs if ref.startswith("PMID")]
                 logger.debug(f"Expanding {refs}, pmids={pmids}")
                 if pmids:
-                    pubs = self.pubmed_wrapper.objects_by_ids(pmids)
-                    row["publications"] = pubs
-                    for pub in row["publications"]:
-                        pub_id = pub["id"]
-                        if pub_id not in by_pub:
-                            by_pub[pub_id] = deepcopy(pub)
-                            by_pub[pub_id]["associations"] = []
-                            logger.info(f"Adding {pub_id} to by_pub, {len(by_pub)} total")
-                        by_pub[pub_id]["associations"].append(
-                            {k: v for k, v in row.items() if k != "publications"}
+                    if retrieve_pubmed_data:
+                        pubs = self.pubmed_wrapper.objects_by_ids(pmids)  # this seems to take ages
+                        row["publications"] = pubs
+                        for pub in row["publications"]:
+                            pub_id = pub["id"]
+                            if pub_id not in by_pub:
+                                by_pub[pub_id] = deepcopy(pub)
+                                by_pub[pub_id]["associations"] = []
+                                logger.info(f"Adding {pub_id} to by_pub, {len(by_pub)} total")
+                            by_pub[pub_id]["associations"].append(
+                                {k: v for k, v in row.items() if k != "publications"}
                         )
+                    else:
+                        row["publications"] = pubs
+                        for pub in row["publications"]:
+                            pub_id = pub["id"]
+                            if pub_id not in by_pub:
+                                by_pub[pub_id] = deepcopy(pub)
+                                by_pub[pub_id]["associations"] = []
+                                logger.info(
+                                    f"Adding {pub_id} to by_pub, {len(by_pub)} total")
+                            by_pub[pub_id]["associations"].append(
+                                {k: v for k, v in row.items() if
+                                 k != "publications"}
+                            )
             if not self.group_by_publication:
                 yield row
         if self.group_by_publication:
             for pub in by_pub.values():
                 yield pub
 
-    def objects_from_file(self, file: TextIO) -> Iterator[Dict]:
+    def objects_from_file(self, file: TextIO,
+                          retrieve_pubmed_data = True) -> Iterator[Dict]:
         rows = DictReader(filter(filter_header, file), delimiter="\t")
-        yield from self.objects_from_rows(rows)
+        yield from self.objects_from_rows(rows,
+                                          retrieve_pubmed_data=retrieve_pubmed_data)

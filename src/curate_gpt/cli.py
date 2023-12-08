@@ -2,10 +2,11 @@
 import csv
 import gzip
 import json
+import os
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 
 import click
 import pandas as pd
@@ -17,6 +18,7 @@ from llm import UnknownModelError, get_model, get_plugins
 from llm.cli import load_conversation
 from oaklib import get_adapter
 from pydantic import BaseModel
+from tqdm import tqdm
 
 from curate_gpt import ChromaDBAdapter, __version__
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
@@ -32,8 +34,10 @@ from curate_gpt.evaluation.splitter import stratify_collection
 from curate_gpt.extract import AnnotatedObject
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
+from curate_gpt.utils.search import generate_phenopacket
 from curate_gpt.utils.vectordb_operations import match_collections
 from curate_gpt.wrappers import BaseWrapper, get_wrapper
+from curate_gpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from curate_gpt.wrappers.ontology import OntologyWrapper
 
@@ -1743,6 +1747,63 @@ def pubmed_ask(query, path, model, show_references, **kwargs):
         for ref, ref_text in response.references.items():
             print(f"## {ref}")
             print(ref_text)
+
+
+@main.command(name="pubmed2phenopacket")
+@click.argument("pmid")
+@click.option("--output-dir", type=click.Path(), help="Directory to save the phenopacket")
+def pubmed2phenopacket(pmid, output_dir):
+    """
+    Fetch full text for a given PMID and generate a phenopacket.
+
+    :param pmid: PubMed ID of the article.
+    :param output_dir: Directory to save the generated phenopacket.
+    """
+    pubmed_wrapper = PubmedWrapper()
+    full_text = pubmed_wrapper.fetch_full_text(pmid)
+    phenopacket = generate_phenopacket(full_text)
+
+    # Save the phenopacket
+    output_path = Path(output_dir) / f"{pmid}_phenopacket.json"
+    with open(output_path, "w") as f:
+        json.dump(phenopacket, f)
+    click.echo(f"Phenopacket generated and saved to {output_path}")
+
+
+@main.command(name="hpoa2phenopackets")
+@click.option("--output-dir", type=click.Path(), help="Directory to save the phenopackets")
+@click.option("--limit", type=click.INT, help="Stop at --limit entries")
+@click.option("--hpoa_file", type=click.Path(), help="Use this hpoa file instead of retrieving")
+def hpoa2phenopackets(output_dir, limit, hpoa_file):
+    """
+    Fetch full text for PMIDs mentioned in HPOA and generate phenopackets.
+    :limit: stop after limit number of entries (for testing)
+    :param output_dir: Directory to save the generated phenopackets.
+    """
+
+    hw = HPOAWrapper(
+        group_by_publication=True
+    )
+    pubmed_wrapper = PubmedWrapper()
+
+    if hpoa_file:
+        with open(hpoa_file) as f:
+            items = [i for i in hw.objects_from_file(f, retrieve_pubmed_data=False)]
+    else:
+        items = []
+        for i, item in tqdm(enumerate(hw.objects(retrieve_pubmed_data=False)), desc="loading data"):
+            if limit and i > limit:
+                break
+            items.append(item)
+
+    full_text = pubmed_wrapper.fetch_full_text(pmid)
+    phenopacket = generate_phenopacket(full_text)
+
+    # Save the phenopacket
+    output_path = Path(output_dir) / f"{pmid}_phenopacket.json"
+    with open(output_path, "w") as f:
+        json.dump(phenopacket, f)
+    click.echo(f"Phenopacket generated and saved to {output_path}")
 
 
 if __name__ == "__main__":

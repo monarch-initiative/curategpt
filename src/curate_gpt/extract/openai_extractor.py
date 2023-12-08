@@ -30,7 +30,7 @@ class OpenAIExtractor(Extractor):
         return [
             {
                 "name": FUNC_NAME,
-                "description": "A n ontology term",
+                "description": "An ontology term",
                 "parameters": self.schema_proxy.json_schema(),
             },
         ]
@@ -50,35 +50,36 @@ class OpenAIExtractor(Extractor):
                 "content": f"You are system that returns {target_class} object in JSON.",
             },
         ]
-        for example in examples:
-            ex_text = example.text
-            ex_object = example.object
-            print(f"EXAMPLE = {ex_text}")
-            messages.append(
-                {
-                    "role": "user",
-                    "content": f"make terms for {ex_text}",
-                }
-            )
-            if not examples_as_functions:
+        if examples:
+            for example in examples:
+                ex_text = example.text
+                ex_object = example.object
+                print(f"EXAMPLE = {ex_text}")
                 messages.append(
                     {
-                        "role": "assistant",
-                        "content": None,
-                        "function_call": {
-                            "name": FUNC_NAME,
-                            "arguments": json.dumps(ex_object),
+                        "role": "user",
+                        "content": f"make terms for {ex_text}",
+                    }
+                )
+                if not examples_as_functions:
+                    messages.append(
+                        {
+                            "role": "assistant",
+                            "content": None,
+                            "function_call": {
+                                "name": FUNC_NAME,
+                                "arguments": json.dumps(ex_object),
+                            },
                         },
-                    },
-                )
-            else:
-                messages.append(
-                    {
-                        "role": "function",
-                        "name": FUNC_NAME,
-                        "content": json.dumps(ex_object),
-                    },
-                )
+                    )
+                else:
+                    messages.append(
+                        {
+                            "role": "function",
+                            "name": FUNC_NAME,
+                            "content": json.dumps(ex_object),
+                        },
+                    )
         if conversation:
             messages.extend(conversation)
         # content = f"make terms for {text}"
