@@ -1788,13 +1788,9 @@ def hpoa2phenopackets(output_dir, limit, hpoa_file):
 
     if hpoa_file:
         with open(hpoa_file) as f:
-            items = [i for i in hw.objects_from_file(f, retrieve_pubmed_data=False)]
+            items = hw.objects_from_file(f, retrieve_pubmed_data=False)
     else:
-        items = []
-        for i, item in tqdm(enumerate(hw.objects(retrieve_pubmed_data=False)), desc="loading data"):
-            if limit and i > limit:
-                break
-            items.append(item)
+        items = hw.objects(retrieve_pubmed_data=False)
 
     full_text = pubmed_wrapper.fetch_full_text(pmid)
     phenopacket = generate_phenopacket(full_text)
