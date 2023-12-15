@@ -1243,7 +1243,7 @@ def ask(query, path, collection, model, show_references, _continue, conversation
             conversation = load_conversation(conversation_id)
             print(f"CONTINUING CONVERSATION {conversation}")
         except UnknownModelError as ex:
-            raise click.ClickException(str(ex))
+            raise click.ClickException(str(ex)) from ex
     chatbot = ChatAgent(path)
     chatbot.extractor = extractor
     chatbot.knowledge_source = db

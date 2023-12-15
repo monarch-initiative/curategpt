@@ -97,7 +97,7 @@ fixable = ["ALL"]
 
 # Select or ignore from https://beta.ruff.rs/docs/rules/
 select = [
-    # "B",  # bugbear
+    "B",  # bugbear
     # "D",  # pydocstyle
     # "E",  # pycodestyle errors
     "F",  # Pyflakes
