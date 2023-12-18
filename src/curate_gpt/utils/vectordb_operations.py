@@ -36,6 +36,6 @@ def match_collections(
     tm_ix, tm_vals = top_matches(sim_matrix)
     logger.info(f"Yielding {len(tm_ix)} matches")
     i = 0
-    for ix, val in zip(tm_ix, tm_vals):
+    for ix, val in zip(tm_ix, tm_vals, strict=True):
         yield left_objs[i][0], right_objs[ix][0], val
         i += 1
