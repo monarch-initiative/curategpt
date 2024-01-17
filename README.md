@@ -148,7 +148,7 @@ Then start up litellm:
 litellm -m ollama/mixtral
 ```
 
-Next edit your `extra-openai-models.yaml` as detailed in the llm docs:
+Next edit your `extra-openai-models.yaml` as detailed in [the llm docs](https://llm.datasette.io/en/stable/other-models.html):
 
 ```
 - model_name: ollama/mixtral
