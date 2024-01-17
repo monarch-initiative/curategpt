@@ -55,7 +55,7 @@ Note that by default this loads into a collection set stored at `stagedb`, where
 of `db`. You can copy the collection set to the db with:
 
 ```
-cp -r stagedb db
+cp -r stagedb/* db/
 ```
 
 
