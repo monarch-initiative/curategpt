@@ -136,7 +136,7 @@ architecture for using alternative models. In theory you can use any of these pl
 
 Additionally, you can set up an openai-emulating proxy using [litellm](https://github.com/BerriAI/litellm/).
 
-Let's say you want to run mixtral locally using ollama. You start up ollama:
+Let's say you want to run mixtral locally using ollama. You start up ollama (you may have to run `ollama serve` first):
 
 ```
 ollama run mixtral
