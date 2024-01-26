@@ -41,7 +41,6 @@ export OPENAI_API_KEY=<your key>
 
 You initially start with an empty database. You can load whatever you like into this
 database! Any JSON, YAML, or CSV is accepted.
-
 CurateGPT comes with *wrappers* for some existing local and remote sources, including
 ontologies. The [Makefile](Makefile) contains some examples of how to load these. You can
 load any ontology using the `ont-<name>` target, e.g.:
@@ -56,7 +55,7 @@ Note that by default this loads into a collection set stored at `stagedb`, where
 of `db`. You can copy the collection set to the db with:
 
 ```
-cp -r stagedb db
+cp -r stagedb/* db/
 ```
 
 
@@ -128,6 +127,51 @@ The following are also supported:
 
 - See [notebooks](notebooks) for examples.
 
+## Selecting models
+
+Currently this tool works best with the OpenAI gpt-4 model (for instruction tasks) and OpenAI `ada-text-embedding-002` for embedding.
+
+Curate-GPT is layered on top of [simonw/llm](https://github.com/simonw/llm) which has a plugin
+architecture for using alternative models. In theory you can use any of these plugins.
+
+Additionally, you can set up an openai-emulating proxy using [litellm](https://github.com/BerriAI/litellm/).
+
+The `litellm` proxy may be installed with `pip` as `pip install litellm[proxy]`.
+
+Let's say you want to run mixtral locally using ollama. You start up ollama (you may have to run `ollama serve` first):
+
+```
+ollama run mixtral
+```
+
+Then start up litellm:
+
+```
+litellm -m ollama/mixtral
+```
+
+Next edit your `extra-openai-models.yaml` as detailed in [the llm docs](https://llm.datasette.io/en/stable/other-models.html):
+
+```
+- model_name: ollama/mixtral
+  model_id: litellm-mixtral
+  api_base: "http://0.0.0.0:8000"
+```
+
+You can now use this:
+
+```yaml
+curategpt ask -m litellm-mixtral -c ont_cl "What neurotransmitter is released by the hippocampus?"
+```
+
+But be warned that many of the prompts in curategpt were engineered
+against openai models, and they may give suboptimal results or fail
+entirely on other models. As an example, `ask` seems to work quite
+well with mixtral, but `complete` works horribly. We haven't yet
+investigated if the issue is the model or our prompts or the overall
+approach.
+
+Welcome to the world of AI engineering!
 
 ## Using the command line
 
