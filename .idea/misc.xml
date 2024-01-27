@@ -3,7 +3,7 @@
   <component name="Black">
     <option name="executionMode" value="BINARY" />
     <option name="pathToExecutable" value="/Library/Frameworks/Python.framework/Versions/3.9/bin/black" />
-    <option name="sdkUUID" value="4a770930-96fd-4418-aaaa-dbb8612c6114" />
+    <option name="sdkName" value="Poetry (curate-gpt)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (curate-gpt)" project-jdk-type="Python SDK" />
 </project>
