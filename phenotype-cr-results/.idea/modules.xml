@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/curate-gpt.iml" filepath="$PROJECT_DIR$/.idea/curate-gpt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/phenotype-cr-results.iml" filepath="$PROJECT_DIR$/.idea/phenotype-cr-results.iml" />
     </modules>
   </component>
 </project>

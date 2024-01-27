@@ -538,7 +538,18 @@ def extract(
     output_format,
     **kwargs,
 ):
-    """Extract."""
+    """Extract a structured object from text.
+
+    This uses RAG to provide the most relevant example objects
+    from the collection to guide the extraction.
+
+    Example:
+
+        curategpt extract -c ont_foodon \
+           "Chip butties are scottish delicacies consisting of \
+            a buttered roll filled with deep fried potato wedges"
+
+    """
     db = ChromaDBAdapter(path)
     if schema:
         schema_manager = SchemaProxy(schema)
@@ -617,7 +628,10 @@ def extract_from_pubmed(
     schema,
     **kwargs,
 ):
-    """Extract."""
+    """Extract structured knowledge from a publication using its PubMed ID.
+
+    See the `extract` command
+    """
     db = ChromaDBAdapter(path)
     if schema:
         schema_manager = SchemaProxy(schema)
@@ -705,9 +719,14 @@ def complete(
 
     Example:
     -------
-        curategpt generate  -c obo_go "umbelliferose biosynthetic process"
+
+        curategpt complete  -c obo_go "umbelliferose biosynthetic process"
 
     If the string looks like yaml (if it has a ':') then it will be parsed as yaml.
+
+    E.g
+
+        curategpt complete  -c obo_go "label: umbelliferose biosynthetic process"
     """
     db = ChromaDBAdapter(path)
     if schema:
@@ -1231,7 +1250,12 @@ def multiprompt(file, model, system, prompt):
 )
 @click.argument("query")
 def ask(query, path, collection, model, show_references, _continue, conversation_id):
-    """Chat with a chatbot."""
+    """Chat with data in a collection.
+
+    Example:
+
+        curategpt ask -c obo_go "What are the parts of the nucleus?"
+    """
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
     if model:
@@ -1302,7 +1326,7 @@ def citeseek(query, path, collection, model, show_references, _continue, convers
 @model_option
 @click.option("--view", "-V", help="Name of the wrapper to use.")
 @click.option("--name-field", help="Field for names.")
-@click.option("--description-field", help="Field for names.")
+@click.option("--description-field", help="Field for descriptions.")
 @click.option("--system-prompt", help="System gpt prompt to use.")
 @click.argument("ids", nargs=-1)
 def summarize(ids, path, collection, model, view, **kwargs):
@@ -1310,6 +1334,8 @@ def summarize(ids, path, collection, model, view, **kwargs):
     Summarize a list of objects.
 
     Retrieves objects by ID from a knowledge source or wrapper and summarizes them.
+
+    (this is a partial implementation of TALISMAN using CurateGPT)
 
     Example:
     -------

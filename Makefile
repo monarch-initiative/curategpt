@@ -91,6 +91,12 @@ load-github-go:
 load-github-cl:
 	$(CURATE) -v view index -p $(DB_PATH) -c gh_cl -m openai:  --view github --init-with "{repo: obophenotype/cell-ontology}"
 
+load-github-to:
+	$(CURATE) -v view index -p $(DB_PATH) -c gh_to -m openai:  --view github --init-with "{repo: Planteome/plant-trait-ontology}"
+
+load-github-po:
+	$(CURATE) -v view index -p $(DB_PATH) -c gh_po -m openai:  --view github --init-with "{repo: Planteome/plant-ontology}"
+
 load-github-envo:
 	$(CURATE) -v view index -p $(DB_PATH) -c gh_envo -m openai:  --view github --init-with "{repo: EnvironmentOntology/envo}"
 

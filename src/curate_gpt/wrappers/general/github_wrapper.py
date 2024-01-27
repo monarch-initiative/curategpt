@@ -35,13 +35,13 @@ class Issue(BaseModel):
     comments: List[Comment] = None
 
 
-def get_token(token: str = None) -> str:
+def get_token(token: str = None) -> Optional[str]:
     if token:
         return token
     """Get token from env var"""
     token = os.environ.get("CURATEGPT_GITHUB_TOKEN")
-    if not token:
-        raise ValueError("CURATEGPT_GITHUB_TOKEN env var not set")
+    #if not token:
+    #    raise ValueError("CURATEGPT_GITHUB_TOKEN env var not set")
     return token
 
 
@@ -78,11 +78,15 @@ class GitHubWrapper(BaseWrapper):
     @property
     def headers(self):
         token = get_token()
-        return {
+        hdr = {
             "Authorization": f"token {token}",
             "Accept": "application/vnd.github.v3+json",
             "User-Agent": "CurateGPT/0.0.1",
         }
+        if not token:
+            del hdr["Authorization"]
+        logger.info(f"Header: {hdr}")
+        return hdr
 
     @property
     def repo_description(self) -> str:
@@ -150,6 +154,10 @@ class GitHubWrapper(BaseWrapper):
         token = get_token(token)
         url = f"https://api.github.com/repos/{self.owner}/{self.repo}/issues"
         headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github.v3+json"}
+        if not token:
+            del headers["Authorization"]
+            sleep(5)
+        logger.debug(f"Header: {headers}")
         params = {
             "state": "all",  # To fetch both open and closed issues
             "per_page": 100,  # Fetch 100 results per page (max allowed)
