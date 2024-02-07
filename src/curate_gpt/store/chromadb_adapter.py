@@ -26,9 +26,11 @@ from curate_gpt.store.db_adapter import (
     CollectionMetadata,
     DBAdapter,
 )
+from curate_gpt.utils.azure import USE_AZURE, get_azure_settings
 from curate_gpt.utils.vector_algorithms import mmr_diversified_search
 
 logger = logging.getLogger(__name__)
+logger.setLevel("DEBUG")
 
 
 @dataclass
@@ -129,10 +131,7 @@ class ChromaDBAdapter(DBAdapter):
         if model is None:
             raise ValueError("Model must be specified")
         if model.startswith("openai:"):
-            return embedding_functions.OpenAIEmbeddingFunction(
-                api_key=os.environ.get("OPENAI_API_KEY"),
-                model_name="text-embedding-ada-002",
-            )
+            return get_openai_embedding_function()
         return embedding_functions.SentenceTransformerEmbeddingFunction(model_name=model)
 
     def insert(
@@ -567,3 +566,20 @@ class ChromaDBAdapter(DBAdapter):
                 batched_obj[k] = result[k][i : i + batch_size]
             target_collection_obj.add(**batched_obj)
             i += batch_size
+
+
+def get_openai_embedding_function(use_azure: bool = USE_AZURE):
+    if use_azure:
+        config = get_azure_settings()["embedding_model"]
+        return embedding_functions.OpenAIEmbeddingFunction(
+            api_key=config["api_key"],
+            model_name=config["model_name"],
+            api_base=config["base_url"],
+            api_type="azure",
+            api_version=config["api_version"],
+            deployment_id=config["deployment_name"],
+        )
+    return embedding_functions.OpenAIEmbeddingFunction(
+        api_key=os.environ.get("OPENAI_API_KEY"),
+        model_name="text-embedding-ada-002",
+    )

@@ -1,0 +1,13 @@
+[chat_model]
+api_key = ""
+api_version = ""
+base_url = ""
+deployment_name = ""
+model_name = ""
+
+[embedding_model]
+api_key = ""
+api_version = ""
+base_url = ""
+deployment_name = ""
+model_name = ""

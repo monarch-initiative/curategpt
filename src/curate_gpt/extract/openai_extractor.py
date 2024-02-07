@@ -2,12 +2,14 @@
 import json
 import logging
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 
-import openai
 import yaml
+from openai import OpenAI
+from openai.lib.azure import AzureOpenAI
 
 from curate_gpt.extract.extractor import AnnotatedObject, Extractor
+from curate_gpt.utils.azure import USE_AZURE, get_azure_settings
 
 FUNC_NAME = "extract_data"
 
@@ -25,6 +27,9 @@ class OpenAIExtractor(Extractor):
     model: str = "gpt-4"
     # conversation: List[Dict[str, Any]] = None
     # conversation_mode: bool = False
+
+    def __init__(self, use_azure: bool = USE_AZURE):
+        self._client = self.get_client(use_azure)
 
     def functions(self):
         return [
@@ -90,7 +95,7 @@ class OpenAIExtractor(Extractor):
             }
         )
         print(yaml.dump(messages))
-        response = openai.ChatCompletion.create(
+        response = self._client.chat.completions.create(
             model=self.model,
             functions=self.functions(),
             messages=messages,
@@ -116,3 +121,17 @@ class OpenAIExtractor(Extractor):
                 raise e
             obj = {}
         return AnnotatedObject(object=obj)
+
+    def get_client(self, use_azure: bool, **kwargs) -> Union[OpenAI, AzureOpenAI]:
+        client_class = AzureOpenAI if use_azure else OpenAI
+        if use_azure:
+            config = get_azure_settings()["chat_model"]
+            kwargs.update(
+                {
+                    "api_version": config["api_version"],
+                    "azure_endpoint": config["base_url"],
+                    "api_key": config["api_key"],
+                    "azure_deployment": config["deployment_name"],
+                }
+            )
+        return client_class(**kwargs)
