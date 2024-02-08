@@ -30,7 +30,6 @@ from curate_gpt.utils.azure import USE_AZURE, get_azure_settings
 from curate_gpt.utils.vector_algorithms import mmr_diversified_search
 
 logger = logging.getLogger(__name__)
-logger.setLevel("DEBUG")
 
 
 @dataclass
