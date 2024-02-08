@@ -15,7 +15,7 @@ subset of the functionality of the local app)
 
 You will first need to [install Poetry](https://python-poetry.org/docs/#installation).
 
-Then clone this repo 
+Then clone this repo
 
 ```
 git clone https://github.com/monarch-initiative/curate-gpt.git
@@ -243,7 +243,7 @@ label: mesenchymal stem cell of the apical papilla
 
 ### All-by-all comparisons
 
-You can compare all objects in one collection 
+You can compare all objects in one collection
 
 `curategpt all-by-all --threshold 0.80 -c ont_hp -X ont_mp --ids-only -t csv > ~/tmp/allxall.mp.hp.csv`
 
@@ -271,3 +271,10 @@ HP:5200134,Jumping,MP:0001401,jumpy,0.9011393233129765
 Note that CurateGPT has a separate component for using an LLM to evaluate candidate matches (see also https://arxiv.org/abs/2310.03666); this is
 not enabled by default, this would be expensive to run for a whole ontology.
 
+## Azure Support
+
+If using with Azure OpenAI Services, a few additional steps are required.
+
+Step 1. `cp etc/azure.toml etc/azure_custom.toml`
+Step 2. Fill out the settings for the chat and embeddings model deployments in `etc/azure_custom.toml`
+Step 3. Set `USE_AZURE=true` when running the code.
