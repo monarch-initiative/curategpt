@@ -4,6 +4,7 @@ import gzip
 import json
 import logging
 import sys
+import warnings
 from pathlib import Path
 import random
 from typing import Any, Dict, List, Union
@@ -1627,6 +1628,10 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
     db = ChromaDBAdapter(path, **kwargs)
     db.text_lookup = view.text_field
 
+    if model is None:
+        warnings.warn("No model specified, using default model. Note that if you must"
+                      "the same model that was used to build the collection.")
+
     c = db.client.get_collection(collection)
 
     # get all terms
@@ -1636,9 +1641,9 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
         if not terms:
             raise ValueError(f"No terms found with prefix {prefix}")
 
-    # choose 1000 pseudo-random terms, get ancestor info, choose a random subsuming
-    # and non-subsuming term, calculate fraction of ancestors in common while we are
-    # at it
+    # choose 1000 pseudo-random terms, for each, choose another random term, then
+    # calculate fraction of ancestors in common while we are at it. we'll compare with
+    # cosine similarity of embeddings later
     random.seed(seed)
     ancs = []
     random_pairs = []
