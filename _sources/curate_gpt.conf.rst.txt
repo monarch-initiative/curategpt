@@ -1,0 +1,10 @@
+curate\_gpt.conf package
+========================
+
+Module contents
+---------------
+
+.. automodule:: curate_gpt.conf
+   :members:
+   :undoc-members:
+   :show-inheritance:

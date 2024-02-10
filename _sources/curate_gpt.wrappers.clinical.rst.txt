@@ -1,0 +1,53 @@
+curate\_gpt.wrappers.clinical package
+=====================================
+
+Submodules
+----------
+
+curate\_gpt.wrappers.clinical.clinvar\_wrapper module
+-----------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.clinical.clinvar_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.wrappers.clinical.ctgov\_wrapper module
+---------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.clinical.ctgov_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.wrappers.clinical.hpoa\_by\_pub\_wrapper module
+-----------------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.clinical.hpoa_by_pub_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.wrappers.clinical.hpoa\_wrapper module
+--------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.clinical.hpoa_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.wrappers.clinical.maxoa\_wrapper module
+---------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.clinical.maxoa_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curate_gpt.wrappers.clinical
+   :members:
+   :undoc-members:
+   :show-inheritance:

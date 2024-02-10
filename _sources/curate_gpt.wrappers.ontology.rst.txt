@@ -1,0 +1,45 @@
+curate\_gpt.wrappers.ontology package
+=====================================
+
+Submodules
+----------
+
+curate\_gpt.wrappers.ontology.bioportal\_wrapper module
+-------------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.ontology.bioportal_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.wrappers.ontology.oboformat\_wrapper module
+-------------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.ontology.oboformat_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.wrappers.ontology.ontology module
+---------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.ontology.ontology
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.wrappers.ontology.ontology\_wrapper module
+------------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.ontology.ontology_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curate_gpt.wrappers.ontology
+   :members:
+   :undoc-members:
+   :show-inheritance:

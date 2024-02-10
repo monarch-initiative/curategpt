@@ -1,0 +1,7 @@
+curate_gpt
+==========
+
+.. toctree::
+   :maxdepth: 4
+
+   curate_gpt

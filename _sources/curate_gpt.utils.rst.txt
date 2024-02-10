@@ -1,0 +1,45 @@
+curate\_gpt.utils package
+=========================
+
+Submodules
+----------
+
+curate\_gpt.utils.search module
+-------------------------------
+
+.. automodule:: curate_gpt.utils.search
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.utils.tokens module
+-------------------------------
+
+.. automodule:: curate_gpt.utils.tokens
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.utils.vector\_algorithms module
+-------------------------------------------
+
+.. automodule:: curate_gpt.utils.vector_algorithms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.utils.vectordb\_operations module
+---------------------------------------------
+
+.. automodule:: curate_gpt.utils.vectordb_operations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curate_gpt.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

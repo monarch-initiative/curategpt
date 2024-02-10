@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>curate_gpt.extract package &mdash; curate_gpt 0.0.0.post2.dev0+335f59e documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=39856d4f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="curate_gpt.utils package" href="curate_gpt.utils.html" />
+    <link rel="prev" title="curate_gpt.agents package" href="curate_gpt.agents.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            curate_gpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="curate_gpt.store.html">curate_gpt.store package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curate_gpt.wrappers.html">curate_gpt.wrappers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curate_gpt.agents.html">curate_gpt.agents package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">curate_gpt.extract package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.extract.basic_extractor">curate_gpt.extract.basic_extractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.basic_extractor.BasicExtractor"><code class="docutils literal notranslate"><span class="pre">BasicExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.basic_extractor.BasicExtractor.deserialize"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.deserialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.basic_extractor.BasicExtractor.extract"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.basic_extractor.BasicExtractor.model_name"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.basic_extractor.BasicExtractor.serialization_format"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.serialization_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.basic_extractor.BasicExtractor.serialize"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.serialize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.extract.extractor">curate_gpt.extract.extractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.annotations"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.annotations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.as_single_object"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.as_single_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.key_values"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.key_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.model_config"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.model_fields"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.object"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.object</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.text"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.text</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor"><code class="docutils literal notranslate"><span class="pre">Extractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor.api_key"><code class="docutils literal notranslate"><span class="pre">Extractor.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor.extract"><code class="docutils literal notranslate"><span class="pre">Extractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor.model"><code class="docutils literal notranslate"><span class="pre">Extractor.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor.model_name"><code class="docutils literal notranslate"><span class="pre">Extractor.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor.pydantic_root_model"><code class="docutils literal notranslate"><span class="pre">Extractor.pydantic_root_model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor.raise_error_if_unparsable"><code class="docutils literal notranslate"><span class="pre">Extractor.raise_error_if_unparsable</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor.schema_proxy"><code class="docutils literal notranslate"><span class="pre">Extractor.schema_proxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.Extractor.schemaview"><code class="docutils literal notranslate"><span class="pre">Extractor.schemaview</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.extract.openai_extractor">curate_gpt.extract.openai_extractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor.extract"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor.functions"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor.functions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor.max_tokens"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor.max_tokens</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor.model"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor.model</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.extract.recursive_extractor">curate_gpt.extract.recursive_extractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.deserialize"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.deserialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.extract"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.model_name"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.partially_serialize"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.partially_serialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.serialization_format"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.serialization_format</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.extract">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.annotations"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.annotations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.as_single_object"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.as_single_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.key_values"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.key_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.model_config"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.model_fields"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.object"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.object</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.text"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.text</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.BasicExtractor"><code class="docutils literal notranslate"><span class="pre">BasicExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.BasicExtractor.deserialize"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.deserialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.BasicExtractor.extract"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.BasicExtractor.model_name"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.BasicExtractor.serialization_format"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.serialization_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.BasicExtractor.serialize"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.serialize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.Extractor"><code class="docutils literal notranslate"><span class="pre">Extractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.Extractor.api_key"><code class="docutils literal notranslate"><span class="pre">Extractor.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.Extractor.extract"><code class="docutils literal notranslate"><span class="pre">Extractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.Extractor.model"><code class="docutils literal notranslate"><span class="pre">Extractor.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.Extractor.model_name"><code class="docutils literal notranslate"><span class="pre">Extractor.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.Extractor.pydantic_root_model"><code class="docutils literal notranslate"><span class="pre">Extractor.pydantic_root_model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.Extractor.raise_error_if_unparsable"><code class="docutils literal notranslate"><span class="pre">Extractor.raise_error_if_unparsable</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.Extractor.schema_proxy"><code class="docutils literal notranslate"><span class="pre">Extractor.schema_proxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.Extractor.schemaview"><code class="docutils literal notranslate"><span class="pre">Extractor.schemaview</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.OpenAIExtractor"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.OpenAIExtractor.extract"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.OpenAIExtractor.functions"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor.functions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.OpenAIExtractor.max_tokens"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor.max_tokens</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.OpenAIExtractor.model"><code class="docutils literal notranslate"><span class="pre">OpenAIExtractor.model</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.extract.RecursiveExtractor"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.RecursiveExtractor.deserialize"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.deserialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.RecursiveExtractor.extract"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.RecursiveExtractor.model_name"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.RecursiveExtractor.partially_serialize"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.partially_serialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.RecursiveExtractor.serialization_format"><code class="docutils literal notranslate"><span class="pre">RecursiveExtractor.serialization_format</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="curate_gpt.utils.html">curate_gpt.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curate_gpt.formatters.html">curate_gpt.formatters package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">curate_gpt</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">curate_gpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">curate_gpt.extract package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/curate_gpt.extract.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="curate-gpt-extract-package">
+<h1>curate_gpt.extract package<a class="headerlink" href="#curate-gpt-extract-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-curate_gpt.extract.basic_extractor">
+<span id="curate-gpt-extract-basic-extractor-module"></span><h2>curate_gpt.extract.basic_extractor module<a class="headerlink" href="#module-curate_gpt.extract.basic_extractor" title="Link to this heading"></a></h2>
+<p>Basic Extractor that is purely example driven.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.basic_extractor.BasicExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.basic_extractor.</span></span><span class="sig-name descname"><span class="pre">BasicExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpt-3.5-turbo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error_if_unparsable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialization_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.basic_extractor.BasicExtractor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#curate_gpt.extract.extractor.Extractor" title="curate_gpt.extract.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p>
+<p>Extractor that is purely example driven.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.basic_extractor.BasicExtractor.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.basic_extractor.BasicExtractor.deserialize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.basic_extractor.BasicExtractor.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.basic_extractor.BasicExtractor.extract" title="Link to this definition"></a></dt>
+<dd><p>Schema-guided extraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.basic_extractor.BasicExtractor.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gpt-3.5-turbo'</span></em><a class="headerlink" href="#curate_gpt.extract.basic_extractor.BasicExtractor.model_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.basic_extractor.BasicExtractor.serialization_format">
+<span class="sig-name descname"><span class="pre">serialization_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'json'</span></em><a class="headerlink" href="#curate_gpt.extract.basic_extractor.BasicExtractor.serialization_format" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.basic_extractor.BasicExtractor.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ao</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.basic_extractor.BasicExtractor.serialize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-curate_gpt.extract.extractor">
+<span id="curate-gpt-extract-extractor-module"></span><h2>curate_gpt.extract.extractor module<a class="headerlink" href="#module-curate_gpt.extract.extractor" title="Link to this heading"></a></h2>
+<p>Retrieval Augmented Generation (RAG) Base Class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.extractor.</span></span><span class="sig-name descname"><span class="pre">AnnotatedObject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Annotated object shadows a basic dictionary object</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.annotations">
+<span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.annotations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.as_single_object">
+<span class="sig-name descname"><span class="pre">as_single_object</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.as_single_object" title="Link to this definition"></a></dt>
+<dd><p>Return as a standard dictionary object.</p>
+<p>Each annotation is prefixed with an underscore.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.key_values">
+<span class="sig-name descname"><span class="pre">key_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <span class="pre">AnnotatedObject]</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.key_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotations':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">Any],</span> <span class="pre">required=False,</span> <span class="pre">default={}),</span> <span class="pre">'key_values':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">curate_gpt.extract.extractor.AnnotatedObject],</span> <span class="pre">required=False,</span> <span class="pre">default={}),</span> <span class="pre">'object':</span> <span class="pre">FieldInfo(annotation=Any,</span> <span class="pre">required=False,</span> <span class="pre">default={})}</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.model_fields" title="Link to this definition"></a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.object">
+<span class="sig-name descname"><span class="pre">object</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></em><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.text">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.text" title="Link to this definition"></a></dt>
+<dd><p>Get the text annotation of the object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.extractor.</span></span><span class="sig-name descname"><span class="pre">Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error_if_unparsable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor.api_key">
+<span class="sig-name descname"><span class="pre">api_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor.api_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor.extract">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor.extract" title="Link to this definition"></a></dt>
+<dd><p>Schema-guided extraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor.model" title="Link to this definition"></a></dt>
+<dd><p>Get the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_name</strong> – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor.model_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor.pydantic_root_model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pydantic_root_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">BaseModel</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor.pydantic_root_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor.raise_error_if_unparsable">
+<span class="sig-name descname"><span class="pre">raise_error_if_unparsable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor.raise_error_if_unparsable" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor.schema_proxy">
+<span class="sig-name descname"><span class="pre">schema_proxy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="curate_gpt.store.html#curate_gpt.store.schema_proxy.SchemaProxy" title="curate_gpt.store.schema_proxy.SchemaProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">SchemaProxy</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor.schema_proxy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.Extractor.schemaview">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">schemaview</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">SchemaView</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.Extractor.schemaview" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-curate_gpt.extract.openai_extractor">
+<span id="curate-gpt-extract-openai-extractor-module"></span><h2>curate_gpt.extract.openai_extractor module<a class="headerlink" href="#module-curate_gpt.extract.openai_extractor" title="Link to this heading"></a></h2>
+<p>Extractor that uses OpenAI functions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.openai_extractor.OpenAIExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.openai_extractor.</span></span><span class="sig-name descname"><span class="pre">OpenAIExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error_if_unparsable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpt-4'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#curate_gpt.extract.extractor.Extractor" title="curate_gpt.extract.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p>
+<p>Extractor that uses OpenAI functions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.openai_extractor.OpenAIExtractor.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples_as_functions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor.extract" title="Link to this definition"></a></dt>
+<dd><p>Schema-guided extraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.openai_extractor.OpenAIExtractor.functions">
+<span class="sig-name descname"><span class="pre">functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor.functions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.openai_extractor.OpenAIExtractor.max_tokens">
+<span class="sig-name descname"><span class="pre">max_tokens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3000</span></em><a class="headerlink" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor.max_tokens" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.openai_extractor.OpenAIExtractor.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gpt-4'</span></em><a class="headerlink" href="#curate_gpt.extract.openai_extractor.OpenAIExtractor.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-curate_gpt.extract.recursive_extractor">
+<span id="curate-gpt-extract-recursive-extractor-module"></span><h2>curate_gpt.extract.recursive_extractor module<a class="headerlink" href="#module-curate_gpt.extract.recursive_extractor" title="Link to this heading"></a></h2>
+<p>Basic Extractor that is purely example driven.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.recursive_extractor.RecursiveExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.recursive_extractor.</span></span><span class="sig-name descname"><span class="pre">RecursiveExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpt-3.5-turbo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error_if_unparsable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialization_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#curate_gpt.extract.extractor.Extractor" title="curate_gpt.extract.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p>
+<p>Extractor that recursively extracts objects from text.</p>
+<p>See SPIRES</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.recursive_extractor.RecursiveExtractor.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.deserialize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.recursive_extractor.RecursiveExtractor.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.extract" title="Link to this definition"></a></dt>
+<dd><p>Schema-guided extraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.recursive_extractor.RecursiveExtractor.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gpt-3.5-turbo'</span></em><a class="headerlink" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.model_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.recursive_extractor.RecursiveExtractor.partially_serialize">
+<span class="sig-name descname"><span class="pre">partially_serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.partially_serialize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.recursive_extractor.RecursiveExtractor.serialization_format">
+<span class="sig-name descname"><span class="pre">serialization_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'json'</span></em><a class="headerlink" href="#curate_gpt.extract.recursive_extractor.RecursiveExtractor.serialization_format" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-curate_gpt.extract">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-curate_gpt.extract" title="Link to this heading"></a></h2>
+<p>CurateGPT Extractors.</p>
+<p>These handle connections to (remote or local) LLMs,
+and can also extract structured objects from text.</p>
+<ul class="simple">
+<li><p>Base class: <a class="reference internal" href="#curate_gpt.extract.Extractor" title="curate_gpt.extract.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.</span></span><span class="sig-name descname"><span class="pre">AnnotatedObject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Annotated object shadows a basic dictionary object</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.annotations">
+<span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.annotations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.as_single_object">
+<span class="sig-name descname"><span class="pre">as_single_object</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.as_single_object" title="Link to this definition"></a></dt>
+<dd><p>Return as a standard dictionary object.</p>
+<p>Each annotation is prefixed with an underscore.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.key_values">
+<span class="sig-name descname"><span class="pre">key_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <span class="pre">AnnotatedObject]</span></em><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.key_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotations':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">Any],</span> <span class="pre">required=False,</span> <span class="pre">default={}),</span> <span class="pre">'key_values':</span> <span class="pre">FieldInfo(annotation=Dict[str,</span> <span class="pre">curate_gpt.extract.extractor.AnnotatedObject],</span> <span class="pre">required=False,</span> <span class="pre">default={}),</span> <span class="pre">'object':</span> <span class="pre">FieldInfo(annotation=Any,</span> <span class="pre">required=False,</span> <span class="pre">default={})}</span></em><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.model_fields" title="Link to this definition"></a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.object">
+<span class="sig-name descname"><span class="pre">object</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></em><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.text">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.text" title="Link to this definition"></a></dt>
+<dd><p>Get the text annotation of the object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.BasicExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.</span></span><span class="sig-name descname"><span class="pre">BasicExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpt-3.5-turbo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error_if_unparsable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialization_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.BasicExtractor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#curate_gpt.extract.extractor.Extractor" title="curate_gpt.extract.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p>
+<p>Extractor that is purely example driven.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.BasicExtractor.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.BasicExtractor.deserialize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.BasicExtractor.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.BasicExtractor.extract" title="Link to this definition"></a></dt>
+<dd><p>Schema-guided extraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.BasicExtractor.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gpt-3.5-turbo'</span></em><a class="headerlink" href="#curate_gpt.extract.BasicExtractor.model_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.BasicExtractor.serialization_format">
+<span class="sig-name descname"><span class="pre">serialization_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'json'</span></em><a class="headerlink" href="#curate_gpt.extract.BasicExtractor.serialization_format" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.BasicExtractor.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ao</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.BasicExtractor.serialize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.</span></span><span class="sig-name descname"><span class="pre">Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error_if_unparsable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.Extractor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor.api_key">
+<span class="sig-name descname"><span class="pre">api_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.extract.Extractor.api_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor.extract">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.Extractor.extract" title="Link to this definition"></a></dt>
+<dd><p>Schema-guided extraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#curate_gpt.extract.Extractor.model" title="Link to this definition"></a></dt>
+<dd><p>Get the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_name</strong> – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.extract.Extractor.model_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor.pydantic_root_model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pydantic_root_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">BaseModel</span></em><a class="headerlink" href="#curate_gpt.extract.Extractor.pydantic_root_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor.raise_error_if_unparsable">
+<span class="sig-name descname"><span class="pre">raise_error_if_unparsable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#curate_gpt.extract.Extractor.raise_error_if_unparsable" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor.schema_proxy">
+<span class="sig-name descname"><span class="pre">schema_proxy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="curate_gpt.store.html#curate_gpt.store.schema_proxy.SchemaProxy" title="curate_gpt.store.schema_proxy.SchemaProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">SchemaProxy</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.extract.Extractor.schema_proxy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="curate_gpt.extract.Extractor.schemaview">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">schemaview</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">SchemaView</span></em><a class="headerlink" href="#curate_gpt.extract.Extractor.schemaview" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.OpenAIExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.</span></span><span class="sig-name descname"><span class="pre">OpenAIExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error_if_unparsable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpt-4'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.OpenAIExtractor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#curate_gpt.extract.extractor.Extractor" title="curate_gpt.extract.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p>
+<p>Extractor that uses OpenAI functions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.OpenAIExtractor.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples_as_functions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.OpenAIExtractor.extract" title="Link to this definition"></a></dt>
+<dd><p>Schema-guided extraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.OpenAIExtractor.functions">
+<span class="sig-name descname"><span class="pre">functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.OpenAIExtractor.functions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.OpenAIExtractor.max_tokens">
+<span class="sig-name descname"><span class="pre">max_tokens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3000</span></em><a class="headerlink" href="#curate_gpt.extract.OpenAIExtractor.max_tokens" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.OpenAIExtractor.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gpt-4'</span></em><a class="headerlink" href="#curate_gpt.extract.OpenAIExtractor.model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.extract.RecursiveExtractor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.extract.</span></span><span class="sig-name descname"><span class="pre">RecursiveExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_proxy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpt-3.5-turbo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error_if_unparsable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialization_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.RecursiveExtractor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#curate_gpt.extract.extractor.Extractor" title="curate_gpt.extract.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p>
+<p>Extractor that recursively extracts objects from text.</p>
+<p>See SPIRES</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.RecursiveExtractor.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.RecursiveExtractor.deserialize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.RecursiveExtractor.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">examples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.RecursiveExtractor.extract" title="Link to this definition"></a></dt>
+<dd><p>Schema-guided extraction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.RecursiveExtractor.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gpt-3.5-turbo'</span></em><a class="headerlink" href="#curate_gpt.extract.RecursiveExtractor.model_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.extract.RecursiveExtractor.partially_serialize">
+<span class="sig-name descname"><span class="pre">partially_serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.extract.RecursiveExtractor.partially_serialize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.RecursiveExtractor.serialization_format">
+<span class="sig-name descname"><span class="pre">serialization_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'json'</span></em><a class="headerlink" href="#curate_gpt.extract.RecursiveExtractor.serialization_format" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="curate_gpt.agents.html" class="btn btn-neutral float-left" title="curate_gpt.agents package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="curate_gpt.utils.html" class="btn btn-neutral float-right" title="curate_gpt.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Author 1 &lt;cjmungall@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

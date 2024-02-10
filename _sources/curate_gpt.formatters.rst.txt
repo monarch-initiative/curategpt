@@ -1,0 +1,21 @@
+curate\_gpt.formatters package
+==============================
+
+Submodules
+----------
+
+curate\_gpt.formatters.format\_utils module
+-------------------------------------------
+
+.. automodule:: curate_gpt.formatters.format_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curate_gpt.formatters
+   :members:
+   :undoc-members:
+   :show-inheritance:
