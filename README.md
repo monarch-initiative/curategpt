@@ -270,4 +270,3 @@ HP:5200134,Jumping,MP:0001401,jumpy,0.9011393233129765
 
 Note that CurateGPT has a separate component for using an LLM to evaluate candidate matches (see also https://arxiv.org/abs/2310.03666); this is
 not enabled by default, this would be expensive to run for a whole ontology.
-
