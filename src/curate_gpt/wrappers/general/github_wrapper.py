@@ -40,7 +40,7 @@ def get_token(token: str = None) -> Optional[str]:
         return token
     """Get token from env var"""
     token = os.environ.get("CURATEGPT_GITHUB_TOKEN")
-    #if not token:
+    # if not token:
     #    raise ValueError("CURATEGPT_GITHUB_TOKEN env var not set")
     return token
 
