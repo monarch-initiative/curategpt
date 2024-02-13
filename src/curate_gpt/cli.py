@@ -20,6 +20,7 @@ from llm.cli import load_conversation
 from oaklib import get_adapter
 from pydantic import BaseModel
 from tqdm import tqdm
+import numpy as np
 
 from curate_gpt import ChromaDBAdapter, __version__
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
@@ -1608,12 +1609,13 @@ def index_ontology_command(ont, path, collection, append, model, index_fields, b
 @click.option('--predicates', multiple=True, help='Predicates of interest (e.g., is_a, part_of)')
 @click.option("--seed", required=False, default=42, help="Seed for random number generator")
 @click.option('--num_terms', required=False, default=1000, help='Number of term pairs to compare')
+@click.option('--choose_subsuming_terms', required=False, default=False, help='Whether to choose subsuming terms or just random terms')
 @click.argument("ont")
-def subsumption_command(ont, path, collection, prefix, predicates, seed, num_terms, model, **kwargs):
+def subsumption_command(ont, path, collection, prefix, predicates, seed, num_terms,
+                        choose_subsuming_terms, model, **kwargs):
     """
-    Compare pairs of ontology terms where one subsumes the other, or one does NOT
-    subsume the other, to determine whether LLM embeddings reflect subsumption
-    relationships.
+    Compare pairs of ontology terms (optionally where one subsums the other) to
+    determine whether similarity of LLM embeddings reflect subsumption relationships.
 
     Example:
     -------
@@ -1641,26 +1643,85 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
         if not terms:
             raise ValueError(f"No terms found with prefix {prefix}")
 
-    # choose 1000 pseudo-random terms, for each, choose another random term, then
+    c = db.client.get_collection(collection,
+                                 embedding_function=db._embedding_function(model))
+
+    # build CURIE to object map
+    curie2obj_id = {}
+    for o in tqdm(list(view.objects())):
+        curie2obj_id[o['original_id']] = o
+
+    # get embeddings to manually do cosine similarity
+    d = c.get(include=['embeddings'])
+    ids = d['ids']
+    emb = d['embeddings']
+    # make id2emb map
+    id2emb = {}
+    for i, id in tqdm(enumerate(ids), desc="Building id2emb map"):
+        id2emb[id] = emb[i]
+
+    # choose num_terms pseudo-random terms, for each, choose another random term, then
     # calculate fraction of ancestors in common while we are at it. we'll compare with
     # cosine similarity of embeddings later
     random.seed(seed)
-    ancs = []
-    random_pairs = []
+    results = []
     for term in tqdm(random.sample(terms, num_terms), desc="Choosing terms to compare"):
         anc = list(view.oak_adapter.ancestors(term, predicates=predicates, reflexive=False))
-        ancs.append((term, anc))
 
         # choose random term to pair with
-        random_other_term = random.choice(terms)
+        if choose_subsuming_terms:
+            random_other_term = random.choice(anc)
+        else:
+            random_other_term = random.choice(terms)
         random_term_ancs = list(view.oak_adapter.ancestors(random_other_term,
                                                            predicates=predicates,
                                                            reflexive=False))
-        pair_shared_anc = len(set(anc).intersection(
-            set(random_term_ancs))) / len(anc)  # fraction of ancestors in common
-        random_pairs.append((term, random_other_term, pair_shared_anc))
+        # fraction of ancestors in common
+        pair_shared_anc = len(set(anc).intersection(set(random_term_ancs))) / len(anc)
 
-    pass
+        id1 = curie2obj_id[term]['id']
+        id2 = curie2obj_id[random_other_term]['id']
+
+        # calculate cosine sim
+        cosine_sim = np.dot(id2emb[id1], id2emb[id2]) / (np.linalg.norm(id2emb[id1]) * np.linalg.norm(id2emb[id2]))
+
+        # if debugging
+        if (logging.getLogger().getEffectiveLevel() == logging.DEBUG and
+                (cosine_sim > 0.85 or cosine_sim < 0.2)):
+            print(f"\nterm: {term} {(curie2obj_id[term]['label'])},"
+                  f" random_other_term: {random_other_term} {(curie2obj_id[random_other_term]['label'])},"
+                  f" pair_shared_anc: {pair_shared_anc}, cosine_sim: {round(cosine_sim, 2)}")
+
+        results.append((term, random_other_term, pair_shared_anc, cosine_sim))
+        pass
+
+    # plot cosine similarity vs fraction of ancestors in common
+    # in matplotlib
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+    df = pd.DataFrame(results, columns=['term', 'random_other_term', 'pair_shared_anc', 'cosine_sim'])
+    sns.scatterplot(data=df, x='pair_shared_anc', y='cosine_sim')
+
+    # least squares fit
+    m, b = np.polyfit(df['pair_shared_anc'], df['cosine_sim'], 1)
+    # plot line
+    plt.plot(df['pair_shared_anc'], m*df['pair_shared_anc'] + b, color='red')
+    # calculate r-squared value
+    r2 = np.corrcoef(df['pair_shared_anc'], df['cosine_sim'])[0, 1]**2
+    plt.text(0.1, 0.9, f"R-squared: {round(r2, 2)}", ha='center',
+             va='center', transform=plt.gca().transAxes)
+
+    plt.xlabel('Fraction of ancestors in common')
+    plt.ylabel('Cosine similarity')
+    # title = ontology name
+    plt.title(f'{ont}')
+
+
+    plt.show()
+
+    # write results to file
+
 
 @main.group()
 def view():
