@@ -1609,10 +1609,11 @@ def index_ontology_command(ont, path, collection, append, model, index_fields, b
 @click.option('--predicates', multiple=True, help='Predicates of interest (e.g., is_a, part_of)')
 @click.option("--seed", required=False, default=42, help="Seed for random number generator")
 @click.option('--num_terms', required=False, default=1000, help='Number of term pairs to compare')
-@click.option('--choose_subsuming_terms', required=False, default=False, help='Whether to choose subsuming terms or just random terms')
+@click.option('--choose_subsuming_terms', required=False, default=True, help='Whether to choose subsuming terms or just random terms')
+@click.option("--root_term", required=False, default=None, help="Root term to use for selecting terms to sample")
 @click.argument("ont")
 def subsumption_command(ont, path, collection, prefix, predicates, seed, num_terms,
-                        choose_subsuming_terms, model, **kwargs):
+                        choose_subsuming_terms, root_term, model, **kwargs):
     """
     Compare pairs of ontology terms (optionally where one subsums the other) to
     determine whether similarity of LLM embeddings reflect subsumption relationships.
@@ -1637,7 +1638,10 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
     c = db.client.get_collection(collection)
 
     # get all terms
-    terms = list(view.oak_adapter.all_entity_curies())
+    if root_term is not None:
+        pass
+    else:
+        terms = list(view.oak_adapter.all_entity_curies())
     if prefix is not None:
         terms = [t for t in terms if t.startswith(prefix)]
         if not terms:
@@ -1666,7 +1670,7 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
     random.seed(seed)
     results = []
     for term in tqdm(random.sample(terms, num_terms), desc="Choosing terms to compare"):
-        anc = list(view.oak_adapter.ancestors(term, predicates=predicates, reflexive=False))
+        anc = list(view.oak_adapter.ancestors(term, predicates=predicates, reflexive=True))
 
         # choose random term to pair with
         if choose_subsuming_terms:
@@ -1675,7 +1679,7 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
             random_other_term = random.choice(terms)
         random_term_ancs = list(view.oak_adapter.ancestors(random_other_term,
                                                            predicates=predicates,
-                                                           reflexive=False))
+                                                           reflexive=True))
         # fraction of ancestors in common
         pair_shared_anc = len(set(anc).intersection(set(random_term_ancs))) / len(anc)
 
@@ -1683,7 +1687,11 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
         id2 = curie2obj_id[random_other_term]['id']
 
         # calculate cosine sim
-        cosine_sim = np.dot(id2emb[id1], id2emb[id2]) / (np.linalg.norm(id2emb[id1]) * np.linalg.norm(id2emb[id2]))
+        try:
+            cosine_sim = np.dot(id2emb[id1], id2emb[id2]) / (np.linalg.norm(id2emb[id1]) * np.linalg.norm(id2emb[id2]))
+        except KeyError as e:
+            print(f"KeyError: {e}")
+            continue
 
         # if debugging
         if (logging.getLogger().getEffectiveLevel() == logging.DEBUG and
@@ -1716,11 +1724,7 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
     plt.ylabel('Cosine similarity')
     # title = ontology name
     plt.title(f'{ont}')
-
-
     plt.show()
-
-    # write results to file
 
 
 @main.group()
