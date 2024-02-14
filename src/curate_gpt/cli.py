@@ -1664,8 +1664,7 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
         id2emb[id] = emb[i]
 
     # choose num_terms pseudo-random terms, for each, choose another random term, then
-    # calculate fraction of ancestors in common while we are at it. we'll compare with
-    # cosine similarity of embeddings later
+    # calculate fraction of ancestors in common, then calculate cosine similarity
     random.seed(seed)
     results = []
     for term in tqdm(random.sample(terms, num_terms), desc="Choosing terms to compare"):
@@ -1690,6 +1689,13 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
             cosine_sim = np.dot(id2emb[id1], id2emb[id2]) / (np.linalg.norm(id2emb[id1]) * np.linalg.norm(id2emb[id2]))
         except KeyError as e:
             print(f"KeyError: {e}")
+            continue
+
+        # this seems to have a few times in HPO
+        if cosine_sim == 1.0 and pair_shared_anc < 1.0:
+            print(f"term: {term} {(curie2obj_id[term]['label'])},"
+                  f" random_other_term: {random_other_term} {(curie2obj_id[random_other_term]['label'])},"
+                  f" pair_shared_anc: {pair_shared_anc}, cosine_sim: {round(cosine_sim, 2)}")
             continue
 
         # if debugging
