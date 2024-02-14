@@ -1635,11 +1635,10 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
         warnings.warn("No model specified, using default model. Note that if you must"
                       "the same model that was used to build the collection.")
 
-    c = db.client.get_collection(collection)
-
     # get all terms
     if root_term is not None:
-        pass
+        print(f"Using root term: {root_term} to select terms to compare.")
+        terms = list(view.oak_adapter.descendants(root_term, predicates=predicates, reflexive=True))
     else:
         terms = list(view.oak_adapter.all_entity_curies())
     if prefix is not None:
