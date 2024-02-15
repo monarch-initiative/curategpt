@@ -1615,7 +1615,7 @@ def index_ontology_command(ont, path, collection, append, model, index_fields, b
 def subsumption_command(ont, path, collection, prefix, predicates, seed, num_terms,
                         choose_subsuming_terms, root_term, model, **kwargs):
     """
-    Compare pairs of ontology terms (optionally where one subsums the other) to
+    Compare pairs of ontology terms (optionally where one subsumes the other) to
     determine whether similarity of LLM embeddings reflect subsumption relationships.
 
     Example:
@@ -1672,14 +1672,16 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
 
         # choose random term to pair with
         if choose_subsuming_terms:
-            random_other_term = random.choice(anc)
+            # do not choose term itself (remove term from list of ancestors)
+            random_other_term = random.choice(list(set(anc) - set([term])))
         else:
             random_other_term = random.choice(terms)
         random_term_ancs = list(view.oak_adapter.ancestors(random_other_term,
                                                            predicates=predicates,
                                                            reflexive=True))
         # fraction of ancestors in common
-        pair_shared_anc = len(set(anc).intersection(set(random_term_ancs))) / len(anc)
+        pair_shared_anc = (len(set(anc).intersection(set(random_term_ancs))) /
+                           len(list(set(anc))))
 
         id1 = curie2obj_id[term]['id']
         id2 = curie2obj_id[random_other_term]['id']
@@ -1689,13 +1691,6 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
             cosine_sim = np.dot(id2emb[id1], id2emb[id2]) / (np.linalg.norm(id2emb[id1]) * np.linalg.norm(id2emb[id2]))
         except KeyError as e:
             print(f"KeyError: {e}")
-            continue
-
-        # this seems to have a few times in HPO
-        if cosine_sim == 1.0 and pair_shared_anc < 1.0:
-            print(f"term: {term} {(curie2obj_id[term]['label'])},"
-                  f" random_other_term: {random_other_term} {(curie2obj_id[random_other_term]['label'])},"
-                  f" pair_shared_anc: {pair_shared_anc}, cosine_sim: {round(cosine_sim, 2)}")
             continue
 
         # if debugging
@@ -1714,7 +1709,9 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
     import seaborn as sns
     import pandas as pd
     df = pd.DataFrame(results, columns=['term', 'random_other_term', 'pair_shared_anc', 'cosine_sim'])
-    sns.scatterplot(data=df, x='pair_shared_anc', y='cosine_sim')
+
+    # plot with some alpha
+    sns.scatterplot(data=df, x='pair_shared_anc', y='cosine_sim', alpha=0.5)
 
     # least squares fit
     m, b = np.polyfit(df['pair_shared_anc'], df['cosine_sim'], 1)
@@ -1730,6 +1727,7 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
     # title = ontology name
     plt.title(f'{ont}')
     plt.show()
+    pass
 
 
 @main.group()
