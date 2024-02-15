@@ -30,7 +30,6 @@ class SubsumptionEvalAgent(BaseAgent):
     def compare_cosine_sim_to_shared_ancestors(
         self,
         view: OntologyWrapper,
-        db: ChromaDBAdapter,
         collection: str,
         ont: str,
         num_terms: int,
@@ -50,7 +49,6 @@ class SubsumptionEvalAgent(BaseAgent):
         >>> print(response)
         """
 
-        db = self.knowledge_source
 
         # get all terms
         if root_term is not None:
@@ -63,8 +61,8 @@ class SubsumptionEvalAgent(BaseAgent):
             if not terms:
                 raise ValueError(f"No terms found with prefix {prefix}")
 
-        c = db.client.get_collection(collection,
-                                     embedding_function=db._embedding_function(model))
+        c = self.knowledge_source.client.get_collection(self.knowledge_source_collection,
+                                                        embedding_function=self.knowledge_source._embedding_function(model))
 
         # build CURIE to object map
         curie2obj_id = {}
