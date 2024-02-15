@@ -30,7 +30,6 @@ class SubsumptionEvalAgent(BaseAgent):
     def compare_cosine_sim_to_shared_ancestors(
         self,
         view: OntologyWrapper,
-        collection: str,
         ont: str,
         num_terms: int,
         choose_subsuming_terms: bool,
