@@ -7,11 +7,8 @@ import seaborn as sns
 import pandas as pd
 
 from dataclasses import dataclass
-
-from oaklib import get_adapter
 from tqdm import tqdm
 
-from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.wrappers.ontology import OntologyWrapper
 
@@ -26,46 +23,67 @@ class SubsumptionEvalAgent(BaseAgent):
     cosine similarity between two entities and fraction of shared ancestors
 
     """
+    view: OntologyWrapper = None
+    model: str = None
+    ont: str = None
 
     def compare_cosine_sim_to_shared_ancestors(
         self,
-        view: OntologyWrapper,
-        ont: str,
         num_terms: int,
         choose_subsuming_terms: bool,
-        model: str,
         prefix: str = None,
         predicates: list = None,
         root_term: str = None,
         seed: int = 42,
         **kwargs):
         """
-        Summarize a list of objects.
+        compare cosine similarity between two entities and fraction of shared ancestors
 
         Example:
-        -------
 
-        >>> print(response)
+        from oaklib.datamodels.vocabulary import IS_A, PART_OF
+        from oaklib.adapters import get_adapter
+        from oaklib.adapters.chroma import ChromaDBAdapter
+        from curate_gpt.agents.subsumption_eval_agent import SubsumptionEvalAgent
+
+        oak_adapter = get_adapter("hp")
+        view = OntologyWrapper(oak_adapter=oak_adapter)
+        db = ChromaDBAdapter(path, **kwargs)
+        db.text_lookup = view.text_fie
+        predicates = [IS_A, PART_OF]
+        model = "openai:" # use the same model as was used in db for embeddings
+        agent = SubsumptionEvalAgent(knowledge_source=db,
+                                     knowledge_source_collection=collection,
+                                     view=view,
+                                     model=model,
+                                     ont="hp)
+        response = (agent.compare_cosine_sim_to_shared_ancestors(num_terms=num_terms,
+                                             choose_subsuming_terms=True,
+                                             prefix="HP:",
+                                             predicates=predicates,
+                                             root_term="HP:0000118",
+        print(response)
         """
-
 
         # get all terms
         if root_term is not None:
             print(f"Using root term: {root_term} to select terms to compare.")
-            terms = list(view.oak_adapter.descendants(root_term, predicates=predicates, reflexive=True))
+            terms = list(self.view.oak_adapter.descendants(root_term,
+                                                      predicates=predicates,
+                                                      reflexive=True))
         else:
-            terms = list(view.oak_adapter.all_entity_curies())
+            terms = list(self.view.oak_adapter.all_entity_curies())
         if prefix is not None:
             terms = [t for t in terms if t.startswith(prefix)]
             if not terms:
                 raise ValueError(f"No terms found with prefix {prefix}")
 
         c = self.knowledge_source.client.get_collection(self.knowledge_source_collection,
-                                                        embedding_function=self.knowledge_source._embedding_function(model))
+                                                        embedding_function=self.knowledge_source._embedding_function(self.model))
 
         # build CURIE to object map
         curie2obj_id = {}
-        for o in tqdm(list(view.objects())):
+        for o in tqdm(list(self.view.objects())):
             curie2obj_id[o['original_id']] = o
 
         # get embeddings to manually do cosine similarity
@@ -82,7 +100,7 @@ class SubsumptionEvalAgent(BaseAgent):
         random.seed(seed)
         results = []
         for term in tqdm(random.sample(terms, num_terms), desc="Choosing terms to compare"):
-            anc = list(view.oak_adapter.ancestors(term, predicates=predicates, reflexive=True))
+            anc = list(self.view.oak_adapter.ancestors(term, predicates=predicates, reflexive=True))
 
             # choose random term to pair with
             if choose_subsuming_terms:
@@ -90,9 +108,9 @@ class SubsumptionEvalAgent(BaseAgent):
                 random_other_term = random.choice(list(set(anc) - set([term])))
             else:
                 random_other_term = random.choice(terms)
-            random_term_ancs = list(view.oak_adapter.ancestors(random_other_term,
-                                                               predicates=predicates,
-                                                               reflexive=True))
+            random_term_ancs = list(self.view.oak_adapter.ancestors(random_other_term,
+                                                                    predicates=predicates,
+                                                                    reflexive=True))
             # fraction of ancestors in common
             pair_shared_anc = (len(set(anc).intersection(set(random_term_ancs))) /
                                len(list(set(anc))))
@@ -136,6 +154,6 @@ class SubsumptionEvalAgent(BaseAgent):
         plt.xlabel('Fraction of ancestors in common')
         plt.ylabel('Cosine similarity')
         # title = ontology name
-        plt.title(f'{ont}')
+        plt.title(f'{self.ont}')
         plt.show()
         return {"rsquared": r2}

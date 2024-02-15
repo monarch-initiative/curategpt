@@ -1637,15 +1637,15 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
                       "the same model that was used to build the collection.")
 
     agent = SubsumptionEvalAgent(knowledge_source=db,
-                                 knowledge_source_collection=collection)
+                                 knowledge_source_collection=collection,
+                                 view=view,
+                                 model=model,
+                                 ont=ont)
+
     response = (
-        agent.compare_cosine_sim_to_shared_ancestors(view=view,
-                                                     db=db,
-                                                     collection=collection,
-                                                     ont=ont,
+        agent.compare_cosine_sim_to_shared_ancestors(
                                                      num_terms=num_terms,
                                                      choose_subsuming_terms=choose_subsuming_terms,
-                                                     model=model,
                                                      prefix=prefix,
                                                      predicates=predicates,
                                                      root_term=root_term,
