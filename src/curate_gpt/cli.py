@@ -3,6 +3,7 @@ import csv
 import gzip
 import json
 import logging
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -1612,9 +1613,10 @@ def index_ontology_command(ont, path, collection, append, model, index_fields, b
 @click.option('--num_terms', required=False, default=1000, help='Number of term pairs to compare')
 @click.option('--choose_subsuming_terms', required=False, default=True, help='Whether to choose subsuming terms or just random terms')
 @click.option("--root_term", required=False, default=None, help="Root term to use for selecting terms to sample")
+@click.option("--output_dir", required=False, default=None, help="Directory to write output to")
 @click.argument("ont")
 def subsumption_command(ont, path, collection, prefix, predicates, seed, num_terms,
-                        choose_subsuming_terms, root_term, model, **kwargs):
+                        choose_subsuming_terms, root_term, output_dir, model, **kwargs):
     """
     Compare pairs of ontology terms (optionally where one subsumes the other) to
     determine whether similarity of LLM embeddings reflect subsumption relationships.
@@ -1642,14 +1644,21 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
                                  model=model,
                                  ont=ont)
 
+    if output_dir and not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+    img_file_name = (os.path.join(output_dir,
+                                  f"cosine_sim_vs_shared_anc_{ont}_"
+                                  f"sub_{str(choose_subsuming_terms)}.png"))
     response = (
         agent.compare_cosine_sim_to_shared_ancestors(
                                                      num_terms=num_terms,
-                                                     choose_subsuming_terms=choose_subsuming_terms,
+                                                     choose_subsuming_terms=
+                                                     choose_subsuming_terms,
                                                      prefix=prefix,
                                                      predicates=predicates,
                                                      root_term=root_term,
                                                      seed=seed,
+                                                     img_file_name=img_file_name,
                                                      **kwargs))
     click.echo(f"r-squared: {response.get('rsquared')}")
 

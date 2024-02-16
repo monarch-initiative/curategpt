@@ -35,6 +35,7 @@ class SubsumptionEvalAgent(BaseAgent):
         predicates: list = None,
         root_term: str = None,
         seed: int = 42,
+        img_file_name: str = None,
         **kwargs):
         """
         compare cosine similarity between two entities and fraction of shared ancestors
@@ -155,5 +156,10 @@ class SubsumptionEvalAgent(BaseAgent):
         plt.ylabel('Cosine similarity')
         # title = ontology name
         plt.title(f'{self.ont}')
+
+        # save to file
+        if img_file_name is not None:
+            plt.savefig(img_file_name)
+
         plt.show()
         return {"rsquared": r2}
