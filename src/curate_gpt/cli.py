@@ -1646,7 +1646,7 @@ def subsumption_command(ont, path, collection, prefix, predicates, seed, num_ter
 
     if output_dir and not os.path.exists(output_dir):
         os.mkdir(output_dir)
-    img_file_name = (os.path.join(output_dir,
+    img_file_name = (os.path.join(output_dir if output_dir else "",
                                   f"cosine_sim_vs_shared_anc_{ont}_"
                                   f"sub_{str(choose_subsuming_terms)}.png"))
     response = (
