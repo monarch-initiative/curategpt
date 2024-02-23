@@ -116,15 +116,17 @@ class SubsumptionEvalAgent(BaseAgent):
             pair_shared_anc = (len(set(anc).intersection(set(random_term_ancs))) /
                                len(list(set(anc))))
 
-            id1 = curie2obj_id[term]['id']
-            id2 = curie2obj_id[random_other_term]['id']
+            try:
+                id1 = curie2obj_id[term]['id']
+                id2 = curie2obj_id[random_other_term]['id']
+            except KeyError as e:
+                raise KeyError(f"KeyError retrieving item from curie2obj_id: {e}")
 
             # calculate cosine sim
             try:
                 cosine_sim = np.dot(id2emb[id1], id2emb[id2]) / (np.linalg.norm(id2emb[id1]) * np.linalg.norm(id2emb[id2]))
             except KeyError as e:
-                print(f"KeyError: {e}")
-                continue
+                raise KeyError(f"KeyError retrieving item from id2emb: {e}")
 
             # if debugging
             if (logging.getLogger().getEffectiveLevel() == logging.DEBUG and
@@ -149,13 +151,12 @@ class SubsumptionEvalAgent(BaseAgent):
         plt.plot(df['pair_shared_anc'], m*df['pair_shared_anc'] + b, color='red')
         # calculate r-squared value
         r2 = np.corrcoef(df['pair_shared_anc'], df['cosine_sim'])[0, 1]**2
-        plt.text(0.1, 0.9, f"R-squared: {round(r2, 2)}", ha='center',
+        plt.text(0.2, 0.9, f"R-squared: {round(r2, 2)}", ha='center',
                  va='center', transform=plt.gca().transAxes)
 
         plt.xlabel('Fraction of ancestors in common')
         plt.ylabel('Cosine similarity')
-        # title = ontology name
-        plt.title(f'{self.ont}')
+        plt.title(f'{self.ont.split(":")[-1]} subsuming: {choose_subsuming_terms}')
 
         # save to file
         if img_file_name is not None:
