@@ -1614,6 +1614,12 @@ def make_gene_embeddings(monarch_url, gene_prefix, association_prefix, phenotype
     -------
         curategpt gene_orthology --monarch_url $URL --hp_collection hp_index --mp_collection mp_index
     """
+
+    # Call an agent to:
+    # download Monarch knowledge graph
+    # extract gene and phenotype associations
+    # generate LLM embeddings for human and mouse genes and phenotypes
+    # write out embeddings to a collection
     pass
 
 @click.option("--monarch_url", required=True, default="https://data.monarchinitiative.org/monarch-kg/2024-02-13/monarch-kg.tar.gz", help="URL for the Monarch knowledge graph")
