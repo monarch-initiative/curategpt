@@ -393,7 +393,7 @@ class DBAdapter(ABC):
         to_file = _get_file(to_file, "w")
         metadata_to_file = _get_file(metadata_to_file, "w")
         collection = self._get_collection(collection)
-        metadata = self.collection_metadata(collection)
+        metadata = self.collection_metadata(collection).model_dump(exclude_none=True)
         if format is None:
             format = "json"
         if not include:
