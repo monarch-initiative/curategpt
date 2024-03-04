@@ -204,7 +204,7 @@ def main(verbose: int, quiet: bool):
 )
 @click.option(
     "--select",
-    help="jsonpath to use to subselect  each.",
+    help="jsonpath to use to subselect from each JSON document.",
 )
 @batch_size_option
 @encoding_option
@@ -243,6 +243,13 @@ def index(
     with standard views for common formats. For example, to index a folder of HPO associations
 
         curategpt index --view bacdive -c bacdive strains.json
+
+    The --select option can be used to customize the path that will be used for indexing.
+    For example:
+
+         curategpt index -c cde_ncit --select '$.DataElementQueryResults' context-*.json
+
+    This will index the DataElementQueryResults from each file.
 
     """
     db = ChromaDBAdapter(path, **kwargs)
