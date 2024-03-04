@@ -47,6 +47,7 @@ llm-gpt4all = "^0.1.1"
 gspread = "^5.10.0"
 defusedxml = "^0.7.1"
 click-default-group = "^1.2.4"
+venomx = "^0.1.1"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7.1.2"
