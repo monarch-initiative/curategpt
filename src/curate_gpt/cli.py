@@ -83,6 +83,7 @@ output_format_option = click.option(
     "--output-format",
     type=click.Choice(["yaml", "json", "blob", "csv"]),
     default="yaml",
+    show_default=True,
     help="Output format for results.",
 )
 relevance_factor_option = click.option(
@@ -105,6 +106,12 @@ replace_option = click.option(
 )
 append_option = click.option(
     "--append/--no-append", default=False, show_default=True, help="Append to the database."
+)
+encoding_option = click.option(
+    "--encoding",
+    default="utf-8",
+    show_default=True,
+    help="Encoding for files, e.g. iso-8859-1, cp1252. Specify 'detect' to infer using chardet."
 )
 object_type_option = click.option(
     "--object-type",
@@ -195,7 +202,12 @@ def main(verbose: int, quiet: bool):
 @click.option(
     "--collect/--no-collect", default=False, show_default=True, help="Whether to collect files."
 )
+@click.option(
+    "--select",
+    help="jsonpath to use to subselect from each JSON document.",
+)
 @batch_size_option
+@encoding_option
 @click.argument("files", nargs=-1)
 def index(
     files,
@@ -209,15 +221,35 @@ def index(
     batch_size,
     glob,
     view,
+    select,
     collect,
+    encoding,
     **kwargs,
 ):
     """
     Index files.
 
-    Example:
-    -------
+    Indexing a folder of JSON files:
+
         curategpt index  -c doc files/*json
+
+    Here each file is treated as a separate object. It is loaded into the collection called 'doc'.
+
+    Use --glob if there are too many files to expand on the command line:
+
+        curategpt index --glob -c doc "files/*json"
+
+    By default no transformation is performed on the objects. However, curategpt comes
+    with standard views for common formats. For example, to index a folder of HPO associations
+
+        curategpt index --view bacdive -c bacdive strains.json
+
+    The --select option can be used to customize the path that will be used for indexing.
+    For example:
+
+         curategpt index -c cde_ncit --select '$.DataElementQueryResults' context-*.json
+
+    This will index the DataElementQueryResults from each file.
 
     """
     db = ChromaDBAdapter(path, **kwargs)
@@ -240,6 +272,23 @@ def index(
     if model is None:
         model = "openai:"
     for file in files:
+        if encoding == "detect":
+            import chardet
+            # Read the first num_lines of the file
+            lines = []
+            with open(file, 'rb') as f:
+                try:
+                    # Attempt to read up to num_lines lines from the file
+                    for _ in range(100):
+                        lines.append(next(f))
+                except StopIteration:
+                    # Reached the end of the file before reading num_lines lines
+                    pass  # This is okay; just continue with the lines read so far
+            # Concatenate lines into a single bytes object
+            data = b''.join(lines)
+            # Detect encoding
+            result = chardet.detect(data)
+            encoding = result['encoding']
         logging.debug(f"Indexing {file}")
         if wrapper:
             wrapper.source_locator = file
@@ -247,16 +296,29 @@ def index(
         elif file.endswith(".json"):
             objs = json.load(open(file))
         elif file.endswith(".csv"):
-            objs = list(csv.DictReader(open(file)))
+            with open(file, encoding=encoding) as f:
+                objs = list(csv.DictReader(f))
         elif file.endswith(".tsv.gz"):
-            with gzip.open(file, "rt") as f:
+            with gzip.open(file, "rt", encoding=encoding) as f:
                 objs = list(csv.DictReader(f, delimiter="\t"))
         elif file.endswith(".tsv"):
-            objs = list(csv.DictReader(open(file), delimiter="\t"))
+            objs = list(csv.DictReader(open(file, encoding=encoding), delimiter="\t"))
         else:
-            objs = yaml.safe_load(open(file))
+            objs = yaml.safe_load(open(file, encoding=encoding))
         if isinstance(objs, (dict, BaseModel)):
             objs = [objs]
+        if select:
+            import jsonpath_ng as jp
+            path_expr = jp.parse(select)
+            new_objs = []
+            for obj in objs:
+                for match in path_expr.find(obj):
+                    logging.debug(f"Match: {match.value}")
+                    if isinstance(match.value, list):
+                        new_objs.extend(match.value)
+                    else:
+                        new_objs.append(match.value)
+            objs = new_objs
         db.insert(objs, model=model, collection=collection, batch_size=batch_size)
     db.update_collection_metadata(
         collection, model=model, object_type=object_type, description=description
@@ -320,13 +382,13 @@ def search(query, path, collection, show_documents, **kwargs):
     "--left-field",
     "-L",
     multiple=True,
-    help="Field to show from left collection.",
+    help="Field to show from left collection (can provide multiple).",
 )
 @click.option(
     "--right-field",
     "-R",
     multiple=True,
-    help="Field to show from right collection.",
+    help="Field to show from right collection (can provide multiple).",
 )
 @output_format_option
 def all_by_all(
@@ -1429,12 +1491,32 @@ def peek_collection(path, collection, **kwargs):
 @collections.command(name="dump")
 @collection_option
 @click.option("-o", "--output", type=click.File("w"), default="-")
-@click.option("--metadata_to_file", type=click.File("w"), default=None)
+@click.option("--metadata-to-file", type=click.File("w"), default=None)
 @click.option("--format", "-t", default="json", show_default=True)
 @click.option("--include", "-I", multiple=True, help="Include a field.")
 @path_option
 def dump_collection(path, collection, output, **kwargs):
-    """Dump a collection to disk."""
+    """
+    Dump a collection to disk.
+
+    There are two flavors of format:
+
+    - streaming, flat lists of objects (e.g. jsonl)
+    - complete (e.g json)
+
+    with streaming formats it's necessary to also provide `--metadata-to-file` since
+    the metadata header won't fit into the line-based formats.
+
+    Example:
+
+        curategpt collections dump  -c ont_cl -o cl.cur.json
+
+    Example:
+
+        curategpt collections dump  -c ont_cl -o cl.cur.jsonl -t jsonl --metadata-to-file cl.meta.json
+
+    TODO: venomx support
+    """
     logging.info(f"Dumping {collection} in {path}")
     db = ChromaDBAdapter(path)
     db.dump(collection, to_file=output, **kwargs)
@@ -1445,7 +1527,13 @@ def dump_collection(path, collection, output, **kwargs):
 @click.option("--target-path")
 @path_option
 def copy_collection(path, collection, target_path, **kwargs):
-    """Copy a collection from one path to another."""
+    """
+    Copy a collection from one path to another.
+
+    Example:
+
+        curategpt collections copy -p stagedb --target-path db -c my_collection
+    """
     logging.info(f"Copying {collection} in {path} to {target_path}")
     db = ChromaDBAdapter(path)
     target = ChromaDBAdapter(target_path)
