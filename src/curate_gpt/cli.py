@@ -1718,7 +1718,7 @@ def load_embeddings(file_path, embedding_format=None):
     return df.to_dict(orient='records')
 
 
-@embeddings.command(name="index")
+@embeddings.command(name="load")
 @path_option
 @collection_option
 @model_option
@@ -1726,7 +1726,7 @@ def load_embeddings(file_path, embedding_format=None):
 @click.option("--embedding-format", "-f",
               type=click.Choice(['parquet', 'csv']), help="Format of the input file")
 @click.argument("file_or_url")
-def index(path, collection, append, embedding_format, model, file_or_url):
+def load_embeddings(path, collection, append, embedding_format, model, file_or_url):
     """
     Index embeddings from a local file or URL into a ChromaDB collection.
     """
