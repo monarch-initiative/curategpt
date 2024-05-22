@@ -49,7 +49,7 @@ def vectors_to_fig(labels: List[str], vectors: List, method: DimensionalityReduc
 
     reduced_data = reducer.fit_transform(vectors)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(12, 10))
     ax.scatter(reduced_data[:, 0], reduced_data[:, 1], s=50)
     for i, label in enumerate(labels):
         ax.annotate(label, (reduced_data[i, 0], reduced_data[i, 1]), fontsize=9, ha="right")

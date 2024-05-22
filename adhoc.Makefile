@@ -20,3 +20,6 @@ index-phenopackets:
 # (head -1 data/monarch-kg-lite.tsv && tail -n +2 data/monarch-kg-lite.tsv | sort -u)
 data/monarch-kg-lite.tsv:
 	 gzip -dc ~/Downloads/monarch-kg-denormalized-edges.tsv.gz | csvcut -t -c subject_label,predicate,object_label,subject_category,object_category | perl -npe "s@biolink:@@g" > $@
+
+# clinical trials
+# https://classic.clinicaltrials.gov/AllAPIJSON.zip

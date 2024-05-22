@@ -15,6 +15,8 @@ def max_tokens_by_model(model_id: Optional[str] = None):
     """
     if model_id == "gpt-4":
         return 8192
+    elif "gpt-4o" in model_id:
+        return 1024 * 128
     elif model_id == "gpt-3.5-turbo-16k":
         return 16384
     else:

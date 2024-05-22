@@ -345,7 +345,12 @@ class DBAdapter(ABC):
         return "id"
 
     def label_field(self, collection: str = None) -> str:
-        return "label"
+        field_names = self.field_names(collection)
+        preferred = ["label", "name", "title"]
+        for candidate in preferred:
+            if candidate in field_names:
+                return candidate
+        return field_names[0] if field_names else "label"
 
     def field_names(self, collection: str = None) -> List[str]:
         """
