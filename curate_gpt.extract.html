@@ -68,6 +68,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.annotations"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.annotations</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.as_single_object"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.as_single_object()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.key_values"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.key_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.model_config"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.model_fields"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.extractor.AnnotatedObject.object"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.object</span></code></a></li>
@@ -113,6 +114,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.annotations"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.annotations</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.as_single_object"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.as_single_object()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.key_values"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.key_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.model_config"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.model_fields"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.model_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.extract.AnnotatedObject.object"><code class="docutils literal notranslate"><span class="pre">AnnotatedObject.object</span></code></a></li>
@@ -284,6 +286,12 @@
 <dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.key_values">
 <span class="sig-name descname"><span class="pre">key_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <span class="pre">AnnotatedObject]</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.key_values" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.extract.extractor.AnnotatedObject.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.extract.extractor.AnnotatedObject.model_config">
@@ -533,6 +541,12 @@ and can also extract structured objects from text.</p>
 <dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.key_values">
 <span class="sig-name descname"><span class="pre">key_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <span class="pre">AnnotatedObject]</span></em><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.key_values" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.extract.AnnotatedObject.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.extract.AnnotatedObject.model_config">

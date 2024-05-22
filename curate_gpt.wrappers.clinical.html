@@ -164,7 +164,7 @@ but cannot be ingested in whole.</p>
 <p>Chat with a KB.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.wrappers.clinical.ctgov_wrapper.</span></span><span class="sig-name descname"><span class="pre">ClinicalTrialsWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_locator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_store</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_label_adapter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.wrappers.clinical.ctgov_wrapper.</span></span><span class="sig-name descname"><span class="pre">ClinicalTrialsWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_locator=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_store=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_label_adapter=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_uses_cache=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="curate_gpt.wrappers.html#curate_gpt.wrappers.base_wrapper.BaseWrapper" title="curate_gpt.wrappers.base_wrapper.BaseWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a></p>
 <p>A wrapper over a clinicaltrials.gov.</p>
 <dl class="py attribute">
@@ -174,7 +174,7 @@ but cannot be ingested in whole.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.external_search">
-<span class="sig-name descname"><span class="pre">external_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.external_search" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">external_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.external_search" title="Link to this definition"></a></dt>
 <dd><p>Search an external source and return the results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -184,7 +184,7 @@ but cannot be ingested in whole.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -195,6 +195,36 @@ but cannot be ingested in whole.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">ClassVar</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ctgov'</span></em><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.objects_from_list">
+<span class="sig-name descname"><span class="pre">objects_from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_objs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.objects_from_list" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.session">
+<span class="sig-name descname"><span class="pre">session</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></em><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.session" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.set_cache">
+<span class="sig-name descname"><span class="pre">set_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.set_cache" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.where">
+<span class="sig-name descname"><span class="pre">where</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.where" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

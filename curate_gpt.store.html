@@ -116,6 +116,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.Collection.add"><code class="docutils literal notranslate"><span class="pre">Collection.add()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.Collection.delete"><code class="docutils literal notranslate"><span class="pre">Collection.delete()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.Collection.metadata"><code class="docutils literal notranslate"><span class="pre">Collection.metadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.Collection.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Collection.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.Collection.model_config"><code class="docutils literal notranslate"><span class="pre">Collection.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.Collection.model_fields"><code class="docutils literal notranslate"><span class="pre">Collection.model_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.Collection.objects"><code class="docutils literal notranslate"><span class="pre">Collection.objects</span></code></a></li>
@@ -124,6 +125,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.CollectionIndex"><code class="docutils literal notranslate"><span class="pre">CollectionIndex</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.CollectionIndex.collections"><code class="docutils literal notranslate"><span class="pre">CollectionIndex.collections</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.CollectionIndex.get_collection"><code class="docutils literal notranslate"><span class="pre">CollectionIndex.get_collection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.CollectionIndex.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">CollectionIndex.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.CollectionIndex.model_config"><code class="docutils literal notranslate"><span class="pre">CollectionIndex.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.CollectionIndex.model_fields"><code class="docutils literal notranslate"><span class="pre">CollectionIndex.model_fields</span></code></a></li>
 </ul>
@@ -154,6 +156,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.annotations"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.annotations</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.description"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.description</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.model"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.model_config"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.model_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.name"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.name</span></code></a></li>
@@ -208,6 +211,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.annotations"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.annotations</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.description"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.description</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.model"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.model_config"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.model_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.name"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.name</span></code></a></li>
@@ -1160,6 +1164,12 @@ overridden.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.in_memory_adapter.Collection.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.in_memory_adapter.Collection.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.in_memory_adapter.Collection.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.in_memory_adapter.Collection.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
@@ -1197,6 +1207,12 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.store.in_memory_adapter.Collection" title="curate_gpt.store.in_memory_adapter.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.in_memory_adapter.CollectionIndex.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.in_memory_adapter.CollectionIndex.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1510,6 +1526,12 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dt class="sig sig-object py" id="curate_gpt.store.metadata.CollectionMetadata.model">
 <span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.metadata.CollectionMetadata.model" title="Link to this definition"></a></dt>
 <dd><p>Name of any ML model</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.metadata.CollectionMetadata.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.metadata.CollectionMetadata.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2011,6 +2033,12 @@ in the future.</p>
 <dt class="sig sig-object py" id="curate_gpt.store.CollectionMetadata.model">
 <span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.CollectionMetadata.model" title="Link to this definition"></a></dt>
 <dd><p>Name of any ML model</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.CollectionMetadata.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.CollectionMetadata.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
 </dd></dl>
 
 <dl class="py attribute">
