@@ -46,6 +46,7 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
     from curate_gpt.wrappers.bio.gocam_wrapper import GOCAMWrapper  # noqa
     from curate_gpt.wrappers.bio.mediadive_wrapper import MediaDiveWrapper  # noqa
     from curate_gpt.wrappers.bio.reactome_wrapper import ReactomeWrapper  # noqa
+    from curate_gpt.wrappers.clinical.ctgov_wrapper import ClinicalTrialsWrapper  # noqa
     from curate_gpt.wrappers.clinical.clinvar_wrapper import ClinVarWrapper  # noqa
     from curate_gpt.wrappers.clinical.hpoa_by_pub_wrapper import HPOAByPubWrapper  # noqa
     from curate_gpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper  # noqa

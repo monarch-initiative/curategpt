@@ -45,7 +45,7 @@ ABOUT = "About"
 
 NO_BACKGROUND_SELECTED = "No background collection"
 
-MODELS = ["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4", "chatgpt-16k", "nous-hermes-13b", "llama2"]
+MODELS = ["gpt-4o", "gpt-3.5-turbo", "gpt-4-turbo", "gpt-4", "chatgpt-16k", "nous-hermes-13b", "llama2"]
 
 logger = logging.getLogger(__name__)
 
