@@ -94,6 +94,18 @@ class BaseWrapper(ABC):
         :param kwargs:
         :return:
         """
+        if object_ids:
+            yield from self.objects_by_ids(object_ids, **kwargs)
+        else:
+            raise NotImplementedError
+
+    def objects_by_ids(self, object_ids: List[str]) -> List[Dict]:
+        """
+        Return objects by their IDs.
+
+        :param object_ids:
+        :return:
+        """
         raise NotImplementedError
 
     def external_search(self, text: str, expand: bool = True, **kwargs) -> List[Dict]:
@@ -122,7 +134,7 @@ class BaseWrapper(ABC):
         **kwargs,
     ) -> Any:
         """
-        Chat with pubmed.
+        Chat with a wrapper view (e.g pubmed).
 
         :param query:
         :param collection:

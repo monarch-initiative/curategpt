@@ -23,11 +23,13 @@ from curate_gpt.app.helper import get_applicable_examples, get_case_collection
 from curate_gpt.app.state import get_state
 from curate_gpt.extract import OpenAIExtractor, RecursiveExtractor
 from curate_gpt.wrappers import BaseWrapper
+from curate_gpt.wrappers.investigation.jgi_wrapper import JGIWrapper
 from curate_gpt.wrappers.literature import WikipediaWrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 
 PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"
+JGI = "JGI (via API)"
 
 CHAT = "Chat"
 EXTRACT = "Extract"
@@ -95,7 +97,7 @@ def filtered_collection_names() -> List[str]:
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    filtered_collection_names() + [WIKIPEDIA, PUBMED],
+    filtered_collection_names() + [WIKIPEDIA, PUBMED, JGI],
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
@@ -140,7 +142,7 @@ state.extractor = extractor
 
 background_collection = st.sidebar.selectbox(
     "Background knowledge",
-    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA] + list(db.list_collection_names()),
+    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA, JGI] + list(db.list_collection_names()),
     help="""
     Background databases can be used to give additional context to the LLM.
     A standard pattern is to have a structured knowledge base as the main
@@ -162,6 +164,8 @@ def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
         source = PubmedWrapper(local_store=db, extractor=extractor)
     elif collection == WIKIPEDIA:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
+    elif collection == JGI:
+        source = JGIWrapper(local_store=db, extractor=extractor)
     else:
         source = db
         knowledge_source_collection = collection
@@ -172,17 +176,8 @@ def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
     )
 
 
-def ask_chatbot(query) -> ChatResponse:
-    return get_chat_agent().chat(query)
-    # if collection == PUBMED:
-    #    chatbot = PubmedWrapper(local_store=db, extractor=extractor)
-    #    return chatbot.chat(query)
-    # if collection == WIKIPEDIA:
-    #    chatbot = WikipediaWrapper(local_store=db, extractor=extractor)
-    #    return chatbot.chat(query)
-    # else:
-    #    chatbot = ChatAgent(kb_adapter=db, extractor=extractor)
-    #    return chatbot.chat(query, collection=collection)
+def ask_chatbot(query, expand=False) -> ChatResponse:
+    return get_chat_agent().chat(query, expand=expand)
 
 
 def html_table(rows: List[dict]) -> str:
@@ -555,13 +550,19 @@ elif option == CHAT:
                                    complete results, but may also exceed context windows for the model.
                                    """,
     )
+    expand = st.checkbox(
+        "Expand query",
+        help="""
+                                                If checked, perform query expansion (pubmed only).
+                                                """,
+    )
     extractor.model_name = model_name
     examples = get_applicable_examples(collection, CHAT)
     st.write("Examples:")
     st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
 
     if st.button(CHAT):
-        response = ask_chatbot(query)
+        response = ask_chatbot(query, expand=expand)
         page_state.chat_response = response
 
     if page_state.chat_response:

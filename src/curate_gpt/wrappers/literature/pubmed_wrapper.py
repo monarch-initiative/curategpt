@@ -10,6 +10,7 @@ from urllib.request import urlretrieve
 
 import requests
 import requests_cache
+from bs4 import BeautifulSoup
 from defusedxml.ElementTree import fromstring
 from eutils import Client
 
@@ -72,7 +73,13 @@ class PubmedWrapper(BaseWrapper):
 
     where: Optional[Dict] = None
 
-    _uses_cache: bool = False
+    email: Optional[str] = None
+
+    ncbi_key: Optional[str] = None
+
+    is_fetch_full_text: Optional[bool] = None
+
+    _uses_cache: bool = None
 
     def set_cache(self, name: str) -> None:
         self.session = requests_cache.CachedSession(name)
@@ -85,7 +92,12 @@ class PubmedWrapper(BaseWrapper):
             logger.info(f"Expanding search term: {text} to create pubmed query")
             model = self.extractor.model
             response = model.prompt(
-                text, system="generate a semi-colon separated list of the most relevant terms"
+                text, system="""
+                Take the specified search text, and expand it to a list
+                of terms used to construct a PubMed query. You will return results as
+                semi-colon separated list of the most relevant terms. Make sure to
+                include all relevant concepts in the returned terms."""
+
             )
             terms = response.text().split(";")
             search_term = " OR ".join(terms)
@@ -162,7 +174,12 @@ class PubmedWrapper(BaseWrapper):
                 current_record[current_field] = "PMID:" + line.replace("PMID- ", "").strip()
             if line.startswith("PMC - "):
                 current_field = "pmcid"
-                current_record[current_field] = "PMCID:" + line.replace("PMC - ", "").strip()
+                pmcid = line.replace("PMC - ", "").strip()
+                current_record[current_field] = "PMCID:" + pmcid
+                if self.is_fetch_full_text:
+                    full_text = self.pmc_full_text(pmcid)
+                    # full_text = self.fetch_full_text(pmcid)
+                    current_record["full_text"] = full_text
             elif line.startswith("TI  - "):
                 current_field = "title"
                 current_record[current_field] = line.replace("TI  - ", "").strip()
@@ -198,6 +215,7 @@ class PubmedWrapper(BaseWrapper):
         return None
 
     def fetch_full_text(self, object_id: str) -> Optional[str]:
+        # OLD
         session = self.session
         if object_id.startswith("PMID:"):
             pmcid = self.fetch_pmcid(object_id)
@@ -234,3 +252,51 @@ class PubmedWrapper(BaseWrapper):
                                 return extract_text_from_xml(xml_str)
                                 # return xml_str
         return None
+
+    def pmc_full_text(self, object_id: str) -> Optional[str]:
+        if object_id.startswith("PMID:"):
+            pmcid = self.fetch_pmcid(object_id)
+        else:
+            pmcid = object_id
+        fulltext = self.pmc_xml(pmcid)
+        logger.debug(f"FULL TEXT XML: {fulltext}")
+        fullsoup = BeautifulSoup(fulltext, "xml")
+        if fullsoup.find("pmc-articleset").find("article").find("body"):
+            body = fullsoup.find("pmc-articleset").find("article").find("body").text
+            return body
+        else:
+            return None
+
+    def pmc_xml(self, pmc_id: str) -> str:
+        """Get the text of one PubMed Central entry.
+
+        Don't parse further here - just get the raw response.
+        :param pmc_id: List of PubMed IDs, or string with single PMID
+        :return: the text of a single entry as XML
+        """
+        session = self.session
+
+        pmc_id = pmc_id.replace("PMC:", "")
+
+        params = {
+            "db": "pmc",
+            "id": pmc_id,
+            "rettype": "xml",
+            "retmode": "xml",
+        }
+
+        if self.email and self.ncbi_key:
+            params["api_key"] = self.ncbi_key
+            params["email"] = self.email
+
+        efetch_response = session.get(EFETCH_URL, params=params)
+        if not self._uses_cache or not efetch_response.from_cache:
+            # throttle if not using cache or if not cached
+            logger.debug(f"Sleeping for {RATE_LIMIT_DELAY} seconds")
+            time.sleep(RATE_LIMIT_DELAY)
+        if not efetch_response.ok:
+            logger.error(f"Failed to fetch data for {pubmed_ids}")
+            raise ValueError(
+                f"Failed to fetch data for {pubmed_ids} using {session} and {efetch_params}"
+            )
+        return efetch_response.text

@@ -139,7 +139,7 @@ class OntologyWrapper(BaseWrapper):
             self._objects_by_curie[id] = obj
         # for id, alias in adapter.alias_relationships():
         if isinstance(adapter, OboGraphInterface):
-            for ldef in adapter.logical_definitions(adapter.entities()):
+            for ldef in adapter.logical_definitions():
                 shorthand = self._as_shorthand(ldef.definedClassId)
                 obj = self._objects_by_curie.get(ldef.definedClassId, None)
                 if obj is None:
