@@ -7,7 +7,7 @@
   <title>curate_gpt.wrappers package &mdash; curate_gpt 0.0.0.post2.dev0+335f59e documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
 
   
   <!--[if lt IE 9]>
@@ -17,7 +17,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=39856d4f"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -74,6 +74,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.max_text_length"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.max_text_length</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.name"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.objects"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.objects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.objects_by_ids"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.objects_by_ids()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.prefix"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.prefix</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.search"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.search()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.search_limit_multiplier"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.search_limit_multiplier</span></code></a></li>
@@ -99,6 +100,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.BaseWrapper.max_text_length"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.max_text_length</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.BaseWrapper.name"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.BaseWrapper.objects"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.objects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.BaseWrapper.objects_by_ids"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.objects_by_ids()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.BaseWrapper.prefix"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.prefix</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.BaseWrapper.search"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.search()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.wrappers.BaseWrapper.search_limit_multiplier"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.search_limit_multiplier</span></code></a></li>
@@ -180,6 +182,7 @@
 <li class="toctree-l2"><a class="reference internal" href="curate_gpt.wrappers.bio.html#module-curate_gpt.wrappers.bio.gocam_wrapper">curate_gpt.wrappers.bio.gocam_wrapper module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.default_object_type"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.default_object_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.include_standard_annotations"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.include_standard_annotations</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.label_adapter"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.label_adapter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.name"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.object_by_id"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.object_by_id()</span></code></a></li>
@@ -187,6 +190,7 @@
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.objects"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.objects()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.pubmed_wrapper"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.pubmed_wrapper</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.ro_adapter"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.ro_adapter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.session"><code class="docutils literal notranslate"><span class="pre">GOCAMWrapper.session</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -428,6 +432,28 @@
 <li class="toctree-l3"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.ess_deepdive_wrapper.get_records"><code class="docutils literal notranslate"><span class="pre">get_records()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#module-curate_gpt.wrappers.investigation.fairsharing_wrapper">curate_gpt.wrappers.investigation.fairsharing_wrapper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.default_object_type"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper.default_object_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.jwt"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper.jwt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.name"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.object_by_id"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper.object_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.objects"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper.objects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.password"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper.password</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.session"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper.session</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.user"><code class="docutils literal notranslate"><span class="pre">FAIRSharingWrapper.user</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#module-curate_gpt.wrappers.investigation.jgi_wrapper">curate_gpt.wrappers.investigation.jgi_wrapper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.jgi_wrapper.JGIWrapper"><code class="docutils literal notranslate"><span class="pre">JGIWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.jgi_wrapper.JGIWrapper.external_search"><code class="docutils literal notranslate"><span class="pre">JGIWrapper.external_search()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.jgi_wrapper.JGIWrapper.name"><code class="docutils literal notranslate"><span class="pre">JGIWrapper.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#module-curate_gpt.wrappers.investigation.ncbi_bioproject_wrapper">curate_gpt.wrappers.investigation.ncbi_bioproject_wrapper module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.ncbi_bioproject_wrapper.NCBIBioprojectWrapper"><code class="docutils literal notranslate"><span class="pre">NCBIBioprojectWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.ncbi_bioproject_wrapper.NCBIBioprojectWrapper.default_object_type"><code class="docutils literal notranslate"><span class="pre">NCBIBioprojectWrapper.default_object_type</span></code></a></li>
@@ -521,12 +547,17 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="curate_gpt.wrappers.literature.html#module-curate_gpt.wrappers.literature.pubmed_wrapper">curate_gpt.wrappers.literature.pubmed_wrapper module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.email"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.email</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.eutils_client"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.eutils_client</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.external_search"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.external_search()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.fetch_full_text"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.fetch_full_text()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.fetch_pmcid"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.fetch_pmcid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.is_fetch_full_text"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.is_fetch_full_text</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.name"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.ncbi_key"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.ncbi_key</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.objects_by_ids"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.objects_by_ids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.pmc_full_text"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.pmc_full_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.pmc_xml"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.pmc_xml()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.session"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.session</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.set_cache"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.set_cache()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.where"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.where</span></code></a></li>
@@ -553,12 +584,17 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.email"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.email</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.eutils_client"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.eutils_client</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.external_search"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.external_search()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.fetch_full_text"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.fetch_full_text()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.fetch_pmcid"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.fetch_pmcid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.is_fetch_full_text"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.is_fetch_full_text</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.name"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.ncbi_key"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.ncbi_key</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.objects_by_ids"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.objects_by_ids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.pmc_full_text"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.pmc_full_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.pmc_xml"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.pmc_xml()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.session"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.session</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.set_cache"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.set_cache()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.PubmedWrapper.where"><code class="docutils literal notranslate"><span class="pre">PubmedWrapper.where</span></code></a></li>
@@ -686,13 +722,13 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.base_wrapper.BaseWrapper.chat">
 <span class="sig-name descname"><span class="pre">chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.chat" title="Link to this definition"></a></dt>
-<dd><p>Chat with pubmed.</p>
+<dd><p>Chat with a wrapper view (e.g pubmed).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -713,7 +749,7 @@
 <dd><p>Create a CURIE for the given local ID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>local_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p>
+<dd class="field-odd"><p><strong>local_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
@@ -741,8 +777,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -787,13 +823,30 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
 <li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional list of IDs to fetch</p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.base_wrapper.BaseWrapper.objects_by_ids">
+<span class="sig-name descname"><span class="pre">objects_by_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.base_wrapper.BaseWrapper.objects_by_ids" title="Link to this definition"></a></dt>
+<dd><p>Return objects by their IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -813,9 +866,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
 <li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – used for caching</p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -843,7 +896,7 @@
 <dd><p>Split objects with text above a certain length into multiple objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>objects</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span>) – </p>
+<dd class="field-odd"><p><strong>objects</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
@@ -867,9 +920,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – </p></li>
-<li><p><strong>store</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curate_gpt.store.html#curate_gpt.store.db_adapter.DBAdapter" title="curate_gpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>)</p></li>
+<li><p><strong>store</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curate_gpt.store.html#curate_gpt.store.db_adapter.DBAdapter" title="curate_gpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -887,7 +940,7 @@
 <dd><p>Convert an object from the source representation to the store representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>) – </p>
+<dd class="field-odd"><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
@@ -914,13 +967,13 @@ into a store.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.BaseWrapper.chat">
 <span class="sig-name descname"><span class="pre">chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.BaseWrapper.chat" title="Link to this definition"></a></dt>
-<dd><p>Chat with pubmed.</p>
+<dd><p>Chat with a wrapper view (e.g pubmed).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -941,7 +994,7 @@ into a store.</p>
 <dd><p>Create a CURIE for the given local ID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>local_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p>
+<dd class="field-odd"><p><strong>local_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
@@ -969,8 +1022,8 @@ into a store.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1015,13 +1068,30 @@ into a store.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
 <li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional list of IDs to fetch</p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.BaseWrapper.objects_by_ids">
+<span class="sig-name descname"><span class="pre">objects_by_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.BaseWrapper.objects_by_ids" title="Link to this definition"></a></dt>
+<dd><p>Return objects by their IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -1041,9 +1111,9 @@ into a store.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
 <li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – used for caching</p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1071,7 +1141,7 @@ into a store.</p>
 <dd><p>Split objects with text above a certain length into multiple objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>objects</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span>) – </p>
+<dd class="field-odd"><p><strong>objects</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
@@ -1095,9 +1165,9 @@ into a store.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – </p></li>
-<li><p><strong>store</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curate_gpt.store.html#curate_gpt.store.db_adapter.DBAdapter" title="curate_gpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>)</p></li>
+<li><p><strong>store</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curate_gpt.store.html#curate_gpt.store.db_adapter.DBAdapter" title="curate_gpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1115,7 +1185,7 @@ into a store.</p>
 <dd><p>Convert an object from the source representation to the store representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>) – </p>
+<dd class="field-odd"><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>

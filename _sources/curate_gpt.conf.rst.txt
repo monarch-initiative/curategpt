@@ -1,6 +1,14 @@
 curate\_gpt.conf package
 ========================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   curate_gpt.conf.prompts
+
 Module contents
 ---------------
 

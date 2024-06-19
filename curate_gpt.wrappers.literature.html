@@ -7,7 +7,7 @@
   <title>curate_gpt.wrappers.literature package &mdash; curate_gpt 0.0.0.post2.dev0+335f59e documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
 
   
   <!--[if lt IE 9]>
@@ -17,7 +17,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=39856d4f"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -143,9 +143,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
 <li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional list of IDs to fetch</p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -187,8 +187,8 @@ but cannot be ingested in whole.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -218,9 +218,16 @@ but cannot be ingested in whole.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.eutils_wrapper.EUtilsWrapper.objects_by_ids">
 <span class="sig-name descname"><span class="pre">objects_by_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.eutils_wrapper.EUtilsWrapper.objects_by_ids" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+<dd><p>Return objects by their IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
 </dd>
 </dl>
 </dd></dl>
@@ -306,7 +313,7 @@ but cannot be ingested in whole.</p>
 <p>Chat with a KB.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.wrappers.literature.pubmed_wrapper.</span></span><span class="sig-name descname"><span class="pre">PubmedWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_locator=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_store=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eutils_client=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_uses_cache=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.wrappers.literature.pubmed_wrapper.</span></span><span class="sig-name descname"><span class="pre">PubmedWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_locator=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_store=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eutils_client=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncbi_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_fetch_full_text=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_uses_cache=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="curate_gpt.wrappers.html#curate_gpt.wrappers.base_wrapper.BaseWrapper" title="curate_gpt.wrappers.base_wrapper.BaseWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a></p>
 <p>A wrapper to provide a search facade over PubMed.</p>
 <p>This is a dynamic wrapper: it can be used as a search facade,
@@ -322,6 +329,11 @@ but cannot be ingested in whole.</p>
 </pre></div>
 </div>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.email" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.eutils_client">
 <span class="sig-name descname"><span class="pre">eutils_client</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.eutils_client" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -333,8 +345,8 @@ but cannot be ingested in whole.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -367,18 +379,56 @@ but cannot be ingested in whole.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.is_fetch_full_text">
+<span class="sig-name descname"><span class="pre">is_fetch_full_text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.is_fetch_full_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">ClassVar</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pubmed'</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.ncbi_key">
+<span class="sig-name descname"><span class="pre">ncbi_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.ncbi_key" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.objects_by_ids">
 <span class="sig-name descname"><span class="pre">objects_by_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.objects_by_ids" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+<dd><p>Return objects by their IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.pmc_full_text">
+<span class="sig-name descname"><span class="pre">pmc_full_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.pmc_full_text" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.pmc_xml">
+<span class="sig-name descname"><span class="pre">pmc_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pmc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.pubmed_wrapper.PubmedWrapper.pmc_xml" title="Link to this definition"></a></dt>
+<dd><p>Get the text of one PubMed Central entry.</p>
+<p>Don’t parse further here - just get the raw response.
+:type pmc_id: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:param pmc_id: List of PubMed IDs, or string with single PMID
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:return: the text of a single entry as XML</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -431,8 +481,8 @@ but cannot be ingested in whole.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -483,9 +533,9 @@ but cannot be ingested in whole.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
 <li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional list of IDs to fetch</p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -501,7 +551,7 @@ but cannot be ingested in whole.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.wrappers.literature.</span></span><span class="sig-name descname"><span class="pre">PubmedWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_locator=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_store=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eutils_client=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_uses_cache=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.wrappers.literature.</span></span><span class="sig-name descname"><span class="pre">PubmedWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_locator=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_store=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eutils_client=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncbi_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_fetch_full_text=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_uses_cache=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="curate_gpt.wrappers.html#curate_gpt.wrappers.base_wrapper.BaseWrapper" title="curate_gpt.wrappers.base_wrapper.BaseWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a></p>
 <p>A wrapper to provide a search facade over PubMed.</p>
 <p>This is a dynamic wrapper: it can be used as a search facade,
@@ -517,6 +567,11 @@ but cannot be ingested in whole.</p>
 </pre></div>
 </div>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper.email" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper.eutils_client">
 <span class="sig-name descname"><span class="pre">eutils_client</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper.eutils_client" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -528,8 +583,8 @@ but cannot be ingested in whole.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -562,18 +617,56 @@ but cannot be ingested in whole.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper.is_fetch_full_text">
+<span class="sig-name descname"><span class="pre">is_fetch_full_text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper.is_fetch_full_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">ClassVar</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pubmed'</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper.ncbi_key">
+<span class="sig-name descname"><span class="pre">ncbi_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper.ncbi_key" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper.objects_by_ids">
 <span class="sig-name descname"><span class="pre">objects_by_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper.objects_by_ids" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+<dd><p>Return objects by their IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper.pmc_full_text">
+<span class="sig-name descname"><span class="pre">pmc_full_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper.pmc_full_text" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.wrappers.literature.PubmedWrapper.pmc_xml">
+<span class="sig-name descname"><span class="pre">pmc_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pmc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.wrappers.literature.PubmedWrapper.pmc_xml" title="Link to this definition"></a></dt>
+<dd><p>Get the text of one PubMed Central entry.</p>
+<p>Don’t parse further here - just get the raw response.
+:type pmc_id: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:param pmc_id: List of PubMed IDs, or string with single PMID
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:return: the text of a single entry as XML</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -612,8 +705,8 @@ but cannot be ingested in whole.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

@@ -7,7 +7,7 @@
   <title>curate_gpt.agents package &mdash; curate_gpt 0.0.0.post2.dev0+335f59e documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
 
   
   <!--[if lt IE 9]>
@@ -17,7 +17,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=39856d4f"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -60,6 +60,24 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.base_agent.BaseAgent.extractor"><code class="docutils literal notranslate"><span class="pre">BaseAgent.extractor</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.base_agent.BaseAgent.knowledge_source"><code class="docutils literal notranslate"><span class="pre">BaseAgent.knowledge_source</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.base_agent.BaseAgent.knowledge_source_collection"><code class="docutils literal notranslate"><span class="pre">BaseAgent.knowledge_source_collection</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.agents.bootstrap_agent">curate_gpt.agents.bootstrap_agent module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.BootstrapAgent"><code class="docutils literal notranslate"><span class="pre">BootstrapAgent</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.BootstrapAgent.bootstrap_data"><code class="docutils literal notranslate"><span class="pre">BootstrapAgent.bootstrap_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.BootstrapAgent.bootstrap_schema"><code class="docutils literal notranslate"><span class="pre">BootstrapAgent.bootstrap_schema()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification"><code class="docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.attributes"><code class="docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification.attributes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.description"><code class="docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.kb_name"><code class="docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification.kb_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.main_class"><code class="docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification.main_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_config"><code class="docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_fields"><code class="docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification.model_fields</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -182,6 +200,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.dragon_agent.DragonAgent.generate_all"><code class="docutils literal notranslate"><span class="pre">DragonAgent.generate_all()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.dragon_agent.DragonAgent.max_background_document_size"><code class="docutils literal notranslate"><span class="pre">DragonAgent.max_background_document_size</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.dragon_agent.DragonAgent.relevance_factor"><code class="docutils literal notranslate"><span class="pre">DragonAgent.relevance_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.dragon_agent.DragonAgent.review"><code class="docutils literal notranslate"><span class="pre">DragonAgent.review()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.dragon_agent.PredictedFieldValue"><code class="docutils literal notranslate"><span class="pre">PredictedFieldValue</span></code></a><ul>
@@ -200,7 +219,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.agents.evidence_agent">curate_gpt.agents.evidence_agent module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceAgent"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.chat_agent"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.chat_agent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.evidence_update_policy"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.evidence_update_policy</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.find_evidence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence_complex"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.find_evidence_complex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence_simple"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.find_evidence_simple()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum"><code class="docutils literal notranslate"><span class="pre">EvidenceUpdatePolicyEnum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.append"><code class="docutils literal notranslate"><span class="pre">EvidenceUpdatePolicyEnum.append</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.replace"><code class="docutils literal notranslate"><span class="pre">EvidenceUpdatePolicyEnum.replace</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.skip"><code class="docutils literal notranslate"><span class="pre">EvidenceUpdatePolicyEnum.skip</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -269,6 +297,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.DragonAgent.generate_all"><code class="docutils literal notranslate"><span class="pre">DragonAgent.generate_all()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.DragonAgent.max_background_document_size"><code class="docutils literal notranslate"><span class="pre">DragonAgent.max_background_document_size</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.DragonAgent.relevance_factor"><code class="docutils literal notranslate"><span class="pre">DragonAgent.relevance_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.DragonAgent.review"><code class="docutils literal notranslate"><span class="pre">DragonAgent.review()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.EvidenceAgent"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.EvidenceAgent.chat_agent"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.chat_agent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.EvidenceAgent.evidence_update_policy"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.evidence_update_policy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.EvidenceAgent.find_evidence"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.find_evidence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.EvidenceAgent.find_evidence_complex"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.find_evidence_complex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.EvidenceAgent.find_evidence_simple"><code class="docutils literal notranslate"><span class="pre">EvidenceAgent.find_evidence_simple()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.MappingAgent"><code class="docutils literal notranslate"><span class="pre">MappingAgent</span></code></a><ul>
@@ -328,10 +365,10 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kb_results</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>) – order from most relevant</p></li>
-<li><p><strong>model</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></span>) – </p></li>
-<li><p><strong>obj_type</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>prompt_template</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
+<li><p><strong>model</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></span>)</p></li>
+<li><p><strong>obj_type</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>prompt_template</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -375,6 +412,98 @@ An agent also has access to a model through an extractor.</p>
 </dd></dl>
 
 </section>
+<section id="module-curate_gpt.agents.bootstrap_agent">
+<span id="curate-gpt-agents-bootstrap-agent-module"></span><h2>curate_gpt.agents.bootstrap_agent module<a class="headerlink" href="#module-curate_gpt.agents.bootstrap_agent" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.BootstrapAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.agents.bootstrap_agent.</span></span><span class="sig-name descname"><span class="pre">BootstrapAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_source_collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.BootstrapAgent" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#curate_gpt.agents.base_agent.BaseAgent" title="curate_gpt.agents.base_agent.BaseAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAgent</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.BootstrapAgent.bootstrap_data">
+<span class="sig-name descname"><span class="pre">bootstrap_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specification</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.BootstrapAgent.bootstrap_data" title="Link to this definition"></a></dt>
+<dd><p>Bootstrap data for a knowledge base.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>specification</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification" title="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification"><code class="xref py py-class docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification</span></code></a>]</span>) – Specification for the knowledge base.</p></li>
+<li><p><strong>schema</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span>) – Schema for the knowledge base.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.BootstrapAgent.bootstrap_schema">
+<span class="sig-name descname"><span class="pre">bootstrap_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specification</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.BootstrapAgent.bootstrap_schema" title="Link to this definition"></a></dt>
+<dd><p>Bootstrap a schema for a knowledge base.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>specification</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification" title="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification"><code class="xref py py-class docutils literal notranslate"><span class="pre">KnowledgeBaseSpecification</span></code></a></span>) – Specification for the knowledge base.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curate_gpt.extract.html#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.agents.bootstrap_agent.</span></span><span class="sig-name descname"><span class="pre">KnowledgeBaseSpecification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.attributes">
+<span class="sig-name descname"><span class="pre">attributes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.attributes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.kb_name">
+<span class="sig-name descname"><span class="pre">kb_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.kb_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.main_class">
+<span class="sig-name descname"><span class="pre">main_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.main_class" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'attributes':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'kb_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'main_class':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_fields" title="Link to this definition"></a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-curate_gpt.agents.chat_agent">
 <span id="curate-gpt-agents-chat-agent-module"></span><h2>curate_gpt.agents.chat_agent module<a class="headerlink" href="#module-curate_gpt.agents.chat_agent" title="Link to this heading"></a></h2>
 <p>Chat with a KB.</p>
@@ -389,13 +518,13 @@ database or a remote source such as pubmed).
 The objects are provided as context to a LLM query</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.agents.chat_agent.ChatAgent.chat">
-<span class="sig-name descname"><span class="pre">chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.chat_agent.ChatAgent.chat" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.chat_agent.ChatAgent.chat" title="Link to this definition"></a></dt>
 <dd><p>Extract structured object using text seed and background knowledge.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong></p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -452,7 +581,7 @@ The objects are provided as context to a LLM query</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.chat_agent.ChatResponse.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'body':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'formatted_body':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False),</span> <span class="pre">'prompt':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'references':</span> <span class="pre">FieldInfo(annotation=Union[Dict[str,</span> <span class="pre">Any],</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'uncited_references':</span> <span class="pre">FieldInfo(annotation=Union[Dict[str,</span> <span class="pre">Any],</span> <span class="pre">NoneType],</span> <span class="pre">required=False)}</span></em><a class="headerlink" href="#curate_gpt.agents.chat_agent.ChatResponse.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'body':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'formatted_body':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'prompt':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'references':</span> <span class="pre">FieldInfo(annotation=Union[Dict[str,</span> <span class="pre">Any],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'uncited_references':</span> <span class="pre">FieldInfo(annotation=Union[Dict[str,</span> <span class="pre">Any],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.agents.chat_agent.ChatResponse.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -525,7 +654,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.concept_recognition_agent.AnnotatedText.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotated_text':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'concepts':</span> <span class="pre">FieldInfo(annotation=Union[Dict[str,</span> <span class="pre">str],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default={}),</span> <span class="pre">'input_text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'prompt':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'spans':</span> <span class="pre">FieldInfo(annotation=Union[List[curate_gpt.agents.concept_recognition_agent.Span],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=[]),</span> <span class="pre">'summary':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False)}</span></em><a class="headerlink" href="#curate_gpt.agents.concept_recognition_agent.AnnotatedText.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotated_text':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'concepts':</span> <span class="pre">FieldInfo(annotation=Union[Dict[str,</span> <span class="pre">str],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default={}),</span> <span class="pre">'input_text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'prompt':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'spans':</span> <span class="pre">FieldInfo(annotation=Union[List[curate_gpt.agents.concept_recognition_agent.Span],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=[]),</span> <span class="pre">'summary':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.agents.concept_recognition_agent.AnnotatedText.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -685,7 +814,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.concept_recognition_agent.GroundingResult.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'input_text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'score':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'spans':</span> <span class="pre">FieldInfo(annotation=Union[List[curate_gpt.agents.concept_recognition_agent.Span],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=[])}</span></em><a class="headerlink" href="#curate_gpt.agents.concept_recognition_agent.GroundingResult.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'input_text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'score':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'spans':</span> <span class="pre">FieldInfo(annotation=Union[List[curate_gpt.agents.concept_recognition_agent.Span],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=[])}</span></em><a class="headerlink" href="#curate_gpt.agents.concept_recognition_agent.GroundingResult.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -747,7 +876,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.concept_recognition_agent.Span.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'concept_id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False),</span> <span class="pre">'concept_label':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False),</span> <span class="pre">'end':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'is_suspect':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=False),</span> <span class="pre">'start':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#curate_gpt.agents.concept_recognition_agent.Span.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'concept_id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'concept_label':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'end':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'is_suspect':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=False,</span> <span class="pre">default=False),</span> <span class="pre">'start':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#curate_gpt.agents.concept_recognition_agent.Span.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -792,7 +921,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>text</strong> – </p>
+<dd class="field-odd"><p><strong>text</strong></p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
@@ -871,13 +1000,13 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> – </p></li>
-<li><p><strong>target_class</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>context_property</strong> – </p></li>
-<li><p><strong>generate_background</strong> – </p></li>
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>rules</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>seed</strong></p></li>
+<li><p><strong>target_class</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>context_property</strong></p></li>
+<li><p><strong>generate_background</strong></p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>rules</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -936,7 +1065,7 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.dase_agent.PredictedFieldValue.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'current_value':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'field_predicted':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'original_id':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'predicted_value':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False)}</span></em><a class="headerlink" href="#curate_gpt.agents.dase_agent.PredictedFieldValue.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'current_value':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'field_predicted':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'original_id':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'predicted_value':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.agents.dase_agent.PredictedFieldValue.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -981,13 +1110,13 @@ as <em>examples</em> to a LLM query, via an extractor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) – </p></li>
-<li><p><strong>target_class</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>context_property</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>generate_background</strong> – </p></li>
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>rules</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>)</p></li>
+<li><p><strong>target_class</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>context_property</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>generate_background</strong></p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>rules</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – these are included in the prompt</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1039,11 +1168,11 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>field_to_predict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>missing_only</strong> – </p></li>
-<li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>field_to_predict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>missing_only</strong></p></li>
+<li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1065,6 +1194,20 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 <dt class="sig sig-object py" id="curate_gpt.agents.dragon_agent.DragonAgent.relevance_factor">
 <span class="sig-name descname"><span class="pre">relevance_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.5</span></em><a class="headerlink" href="#curate_gpt.agents.dragon_agent.DragonAgent.relevance_factor" title="Link to this definition"></a></dt>
 <dd><p>Relevance factor for diversifying search results using MMR.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.dragon_agent.DragonAgent.review">
+<span class="sig-name descname"><span class="pre">review</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_property</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields_to_predict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.dragon_agent.DragonAgent.review" title="Link to this definition"></a></dt>
+<dd><p>Review an object for correctness, completeness, and consistency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curate_gpt.extract.html#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1102,7 +1245,7 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.dragon_agent.PredictedFieldValue.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'current_value':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'field_predicted':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'original_id':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'predicted_value':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False)}</span></em><a class="headerlink" href="#curate_gpt.agents.dragon_agent.PredictedFieldValue.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'current_value':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'field_predicted':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'original_id':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'predicted_value':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.agents.dragon_agent.PredictedFieldValue.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -1125,18 +1268,77 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <span id="curate-gpt-agents-evidence-agent-module"></span><h2>curate_gpt.agents.evidence_agent module<a class="headerlink" href="#module-curate_gpt.agents.evidence_agent" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceAgent">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.agents.evidence_agent.</span></span><span class="sig-name descname"><span class="pre">EvidenceAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_source_collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chat_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceAgent" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.agents.evidence_agent.</span></span><span class="sig-name descname"><span class="pre">EvidenceAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_source_collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chat_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence_update_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">EvidenceUpdatePolicyEnum.skip</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceAgent" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#curate_gpt.agents.base_agent.BaseAgent" title="curate_gpt.agents.base_agent.BaseAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAgent</span></code></a></p>
 <p>An agent to find evidence for an object by querying a reference source.</p>
-<p>TODO: also extend to allow categorization of evidence type.</p>
+<p>The evidence agent is able to find (supporting and refuting) evidence for any of
+the following:</p>
+<ul class="simple">
+<li><p>A simple statement in natural language</p></li>
+<li><p>A simple structured dictionary object of key-value pairs</p></li>
+<li><p>A complex structured dictionary object with nested key-value pairs</p></li>
+</ul>
+<p>The default source used is Pubmed, using <code class="xref py py-class docutils literal notranslate"><span class="pre">PubmedWrapper</span></code> via <code class="xref py py-class docutils literal notranslate"><span class="pre">ChatAgent</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceAgent.chat_agent">
 <span class="sig-name descname"><span class="pre">chat_agent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><a class="reference internal" href="#curate_gpt.agents.chat_agent.ChatAgent" title="curate_gpt.agents.chat_agent.ChatAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChatAgent</span></code></a><span class="pre">,</span> <a class="reference internal" href="curate_gpt.wrappers.html#curate_gpt.wrappers.base_wrapper.BaseWrapper" title="curate_gpt.wrappers.base_wrapper.BaseWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.chat_agent" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceAgent.evidence_update_policy">
+<span class="sig-name descname"><span class="pre">evidence_update_policy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum" title="curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvidenceUpdatePolicyEnum</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'skip'</span></em><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.evidence_update_policy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence">
 <span class="sig-name descname"><span class="pre">find_evidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.agents.chat_agent.ChatResponse" title="curate_gpt.agents.chat_agent.ChatResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChatResponse</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence_complex">
+<span class="sig-name descname"><span class="pre">find_evidence_complex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statement_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence_complex" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence_simple">
+<span class="sig-name descname"><span class="pre">find_evidence_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceAgent.find_evidence_simple" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.agents.evidence_agent.</span></span><span class="sig-name descname"><span class="pre">EvidenceUpdatePolicyEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.append">
+<span class="sig-name descname"><span class="pre">append</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'append'</span></em><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.append" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.replace">
+<span class="sig-name descname"><span class="pre">replace</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'replace'</span></em><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.replace" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.skip">
+<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'skip'</span></em><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.skip" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1164,7 +1366,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.mapping_agent.Mapping.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'object_id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'predicate_id':</span> <span class="pre">FieldInfo(annotation=Union[MappingPredicate,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'subject_id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#curate_gpt.agents.mapping_agent.Mapping.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'object_id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'predicate_id':</span> <span class="pre">FieldInfo(annotation=Union[MappingPredicate,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'subject_id':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#curate_gpt.agents.mapping_agent.Mapping.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -1199,8 +1401,8 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) – </p></li>
-<li><p><strong>kb_results</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>) – </p></li>
+<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>)</p></li>
+<li><p><strong>kb_results</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1218,7 +1420,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dd><p>Find links between elements in this collection and another collection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other_collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p>
+<dd class="field-odd"><p><strong>other_collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
@@ -1236,10 +1438,10 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) – </p></li>
-<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – </p></li>
+<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>)</p></li>
+<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
 <li><p><strong>randomize_order</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – randomize the order in which candidates are presented (mostly for testing purposes)</p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1325,7 +1527,7 @@ high is recommended for this task</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.agents.mapping_agent.MappingSet.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'mappings':</span> <span class="pre">FieldInfo(annotation=List[curate_gpt.agents.mapping_agent.Mapping],</span> <span class="pre">required=True),</span> <span class="pre">'prompt':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False),</span> <span class="pre">'response_text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False)}</span></em><a class="headerlink" href="#curate_gpt.agents.mapping_agent.MappingSet.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'mappings':</span> <span class="pre">FieldInfo(annotation=List[curate_gpt.agents.mapping_agent.Mapping],</span> <span class="pre">required=True),</span> <span class="pre">'prompt':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'response_text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.agents.mapping_agent.MappingSet.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -1421,13 +1623,13 @@ database or a remote source such as pubmed).
 The objects are provided as context to a LLM query</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.agents.ChatAgent.chat">
-<span class="sig-name descname"><span class="pre">chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.ChatAgent.chat" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.ChatAgent.chat" title="Link to this definition"></a></dt>
 <dd><p>Extract structured object using text seed and background knowledge.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>text</strong></p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1475,13 +1677,13 @@ as <em>examples</em> to a LLM query, via an extractor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) – </p></li>
-<li><p><strong>target_class</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>context_property</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>generate_background</strong> – </p></li>
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – </p></li>
-<li><p><strong>rules</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>)</p></li>
+<li><p><strong>target_class</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>context_property</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>generate_background</strong></p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>rules</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – these are included in the prompt</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1533,11 +1735,11 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>field_to_predict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p></li>
-<li><p><strong>missing_only</strong> – </p></li>
-<li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>field_to_predict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>missing_only</strong></p></li>
+<li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>)</p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1561,6 +1763,75 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 <dd><p>Relevance factor for diversifying search results using MMR.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.DragonAgent.review">
+<span class="sig-name descname"><span class="pre">review</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_property</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields_to_predict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.DragonAgent.review" title="Link to this definition"></a></dt>
+<dd><p>Review an object for correctness, completeness, and consistency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curate_gpt.extract.html#curate_gpt.extract.extractor.AnnotatedObject" title="curate_gpt.extract.extractor.AnnotatedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedObject</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.agents.EvidenceAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.agents.</span></span><span class="sig-name descname"><span class="pre">EvidenceAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_source_collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chat_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence_update_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">EvidenceUpdatePolicyEnum.skip</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.EvidenceAgent" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#curate_gpt.agents.base_agent.BaseAgent" title="curate_gpt.agents.base_agent.BaseAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAgent</span></code></a></p>
+<p>An agent to find evidence for an object by querying a reference source.</p>
+<p>The evidence agent is able to find (supporting and refuting) evidence for any of
+the following:</p>
+<ul class="simple">
+<li><p>A simple statement in natural language</p></li>
+<li><p>A simple structured dictionary object of key-value pairs</p></li>
+<li><p>A complex structured dictionary object with nested key-value pairs</p></li>
+</ul>
+<p>The default source used is Pubmed, using <code class="xref py py-class docutils literal notranslate"><span class="pre">PubmedWrapper</span></code> via <a class="reference internal" href="#curate_gpt.agents.ChatAgent" title="curate_gpt.agents.ChatAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChatAgent</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.EvidenceAgent.chat_agent">
+<span class="sig-name descname"><span class="pre">chat_agent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><a class="reference internal" href="#curate_gpt.agents.chat_agent.ChatAgent" title="curate_gpt.agents.chat_agent.ChatAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChatAgent</span></code></a><span class="pre">,</span> <a class="reference internal" href="curate_gpt.wrappers.html#curate_gpt.wrappers.base_wrapper.BaseWrapper" title="curate_gpt.wrappers.base_wrapper.BaseWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curate_gpt.agents.EvidenceAgent.chat_agent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.agents.EvidenceAgent.evidence_update_policy">
+<span class="sig-name descname"><span class="pre">evidence_update_policy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum" title="curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvidenceUpdatePolicyEnum</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'skip'</span></em><a class="headerlink" href="#curate_gpt.agents.EvidenceAgent.evidence_update_policy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.EvidenceAgent.find_evidence">
+<span class="sig-name descname"><span class="pre">find_evidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.EvidenceAgent.find_evidence" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curate_gpt.agents.chat_agent.ChatResponse" title="curate_gpt.agents.chat_agent.ChatResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChatResponse</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.EvidenceAgent.find_evidence_complex">
+<span class="sig-name descname"><span class="pre">find_evidence_complex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statement_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.EvidenceAgent.find_evidence_complex" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.EvidenceAgent.find_evidence_simple">
+<span class="sig-name descname"><span class="pre">find_evidence_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.EvidenceAgent.find_evidence_simple" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1575,8 +1846,8 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) – </p></li>
-<li><p><strong>kb_results</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>) – </p></li>
+<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>)</p></li>
+<li><p><strong>kb_results</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1594,7 +1865,7 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 <dd><p>Find links between elements in this collection and another collection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other_collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – </p>
+<dd class="field-odd"><p><strong>other_collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
@@ -1612,10 +1883,10 @@ NOTE: may be deprecated as now collections can be bound to adapters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) – </p></li>
-<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – </p></li>
+<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>)</p></li>
+<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
 <li><p><strong>randomize_order</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – randomize the order in which candidates are presented (mostly for testing purposes)</p></li>
-<li><p><strong>kwargs</strong> – </p></li>
+<li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

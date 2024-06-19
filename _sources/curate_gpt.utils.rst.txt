@@ -4,6 +4,14 @@ curate\_gpt.utils package
 Submodules
 ----------
 
+curate\_gpt.utils.patch\_utils module
+-------------------------------------
+
+.. automodule:: curate_gpt.utils.patch_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 curate\_gpt.utils.search module
 -------------------------------
 

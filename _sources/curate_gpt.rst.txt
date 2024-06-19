@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   curate_gpt.adhoc
    curate_gpt.agents
    curate_gpt.app
    curate_gpt.conf

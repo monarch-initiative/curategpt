@@ -12,6 +12,22 @@ curate\_gpt.wrappers.investigation.ess\_deepdive\_wrapper module
    :undoc-members:
    :show-inheritance:
 
+curate\_gpt.wrappers.investigation.fairsharing\_wrapper module
+--------------------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.investigation.fairsharing_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.wrappers.investigation.jgi\_wrapper module
+------------------------------------------------------
+
+.. automodule:: curate_gpt.wrappers.investigation.jgi_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 curate\_gpt.wrappers.investigation.ncbi\_bioproject\_wrapper module
 -------------------------------------------------------------------
 
