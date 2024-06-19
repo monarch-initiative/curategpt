@@ -6,9 +6,10 @@ import logging
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 
 import click
+import jsonpatch
 import pandas as pd
 import requests
 import yaml
@@ -19,8 +20,10 @@ from llm import UnknownModelError, get_model, get_plugins
 from llm.cli import load_conversation
 from oaklib import get_adapter
 from pydantic import BaseModel
+import venomx as vx
 
 from curate_gpt import ChromaDBAdapter, __version__
+from curate_gpt.agents.bootstrap_agent import BootstrapAgent, KnowledgeBaseSpecification
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
@@ -33,6 +36,7 @@ from curate_gpt.evaluation.runner import run_task
 from curate_gpt.evaluation.splitter import stratify_collection
 from curate_gpt.extract import AnnotatedObject
 from curate_gpt.extract.basic_extractor import BasicExtractor
+from curate_gpt.store import get_store
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.utils.vectordb_operations import match_collections
 from curate_gpt.wrappers import BaseWrapper, get_wrapper
@@ -44,12 +48,14 @@ __all__ = [
 ]
 
 
-def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml") -> None:
+def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml", old_object: Optional[Dict] = None, primary_key: Optional[str] = None) -> None:
     """
     Dump an object to stdout.
 
     :param obj:
     :param format:
+    :param old_object: (when format=="patch")
+    :param primary_key: (when format=="patch")
     :return:
     """
     if isinstance(obj, str):
@@ -67,6 +73,14 @@ def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml") -> None:
         set = json.dumps(obj, indent=2)
     elif format == "blob":
         set = list(obj.values())[0]
+    elif format == "patch":
+        patch = jsonpatch.make_patch(old_object, obj)
+        patch = jsonpatch.make_patch(old_object, obj)
+        patch = json.loads(patch.to_string())
+        if primary_key:
+            pk_val = obj[primary_key]
+            patch = {pk_val: patch}
+        set = yaml.dump(patch, sort_keys=False)
     else:
         raise ValueError(f"Unknown format {format}")
     print(set)
@@ -75,15 +89,26 @@ def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml") -> None:
 # logger = logging.getLogger(__name__)
 
 path_option = click.option("-p", "--path", help="Path to a file or directory for database.")
+database_type_option = click.option(
+    "-D",
+    "--database-type",
+    default="chromadb",
+    show_default=True,
+    help="Adapter to use for database, e.g. chromadb.",
+)
 model_option = click.option(
     "-m", "--model", help="Model to use for generation or embedding, e.g. gpt-4."
 )
+extract_format_option = click.option("--extract-format",
+              "-X",
+              default="json",
+              show_default=True, help="Format to use for extraction.")
 schema_option = click.option("-s", "--schema", help="Path to schema.")
 collection_option = click.option("-c", "--collection", help="Collection within the database.")
 output_format_option = click.option(
     "-t",
     "--output-format",
-    type=click.Choice(["yaml", "json", "blob", "csv"]),
+    type=click.Choice(["yaml", "json", "blob", "csv", "patch"]),
     default="yaml",
     show_default=True,
     help="Output format for results.",
@@ -208,6 +233,9 @@ def main(verbose: int, quiet: bool):
     "--select",
     help="jsonpath to use to subselect from each JSON document.",
 )
+@click.option("--remove-field",
+            multiple=True,
+            help="Field to remove recursively from each object.")
 @batch_size_option
 @encoding_option
 @click.argument("files", nargs=-1)
@@ -226,6 +254,7 @@ def index(
     select,
     collect,
     encoding,
+    remove_field,
     **kwargs,
 ):
     """
@@ -306,7 +335,7 @@ def index(
         elif file.endswith(".tsv"):
             objs = list(csv.DictReader(open(file, encoding=encoding), delimiter="\t"))
         else:
-            objs = yaml.safe_load(open(file, encoding=encoding))
+            objs = yaml.safe_load_all(open(file, encoding=encoding))
         if isinstance(objs, (dict, BaseModel)):
             objs = [objs]
         if select:
@@ -321,6 +350,8 @@ def index(
                     else:
                         new_objs.append(match.value)
             objs = new_objs
+        if remove_field:
+            raise NotImplementedError("Use yq instead, e.g. yq eval 'del(.. | .evidence?)' input.yaml")
         db.insert(objs, model=model, collection=collection, batch_size=batch_size)
     db.update_collection_metadata(
         collection, model=model, object_type=object_type, description=description
@@ -731,6 +762,62 @@ def extract_from_pubmed(
             f.write(text)
 
 
+@main.group()
+def bootstrap():
+    "Bootstrap schema or data."
+
+
+@bootstrap.command(name="schema")
+@model_option
+@click.option(
+    "--config",
+    "-C",
+    required=True,
+    help="path to yaml config",
+)
+def bootstrap_schema(config, model):
+    """Bootstrap a knowledge base."""
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    bootstrap_agent = BootstrapAgent(extractor=extractor)
+    config_dict = yaml.safe_load(open(config))
+    config = KnowledgeBaseSpecification(**config_dict)
+    ao = bootstrap_agent.bootstrap_schema(config)
+    dump(ao.object)
+
+
+@bootstrap.command(name="data")
+@model_option
+@click.option(
+    "--config",
+    "-C",
+    help="path to yaml config",
+)
+@click.option(
+    "--schema",
+    "-s",
+    help="path to yaml linkml schema",
+)
+def bootstrap_data(config, schema, model):
+    """Bootstrap a knowledge base."""
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    bootstrap_agent = BootstrapAgent(extractor=extractor)
+    if config:
+        config_dict = yaml.safe_load(open(config))
+        config = KnowledgeBaseSpecification(**config_dict)
+    else:
+        config = None
+    if schema:
+        schema_dict = yaml.safe_load(open(schema))
+    else:
+        schema_dict = None
+    yaml_str = bootstrap_agent.bootstrap_data(specification=config, schema=schema_dict)
+    print(yaml_str)
+
+
 @main.command()
 @path_option
 @collection_option
@@ -760,8 +847,9 @@ def extract_from_pubmed(
 @click.option(
     "--rule",
     multiple=True,
-    help="Rule to use for generating background knowledge.",
+    help="Rule to use for generating background knowledge. These are included in the prompt.",
 )
+@extract_format_option
 @schema_option
 @output_format_option
 @click.argument("query")
@@ -775,6 +863,7 @@ def complete(
     model,
     query_property,
     schema,
+    extract_format,
     output_format,
     **kwargs,
 ):
@@ -791,6 +880,9 @@ def complete(
     E.g
 
         curategpt complete  -c obo_go "label: umbelliferose biosynthetic process"
+
+    Pass ``--extract-format`` to make the extractor use a different internal representation
+    when communicating to the LLM
     """
     db = ChromaDBAdapter(path)
     if schema:
@@ -801,6 +893,8 @@ def complete(
     # TODO: generalize
     filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
     extractor = BasicExtractor()
+    if extract_format:
+        extractor.serialization_format = extract_format
     if model:
         extractor.model_name = model
     if schema_manager:
@@ -833,6 +927,198 @@ def complete(
 )
 @click.option(
     "--fields-to-predict",
+    "-Z",
+    multiple=True,
+)
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@generate_background_option
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge. These are included in the prompt.",
+)
+@extract_format_option
+@schema_option
+@output_format_option
+@click.option("--primary-key", help="Primary key for patch output.")
+@click.argument("where", nargs=-1)
+def update(
+    where,
+    path,
+    collection,
+    docstore_path,
+    docstore_collection,
+    conversation,
+    rule: List[str],
+    model,
+    query_property,
+    schema,
+    extract_format,
+    output_format,
+    primary_key,
+    **kwargs,
+):
+    """
+    Update an entry from a database using object completion.
+
+    Example:
+    -------
+
+        curategpt update -X yaml --model gpt-4o -p db -c disease -Z description name: Asthma --primary-key name -t patch > patch.yaml
+
+    """
+    where_str = " ".join(where)
+    where_q = yaml.safe_load(where_str)
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor()
+    if extract_format:
+        extractor.serialization_format = extract_format
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    dac = DragonAgent(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        dac.document_adapter = ChromaDBAdapter(docstore_path)
+        dac.document_adapter_collection = docstore_collection
+    for obj, _s, _meta in db.find(where_q, collection=collection):
+        logging.debug(f"Updating {obj}")
+        ao = dac.complete(obj, context_property=query_property, rules=rule, collection=collection, **filtered_kwargs)
+        if output_format == "yaml":
+            print("---")
+        dump(ao.object, format=output_format, old_object=obj, primary_key=primary_key)
+
+
+
+@main.command()
+@path_option
+@collection_option
+@click.option(
+    "-C/--no-C",
+    "--conversation/--no-conversation",
+    default=False,
+    show_default=True,
+    help="Whether to run in conversation mode.",
+)
+@model_option
+@limit_option
+@click.option(
+    "-P", "--query-property", default="label", show_default=True, help="Property to use for query."
+)
+@click.option(
+    "--fields-to-predict",
+    "-Z",
+    multiple=True,
+)
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge. These are included in the prompt.",
+)
+@extract_format_option
+@schema_option
+@output_format_option
+@click.option("--primary-key", help="Primary key for patch output.")
+@click.argument("where", nargs=-1)
+def review(
+    where,
+    path,
+    collection,
+    docstore_path,
+    docstore_collection,
+    conversation,
+    rule: List[str],
+    model,
+    query_property,
+    schema,
+    extract_format,
+    output_format,
+    primary_key,
+    **kwargs,
+):
+    """
+    Review entries.
+
+    Example:
+    -------
+
+        curategpt complete  -c obo_go "umbelliferose biosynthetic process"
+
+    If the string looks like yaml (if it has a ':') then it will be parsed as yaml.
+
+    E.g
+
+        curategpt complete  -c obo_go "label: umbelliferose biosynthetic process"
+
+    Pass ``--extract-format`` to make the extractor use a different internal representation
+    when communicating to the LLM
+    """
+    where_str = " ".join(where)
+    where_q = yaml.safe_load(where_str)
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor()
+    if extract_format:
+        extractor.serialization_format = extract_format
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    dac = DragonAgent(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        dac.document_adapter = ChromaDBAdapter(docstore_path)
+        dac.document_adapter_collection = docstore_collection
+    for obj, _s, _meta in db.find(where_q, collection=collection):
+        logging.debug(f"Updating {obj}")
+        ao = dac.review(obj, rules=rule, collection=collection, context_property=query_property, primary_key=primary_key, **filtered_kwargs)
+        if output_format == "yaml":
+            print("---")
+        dump(ao.object, format=output_format, old_object=obj, primary_key=primary_key)
+
+
+@main.command()
+@path_option
+@collection_option
+@click.option(
+    "-C/--no-C",
+    "--conversation/--no-conversation",
+    default=False,
+    show_default=True,
+    help="Whether to run in conversation mode.",
+)
+@model_option
+@limit_option
+@click.option(
+    "-P", "--query-property", default="label", show_default=True, help="Property to use for query."
+)
+@click.option(
+    "--fields-to-predict",
     multiple=True,
 )
 @click.option(
@@ -848,6 +1134,7 @@ def complete(
     help="Rule to use for generating background knowledge.",
 )
 @schema_option
+@extract_format_option
 @output_format_option
 @click.argument("input_file")
 def complete_multiple(
@@ -861,6 +1148,7 @@ def complete_multiple(
     query_property,
     schema,
     output_format,
+    extract_format,
     **kwargs,
 ):
     """
@@ -868,7 +1156,7 @@ def complete_multiple(
 
     Example:
     -------
-        curategpt generate  -c obo_go terms.txt
+        curategpt complete-multiple -c obo_go -P label terms.txt
     """
     db = ChromaDBAdapter(path)
     if schema:
@@ -878,7 +1166,7 @@ def complete_multiple(
 
     # TODO: generalize
     filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
-    extractor = BasicExtractor()
+    extractor = BasicExtractor(serialization_format=extract_format)
     if model:
         extractor.model_name = model
     if schema_manager:
@@ -891,6 +1179,7 @@ def complete_multiple(
     with open(input_file) as f:
         queries = [l.strip() for l in f.readlines()]
         for query in queries:
+            query = query.split("\t")[0]
             if ":" in query:
                 query = yaml.safe_load(query)
             ao = dac.complete(query, context_property=query_property, rules=rule, **filtered_kwargs)
@@ -1340,6 +1629,33 @@ def ask(query, path, collection, model, show_references, _continue, conversation
 
 
 @main.command()
+@click.option("--patch", help="Patch file.")
+@click.option("--primary-key", help="Primary key for patch output")
+@click.argument("input_file")
+def apply_patch(input_file, patch, primary_key):
+    """Apply a patch to a file/KB.
+
+    This can be executed after `update`
+    """
+    objs = list(yaml.safe_load_all(open(input_file)))
+    logging.info(f"Applying patch to {len(objs)} objects")
+    patch = yaml.safe_load(open(patch))
+    if primary_key:
+        for inner_obj in objs:
+            pk_val = inner_obj[primary_key]
+            if pk_val in patch:
+                actual_patch = patch[pk_val]
+                logging.debug(f"Applying: {actual_patch}")
+                jsonpatch.apply_patch(inner_obj, actual_patch, in_place=True)
+    else:
+        for obj in objs:
+            jsonpatch.apply_patch(objs, patch, in_place=True)
+    logging.info(f"Writing patch output for {len(objs)} objects")
+    for obj in objs:
+        print("---")
+        print(yaml.dump(obj, sort_keys=False))
+
+@main.command()
 @collection_option
 @path_option
 @model_option
@@ -1363,25 +1679,89 @@ def ask(query, path, collection, model, show_references, _continue, conversation
     "--conversation",
     help="Continue the conversation with the given ID.",
 )
+@click.option(
+    "--select",
+    help="jsonpath expression to select objects from the input file.",
+)
 @click.argument("query")
-def citeseek(query, path, collection, model, show_references, _continue, conversation_id):
-    """Find citations for an object."""
+def citeseek(query, path, collection, model, show_references, _continue, select, conversation_id):
+    """Find citations for an object or statement.
+
+    You can pass in a statement directly as an argument
+
+    Example:
+
+        curategpt -citeseek --model gpt-4o "Ivermectin cures COVID-19"
+
+    Returns:
+
+    .. code-block:: yaml
+
+      - reference: PMID:35657909
+        supports: REFUTE
+        snippet: 'COVID-19 update: NIH recommends against ivermectin.'
+        explanation: This reference clearly states that the National Institutes of Health
+          (NIH) recommends against the use of ivermectin for COVID-19 treatment.
+      - reference: PMID:35225114
+        supports: REFUTE
+        snippet: Due to concern for adverse events, specifically neurotoxicity, as well
+          as a paucity of supporting evidence, the use of ivermectin as a routine treatment
+          or preventive measure for COVID-19 infection is not recommended at this time.
+        explanation: The reference indicates concerns about adverse events and a lack
+          of supporting evidence, leading to the conclusion that ivermectin is not recommended
+          for COVID-19 treatment.
+
+    You can also pass a YAML file as an argument. All assertions within the YAML file
+    will be individually checked.
+
+    Example:
+
+        curategpt -v  citeseek --model gpt-4o tests/input/citeseek-test.yaml
+
+    """
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
     if model:
         extractor.model_name = model
-    chatbot = ChatAgent(db, extractor=extractor, knowledge_source_collection=collection)
+    if not collection or collection == "pubmed":
+        chatbot = PubmedWrapper(local_store=db, extractor=extractor)
+    else:
+        chatbot = ChatAgent(db, extractor=extractor, knowledge_source_collection=collection)
     ea = EvidenceAgent(chat_agent=chatbot)
-    response = ea.find_evidence(query)
-    print("# Response:")
-    click.echo(response.formatted_body)
-    print("# Raw:")
-    click.echo(response.body)
-    if show_references:
-        print("# References:")
-        for ref, ref_text in response.references.items():
-            print(f"## {ref}")
-            print(ref_text)
+    if Path(query).exists():
+        try:
+            logging.info(f"Testing if query is a file: {query}")
+            parsed_obj = list(yaml.safe_load_all(open(query)))
+            if isinstance(parsed_obj, list):
+                objs = parsed_obj
+            else:
+                objs = [parsed_obj]
+            logging.info(f"Loaded {len(objs)} objects from {query}")
+            if select:
+                logging.info(f"Selecting objects using {select}")
+                # TODO: DRY
+                import jsonpath_ng as jp
+                path_expr = jp.parse(select)
+                new_objs = []
+                for obj in objs:
+                    for match in path_expr.find(obj):
+                        logging.debug(f"Match: {match.value}")
+                        if isinstance(match.value, list):
+                            new_objs.extend(match.value)
+                        else:
+                            new_objs.append(match.value)
+                objs = new_objs
+                logging.info(f"New {len(objs)} objects from {select}")
+            for obj in objs:
+                enhanced_obj = ea.find_evidence_complex(obj)
+                print("---")
+                print(yaml.dump(enhanced_obj, sort_keys=False), flush=True)
+            return
+        except Exception as ex:
+            raise ValueError(f"Error reading {query}: {ex}")
+    logging.info(f"Query: {query}")
+    response = ea.find_evidence_simple(query)
+    print(yaml.dump(response, sort_keys=False))
 
 
 @main.command()
@@ -1452,10 +1832,13 @@ def collections():
     show_default=True,
     help="Whether to peek at the first few entries of the collection.",
 )
+@database_type_option
 @path_option
-def list_collections(path, peek: bool, minimal: bool, derived: bool):
+def list_collections(database_type, path, peek: bool, minimal: bool, derived: bool):
     """List all collections."""
-    db = ChromaDBAdapter(path)
+    logging.info(f"Listing collections in {path}")
+    db = get_store(database_type, path)
+    logging.info(f"Initialized: {db}")
     for cn in db.collections():
         if minimal:
             print(f"## Collection: {cn}")
@@ -1492,7 +1875,7 @@ def peek_collection(path, collection, **kwargs):
 
 @collections.command(name="dump")
 @collection_option
-@click.option("-o", "--output", type=click.File("w"), default="-")
+@click.option("-o", "--output", default="-")
 @click.option("--metadata-to-file", type=click.File("w"), default=None)
 @click.option("--format", "-t", default="json", show_default=True)
 @click.option("--include", "-I", multiple=True, help="Include a field.")
@@ -1517,7 +1900,6 @@ def dump_collection(path, collection, output, **kwargs):
 
         curategpt collections dump  -c ont_cl -o cl.cur.jsonl -t jsonl --metadata-to-file cl.meta.json
 
-    TODO: venomx support
     """
     logging.info(f"Dumping {collection} in {path}")
     db = ChromaDBAdapter(path)
@@ -1652,7 +2034,7 @@ def ontology():
 )
 @click.option(
     "--index-fields",
-    help="Fields to index; comma sepatrated",
+    help="Fields to index; comma septrated",
 )
 @click.argument("ont")
 def index_ontology_command(ont, path, collection, append, model, index_fields, branches, **kwargs):
@@ -1763,8 +2145,10 @@ def view():
 @view.command(name="objects")
 @click.option("--view", "-V", required=True, help="Name of the wrapper to use.")
 @click.option("--source-locator")
+@click.option("--settings", help="YAML settings for the wrapper.")
 @init_with_option
-def view_objects(view, init_with, **kwargs):
+@click.argument("object_ids", nargs=-1)
+def view_objects(view, init_with, settings, object_ids, **kwargs):
     """
     View objects in a virtual store.
 
@@ -1776,9 +2160,16 @@ def view_objects(view, init_with, **kwargs):
     if init_with:
         for k, v in yaml.safe_load(init_with).items():
             kwargs[k] = v
+    if settings:
+        for k, v in yaml.safe_load(settings).items():
+            kwargs[k] = v
     vstore = get_wrapper(view, **kwargs)
-    for obj in vstore.objects():
-        print(yaml.dump(obj, sort_keys=False))
+    if object_ids:
+        for obj in vstore.objects(object_ids=object_ids):
+            print(yaml.dump(obj, sort_keys=False))
+    else:
+        for obj in vstore.objects():
+            print(yaml.dump(obj, sort_keys=False))
 
 
 @view.command(name="unwrap")

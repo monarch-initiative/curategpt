@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Tuple, Union
 
+import pandas as pd
 import yaml
 from click.utils import LazyFile
 from jsonlines import jsonlines
@@ -263,7 +264,7 @@ class DBAdapter(ABC):
         :param collection:
         :param where:
         :param kwargs:
-        :return:
+        :return: tuple of object, distance, metadata
         """
 
     def find(
@@ -395,8 +396,7 @@ class DBAdapter(ABC):
         :param kwargs:
         :return:
         """
-        to_file = _get_file(to_file, "w")
-        metadata_to_file = _get_file(metadata_to_file, "w")
+        collection_name = collection
         collection = self._get_collection(collection)
         metadata = self.collection_metadata(collection).model_dump(exclude_none=True)
         if format is None:
@@ -406,7 +406,33 @@ class DBAdapter(ABC):
             # include = ["embeddings", "documents", "metadatas"]
         if not isinstance(include, list):
             include = list(include)
-        objects = self.find(collection=collection, include=include, **kwargs)
+        objects = list(self.find(collection=collection, include=include, **kwargs))
+        if format.startswith("venomx"):
+            import venomx as vx
+            from venomx.tools.file_io import save_index
+            cm = self.collection_metadata(collection_name, include_derived=False)
+            label_field = self.label_field(collection_name)
+            id_field = self.identifier_field(collection_name)
+            def _label(obj):
+                return obj.get(label_field, None)
+            def _id(obj):
+                original_id = obj.get("original_id", None)
+                if original_id:
+                    return original_id
+                return obj.get(id_field, None)
+            rows = [{"id": _id(obj), "text": meta["document"], "values": meta["_embeddings"]} for obj, _, meta in objects]
+            vx_objects = [{"id": _id(obj), "label": _label(obj)} for obj, _, _ in objects]
+            logger.info(f"Num vx objects: {len(vx_objects)}")
+            vx_index = vx.Index(
+                embedding_model=vx.model.venomx.Model(name=cm.model),
+                dataset=vx.model.venomx.Dataset(name=collection_name),
+                embeddings_frame=pd.DataFrame(rows),
+                objects=vx_objects,
+            )
+            save_index(vx_index, to_file)
+            return
+        to_file = _get_file(to_file, "w")
+        metadata_to_file = _get_file(metadata_to_file, "w")
         streaming = True
         if format == "jsonl":
             writer = jsonlines.Writer(to_file)

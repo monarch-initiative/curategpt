@@ -54,11 +54,14 @@ class ChromaDBAdapter(DBAdapter):
         self.client = chromadb.PersistentClient(
             path=str(self.path), settings=Settings(allow_reset=True, anonymized_telemetry=False)
         )
+        logger.info(f"ChromaDB client: {self.client}")
 
     def _get_collection_object(self, collection: str = None):
         return self.client.get_collection(name=self._get_collection(collection))
 
     def _text(self, obj: OBJECT, text_field: Union[str, Callable]):
+        if isinstance(obj, list):
+            raise ValueError(f"Cannot handle list of text fields: {obj}")
         if text_field is None or (isinstance(text_field, str) and text_field not in obj):
             obj = {k: v for k, v in obj.items() if v}
             t = yaml.safe_dump(obj, sort_keys=False)

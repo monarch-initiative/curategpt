@@ -69,6 +69,7 @@ class ChatAgent(BaseAgent):
         conversation: Optional[Conversation] = None,
         limit: int = 10,
         collection: str = None,
+        expand = True,
         **kwargs,
     ) -> ChatResponse:
         """

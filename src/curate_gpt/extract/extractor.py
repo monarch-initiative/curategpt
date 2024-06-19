@@ -96,3 +96,12 @@ class Extractor(ABC):
     @property
     def pydantic_root_model(self) -> BaseModel:
         return self.schema_proxy.pydantic_root_model
+
+    def deserialize(self, text: str, **kwargs) -> AnnotatedObject:
+        """
+        Deserialize text into an annotated object
+
+        :param text:
+        :return:
+        """
+        raise NotImplementedError

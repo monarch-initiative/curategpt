@@ -90,7 +90,7 @@ class DragonAgent(BaseAgent):
         :param context_property:
         :param generate_background:
         :param collection:
-        :param rules:
+        :param rules: these are included in the prompt
         :param kwargs:
         :return:
         """
@@ -130,7 +130,7 @@ class DragonAgent(BaseAgent):
                     # generate a partial object with only feature fields set
                     min_obj = {k: obj[k] for k in feature_fields if k in obj}
                 if min_obj:
-                    as_text = yaml.safe_dump(min_obj, sort_keys=True).strip()
+                    as_text = yaml.safe_dump(min_obj, sort_keys=False).strip()
                     return f"{prefix} {target_class} with {as_text}"
                 else:
                     return f"{prefix} {target_class}:"
@@ -160,7 +160,7 @@ class DragonAgent(BaseAgent):
             }
             if not obj_predicted_part:
                 logger.warning(
-                    f"Skipping; Candidate example lacked predictable properties: {obj}; "
+                    f"Skipping; Candidate example lacked predictable properties ({fields_to_predict}): {obj}; "
                     f"Context properties: {feature_fields}; "
                     f"Num examples={len(annotated_examples)}"
                 )
@@ -207,9 +207,12 @@ class DragonAgent(BaseAgent):
             rules=rules,
         )
         if merge:
+            # put the seed object (non-predicted fields) back in
+            init_object = {}
             for k, v in seed.items():
                 if v and not ao.object.get(k, None):
-                    ao.object[k] = v
+                    init_object[k] = v
+            ao.object = {**init_object, **ao.object}
         return ao
 
     def generate_all(
@@ -254,3 +257,67 @@ class DragonAgent(BaseAgent):
                 predicted_value=ao.object.get(field_to_predict, None),
                 current_value=curr_val,
             )
+
+    def review(self, obj: dict, context_property: str = None, rules = None, collection = None, fields_to_predict=None, primary_key=None, **kwargs) -> AnnotatedObject:
+        """
+        Review an object for correctness, completeness, and consistency.
+
+        :param obj:
+        """
+        if fields_to_predict and not context_property:
+            raise ValueError("context_property is required if fields_to_predict")
+
+        pk_val = obj.get(primary_key, None)
+
+        def _obj_as_str(obj: dict) -> str:
+            slim_obj = {k: v for k, v in obj.items() if v is not None and ((not fields_to_predict or k in fields_to_predict) or k == context_property)}
+            return yaml.dump(slim_obj, sort_keys=True)
+
+        q = yaml.safe_dump(obj, sort_keys=True)
+        texts = []
+        for example_obj, _, _obj_meta in self.knowledge_source.search(
+                q,
+                relevance_factor=self.relevance_factor,
+                collection=collection,
+                **kwargs,
+        ):
+            if primary_key:
+                if example_obj.get(primary_key, None) == pk_val:
+                    logger.debug(f"Skipping example with same primary key: {primary_key} = {pk_val}")
+                    continue
+            texts.append(_obj_as_str(example_obj))
+        system = """
+        Your are an expert database curator. Your job is to take an input record and review it for correctness,
+        completeness, and consistency. In particular, the input record may be incomplete so you should
+        use your expert domain knowledge to fill things in more detail and granularity,
+        
+        I will give you a list of example objects that are similar to the
+        input record for you to follow as a guide to the schema (but these may themselves be incomplete).
+        
+        You should return results in YAML in a ```yaml...``` block.
+        You should follow the examples for a consistent schema, but you can add an optional
+        `review_notes:` field at either the top level or within individual objects to provide additional
+        commentary.
+        """
+        if rules:
+            system += f"\n\nAdditional considerations: {'. '.join(list(rules))}"
+        prompt = f"Example records:\n\n" + "\n\n".join(texts)
+
+        prompt += f"\n\nInput record:\n\n{_obj_as_str(obj)}"
+        response = self.extractor.model.prompt(prompt, system=system)
+        ao = self.extractor.deserialize(response.text(), format="yaml")
+        if not isinstance(ao.object, dict):
+            logger.warning(f"Expected dict, got {ao.object}")
+            if isinstance(ao.object, list):
+                logger.warning(f"Taking first element of list of len {len(ao.object)}")
+                ao.object = ao.object[0]
+        if isinstance(ao.object, dict):
+            if context_property:
+                ao.object[context_property] = obj[context_property]
+            if fields_to_predict:
+                for k, v in obj.items():
+                    if k not in fields_to_predict:
+                        ao.object[k] = v
+        ao.annotations["prompt"] = prompt
+        return ao
+

@@ -61,6 +61,9 @@ load-rdp:
 load-generic-%:
 	$(CURATE) -v view index --view $@ --batch-size 10 -c $* -m openai: WEB
 
+load-json-data-%: data/%.json
+	$(CURATE) index -c $* -c $* $<
+
 load-db-%:
 	$(CURATE) -v view index -p $(DB_PATH) --view $* -c $* -m openai: 
 

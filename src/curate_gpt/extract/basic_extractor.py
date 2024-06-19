@@ -6,6 +6,9 @@ from copy import copy
 from dataclasses import dataclass
 from typing import List
 
+import yaml
+from pydantic import ConfigDict
+
 from ..utils.tokens import estimate_num_tokens, max_tokens_by_model
 from .extractor import AnnotatedObject, Extractor
 
@@ -19,8 +22,10 @@ class BasicExtractor(Extractor):
     Extractor that is purely example driven.
     """
 
+    model_config = ConfigDict(protected_namespaces=())
+
     serialization_format: str = "json"
-    model_name: str = "gpt-3.5-turbo"
+    model_name: str = "gpt-4o"
 
     def extract(
         self,
@@ -71,9 +76,16 @@ class BasicExtractor(Extractor):
         return ao
 
     def serialize(self, ao: AnnotatedObject) -> str:
-        return json.dumps(ao.object)
+        if self.serialization_format == "yaml":
+            return yaml.dump(ao.object, sort_keys=False)
+        else:
+            return json.dumps(ao.object)
 
-    def deserialize(self, text: str) -> AnnotatedObject:
+    def deserialize(self, text: str, format=None, **kwargs) -> AnnotatedObject:
+        if format is None:
+            format = self.serialization_format
+        if format == "yaml":
+            return self.deserialize_yaml(text, **kwargs)
         logger.debug(f"Parsing {text}")
         try:
             obj = json.loads(text)
@@ -93,3 +105,26 @@ class BasicExtractor(Extractor):
             else:
                 logger.warning(f"Could not parse {text}")
                 return AnnotatedObject(object={})
+
+    def deserialize_yaml(self, text: str, multiple=False) -> AnnotatedObject:
+        logger.debug(f"Parsing YAML: {text}")
+        if "```" in text:
+            logger.debug("Removing code block")
+            text = text.split("```")[1]
+            text = text.strip()
+        if text.startswith("yaml"):
+            text = text[4:]
+        try:
+            if multiple:
+                obj = yaml.safe_load_all(text)
+            else:
+                obj = yaml.safe_load(text)
+            if isinstance(obj, str):
+                if self.raise_error_if_unparsable:
+                    raise ValueError(f"Could not parse {text}")
+                else:
+                    obj = {}
+            return AnnotatedObject(object=obj)
+        except Exception as e:
+            logger.warning(f"Could not parse {text}")
+            return AnnotatedObject(object={})

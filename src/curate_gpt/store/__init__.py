@@ -32,7 +32,7 @@ def get_all_subclasses(cls):
     ]
 
 
-def get_store(name: str, *args, **kwargs) -> DBAdapter:
+def get_store(name: str = "chromadb", *args, **kwargs) -> DBAdapter:
     from .in_memory_adapter import InMemoryAdapter  # noqa F401
 
     # noqa I005

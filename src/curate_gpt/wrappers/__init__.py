@@ -16,6 +16,7 @@ __all__ = [
     "BioportalWrapper",
     "NMDCWrapper",
     "GOCAMWrapper",
+    "JGIWrapper",
     "AllianceGeneWrapper",
     "NCBIBiosampleWrapper",
     "NCBIBioprojectWrapper",
@@ -26,6 +27,7 @@ __all__ = [
     "HPOAByPubWrapper",
     "MAXOAWrapper",
     "GoogleDriveWrapper",
+    "FAIRSharingWrapper",
     "FilesystemWrapper",
     "get_wrapper",
 ]
@@ -58,6 +60,8 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
     from curate_gpt.wrappers.general.json_wrapper import JSONWrapper  # noqa
     from curate_gpt.wrappers.general.linkml_schema_wrapper import LinkMLSchemarapper  # noqa
     from curate_gpt.wrappers.investigation.ess_deepdive_wrapper import ESSDeepDiveWrapper  # noqa
+    from curate_gpt.wrappers.investigation.fairsharing_wrapper import FAIRSharingWrapper  # noqa
+    from curate_gpt.wrappers.investigation.jgi_wrapper import JGIWrapper  # noqa
     from curate_gpt.wrappers.investigation.ncbi_bioproject_wrapper import (  # noqa
         NCBIBioprojectWrapper,
     )
