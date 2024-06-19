@@ -111,12 +111,14 @@ class EvidenceAgent(BaseAgent):
         Return in YAML:
         
         ```
-        - reference: IDENTIFIER  ## e.g pubmed ID
+        - reference: IDENTIFIER  ## e.g PMID:123456
           supports: "SUPPORT" | "REFUTE" | "NO_EVIDENCE" | "PARTIAL" | "WRONG_STATEMENT"
           snippet: "EXCERPT"
           explanation: "<explanatory text, if necessary>"
         - ... 
         ```
+        
+        Never put a space between the pubmed prefix and local ID. The correct way to write is PMID:123456.
         
         Do not include an entry if you cannot find it in the literature provided.
         

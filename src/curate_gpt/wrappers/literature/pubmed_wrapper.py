@@ -122,9 +122,16 @@ class PubmedWrapper(BaseWrapper):
         # different search terms
         response = requests.get(ESEARCH_URL, params=params)
         time.sleep(RATE_LIMIT_DELAY)
+        if response.status_code != 200:
+            logger.error(f"Failed to search for {text}; params: {params}")
+            return []
         data = response.json()
 
         # Extract PubMed IDs from the response
+        if "esearchresult" not in data:
+            logger.error(f"Failed to find results for {text}")
+            logger.error(f"Data: {data}")
+            return []
         pubmed_ids = data["esearchresult"]["idlist"]
 
         if not pubmed_ids:

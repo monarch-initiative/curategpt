@@ -1,0 +1,164 @@
+Provide a LinkML schema in YAML for the specified knowledge base type.
+
+the model will have this header:
+
+```yaml
+id: https://w3id.org/{{ kb_name }}
+name: {{ kb_name }}
+description: {{ description }}
+prefixes:
+  linkml: https://w3id.org/linkml/
+  {{ kb_name }}: https://w3id.org/{{ kb_name }}
+
+imports:
+  - linkml:types
+
+classes:
+  Container:
+    tree_root: true
+    attributes:
+      members:
+        range: {{ main_class }}
+        multivalued: true
+        inlined_as_list: true
+  {{ main_class }}:
+    description: { DESCRIPTION HERE }
+    attributes:
+      name:
+        required: true
+        identifier: true
+      FIELD1:
+        range: ...
+        multivalued: < true | false >
+      ...
+  << OTHER CLASSES REFERENCED IN THE ABOVE >>
+```
+
+The goal is to have a tree like model with {{  main_class }} as the root of the tree,
+and then lists of rich objects as the children of the root. Each rich object may need
+its own class to describe it
+
+## Examples
+
+Note I am only showing the main classes section onwards for each example.
+
+### Disease Knowledge Base Schema
+
+```yaml
+...
+classes:
+...
+   Disease:
+     description: A representation of a human disease
+     attributes:
+         name:
+            required: true
+            identifier: true
+         description:
+            range: string
+         synonyms:
+            range: string
+            multivalued: true
+         gene_associations:
+            range: GeneAssociation
+            multivalued: true
+            inlined_as_list: true
+         drug_associations:
+            range: DrugAssociation
+            multivalued: true
+            inlined_as_list: true
+         symptoms:
+            range: Symptom
+            multivalued: true
+            inlined_as_list: true
+        ...{ OTHER ATTRIBUTES }
+
+   GeneAssociation:
+        description: All the genes associated with a disease, plus the nature of that association
+        attributes:
+            gene_symbol:
+                range: GeneSymbolType
+            association_type:
+                range: AssociationTypeEnum
+
+   ...{ OTHER NESTED CLASSES }
+
+enums:
+     AssociationTypeEnum:
+         permissible_values:
+             MENDELIAN: {}
+             MODIFIER: {}
+             RISK_FACTOR: {}
+            ...
+
+types:
+  GeneSymbolType:
+    typeof: string
+
+### Vehicle Knowledge Base Schema
+
+```yaml
+...
+classes:
+...
+   Vehicle:
+     description: A representation of a vehicle
+     attributes:
+         name:
+            required: true
+            identifier: true
+         description:
+            range: string
+         type:
+            range: VehicleTypeEnum
+         manufacturer:
+            range: Manufacturer
+         model:
+            range: Model
+         year:
+            range: Year
+         max_speed:
+            range: float
+         colors:
+            range: string
+            multivalued: true
+         parts:
+            range: VehiclePart
+            multivalued: true
+            inlined_as_list: true
+         ...{ OTHER ATTRIBUTES }
+
+   Manufacturer:
+        description: The manufacturer of a vehicle
+        attributes:
+            name:
+                required: true
+                identifier: true
+            country:
+                range: Country
+
+   VehiclePart:
+        description: A part of a vehicle
+        attributes:
+            name:
+                required: true
+                identifier: true
+            type:
+                range: VehiclePartTypeEnum
+            ...{ OTHER ATTRIBUTES }
+
+   ...{ OTHER NESTED CLASSES }
+
+## General Tips
+
+- don't include base types like string etc under `types`, they are imported already
+- give {{ main_class }} a mixture of simple string metadata and lists of rich objects for associated data that might require provenance or other metadata.
+- make sure the YAML is complete. Even though I provide placeholder "..." in the examples, the YAML you provide must parse
+- if you really need to include commentary do this using YAML comments (e.g. ##). The YAML must parse.
+
+## Specification
+
+Here is the specification. Try and be as comprehensive and inclusive of everything asked for here.
+Include all attributes asked for. Include more attributes and more granular modeling if necessary.
+
+{{ specification }}

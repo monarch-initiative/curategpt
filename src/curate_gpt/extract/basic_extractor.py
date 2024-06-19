@@ -81,11 +81,11 @@ class BasicExtractor(Extractor):
         else:
             return json.dumps(ao.object)
 
-    def deserialize(self, text: str, format=None) -> AnnotatedObject:
+    def deserialize(self, text: str, format=None, **kwargs) -> AnnotatedObject:
         if format is None:
             format = self.serialization_format
         if format == "yaml":
-            return self.deserialize_yaml(text)
+            return self.deserialize_yaml(text, **kwargs)
         logger.debug(f"Parsing {text}")
         try:
             obj = json.loads(text)
@@ -106,16 +106,19 @@ class BasicExtractor(Extractor):
                 logger.warning(f"Could not parse {text}")
                 return AnnotatedObject(object={})
 
-    def deserialize_yaml(self, text: str) -> AnnotatedObject:
+    def deserialize_yaml(self, text: str, multiple=False) -> AnnotatedObject:
         logger.debug(f"Parsing YAML: {text}")
         if "```" in text:
             logger.debug("Removing code block")
             text = text.split("```")[1]
             text = text.strip()
-            if text.startswith("yaml"):
-                text = text[4:]
+        if text.startswith("yaml"):
+            text = text[4:]
         try:
-            obj = yaml.safe_load(text)
+            if multiple:
+                obj = yaml.safe_load_all(text)
+            else:
+                obj = yaml.safe_load(text)
             if isinstance(obj, str):
                 if self.raise_error_if_unparsable:
                     raise ValueError(f"Could not parse {text}")

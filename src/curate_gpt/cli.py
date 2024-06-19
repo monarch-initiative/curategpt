@@ -23,6 +23,7 @@ from pydantic import BaseModel
 import venomx as vx
 
 from curate_gpt import ChromaDBAdapter, __version__
+from curate_gpt.agents.bootstrap_agent import BootstrapAgent, KnowledgeBaseSpecification
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
@@ -761,6 +762,62 @@ def extract_from_pubmed(
             f.write(text)
 
 
+@main.group()
+def bootstrap():
+    "Bootstrap schema or data."
+
+
+@bootstrap.command(name="schema")
+@model_option
+@click.option(
+    "--config",
+    "-C",
+    required=True,
+    help="path to yaml config",
+)
+def bootstrap_schema(config, model):
+    """Bootstrap a knowledge base."""
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    bootstrap_agent = BootstrapAgent(extractor=extractor)
+    config_dict = yaml.safe_load(open(config))
+    config = KnowledgeBaseSpecification(**config_dict)
+    ao = bootstrap_agent.bootstrap_schema(config)
+    dump(ao.object)
+
+
+@bootstrap.command(name="data")
+@model_option
+@click.option(
+    "--config",
+    "-C",
+    help="path to yaml config",
+)
+@click.option(
+    "--schema",
+    "-s",
+    help="path to yaml linkml schema",
+)
+def bootstrap_data(config, schema, model):
+    """Bootstrap a knowledge base."""
+    extractor = BasicExtractor()
+    if model:
+        extractor.model_name = model
+    bootstrap_agent = BootstrapAgent(extractor=extractor)
+    if config:
+        config_dict = yaml.safe_load(open(config))
+        config = KnowledgeBaseSpecification(**config_dict)
+    else:
+        config = None
+    if schema:
+        schema_dict = yaml.safe_load(open(schema))
+    else:
+        schema_dict = None
+    yaml_str = bootstrap_agent.bootstrap_data(specification=config, schema=schema_dict)
+    print(yaml_str)
+
+
 @main.command()
 @path_option
 @collection_option
@@ -1039,7 +1096,7 @@ def review(
         dac.document_adapter_collection = docstore_collection
     for obj, _s, _meta in db.find(where_q, collection=collection):
         logging.debug(f"Updating {obj}")
-        ao = dac.review(obj, rules=rule, collection=collection, context_property=query_property, **filtered_kwargs)
+        ao = dac.review(obj, rules=rule, collection=collection, context_property=query_property, primary_key=primary_key, **filtered_kwargs)
         if output_format == "yaml":
             print("---")
         dump(ao.object, format=output_format, old_object=obj, primary_key=primary_key)
@@ -1674,7 +1731,7 @@ def citeseek(query, path, collection, model, show_references, _continue, select,
     if Path(query).exists():
         try:
             logging.info(f"Testing if query is a file: {query}")
-            parsed_obj = yaml.safe_load(open(query))
+            parsed_obj = list(yaml.safe_load_all(open(query)))
             if isinstance(parsed_obj, list):
                 objs = parsed_obj
             else:

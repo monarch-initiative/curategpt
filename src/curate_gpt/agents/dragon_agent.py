@@ -258,7 +258,7 @@ class DragonAgent(BaseAgent):
                 current_value=curr_val,
             )
 
-    def review(self, obj: dict, context_property: str = None, rules = None, collection = None, fields_to_predict=None, **kwargs) -> AnnotatedObject:
+    def review(self, obj: dict, context_property: str = None, rules = None, collection = None, fields_to_predict=None, primary_key=None, **kwargs) -> AnnotatedObject:
         """
         Review an object for correctness, completeness, and consistency.
 
@@ -266,6 +266,9 @@ class DragonAgent(BaseAgent):
         """
         if fields_to_predict and not context_property:
             raise ValueError("context_property is required if fields_to_predict")
+
+        pk_val = obj.get(primary_key, None)
+
         def _obj_as_str(obj: dict) -> str:
             slim_obj = {k: v for k, v in obj.items() if v is not None and ((not fields_to_predict or k in fields_to_predict) or k == context_property)}
             return yaml.dump(slim_obj, sort_keys=True)
@@ -278,6 +281,10 @@ class DragonAgent(BaseAgent):
                 collection=collection,
                 **kwargs,
         ):
+            if primary_key:
+                if example_obj.get(primary_key, None) == pk_val:
+                    logger.debug(f"Skipping example with same primary key: {primary_key} = {pk_val}")
+                    continue
             texts.append(_obj_as_str(example_obj))
         system = """
         Your are an expert database curator. Your job is to take an input record and review it for correctness,
@@ -299,12 +306,18 @@ class DragonAgent(BaseAgent):
         prompt += f"\n\nInput record:\n\n{_obj_as_str(obj)}"
         response = self.extractor.model.prompt(prompt, system=system)
         ao = self.extractor.deserialize(response.text(), format="yaml")
-        if context_property:
-            ao.object[context_property] = obj[context_property]
-        if fields_to_predict:
-            for k, v in obj.items():
-                if k not in fields_to_predict:
-                    ao.object[k] = v
+        if not isinstance(ao.object, dict):
+            logger.warning(f"Expected dict, got {ao.object}")
+            if isinstance(ao.object, list):
+                logger.warning(f"Taking first element of list of len {len(ao.object)}")
+                ao.object = ao.object[0]
+        if isinstance(ao.object, dict):
+            if context_property:
+                ao.object[context_property] = obj[context_property]
+            if fields_to_predict:
+                for k, v in obj.items():
+                    if k not in fields_to_predict:
+                        ao.object[k] = v
         ao.annotations["prompt"] = prompt
         return ao
 

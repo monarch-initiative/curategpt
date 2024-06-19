@@ -5,6 +5,9 @@ data/nmdc.json:
 	$(RUN) python -m curate_gpt.adhoc.nmdc_sample_downloader --no-stream  --format json > $@
 
 
+data/clingen.json:
+	wget https://actionability.clinicalgenome.org/ac/Pediatric/api/summ -O $@
+
 index-nmdc: data/nmdc.json
 	$(RUN) curategpt -v index -p $(DB_PATH) -m openai: -c biosamples_nmdc_oai --object-type Biosample --description "Samples taken from NMDC database" $<
 
