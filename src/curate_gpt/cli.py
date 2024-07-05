@@ -223,6 +223,7 @@ def main(verbose: int, quiet: bool):
     "-V",
     help="View/Proxy to use for the database, e.g. bioc.",
 )
+@click.option("--view-settings", help="YAML settings for the view wrapper.")
 @click.option(
     "--glob/--no-glob", default=False, show_default=True, help="Whether to glob the files."
 )
@@ -255,6 +256,7 @@ def index(
     collect,
     encoding,
     remove_field,
+    view_settings,
     **kwargs,
 ):
     """
@@ -288,7 +290,11 @@ def index(
     if glob:
         files = [str(gf.absolute()) for f in files for gf in Path().glob(f) if gf.is_file()]
     if view:
-        wrapper = get_wrapper(view)
+        view_args = {}
+        if view_settings:
+            view_args = yaml.safe_load(view_settings)
+            logging.info(f"View settings: {view_args}")
+        wrapper = get_wrapper(view, **view_args)
         if not object_type:
             object_type = wrapper.default_object_type
         if not description:
@@ -302,6 +308,8 @@ def index(
             db.remove_collection(collection)
     if model is None:
         model = "openai:"
+    if not files and wrapper:
+        files = ["API"]
     for file in files:
         if encoding == "detect":
             import chardet
@@ -1061,16 +1069,10 @@ def review(
     Example:
     -------
 
-        curategpt complete  -c obo_go "umbelliferose biosynthetic process"
+        curategpt review  -c obo_obi "{}" -Z definition -t patch \
+          --primary-key original_id --rule "make definitions simple and easy to read by domain scientists. \
+             At the same time, conform to genus-differentia style and OBO best practice."
 
-    If the string looks like yaml (if it has a ':') then it will be parsed as yaml.
-
-    E.g
-
-        curategpt complete  -c obo_go "label: umbelliferose biosynthetic process"
-
-    Pass ``--extract-format`` to make the extractor use a different internal representation
-    when communicating to the LLM
     """
     where_str = " ".join(where)
     where_q = yaml.safe_load(where_str)
@@ -1729,36 +1731,33 @@ def citeseek(query, path, collection, model, show_references, _continue, select,
         chatbot = ChatAgent(db, extractor=extractor, knowledge_source_collection=collection)
     ea = EvidenceAgent(chat_agent=chatbot)
     if Path(query).exists():
-        try:
-            logging.info(f"Testing if query is a file: {query}")
-            parsed_obj = list(yaml.safe_load_all(open(query)))
-            if isinstance(parsed_obj, list):
-                objs = parsed_obj
-            else:
-                objs = [parsed_obj]
-            logging.info(f"Loaded {len(objs)} objects from {query}")
-            if select:
-                logging.info(f"Selecting objects using {select}")
-                # TODO: DRY
-                import jsonpath_ng as jp
-                path_expr = jp.parse(select)
-                new_objs = []
-                for obj in objs:
-                    for match in path_expr.find(obj):
-                        logging.debug(f"Match: {match.value}")
-                        if isinstance(match.value, list):
-                            new_objs.extend(match.value)
-                        else:
-                            new_objs.append(match.value)
-                objs = new_objs
-                logging.info(f"New {len(objs)} objects from {select}")
+        logging.info(f"Testing if query is a file: {query}")
+        parsed_obj = list(yaml.safe_load_all(open(query)))
+        if isinstance(parsed_obj, list):
+            objs = parsed_obj
+        else:
+            objs = [parsed_obj]
+        logging.info(f"Loaded {len(objs)} objects from {query}")
+        if select:
+            logging.info(f"Selecting objects using {select}")
+            # TODO: DRY
+            import jsonpath_ng as jp
+            path_expr = jp.parse(select)
+            new_objs = []
             for obj in objs:
-                enhanced_obj = ea.find_evidence_complex(obj)
-                print("---")
-                print(yaml.dump(enhanced_obj, sort_keys=False), flush=True)
-            return
-        except Exception as ex:
-            raise ValueError(f"Error reading {query}: {ex}")
+                for match in path_expr.find(obj):
+                    logging.debug(f"Match: {match.value}")
+                    if isinstance(match.value, list):
+                        new_objs.extend(match.value)
+                    else:
+                        new_objs.append(match.value)
+            objs = new_objs
+            logging.info(f"New {len(objs)} objects from {select}")
+        for obj in objs:
+            enhanced_obj = ea.find_evidence_complex(obj)
+            print("---")
+            print(yaml.dump(enhanced_obj, sort_keys=False), flush=True)
+        return
     logging.info(f"Query: {query}")
     response = ea.find_evidence_simple(query)
     print(yaml.dump(response, sort_keys=False))
@@ -2245,13 +2244,19 @@ def view_index(view, path, append, collection, model, init_with, batch_size, **k
 @click.option("--source-locator")
 @limit_option
 @model_option
+@click.option(
+    "--expand/--no-expand",
+    default=True,
+    show_default=True,
+    help="Whether to expand the search term using an LLM.",
+)
 @click.argument("query")
-def view_ask(query, view, model, limit, **kwargs):
+def view_ask(query, view, model, limit, expand, **kwargs):
     """Ask a knowledge source wrapper."""
     vstore: BaseWrapper = get_wrapper(view)
     vstore.extractor = BasicExtractor(model_name=model)
     chatbot = ChatAgent(knowledge_source=vstore)
-    response = chatbot.chat(query, limit=limit)
+    response = chatbot.chat(query, limit=limit, expand=expand)
     show_chat_response(response, True)
 
 

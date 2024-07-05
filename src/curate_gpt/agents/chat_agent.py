@@ -90,7 +90,7 @@ class ChatAgent(BaseAgent):
         kwargs["collection"] = collection
         kb_results = list(
             self.knowledge_source.search(
-                query, relevance_factor=self.relevance_factor, limit=limit, **kwargs
+                query, relevance_factor=self.relevance_factor, limit=limit, expand=expand, **kwargs
             )
         )
         while True:

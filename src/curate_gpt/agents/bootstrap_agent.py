@@ -57,7 +57,8 @@ class BootstrapAgent(BaseAgent):
         model = extractor.model
         prompt = ("Generate an example instance data objects in YAML, inside a ```yaml...``` block\n"
                   "Choose any objects you like, but make them representative of the domain, "
-                  "with rich comprehensive information\n"
+                  "with rich comprehensive information.\n"
+                  "For now, do not put any references in, as these will be added later."
                   "Separate each element with '---' breaks, such that each entry is a separate object\n"
                   "Do not include the root container class"
                   )

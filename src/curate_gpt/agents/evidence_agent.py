@@ -180,9 +180,9 @@ class EvidenceAgent(BaseAgent):
                 evidence = self.find_evidence_simple(q)
                 if evidence:
                     if "evidence" in input_obj and self.evidence_update_policy == EvidenceUpdatePolicyEnum.append:
-                        sub_obj["evidence"].append(evidence)
+                        input_obj["evidence"].append(evidence)
                     else:
-                        sub_obj["evidence"] = evidence
+                        input_obj["evidence"] = evidence
                     new_evidences.append(evidence)
 
             if isinstance(v, list):
@@ -190,7 +190,7 @@ class EvidenceAgent(BaseAgent):
                     if isinstance(sub_obj, dict):
                         _add_evidence(sub_obj)
             elif isinstance(v, dict):
-                _add_evidence(sub_obj)
+                _add_evidence(v)
         logger.info(f"Found {len(new_evidences)} evidence objects.")
         return obj
 
