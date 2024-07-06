@@ -218,7 +218,6 @@ class DuckDBVSSAdapter(DBAdapter):
                 model = cm.model
             if model is None:
                 model = self.default_model
-        # self.update_collection_metadata(collection, model=model, object_type=object_type)
         if batch_size is None:
             batch_size = 100000
         if text_field is None:
@@ -336,7 +335,7 @@ class DuckDBVSSAdapter(DBAdapter):
             ORDER BY distance
             LIMIT ?
         """, [limit]).fetchall()
-        results = sorted(results, key=lambda x: x[-1])  # Sort results by distance
+        results = sorted(results, key=lambda x: x[-1])
         yield from self.parse_duckdb_result(results)
 
     def list_collection_names(self):
@@ -593,7 +592,7 @@ class DuckDBVSSAdapter(DBAdapter):
                     ORDER BY distance 
                     LIMIT ?
                 """, [limit * 10]).fetchall()
-        results = sorted(results, key=lambda x: x[-1])  # Sort results by distance
+        results = sorted(results, key=lambda x: x[-1])
         distances = np.array([r[-1] for r in results])
         parsed_results = list(self.parse_duckdb_result(results))
         selected_indices = []
@@ -633,7 +632,6 @@ class DuckDBVSSAdapter(DBAdapter):
         if result:
             metadata = json.loads(result[0])
             if 'model' in metadata and metadata['model'].startswith('openai:'):
-            # CollectionMetadata(**metadata)
                 return True
         return False
 
@@ -680,7 +678,6 @@ class DuckDBVSSAdapter(DBAdapter):
         return t
 
     def identifier_field(self, collection: str = None) -> str:
-        # TODO: use collection
         if self.schema_proxy and self.schema_proxy.schemaview:
             fields = []
             for s in self.schema_proxy.schemaview.all_slots(attributes=True).values():
