@@ -13,16 +13,16 @@ from jsonlines import jsonlines
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
 
+from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.store.schema_proxy import SchemaProxy
 
-OBJECT = Union[YAMLRoot, BaseModel, Dict]
-QUERY = Union[str, YAMLRoot, BaseModel, Dict]
+OBJECT = Union[YAMLRoot, BaseModel, Dict, DuckDBSearchResult]
+QUERY = Union[str, YAMLRoot, BaseModel, Dict, DuckDBSearchResult]
 PROJECTION = Union[str, List[str]]
-DEFAULT_COLLECTION = "default"
-SEARCH_RESULT = Tuple[Dict, float, Optional[Dict]]
+DEFAULT_COLLECTION = "test_collection"
+SEARCH_RESULT = Tuple[DuckDBSearchResult, Dict, float, Optional[Dict]]
 FILE_LIKE = Union[str, TextIO, Path]
-
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,6 @@ def _get_file(file: Optional[FILE_LIKE] = None, mode="r") -> Optional[TextIO]:
 
 @dataclass
 class DBAdapter(ABC):
-
     """
     Base class for stores.
 
@@ -203,7 +202,7 @@ class DBAdapter(ABC):
 
     @abstractmethod
     def collection_metadata(
-        self, collection_name: Optional[str] = None, include_derived=False, **kwargs
+            self, collection_name: Optional[str] = None, include_derived=False, **kwargs
     ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for a collection.
@@ -214,7 +213,7 @@ class DBAdapter(ABC):
         """
 
     def set_collection_metadata(
-        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+            self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
     ):
         """
         Set the metadata for a collection.
@@ -244,7 +243,7 @@ class DBAdapter(ABC):
 
     @abstractmethod
     def search(
-        self, text: str, where: QUERY = None, collection: str = None, **kwargs
+            self, text: str, where: QUERY = None, collection: str = None, **kwargs
     ) -> Iterator[SEARCH_RESULT]:
         """
         Query the database for a text string.
@@ -268,11 +267,11 @@ class DBAdapter(ABC):
         """
 
     def find(
-        self,
-        where: QUERY = None,
-        projection: PROJECTION = None,
-        collection: str = None,
-        **kwargs,
+            self,
+            where: QUERY = None,
+            projection: PROJECTION = None,
+            collection: str = None,
+            **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         """
         Query the database.
@@ -353,6 +352,7 @@ class DBAdapter(ABC):
                 return candidate
         return field_names[0] if field_names else "label"
 
+    #TODO: Might be abstract as currently gives not same values for DuckDBVSSAdapter and ChromaDBAdapter
     def field_names(self, collection: str = None) -> List[str]:
         """
         Return the names of all top level fields in the database for a collection.
@@ -381,13 +381,13 @@ class DBAdapter(ABC):
 
     # Loading and dumping
     def dump(
-        self,
-        collection: str = None,
-        to_file: FILE_LIKE = None,
-        metadata_to_file: FILE_LIKE = None,
-        format=None,
-        include=None,
-        **kwargs,
+            self,
+            collection: str = None,
+            to_file: FILE_LIKE = None,
+            metadata_to_file: FILE_LIKE = None,
+            format=None,
+            include=None,
+            **kwargs,
     ):
         """
         Dump the database to a file.
@@ -413,14 +413,18 @@ class DBAdapter(ABC):
             cm = self.collection_metadata(collection_name, include_derived=False)
             label_field = self.label_field(collection_name)
             id_field = self.identifier_field(collection_name)
+
             def _label(obj):
                 return obj.get(label_field, None)
+
             def _id(obj):
                 original_id = obj.get("original_id", None)
                 if original_id:
                     return original_id
                 return obj.get(id_field, None)
-            rows = [{"id": _id(obj), "text": meta["document"], "values": meta["_embeddings"]} for obj, _, meta in objects]
+
+            rows = [{"id": _id(obj), "text": meta["document"], "values": meta["_embeddings"]} for obj, _, meta in
+                    objects]
             vx_objects = [{"id": _id(obj), "label": _label(obj)} for obj, _, _ in objects]
             logger.info(f"Num vx objects: {len(vx_objects)}")
             vx_index = vx.Index(
