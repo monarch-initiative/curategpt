@@ -1002,7 +1002,6 @@ def update(
         dump(ao.object, format=output_format, old_object=obj, primary_key=primary_key)
 
 
-
 @main.command()
 @path_option
 @collection_option
@@ -2021,12 +2020,12 @@ def set_collection_metadata(path, collection, metadata_yaml):
 def ontology():
     "Use the ontology model"
 
-
 @ontology.command(name="index")
 @path_option
 @collection_option
 @model_option
 @append_option
+@database_type_option
 @click.option(
     "--branches",
     "-b",
@@ -2034,28 +2033,28 @@ def ontology():
 )
 @click.option(
     "--index-fields",
-    help="Fields to index; comma septrated",
+    help="Fields to index; comma seperated",
 )
 @click.argument("ont")
-def index_ontology_command(ont, path, collection, append, model, index_fields, branches, **kwargs):
+def index_ontology_command(ont, path, collection, append, model, index_fields, branches, database_type, **kwargs):
     """
     Index an ontology.
 
     Example:
     -------
-        curategpt index-ontology  -c obo_hp $db/hp.db
+        curategpt index-ontology  -c obo_hp $db/hp.db -D duckdb
 
     """
     oak_adapter = get_adapter(ont)
     view = OntologyWrapper(oak_adapter=oak_adapter)
     if branches:
         view.branches = branches.split(",")
-    db = ChromaDBAdapter(path, **kwargs)
+    db = get_store(database_type, path)
     db.text_lookup = view.text_field
     if index_fields:
         fields = index_fields.split(",")
-
         # print(f"Indexing fields: {fields}")
+
         def _text_lookup(obj: Dict):
             vals = [str(obj.get(f)) for f in fields if f in obj]
             return " ".join(vals)
@@ -2134,7 +2133,6 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
     # Insert embeddings into the collection
     db.insert(embeddings, model=model, collection=collection)
     print(f"Successfully indexed embeddings into collection '{collection}'.")
-
 
 
 @main.group()
