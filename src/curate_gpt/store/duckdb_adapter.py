@@ -2,6 +2,7 @@
 This is a DuckDB adapter for the Vector Similarity Search (VSS) extension
 using the experimental persistence feature
 """
+import itertools
 
 import yaml
 import logging
@@ -44,8 +45,8 @@ MODELS = ["text-embedding-ada-002", "text-embedding-3-small", "text-embedding-3-
 
 
 @dataclass
-class DuckDBVSSAdapter(DBAdapter):
-    name: ClassVar[str] = "duckdb_vss"
+class DuckDBAdapter(DBAdapter):
+    name: ClassVar[str] = "duckdb"
     default_model: str = "all-MiniLM-L6-v2"
     conn: duckdb.DuckDBPyConnection = field(init=False)
     vec_dimension: int = field(init=False)
@@ -57,20 +58,17 @@ class DuckDBVSSAdapter(DBAdapter):
     text_lookup: Optional[Union[str, Callable]] = field(default="text")
     id_to_object: Mapping[str, dict] = field(default_factory=dict)
     default_max_document_length: ClassVar[int] = 6000
-    path: str = "./db/duckdb_vss.db"
     openai_client: OpenAI = field(default=None)
 
     def __post_init__(self):
-        if os.path.isdir(self.path):
-            self.path = os.path.join(self.path, "duckdb_vss.db")
-        directory = os.path.dirname(self.path)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+        if not self.path:
+            self.path="./duck.db"
+        os.makedirs(os.path.dirname(self.path), exist_ok=True)
         self.ef_construction = self._validate_ef_construction(self.ef_construction)
         self.ef_search = self._validate_ef_search(self.ef_search)
         self.M = self._validate_m(self.M)
         logger.info(f"Using DuckDB at {self.path}")
-        self.conn = duckdb.connect(self.path)
+        self.conn = duckdb.connect(self.path, read_only=False)
         self.conn.execute("INSTALL vss;")
         self.conn.execute("LOAD vss;")
         self.conn.execute("SET hnsw_enable_experimental_persistence=true;")
@@ -80,6 +78,8 @@ class DuckDBVSSAdapter(DBAdapter):
 
     def _initialize_openai_client(self):
         if self.openai_client is None:
+            from dotenv import load_dotenv
+            load_dotenv()
             openai_api_key = os.environ.get("OPENAI_API_KEY")
             if openai_api_key:
                 self.openai_client = openai.OpenAI(api_key=openai_api_key)
@@ -87,7 +87,7 @@ class DuckDBVSSAdapter(DBAdapter):
                 raise openai.OpenAIError(
                     "The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable")
 
-    def _get_collection_object(self, collection: Optional[str] = None) -> str:
+    def _get_collection_name(self, collection: Optional[str] = None) -> str:
         """
         Get the collection name or the default collection name
         :param collection:
@@ -101,7 +101,6 @@ class DuckDBVSSAdapter(DBAdapter):
         :param collection:
         :return:
         """
-
         create_table_sql = f"""
             CREATE TABLE IF NOT EXISTS {collection} (
                 id VARCHAR PRIMARY KEY,
@@ -112,7 +111,7 @@ class DuckDBVSSAdapter(DBAdapter):
         """
         self.conn.execute(create_table_sql)
 
-        # special metadata row that holds table metadata (CollectionMetadata)
+        # metadata row that holds table metadata (CollectionMetadata)
         if model is not None:
             metadata = CollectionMetadata(name=collection, model=model)
         else:
@@ -125,7 +124,19 @@ class DuckDBVSSAdapter(DBAdapter):
                     """, [metadata_json]
         )
 
-        metrics = ['l2sq', 'cosine', 'ip']
+    def create_index(self, collection: str):
+        """
+        Create an index for the given collection
+        Parameters
+        ----------
+        collection
+
+        Returns
+        -------
+
+        """
+
+        metrics = ['l2sq', 'cosine', 'ip'] #l2sq,ip
         for metric in metrics:
             create_index_sql = f"""
                 CREATE INDEX IF NOT EXISTS idx_{collection}_embeddings_{metric} ON {collection}
@@ -138,26 +149,33 @@ class DuckDBVSSAdapter(DBAdapter):
             """
             self.conn.execute(create_index_sql)
 
-    def _embedding_function(self, text: str, model: str = None) -> list:
+    def _embedding_function(self, texts: Union[str, List[str]], model: str = None) -> list:
         """
-        Get the embeddings for the given text using the specified model
-        :param text:
-        :param model:
-        :return:
+        Get the embeddings for the given texts using the specified model
+        :param texts: A single text or a list of texts to embed
+        :param model: Model to use for embedding
+        :return: A single embedding or a list of embeddings
         """
+        single_text = False
+        if isinstance(texts, str):
+            texts = [texts]
+            single_text = True
+
         if model is None:
             model = self.model
 
         if model.startswith("openai:"):
             self._initialize_openai_client()
             openai_model = model.split(':', 1)[1] if ':' in model else MODELS[1]
-            response = self.openai_client.embeddings.create(
-                input=text,
-                model=openai_model
-            )
-            return response.data[0].embedding
+            responses = [
+                self.openai_client.embeddings.create(input=text, model=openai_model).data[0].embedding
+                for text in texts
+            ]
+            return responses[0] if single_text else responses
+
         model = SentenceTransformer(model)
-        return model.encode(text).tolist()
+        embeddings = model.encode(texts, convert_to_tensor=False).tolist()
+        return embeddings[0] if single_text else embeddings
 
     def insert(self, objs: Union[OBJECT, Iterable[OBJECT]], **kwargs):
         """
@@ -168,14 +186,19 @@ class DuckDBVSSAdapter(DBAdapter):
         """
         self._process_objects(objs, method="insert", **kwargs)
 
+    # DELETE first to ensure primary key  constraint https://duckdb.org/docs/sql/indexes
     def update(self, objs: Union[OBJECT, Iterable[OBJECT]], **kwargs):
         """
-        Update objects in the collection
+        Update objects in the collection.
         :param objs:
         :param kwargs:
         :return:
         """
-        self._process_objects(objs, method="update", **kwargs)
+        collection = kwargs.get('collection')
+        ids = [self._id(o, self.id_field) for o in objs]
+        delete_sql = f"DELETE FROM {collection} WHERE id = ?"
+        self.conn.executemany(delete_sql, [(id_,) for id_ in ids])
+        self.insert(objs, **kwargs)
 
     def upsert(self, objs: Union[OBJECT, Iterable[OBJECT]], **kwargs):
         """
@@ -184,7 +207,20 @@ class DuckDBVSSAdapter(DBAdapter):
         :param kwargs:
         :return:
         """
-        self._process_objects(objs, method="upsert", **kwargs)
+        collection = kwargs.get('collection')
+        ids = [self._id(o, self.id_field) for o in objs]
+        existing_ids = set()
+        for id_ in ids:
+            result = self.conn.execute(f"SELECT id FROM {collection} WHERE id = ?",[id_]).fetchall()
+            if result:
+                existing_ids.add(id_)
+        objs_to_update = [o for o in objs if self._id(o, self.id_field) in existing_ids]
+        objs_to_insert = [o for o in objs if self._id(o, self.id_field) not in existing_ids]
+        if objs_to_update:
+            self.update(objs_to_update, **kwargs)
+
+        if objs_to_insert:
+            self.insert(objs_to_insert, **kwargs)
 
     def _process_objects(
             self,
@@ -209,7 +245,7 @@ class DuckDBVSSAdapter(DBAdapter):
         :param kwargs:
         :return:
         """
-        collection = self._get_collection_object(collection)
+        collection = self._get_collection_name(collection)
         self.vec_dimension = self._get_embedding_dimension(model)
         self._create_table_if_not_exists(collection, self.vec_dimension, model=model)
         cm = self.update_collection_metadata(collection, metadata=kwargs)
@@ -225,6 +261,8 @@ class DuckDBVSSAdapter(DBAdapter):
         id_field = self.id_field
         num_objs = len(objs) if isinstance(objs, list) else "?"
         cumulative_len = 0
+        sql_command = self._generate_sql_command(collection, method)
+        sql_command = sql_command.format(collection=collection)
         for next_objs in chunk(objs, batch_size):
             next_objs = list(next_objs)
             docs = [self._text(o, text_field) for o in next_objs]
@@ -236,32 +274,25 @@ class DuckDBVSSAdapter(DBAdapter):
                 cumulative_len = 0
             metadatas = [self._dict(o) for o in next_objs]
             ids = [self._id(o, id_field) for o in next_objs]
-            logger.info(f"{method.capitalize()}ing {len(next_objs)} / {num_objs} objects into {collection}")
-            if method == "insert":
-                sql_command = f"""
-                               INSERT INTO {collection} (id, metadata, embeddings, documents) VALUES (?, ?, ?, ?)
-                               """
-            elif method == "update":
-                sql_command = (f"""
-                               UPDATE {collection} SET metadata = ?, embeddings = ?, documents = ? WHERE id = ?
-                               """)
-            elif method == "upsert":
-                sql_command = (f"""
-                               INSERT INTO {collection} (id, metadata, embeddings, documents) VALUES (?, ?, ?, ?) 
-                               ON CONFLICT(id) DO UPDATE SET 
-                               embeddings = EXCLUDED.embeddings, 
-                               documents = EXCLUDED.documents, 
-                               metadata = EXCLUDED.metadata
-                               """
-                               )
-            else:
-                raise ValueError(f"Unknown method: {method}")
-            sql_command = sql_command.format(collection=collection)
-            i = 0
-            for id_field, metadata, doc in zip(ids, metadatas, docs):
-                i = i + 1
-                embeddings = self._embedding_function(doc, model)
-                self.conn.execute(sql_command, [id_field, metadata, embeddings, doc])
+            embeddings = self._embedding_function(docs, model)
+            try:
+                self.conn.execute("BEGIN TRANSACTION;")
+                self.conn.executemany(sql_command, list(zip(ids, metadatas, embeddings, docs)))
+                self.conn.execute("COMMIT;")
+            except Exception as e:
+                self.conn.execute("ROLLBACK;")
+                logger.error(f"Trransaction failed: {e}")
+                raise
+            self.create_index(collection)
+
+    def _generate_sql_command(self, collection: str,  method: str) -> str:
+        if method == "insert":
+            return f"""
+            INSERT INTO {collection} (id,metadata, embeddings, documents) VALUES (?, ?, ?, ?)
+            """
+        else:
+            raise ValueError(f"Unknown method: {method}")
+
 
     def remove_collection(self, collection: str = None, exists_ok=False, **kwargs):
         """
@@ -286,22 +317,6 @@ class DuckDBVSSAdapter(DBAdapter):
         :param collection:
         :param limit:
         :param relevance_factor:
-        :param kwargs:
-        :return:
-        """
-        return self._search(text, where, collection, limit, relevance_factor, **kwargs)
-
-    def search(self, text: str, where: QUERY = None, collection: str = None, limit: int = 10,
-               relevance_factor: float = None, **kwargs) -> Iterator[
-        SEARCH_RESULT]:
-        """
-        Search for objects in the collection that match the given text
-        :param text:
-        :param where:
-        :param collection:
-        :param limit:
-        :param relevance_factor:
-        :param include: List of fields to include in the output ['metadata', 'embeddings', 'documents']
         :param kwargs:
         :return:
         """
@@ -335,6 +350,8 @@ class DuckDBVSSAdapter(DBAdapter):
             ORDER BY distance
             LIMIT ?
         """, [limit]).fetchall()
+        # first row currently always with distance None as id = '__metadata__'
+        results = [r for r in results if r[-1] is not None]
         results = sorted(results, key=lambda x: x[-1])
         yield from self.parse_duckdb_result(results)
 
@@ -505,7 +522,7 @@ class DuckDBVSSAdapter(DBAdapter):
         if collection is None:
             raise ValueError("Collection name must be provided.")
 
-        collection_name = self._get_collection_object(collection)
+        collection_name = self._get_collection_name(collection)
         query = f"SELECT id, embeddings, metadata, documents FROM {collection_name}"
         data = self.conn.execute(query).fetchall()
         metadata = self.collection_metadata(collection_name).dict(exclude_none=True)
@@ -592,6 +609,8 @@ class DuckDBVSSAdapter(DBAdapter):
                     ORDER BY distance 
                     LIMIT ?
                 """, [limit * 10]).fetchall()
+        # first row currently always with distance None as id = '__metadata__'
+        results = [r for r in results if r[-1] is not None]
         results = sorted(results, key=lambda x: x[-1])
         distances = np.array([r[-1] for r in results])
         parsed_results = list(self.parse_duckdb_result(results))
@@ -736,7 +755,7 @@ class DuckDBVSSAdapter(DBAdapter):
                     elif op == "$in":
                         conditions.append(
                             f"json_extract_string(metadata, '$.{key}') IN ({', '.join([f'{v}' for v in value])})")
-                    elif op == "$nin":
+                    elif op == "$notin":
                         conditions.append(
                             f"json_extract_string(metadata, '$.{key}') NOT IN ({', '.join([f'{v}' for v in value])})")
                     elif op == "$exists":
@@ -757,9 +776,9 @@ class DuckDBVSSAdapter(DBAdapter):
             if model_name.startswith("openai:"):
                 model_key = model_name.split("openai:", 1)[1]
                 return OPENAI_MODEL_DIMENSIONS.get(model_key, OPENAI_MODEL_DIMENSIONS["text-embedding-3-small"])
-        else:
-            if model_name in MODEL_DIMENSIONS:
-                return MODEL_DIMENSIONS[model_name]
+            else:
+                if model_name in MODEL_DIMENSIONS:
+                    return MODEL_DIMENSIONS[model_name]
 
     @staticmethod
     def _validate_ef_construction(value: int) -> int:

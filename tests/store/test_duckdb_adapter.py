@@ -1,5 +1,4 @@
 import itertools
-import json
 import os
 import shutil
 from typing import Dict
@@ -7,7 +6,7 @@ from typing import Dict
 import pytest
 
 from curate_gpt.store import CollectionMetadata
-from curate_gpt.store.duckdb_adapter import DuckDBVSSAdapter
+from curate_gpt.store.duckdb_adapter import DuckDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
 from linkml_runtime.utils.schema_builder import SchemaBuilder
@@ -26,9 +25,9 @@ def terms_to_objects(terms: list[str]) -> list[Dict]:
 
 
 @pytest.fixture
-def empty_db() -> DuckDBVSSAdapter:
+def empty_db() -> DuckDBAdapter:
     shutil.rmtree(EMPTY_DB_PATH, ignore_errors=True)
-    db = DuckDBVSSAdapter(EMPTY_DB_PATH)
+    db = DuckDBAdapter(EMPTY_DB_PATH)
     db.conn.execute("DROP TABLE IF EXISTS collection_metadata")
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
     collection = "test_collection"
@@ -51,10 +50,11 @@ def simple_schema_manager() -> SchemaProxy:
 
 
 def test_store(simple_schema_manager, example_texts):
-    db = DuckDBVSSAdapter(OUTPUT_DUCKDB_PATH)
+    db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     db.schema_proxy = simple_schema_manager
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
     db.conn.execute("DROP TABLE IF EXISTS test_ef_collection")
+    db.conn.execute("DROP TABLE IF EXISTS test_openai_collection")
     assert db.list_collection_names() == []
     collection = "test_collection"
     objs = terms_to_objects(example_texts)
@@ -63,7 +63,7 @@ def test_store(simple_schema_manager, example_texts):
     md.description = "test collection"
     db.set_collection_metadata(collection, md)
     assert db.collection_metadata(collection).description == "test collection"
-    db2 = DuckDBVSSAdapter(str(OUTPUT_DUCKDB_PATH))
+    db2 = DuckDBAdapter(str(OUTPUT_DUCKDB_PATH))
     assert db2.collection_metadata(collection).description == "test collection"
     assert db.list_collection_names() == ["test_collection"]
     results = list(db.search("fox", collection=collection, include=['metadata']))
@@ -86,38 +86,31 @@ def test_store(simple_schema_manager, example_texts):
     assert len(results2) > limit
 
 def test_the_embedding_function(simple_schema_manager, example_texts):
-    db = DuckDBVSSAdapter(OUTPUT_DUCKDB_PATH)
+    db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
     db.conn.execute("DROP TABLE IF EXISTS test_ef_collection")
     db.conn.execute("DROP TABLE IF EXISTS test_openai_collection")
     objs = terms_to_objects(example_texts)
-
     db.insert(objs[1:], collection="test_collection")
-
     metadata_default = db.collection_metadata("test_collection")
     if metadata_default is None:
         md_default = CollectionMetadata(name="test_collection", model=db.default_model)
         assert md_default.model == "all-MiniLM-L6-v2"
         db.set_collection_metadata("test_collection", md_default)
         metadata_default = db.collection_metadata("test_collection")
-
     db.insert(objs[1:], collection="test_ef_collection", model=None)
     md_ef = CollectionMetadata(name="test_ef_collection", model="openai:")
     db.set_collection_metadata("test_ef_collection", md_ef)
     assert md_ef.model == "openai:"
+    # test openai model
+    db.insert(objs[1:], collection="test_openai_collection", model="openai:text-embedding-ada-002")
 
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-    if openai_api_key:
-        db.insert(objs[1:], collection="test_openai_collection", model="openai:text-embedding-ada-002")
-    else:
-        print("\n\n\nSet your OPENAI_API_KEY environment variable to test the OpenAI model.")
-        return
 
 @pytest.fixture
-def ontology_db() -> DuckDBVSSAdapter:
-    db_path = os.path.join(INPUT_DBS, "go-nocleus-duckdb")
-    db = DuckDBVSSAdapter(db_path)
-    db.schema_proxy = SchemaProxy(ONTOLOGY_MODEL_PATH)
+def ontology_db() -> DuckDBAdapter:
+    db_path = os.path.join(INPUT_DBS, "go-nocleus-duck")
+    db = DuckDBAdapter(db_path)
+    # db.schema_proxy = SchemaProxy(ONTOLOGY_MODEL_PATH)
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
     db.conn.execute("DROP TABLE IF EXISTS other_collection")
     db.conn.execute("DROP TABLE IF EXISTS terms_go_collection")
@@ -125,7 +118,7 @@ def ontology_db() -> DuckDBVSSAdapter:
 
 
 @pytest.fixture
-def loaded_ontology_db(ontology_db) -> DuckDBVSSAdapter:
+def loaded_ontology_db(ontology_db) -> DuckDBAdapter:
     db = ontology_db
     list_all = db.list_collection_names()
     db.conn.execute("DROP TABLE IF EXISTS other_collection")
@@ -146,25 +139,41 @@ def test_ontology_matches(ontology_db):
     adapter = get_adapter(str(INPUT_DIR / "go-nucleus.db"))
     view = OntologyWrapper(oak_adapter=adapter)
     ontology_db.text_lookup = view.text_field
-    sliced_gen = list(itertools.islice(view.objects(), 3))
-    ontology_db.insert(sliced_gen)
+    ontology_db.insert(view.objects())
     ontology_db.text_lookup = "label"
     obj = ontology_db.lookup("Continuant", collection="test_collection")
-    results = ontology_db.matches(obj)
-    assert len(list(results)) == 3
-    for res in results:
-        print(f"RES: {res}")
-        print(f"ID: {res.id}")
-        print(f"Metadata: {res.metadata}")
-        print(f"Embeddings: {res.embeddings}")
-        print(f"Documents: {res.documents}")
-        print(f"Distance: {res.distance}")
-    for i, res in enumerate(results):
-        obj, distance, _meta = res.metadata, res.distance, res.metadata
-        print(f"## {i} DISTANCE: {distance}")
-        print(json.dumps(obj, indent=2))
-        if i >= 2:  # Limit to printing 3 results
-            break
+    results = list(ontology_db.matches(obj))
+    assert len(list(results)) == 10
+    # test update
+    first_obj = results[0]
+    updated_obj = {
+        "id": first_obj.id,
+        "metadata": {"updated_key": "updated_value"},
+        "embeddings": [0.1] * len(first_obj.embeddings),
+        "documents": "Updated document text"
+    }
+    ontology_db.update([updated_obj], collection="test_collection")
+    # verify update
+    result = ontology_db.lookup(first_obj.id, collection="test_collection")
+    assert result['metadata'] == {"updated_key": "updated_value"}
+    assert result == updated_obj
+    updated_results = list(ontology_db.matches(updated_obj))
+    assert len(updated_results) == 10
+    for res in updated_results:
+        if res.id == first_obj.id:
+            assert res.metadata == updated_obj
+            assert res.metadata['metadata'] == {"updated_key": "updated_value"}
+    # test upsert
+    new_obj = {
+        "id": "new_id",
+        "metadata": {"new_key": "new_value"},
+        "embeddings": [0.5] * len(first_obj.embeddings),
+        "documents": "New document text"
+    }
+    ontology_db.upsert([new_obj], collection="test_collection")
+    # verify upsert
+    new_results = ontology_db.lookup("new_id", collection="test_collection")
+    assert new_results["metadata"] == {"new_key": "new_value"}
 
 
 @pytest.mark.parametrize(
@@ -210,8 +219,8 @@ def test_load_in_batches(ontology_db):
 
 
 @pytest.fixture
-def combo_db(example_combo_texts) -> DuckDBVSSAdapter:
-    db = DuckDBVSSAdapter(str(OUTPUT_DUCKDB_PATH))
+def combo_db(example_combo_texts) -> DuckDBAdapter:
+    db = DuckDBAdapter(str(OUTPUT_DUCKDB_PATH))
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
     collection = "test_collection"
     objs = terms_to_objects(example_combo_texts)
