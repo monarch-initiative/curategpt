@@ -755,7 +755,7 @@ class DuckDBAdapter(DBAdapter):
                     elif op == "$in":
                         conditions.append(
                             f"json_extract_string(metadata, '$.{key}') IN ({', '.join([f'{v}' for v in value])})")
-                    elif op == "$notin":
+                    elif op == "$not_in":
                         conditions.append(
                             f"json_extract_string(metadata, '$.{key}') NOT IN ({', '.join([f'{v}' for v in value])})")
                     elif op == "$exists":

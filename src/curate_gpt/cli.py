@@ -2033,7 +2033,7 @@ def ontology():
 )
 @click.option(
     "--index-fields",
-    help="Fields to index; comma seperated",
+    help="Fields to index; comma separated",
 )
 @click.argument("ont")
 def index_ontology_command(ont, path, collection, append, model, index_fields, branches, database_type, **kwargs):
