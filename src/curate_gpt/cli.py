@@ -2042,7 +2042,8 @@ def index_ontology_command(ont, path, collection, append, model, index_fields, b
 
     Example:
     -------
-        curategpt index-ontology  -c obo_hp $db/hp.db -D duckdb
+        curategpt ontology index -c obo_hp $db/hp.db -D duckdb
+        curategpt ontology index -p stagedb/duck.db -c ont-hp sqlite:obo:hp -D duckdb
 
     """
     oak_adapter = get_adapter(ont)
