@@ -265,7 +265,6 @@ class DuckDBAdapter(DBAdapter):
             text_field = self.text_lookup
         id_field = self.id_field
         num_objs = len(objs) if isinstance(objs, list) else "?"
-        logger.info(f"Processing {len(num_objs)} objects")
         cumulative_len = 0
         sql_command = self._generate_sql_command(collection, method)
         sql_command = sql_command.format(collection=collection)
@@ -281,7 +280,6 @@ class DuckDBAdapter(DBAdapter):
             metadatas = [self._dict(o) for o in next_objs]
             ids = [self._id(o, id_field) for o in next_objs]
             embeddings = self._embedding_function(docs, model)
-            logger.info(f"Processing object {next_objs[0]} of {num_objs}")
             try:
                 self.conn.execute("BEGIN TRANSACTION;")
                 self.conn.executemany(sql_command, list(zip(ids, metadatas, embeddings, docs)))
@@ -721,7 +719,7 @@ class DuckDBAdapter(DBAdapter):
                 metadata=json.loads(obj[1]),
                 embeddings=obj[2],
                 documents=obj[3],
-                distance=obj[4]
+                cosim=obj[4]
             )
 
     @staticmethod
