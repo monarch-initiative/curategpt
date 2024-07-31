@@ -1,4 +1,5 @@
 """Chat with a filesystem."""
+
 import glob
 import logging
 import os
@@ -13,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class FilesystemWrapper(BaseWrapper):
-
     """
     A wrapper over a filesystem.
 

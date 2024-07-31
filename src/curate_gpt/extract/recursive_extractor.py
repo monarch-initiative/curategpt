@@ -1,4 +1,5 @@
 """Basic Extractor that is purely example driven."""
+
 import json
 import logging
 from copy import deepcopy
@@ -12,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class RecursiveExtractor(Extractor):
-
     """
     Extractor that recursively extracts objects from text.
 

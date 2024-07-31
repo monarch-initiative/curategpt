@@ -1,4 +1,5 @@
 """Abstract DB adapter."""
+
 import json
 import logging
 from abc import ABC, abstractmethod
@@ -202,7 +203,7 @@ class DBAdapter(ABC):
 
     @abstractmethod
     def collection_metadata(
-            self, collection_name: Optional[str] = None, include_derived=False, **kwargs
+        self, collection_name: Optional[str] = None, include_derived=False, **kwargs
     ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for a collection.
@@ -213,7 +214,7 @@ class DBAdapter(ABC):
         """
 
     def set_collection_metadata(
-            self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
     ):
         """
         Set the metadata for a collection.
@@ -243,7 +244,7 @@ class DBAdapter(ABC):
 
     @abstractmethod
     def search(
-            self, text: str, where: QUERY = None, collection: str = None, **kwargs
+        self, text: str, where: QUERY = None, collection: str = None, **kwargs
     ) -> Iterator[SEARCH_RESULT]:
         """
         Query the database for a text string.
@@ -267,11 +268,11 @@ class DBAdapter(ABC):
         """
 
     def find(
-            self,
-            where: QUERY = None,
-            projection: PROJECTION = None,
-            collection: str = None,
-            **kwargs,
+        self,
+        where: QUERY = None,
+        projection: PROJECTION = None,
+        collection: str = None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         """
         Query the database.
@@ -352,7 +353,7 @@ class DBAdapter(ABC):
                 return candidate
         return field_names[0] if field_names else "label"
 
-    #TODO: Might be abstract as currently gives not same values for DuckDBVSSAdapter and ChromaDBAdapter
+    # TODO: Might be abstract as currently gives not same values for DuckDBVSSAdapter and ChromaDBAdapter
     def field_names(self, collection: str = None) -> List[str]:
         """
         Return the names of all top level fields in the database for a collection.
@@ -381,13 +382,13 @@ class DBAdapter(ABC):
 
     # Loading and dumping
     def dump(
-            self,
-            collection: str = None,
-            to_file: FILE_LIKE = None,
-            metadata_to_file: FILE_LIKE = None,
-            format=None,
-            include=None,
-            **kwargs,
+        self,
+        collection: str = None,
+        to_file: FILE_LIKE = None,
+        metadata_to_file: FILE_LIKE = None,
+        format=None,
+        include=None,
+        **kwargs,
     ):
         """
         Dump the database to a file.
@@ -410,6 +411,7 @@ class DBAdapter(ABC):
         if format.startswith("venomx"):
             import venomx as vx
             from venomx.tools.file_io import save_index
+
             cm = self.collection_metadata(collection_name, include_derived=False)
             label_field = self.label_field(collection_name)
             id_field = self.identifier_field(collection_name)
@@ -423,8 +425,10 @@ class DBAdapter(ABC):
                     return original_id
                 return obj.get(id_field, None)
 
-            rows = [{"id": _id(obj), "text": meta["document"], "values": meta["_embeddings"]} for obj, _, meta in
-                    objects]
+            rows = [
+                {"id": _id(obj), "text": meta["document"], "values": meta["_embeddings"]}
+                for obj, _, meta in objects
+            ]
             vx_objects = [{"id": _id(obj), "label": _label(obj)} for obj, _, _ in objects]
             logger.info(f"Num vx objects: {len(vx_objects)}")
             vx_index = vx.Index(

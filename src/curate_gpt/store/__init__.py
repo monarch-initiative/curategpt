@@ -22,7 +22,13 @@ from .duckdb_adapter import DuckDBAdapter
 from .metadata import CollectionMetadata
 from .schema_proxy import SchemaProxy
 
-__all__ = ["DBAdapter", "ChromaDBAdapter", "DuckDBAdapter" "SchemaProxy", "CollectionMetadata", "get_store"]
+__all__ = [
+    "DBAdapter",
+    "ChromaDBAdapter",
+    "DuckDBAdapter" "SchemaProxy",
+    "CollectionMetadata",
+    "get_store",
+]
 
 
 def get_all_subclasses(cls):

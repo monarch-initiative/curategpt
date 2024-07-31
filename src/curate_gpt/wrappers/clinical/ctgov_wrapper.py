@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 import time
 from dataclasses import dataclass, field
@@ -16,9 +17,9 @@ STUDY_URL = f"{BASE_URL}/studies"
 
 RATE_LIMIT_DELAY = 0.5
 
+
 @dataclass
 class ClinicalTrialsWrapper(BaseWrapper):
-
     """
     A wrapper over a clinicaltrials.gov.
 
@@ -41,16 +42,18 @@ class ClinicalTrialsWrapper(BaseWrapper):
         self._uses_cache = True
 
     def external_search(
-            self, text: str, expand: bool = True, where: Optional[Dict] = None, **kwargs
+        self, text: str, expand: bool = True, where: Optional[Dict] = None, **kwargs
     ) -> List:
         if expand:
             logger.info(f"Expanding search term: {text} to create ctgov query")
             model = self.extractor.model
             response = model.prompt(
-                text, system=("generate a MINIMAL semi-colon separated list of the most relevant terms. "
-                              "make terms general such that when they are concatenated with AND they can be "
-                              "used to search for the desired clinical trial."
-                              )
+                text,
+                system=(
+                    "generate a MINIMAL semi-colon separated list of the most relevant terms. "
+                    "make terms general such that when they are concatenated with AND they can be "
+                    "used to search for the desired clinical trial."
+                ),
             )
             terms = response.text().split(";")
             terms = [f'"{term}"' for term in terms]
@@ -79,11 +82,11 @@ class ClinicalTrialsWrapper(BaseWrapper):
         for input_obj in input_objs:
             protocolSection = input_obj["protocolSection"]
             identificationModule = protocolSection["identificationModule"]
-            #print(protocolSection)
+            # print(protocolSection)
             obj = {
                 "id": identificationModule["nctId"],
                 "title": identificationModule["briefTitle"],
-                "description": protocolSection["descriptionModule"]
+                "description": protocolSection["descriptionModule"],
             }
             objs.append(obj)
         return objs

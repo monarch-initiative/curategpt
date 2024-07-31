@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import json
 import logging
 import re
@@ -43,7 +44,6 @@ class MappingPredicate(str, Enum):
 
 
 class Mapping(BaseModel):
-
     """Response from chat engine."""
 
     subject_id: str
@@ -59,7 +59,6 @@ class MappingSet(BaseModel):
 
 @dataclass
 class MappingAgent(BaseAgent):
-
     """
     An agent to map/align entities.
     """

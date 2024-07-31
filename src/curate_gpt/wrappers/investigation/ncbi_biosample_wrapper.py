@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 from dataclasses import dataclass
 from typing import ClassVar, Dict, List
@@ -10,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class NCBIBiosampleWrapper(EUtilsWrapper):
-
     """
     A wrapper to provide a search facade over NCBI Biosample.
 

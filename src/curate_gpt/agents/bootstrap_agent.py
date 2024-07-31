@@ -16,9 +16,9 @@ class KnowledgeBaseSpecification(BaseModel):
     attributes: str
     main_class: str
 
+
 @dataclass
 class BootstrapAgent(BaseAgent):
-
 
     def bootstrap_schema(self, specification: KnowledgeBaseSpecification) -> AnnotatedObject:
         """
@@ -36,7 +36,9 @@ class BootstrapAgent(BaseAgent):
         ao = extractor.deserialize(response.text(), format="yaml")
         return ao
 
-    def bootstrap_data(self, specification: KnowledgeBaseSpecification = None, schema: Dict = None) -> str:
+    def bootstrap_data(
+        self, specification: KnowledgeBaseSpecification = None, schema: Dict = None
+    ) -> str:
         """
         Bootstrap data for a knowledge base.
 
@@ -49,18 +51,21 @@ class BootstrapAgent(BaseAgent):
             preamble = "Use the following knowledge base schema specification"
             spec_str = yaml.dump(specification.model_dump(), sort_keys=False)
         if schema is not None:
-            preamble = "Make sure the object you create is consistent with the following linkml schema"
+            preamble = (
+                "Make sure the object you create is consistent with the following linkml schema"
+            )
             spec_str = yaml.dump(schema, sort_keys=False)
         if not spec_str:
             raise ValueError("No specification or schema provided")
         extractor = self.extractor
         model = extractor.model
-        prompt = ("Generate an example instance data objects in YAML, inside a ```yaml...``` block\n"
-                  "Choose any objects you like, but make them representative of the domain, "
-                  "with rich comprehensive information\n"
-                  "Separate each element with '---' breaks, such that each entry is a separate object\n"
-                  "Do not include the root container class"
-                  )
+        prompt = (
+            "Generate an example instance data objects in YAML, inside a ```yaml...``` block\n"
+            "Choose any objects you like, but make them representative of the domain, "
+            "with rich comprehensive information\n"
+            "Separate each element with '---' breaks, such that each entry is a separate object\n"
+            "Do not include the root container class"
+        )
         prompt += f"{preamble}:\n{spec_str}"
         response = model.prompt(prompt)
         txt = response.text()
@@ -71,5 +76,3 @@ class BootstrapAgent(BaseAgent):
                 txt = txt[4:]
                 txt = txt.strip()
         return txt
-
-

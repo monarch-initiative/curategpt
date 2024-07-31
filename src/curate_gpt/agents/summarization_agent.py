@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class SummarizationAgent(BaseAgent):
-
     """
     An agent to summarize entities
 

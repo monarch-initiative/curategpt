@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
@@ -15,7 +16,6 @@ BASE_URL = "https://www.alliancegenome.org/api"
 
 @dataclass
 class AllianceGeneWrapper(BaseWrapper):
-
     """
     A wrapper over a Alliance (AGR) gene API.
 

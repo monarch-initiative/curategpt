@@ -1,4 +1,5 @@
 """Simple default adapter for a object store."""
+
 import logging
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Union
@@ -34,7 +35,6 @@ class CollectionIndex(BaseModel):
 
 @dataclass
 class InMemoryAdapter(DBAdapter):
-
     """
     Simple in-memory adapter for a object store.
     """

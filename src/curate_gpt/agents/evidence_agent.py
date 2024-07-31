@@ -14,14 +14,15 @@ from curate_gpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 
+
 class EvidenceUpdatePolicyEnum(str, Enum):
     skip = "skip"
     append = "append"
     replace = "replace"
 
+
 @dataclass
 class EvidenceAgent(BaseAgent):
-
     """
     An agent to find evidence for an object by querying a reference source.
 
@@ -103,7 +104,9 @@ class EvidenceAgent(BaseAgent):
 
         logger.debug(f"Prompt: {prompt}")
 
-        response = model.prompt(prompt, system="""
+        response = model.prompt(
+            prompt,
+            system="""
         You are a scientist assistant. Given a statement in subject-predicate-object form, your job is
         to look at the literature I provide you, and return an object that states whether the literature
         supports or refutes the statement.
@@ -141,7 +144,8 @@ class EvidenceAgent(BaseAgent):
             
         And the literature says that Ebola causes SEVERE bleeding.
         Use WRONG_STATEMENT in this case.
-        """)
+        """,
+        )
         response_text = response.text()
         if "```" in response_text:
             response_text = response_text.split("```")[1]
@@ -154,7 +158,9 @@ class EvidenceAgent(BaseAgent):
             logger.error(f"Error parsing response: {response_text}: {e}")
             return None
 
-    def find_evidence_complex(self, obj: Union[str, Dict], label_field=None, statement_fields: Optional[List] = None) -> Dict:
+    def find_evidence_complex(
+        self, obj: Union[str, Dict], label_field=None, statement_fields: Optional[List] = None
+    ) -> Dict:
         if not label_field:
             for candidates in ["name", "label", "code"]:
                 if candidates in obj:
@@ -179,7 +185,10 @@ class EvidenceAgent(BaseAgent):
                 q = f"Subject: {label} Predicate: {k} Value: {yaml.dump(input_obj)}"
                 evidence = self.find_evidence_simple(q)
                 if evidence:
-                    if "evidence" in input_obj and self.evidence_update_policy == EvidenceUpdatePolicyEnum.append:
+                    if (
+                        "evidence" in input_obj
+                        and self.evidence_update_policy == EvidenceUpdatePolicyEnum.append
+                    ):
                         sub_obj["evidence"].append(evidence)
                     else:
                         sub_obj["evidence"] = evidence
@@ -193,6 +202,3 @@ class EvidenceAgent(BaseAgent):
                 _add_evidence(sub_obj)
         logger.info(f"Found {len(new_evidences)} evidence objects.")
         return obj
-
-
-

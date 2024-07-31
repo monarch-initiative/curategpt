@@ -1,4 +1,5 @@
 """Wrapper for JSON (or YAML) documents."""
+
 import json
 import logging
 from dataclasses import dataclass
@@ -14,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class JSONWrapper(BaseWrapper):
-
     """
     A wrapper over a json (or yaml) document.
 

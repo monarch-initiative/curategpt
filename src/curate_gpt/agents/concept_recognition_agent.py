@@ -1,4 +1,5 @@
 """Annotation (Concept Recognition) in texts."""
+
 import logging
 from dataclasses import dataclass
 from enum import Enum
@@ -15,7 +16,6 @@ CONCEPT = Tuple[str, str]
 
 
 class Span(BaseModel):
-
     """An individual span of text containing a single concept."""
 
     text: str
@@ -34,7 +34,6 @@ class Span(BaseModel):
 
 
 class GroundingResult(BaseModel):
-
     """Result of grounding text."""
 
     input_text: str
@@ -48,7 +47,6 @@ class GroundingResult(BaseModel):
 
 
 class AnnotationMethod(str, Enum):
-
     """Strategy or algorithm used for CR."""
 
     INLINE = "inline"
@@ -62,7 +60,6 @@ class AnnotationMethod(str, Enum):
 
 
 class AnnotatedText(BaseModel):
-
     """In input text annotated with concept instances."""
 
     input_text: str

@@ -1,4 +1,5 @@
 """Retrieval Augmented Generation (RAG) Base Class."""
+
 import logging
 from dataclasses import dataclass, field
 from typing import Any, ClassVar, Dict, Iterable, List, Optional, Tuple, Union
@@ -33,7 +34,6 @@ def _dict2str(d: Dict[str, Any]) -> str:
 
 @dataclass
 class DragonAgent(BaseAgent):
-
     """
     Retrieves objects in response to a query using a structured knowledge source.
 
@@ -258,7 +258,16 @@ class DragonAgent(BaseAgent):
                 current_value=curr_val,
             )
 
-    def review(self, obj: dict, context_property: str = None, rules = None, collection = None, fields_to_predict=None, primary_key=None, **kwargs) -> AnnotatedObject:
+    def review(
+        self,
+        obj: dict,
+        context_property: str = None,
+        rules=None,
+        collection=None,
+        fields_to_predict=None,
+        primary_key=None,
+        **kwargs,
+    ) -> AnnotatedObject:
         """
         Review an object for correctness, completeness, and consistency.
 
@@ -270,20 +279,27 @@ class DragonAgent(BaseAgent):
         pk_val = obj.get(primary_key, None)
 
         def _obj_as_str(obj: dict) -> str:
-            slim_obj = {k: v for k, v in obj.items() if v is not None and ((not fields_to_predict or k in fields_to_predict) or k == context_property)}
+            slim_obj = {
+                k: v
+                for k, v in obj.items()
+                if v is not None
+                and ((not fields_to_predict or k in fields_to_predict) or k == context_property)
+            }
             return yaml.dump(slim_obj, sort_keys=True)
 
         q = yaml.safe_dump(obj, sort_keys=True)
         texts = []
         for example_obj, _, _obj_meta in self.knowledge_source.search(
-                q,
-                relevance_factor=self.relevance_factor,
-                collection=collection,
-                **kwargs,
+            q,
+            relevance_factor=self.relevance_factor,
+            collection=collection,
+            **kwargs,
         ):
             if primary_key:
                 if example_obj.get(primary_key, None) == pk_val:
-                    logger.debug(f"Skipping example with same primary key: {primary_key} = {pk_val}")
+                    logger.debug(
+                        f"Skipping example with same primary key: {primary_key} = {pk_val}"
+                    )
                     continue
             texts.append(_obj_as_str(example_obj))
         system = """
@@ -320,4 +336,3 @@ class DragonAgent(BaseAgent):
                         ao.object[k] = v
         ao.annotations["prompt"] = prompt
         return ao
-

@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import json
 import logging
 import os
@@ -17,16 +18,14 @@ SIGNIN_URL = f"{URL}/users/sign_in"
 FETCH_URL = f"{URL}/fairsharing_records"
 
 
-
-
 logger = logging.getLogger(__name__)
 
 
 MAX_ID = 10000
 
+
 @dataclass
 class FAIRSharingWrapper(BaseWrapper):
-
     """
     A wrapper over the NMDC Biosample API.
     """
@@ -60,37 +59,32 @@ class FAIRSharingWrapper(BaseWrapper):
     def jwt(self) -> str:
         if self._jwt is None:
             payload = {"user": {"login": self.user, "password": self.password}}
-            headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+            headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
-            response = requests.request("POST", SIGNIN_URL, headers=headers, data=json.dumps(payload))
+            response = requests.request(
+                "POST", SIGNIN_URL, headers=headers, data=json.dumps(payload)
+            )
 
             # Get the JWT from the response.text to use in the next part.
             data = response.json()
-            self._jwt = data['jwt']
+            self._jwt = data["jwt"]
 
         return self._jwt
-
-
 
     def object_by_id(self, object_id: str) -> Optional[Dict]:
 
         url = f"{FETCH_URL}/{object_id}"
 
         headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': "Bearer {0}".format(self.jwt),
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer {0}".format(self.jwt),
         }
 
-        #sleep(0.05)
+        # sleep(0.05)
         response = self.session.request("GET", url, headers=headers)
         if response.status_code == 200:
             return response.json()
         else:
             logger.warning(f"Could not download records for {object_id} from {url}")
             return None
-
-

@@ -1,4 +1,5 @@
 """Extractor that uses OpenAI functions."""
+
 import json
 import logging
 from dataclasses import dataclass
@@ -16,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class OpenAIExtractor(Extractor):
-
     """
     Extractor that uses OpenAI functions.
     """

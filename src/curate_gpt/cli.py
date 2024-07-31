@@ -1,4 +1,5 @@
 """Command line interface for curate-gpt."""
+
 import csv
 import gzip
 import json
@@ -48,7 +49,12 @@ __all__ = [
 ]
 
 
-def dump(obj: Union[str, AnnotatedObject, Dict], format="yaml", old_object: Optional[Dict] = None, primary_key: Optional[str] = None) -> None:
+def dump(
+    obj: Union[str, AnnotatedObject, Dict],
+    format="yaml",
+    old_object: Optional[Dict] = None,
+    primary_key: Optional[str] = None,
+) -> None:
     """
     Dump an object to stdout.
 
@@ -99,10 +105,13 @@ database_type_option = click.option(
 model_option = click.option(
     "-m", "--model", help="Model to use for generation or embedding, e.g. gpt-4."
 )
-extract_format_option = click.option("--extract-format",
-              "-X",
-              default="json",
-              show_default=True, help="Format to use for extraction.")
+extract_format_option = click.option(
+    "--extract-format",
+    "-X",
+    default="json",
+    show_default=True,
+    help="Format to use for extraction.",
+)
 schema_option = click.option("-s", "--schema", help="Path to schema.")
 collection_option = click.option("-c", "--collection", help="Collection within the database.")
 output_format_option = click.option(
@@ -138,7 +147,7 @@ encoding_option = click.option(
     "--encoding",
     default="utf-8",
     show_default=True,
-    help="Encoding for files, e.g. iso-8859-1, cp1252. Specify 'detect' to infer using chardet."
+    help="Encoding for files, e.g. iso-8859-1, cp1252. Specify 'detect' to infer using chardet.",
 )
 object_type_option = click.option(
     "--object-type",
@@ -233,9 +242,7 @@ def main(verbose: int, quiet: bool):
     "--select",
     help="jsonpath to use to subselect from each JSON document.",
 )
-@click.option("--remove-field",
-            multiple=True,
-            help="Field to remove recursively from each object.")
+@click.option("--remove-field", multiple=True, help="Field to remove recursively from each object.")
 @batch_size_option
 @encoding_option
 @click.argument("files", nargs=-1)
@@ -305,9 +312,10 @@ def index(
     for file in files:
         if encoding == "detect":
             import chardet
+
             # Read the first num_lines of the file
             lines = []
-            with open(file, 'rb') as f:
+            with open(file, "rb") as f:
                 try:
                     # Attempt to read up to num_lines lines from the file
                     for _ in range(100):
@@ -316,10 +324,10 @@ def index(
                     # Reached the end of the file before reading num_lines lines
                     pass  # This is okay; just continue with the lines read so far
             # Concatenate lines into a single bytes object
-            data = b''.join(lines)
+            data = b"".join(lines)
             # Detect encoding
             result = chardet.detect(data)
-            encoding = result['encoding']
+            encoding = result["encoding"]
         logging.debug(f"Indexing {file}")
         if wrapper:
             wrapper.source_locator = file
@@ -340,6 +348,7 @@ def index(
             objs = [objs]
         if select:
             import jsonpath_ng as jp
+
             path_expr = jp.parse(select)
             new_objs = []
             for obj in objs:
@@ -351,7 +360,9 @@ def index(
                         new_objs.append(match.value)
             objs = new_objs
         if remove_field:
-            raise NotImplementedError("Use yq instead, e.g. yq eval 'del(.. | .evidence?)' input.yaml")
+            raise NotImplementedError(
+                "Use yq instead, e.g. yq eval 'del(.. | .evidence?)' input.yaml"
+            )
         db.insert(objs, model=model, collection=collection, batch_size=batch_size)
     db.update_collection_metadata(
         collection, model=model, object_type=object_type, description=description
@@ -996,7 +1007,13 @@ def update(
         dac.document_adapter_collection = docstore_collection
     for obj, _s, _meta in db.find(where_q, collection=collection):
         logging.debug(f"Updating {obj}")
-        ao = dac.complete(obj, context_property=query_property, rules=rule, collection=collection, **filtered_kwargs)
+        ao = dac.complete(
+            obj,
+            context_property=query_property,
+            rules=rule,
+            collection=collection,
+            **filtered_kwargs,
+        )
         if output_format == "yaml":
             print("---")
         dump(ao.object, format=output_format, old_object=obj, primary_key=primary_key)
@@ -1095,7 +1112,14 @@ def review(
         dac.document_adapter_collection = docstore_collection
     for obj, _s, _meta in db.find(where_q, collection=collection):
         logging.debug(f"Updating {obj}")
-        ao = dac.review(obj, rules=rule, collection=collection, context_property=query_property, primary_key=primary_key, **filtered_kwargs)
+        ao = dac.review(
+            obj,
+            rules=rule,
+            collection=collection,
+            context_property=query_property,
+            primary_key=primary_key,
+            **filtered_kwargs,
+        )
         if output_format == "yaml":
             print("---")
         dump(ao.object, format=output_format, old_object=obj, primary_key=primary_key)
@@ -1654,6 +1678,7 @@ def apply_patch(input_file, patch, primary_key):
         print("---")
         print(yaml.dump(obj, sort_keys=False))
 
+
 @main.command()
 @collection_option
 @path_option
@@ -1740,6 +1765,7 @@ def citeseek(query, path, collection, model, show_references, _continue, select,
                 logging.info(f"Selecting objects using {select}")
                 # TODO: DRY
                 import jsonpath_ng as jp
+
                 path_expr = jp.parse(select)
                 new_objs = []
                 for obj in objs:
@@ -2020,6 +2046,7 @@ def set_collection_metadata(path, collection, metadata_yaml):
 def ontology():
     "Use the ontology model"
 
+
 @ontology.command(name="index")
 @path_option
 @collection_option
@@ -2036,7 +2063,9 @@ def ontology():
     help="Fields to index; comma separated",
 )
 @click.argument("ont")
-def index_ontology_command(ont, path, collection, append, model, index_fields, branches, database_type, **kwargs):
+def index_ontology_command(
+    ont, path, collection, append, model, index_fields, branches, database_type, **kwargs
+):
     """
     Index an ontology.
 
@@ -2080,7 +2109,7 @@ def download_file(url):
     local_filename = tempfile.mktemp()
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
-        with open(local_filename, 'wb') as f:
+        with open(local_filename, "wb") as f:
             for chunk in r.iter_content(chunk_size=8192):
                 f.write(chunk)
     return local_filename
@@ -2090,14 +2119,17 @@ def load_embeddings(file_path, embedding_format=None):
     """
     Helper function to load embeddings from a file. Supports Parquet and CSV formats.
     """
-    if file_path.endswith('.parquet') or file_path.endswith('.parquet.gz') or embedding_format == 'parquet':
+    if (
+        file_path.endswith(".parquet")
+        or file_path.endswith(".parquet.gz")
+        or embedding_format == "parquet"
+    ):
         df = pd.read_parquet(file_path)
-    elif file_path.endswith('.csv') or file_path.endswith('.csv.gz') or embedding_format == 'csv':
+    elif file_path.endswith(".csv") or file_path.endswith(".csv.gz") or embedding_format == "csv":
         df = pd.read_csv(file_path)
     else:
-        raise ValueError(
-            "Unsupported file type. Only Parquet and CSV files are supported.")
-    return df.to_dict(orient='records')
+        raise ValueError("Unsupported file type. Only Parquet and CSV files are supported.")
+    return df.to_dict(orient="records")
 
 
 @embeddings.command(name="load")
@@ -2105,15 +2137,19 @@ def load_embeddings(file_path, embedding_format=None):
 @collection_option
 @model_option
 @append_option
-@click.option("--embedding-format", "-f",
-              type=click.Choice(['parquet', 'csv']), help="Format of the input file")
+@click.option(
+    "--embedding-format",
+    "-f",
+    type=click.Choice(["parquet", "csv"]),
+    help="Format of the input file",
+)
 @click.argument("file_or_url")
 def load_embeddings(path, collection, append, embedding_format, model, file_or_url):
     """
     Index embeddings from a local file or URL into a ChromaDB collection.
     """
     # Check if file_or_url is a URL
-    if file_or_url.startswith('http://') or file_or_url.startswith('https://'):
+    if file_or_url.startswith("http://") or file_or_url.startswith("https://"):
         print(f"Downloading file from URL: {file_or_url}")
         file_path = download_file(file_or_url)
     else:
@@ -2126,8 +2162,7 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
     db = ChromaDBAdapter(path)
     if append:
         if collection in db.list_collection_names():
-            print(
-                f"Collection '{collection}' already exists. Adding to the existing collection.")
+            print(f"Collection '{collection}' already exists. Adding to the existing collection.")
     else:
         db.remove_collection(collection, exists_ok=True)
 

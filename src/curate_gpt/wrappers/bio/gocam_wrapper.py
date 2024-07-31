@@ -38,6 +38,7 @@ def _annotations(obj: Dict) -> Dict:
         if "/" in prop:
             return prop.split("/")[-1]
         return prop
+
     return {_normalize_property(a["key"]): a["value"] for a in obj["annotations"]}
 
 
@@ -54,7 +55,6 @@ MAIN_TYPES = [
 
 @dataclass
 class GOCAMWrapper(BaseWrapper):
-
     """
     An view over a GO CAM source.
     """
@@ -196,7 +196,6 @@ class GOCAMWrapper(BaseWrapper):
                 a["process"] = individual_to_term[o]
                 process_ids.add(individual_to_term[o])
 
-
         for fact in facts_by_property.get(OCCURS_IN, []):
             s, o = fact["subject"], fact["object"]
             if o not in individual_to_term:
@@ -307,7 +306,7 @@ class GOCAMWrapper(BaseWrapper):
                 "num_activities": len(activities),
                 "num_relationships": len(relationships),
                 "num_publications": len(pmids),
-            }
+            },
         }
         if assocs:
             cam["associations"] = assocs

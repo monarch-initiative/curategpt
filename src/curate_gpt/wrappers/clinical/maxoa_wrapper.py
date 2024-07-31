@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 from copy import deepcopy
 from csv import DictReader
@@ -56,7 +57,6 @@ def term_label(identifier: str) -> str:
 
 @dataclass
 class MAXOAWrapper(BaseWrapper):
-
     """
     A wrapper over HPOA
 

@@ -9,7 +9,6 @@ from pydantic import BaseModel
 
 @dataclass
 class SchemaProxy:
-
     """
     Manage connection to a schema
     """

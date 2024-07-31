@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 import tarfile
 import tempfile
@@ -40,7 +41,6 @@ def extract_text_from_xml(xml_content):
 # TODO: rewrite to subclass EUtilsWrapper
 @dataclass
 class PubmedWrapper(BaseWrapper):
-
     """
     A wrapper to provide a search facade over PubMed.
 
@@ -92,12 +92,12 @@ class PubmedWrapper(BaseWrapper):
             logger.info(f"Expanding search term: {text} to create pubmed query")
             model = self.extractor.model
             response = model.prompt(
-                text, system="""
+                text,
+                system="""
                 Take the specified search text, and expand it to a list
                 of terms used to construct a PubMed query. You will return results as
                 semi-colon separated list of the most relevant terms. Make sure to
-                include all relevant concepts in the returned terms."""
-
+                include all relevant concepts in the returned terms.""",
             )
             terms = response.text().split(";")
             search_term = " OR ".join(terms)

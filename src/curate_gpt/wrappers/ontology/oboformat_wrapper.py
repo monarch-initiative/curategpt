@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
@@ -10,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class OBOFormatWrapper(BaseWrapper):
-
     """
     A wrapper to index ontologies in OBO Format.
 

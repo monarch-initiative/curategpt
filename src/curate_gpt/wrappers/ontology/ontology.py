@@ -4,7 +4,6 @@ from pydantic import BaseModel, Extra
 
 
 class Relationship(BaseModel):
-
     """
     A relationship to another node.
 
@@ -16,7 +15,6 @@ class Relationship(BaseModel):
 
 
 class OntologyClass(BaseModel, extra=Extra.allow):
-
     """
     An ontology class.
 
@@ -33,7 +31,6 @@ class OntologyClass(BaseModel, extra=Extra.allow):
 
 
 class Ontology(BaseModel):
-
     """
     An ontology.
 

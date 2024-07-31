@@ -6,7 +6,6 @@ from pydantic import BaseModel
 
 
 class StratifiedCollection(BaseModel):
-
     """
     A collection of objects that have been split into training, test, and validation sets.
     """
@@ -46,7 +45,6 @@ class ClassificationMetrics(BaseModel):
 
 
 class Task(BaseModel):
-
     """
     A task to be run by the evaluation runner.
     """

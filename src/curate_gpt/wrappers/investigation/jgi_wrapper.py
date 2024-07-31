@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 import time
 from dataclasses import dataclass
@@ -17,7 +18,6 @@ BASE_URL = "https://files.jgi.doe.gov/search/"
 
 @dataclass
 class JGIWrapper(BaseWrapper):
-
     """
     A wrapper to provide a search facade over JGI Data Search.
 
@@ -27,24 +27,29 @@ class JGIWrapper(BaseWrapper):
 
     name: ClassVar[str] = "jgi"
 
-    def external_search(self, text: str, expand: bool = False, where: Optional[Dict] = None, **kwargs) -> List:
+    def external_search(
+        self, text: str, expand: bool = False, where: Optional[Dict] = None, **kwargs
+    ) -> List:
         params = {
             "x": 20,
         }
         if expand:
+
             def qt(t: str):
                 t = t.strip()
                 if " " in t:
                     return f'"{t}"'
                 return t
+
             logger.info(f"Expanding search term: {text} to create JGI query")
             model = self.extractor.model
             response = model.prompt(
-                text, system="""
+                text,
+                system="""
                 Take the specified search text, and expand it to a list
                 of key terms used to construct a query. You will return results as
                 semi-colon separated list of the most relevant terms. Make sure to
-                include all relevant concepts in the returned terms."""
+                include all relevant concepts in the returned terms.""",
             )
             terms = response.text().split(";")
             logger.info(f"Expanded terms: {terms}")
