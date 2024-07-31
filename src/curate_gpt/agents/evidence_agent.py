@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Union, Optional, List
+from typing import Dict, List, Optional, Union
 
 import yaml
 
@@ -9,7 +9,7 @@ from curate_gpt import BasicExtractor
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.formatters.format_utils import object_as_yaml
-from curate_gpt.utils.tokens import max_tokens_by_model, estimate_num_tokens
+from curate_gpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
 from curate_gpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
@@ -110,38 +110,38 @@ class EvidenceAgent(BaseAgent):
         You are a scientist assistant. Given a statement in subject-predicate-object form, your job is
         to look at the literature I provide you, and return an object that states whether the literature
         supports or refutes the statement.
-        
+
         Return in YAML:
-        
+
         ```
         - reference: IDENTIFIER  ## e.g PMID:123456
           supports: "SUPPORT" | "REFUTE" | "NO_EVIDENCE" | "PARTIAL" | "WRONG_STATEMENT"
           snippet: "EXCERPT"
           explanation: "<explanatory text, if necessary>"
-        - ... 
+        - ...
         ```
-        
+
         Never put a space between the pubmed prefix and local ID. The correct way to write is PMID:123456.
-        
+
         Do not include an entry if you cannot find it in the literature provided.
-        
+
         Pay close attention to the predicate. For example, the following statement:
-        
+
             Subject: The Sun Predicate: orbits Value: name: Mercury
-            
+
         is false, because the subject and value are inverted. Use WRONG_STATEMENT in this case.
-        
+
         Similarly, the following statement:
-        
+
             Subject: Mercury Predicate: friend-of Value: name: The Sun
-            
+
         Is false because the predicate is not correct for these two entities.
         Use WRONG_STATEMENT in this case.
-        
+
         Additionally, if the statement is:
-        
+
             Subject: Ebola Predicate: causes Value: {name: Bleeding, severity: Mild }
-            
+
         And the literature says that Ebola causes SEVERE bleeding.
         Use WRONG_STATEMENT in this case.
         """,

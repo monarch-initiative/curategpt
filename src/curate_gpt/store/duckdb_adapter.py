@@ -2,42 +2,29 @@
 This is a DuckDB adapter for the Vector Similarity Search (VSS) extension
 using the experimental persistence feature
 """
-import psutil
-import yaml
+
+import json
 import logging
 import os
-import time
 import re
-
-import numpy as np
+import time
 from dataclasses import dataclass, field
-from typing import (
-    ClassVar,
-    Iterable,
-    Iterator,
-    Optional,
-    Union,
-    Callable,
-    Mapping,
-    List,
-    Dict,
-    Any,
-    Tuple,
-)
-import duckdb
-import json
-
-import openai
-from openai import OpenAI
 from pathlib import Path
+from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Union
 
+import duckdb
+import numpy as np
+import openai
+import psutil
+import yaml
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk
+from openai import OpenAI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 
-from curate_gpt.store.db_adapter import DBAdapter, OBJECT, QUERY, PROJECTION, SEARCH_RESULT
+from curate_gpt.store.db_adapter import OBJECT, PROJECTION, QUERY, SEARCH_RESULT, DBAdapter
 from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.utils.vector_algorithms import mmr_diversified_search
@@ -83,7 +70,7 @@ class DuckDBAdapter(DBAdapter):
         try:
             self.conn = duckdb.connect(self.path, read_only=False)
         except duckdb.IOException as e:
-            match = re.search(r'PID (\d+)', str(e))
+            match = re.search(r"PID (\d+)", str(e))
             if match:
                 pid = int(match.group(1))
                 logger.info(f"Got {e}.Attempting to kill process with PID: {pid}")
@@ -322,7 +309,6 @@ class DuckDBAdapter(DBAdapter):
             finally:
                 self.create_index(collection)
 
-
     def remove_collection(self, collection: str = None, exists_ok=False, **kwargs):
         """
         Remove the collection from the database
@@ -393,7 +379,7 @@ class DuckDBAdapter(DBAdapter):
         safe_collection_name = f'"{collection}"'
         results = self.conn.execute(
             f"""
-            SELECT *, (1 - array_cosine_similarity(embeddings::FLOAT[{self.vec_dimension}], 
+            SELECT *, (1 - array_cosine_similarity(embeddings::FLOAT[{self.vec_dimension}],
             {query_embedding}::FLOAT[{self.vec_dimension}])) as distance
             FROM {safe_collection_name}
             {where_clause}
@@ -688,11 +674,11 @@ class DuckDBAdapter(DBAdapter):
         safe_collection_name = f'"{collection}"'
         results = self.conn.execute(
             f"""
-                    SELECT *, (1 - array_cosine_similarity(embeddings::FLOAT[{self.vec_dimension}], 
+                    SELECT *, (1 - array_cosine_similarity(embeddings::FLOAT[{self.vec_dimension}],
                     {query_embedding}::FLOAT[{self.vec_dimension}])) as distance
                     FROM {safe_collection_name}
                     {where_clause}
-                    ORDER BY distance 
+                    ORDER BY distance
                     LIMIT ?
                 """,
             [limit * 10],
@@ -836,7 +822,7 @@ class DuckDBAdapter(DBAdapter):
                 metadata=json.loads(obj[1]),
                 embeddings=obj[2],
                 documents=obj[3],
-                distance=obj[4]
+                distance=obj[4],
             )
 
     @staticmethod
