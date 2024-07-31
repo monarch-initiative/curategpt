@@ -19,7 +19,13 @@ EMPTY_DB_PATH = os.path.join(OUTPUT_DIR, "empty_duckdb")
 
 def terms_to_objects(terms: list[str]) -> list[Dict]:
     return [
-        {"id": f"ID:{i}", "text": t, "wordlen": len(t), "nested": {"wordlen": len(t)}, "vec": [float(i)] * 1536}
+        {
+            "id": f"ID:{i}",
+            "text": t,
+            "wordlen": len(t),
+            "nested": {"wordlen": len(t)},
+            "vec": [float(i)] * 1536,
+        }
         for i, t in enumerate(terms)
     ]
 
@@ -66,14 +72,14 @@ def test_store(simple_schema_manager, example_texts):
     db2 = DuckDBAdapter(str(OUTPUT_DUCKDB_PATH))
     assert db2.collection_metadata(collection).description == "test collection"
     assert db.list_collection_names() == ["test_collection"]
-    results = list(db.search("fox", collection=collection, include=['metadata']))
+    results = list(db.search("fox", collection=collection, include=["metadata"]))
     db.update(objs, collection=collection)
     assert db.collection_metadata(collection).description == "test collection"
     long_words = list(db.find(where={"wordlen": {"$gt": 12}}, collection=collection))
     assert len(long_words) == 2
     db.remove_collection(collection)
     db.insert(objs, collection=collection)
-    results2 = list(db.search("fox", collection=collection, include=['metadata']))
+    results2 = list(db.search("fox", collection=collection, include=["metadata"]))
 
     def _id(id, _meta, _emb, _doc, _dist):
         return id
@@ -84,6 +90,7 @@ def test_store(simple_schema_manager, example_texts):
     assert len(results2) == limit
     results2 = list(db.find({}, limit=10000000, collection=collection))
     assert len(results2) > limit
+
 
 def test_the_embedding_function(simple_schema_manager, example_texts):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
@@ -150,25 +157,25 @@ def test_ontology_matches(ontology_db):
         "id": first_obj.id,
         "metadata": {"updated_key": "updated_value"},
         "embeddings": [0.1] * len(first_obj.embeddings),
-        "documents": "Updated document text"
+        "documents": "Updated document text",
     }
     ontology_db.update([updated_obj], collection="test_collection")
     # verify update
     result = ontology_db.lookup(first_obj.id, collection="test_collection")
-    assert result['metadata'] == {"updated_key": "updated_value"}
+    assert result["metadata"] == {"updated_key": "updated_value"}
     assert result == updated_obj
     updated_results = list(ontology_db.matches(updated_obj))
     assert len(updated_results) == 10
     for res in updated_results:
         if res.id == first_obj.id:
             assert res.metadata == updated_obj
-            assert res.metadata['metadata'] == {"updated_key": "updated_value"}
+            assert res.metadata["metadata"] == {"updated_key": "updated_value"}
     # test upsert
     new_obj = {
         "id": "new_id",
         "metadata": {"new_key": "new_value"},
         "embeddings": [0.5] * len(first_obj.embeddings),
-        "documents": "New document text"
+        "documents": "New document text",
     }
     ontology_db.upsert([new_obj], collection="test_collection")
     # verify upsert
@@ -186,19 +193,21 @@ def test_ontology_matches(ontology_db):
 )
 def test_where_queries(loaded_ontology_db, where, num_expected, limit, include):
     db = loaded_ontology_db
-    results = list(db.find(where=where, limit=limit, collection="other_collection", include=include))
+    results = list(
+        db.find(where=where, limit=limit, collection="other_collection", include=include)
+    )
     assert len(results) == num_expected
     for res in results:
         if include:
-            if 'id' in include:
+            if "id" in include:
                 assert res.id is not None
-            if 'metadata' in include:
+            if "metadata" in include:
                 assert res.metadata is not None
-            if 'embeddings' in include:
+            if "embeddings" in include:
                 assert res.embeddings is not None
-            if 'documents' in include:
+            if "documents" in include:
                 assert res.documents is not None
-            if 'distance' in include:
+            if "distance" in include:
                 assert res.distance is not None
         else:
             assert res.id is not None
@@ -214,7 +223,10 @@ def test_load_in_batches(ontology_db):
     sliced_gen = list(itertools.islice(view.objects(), 3))
     ontology_db.insert(sliced_gen, batch_size=10, collection="other_collection")
     objs = list(
-        ontology_db.find(where={"original_id": {"$eq": "BFO:0000002"}}, collection="other_collection", limit=2000))
+        ontology_db.find(
+            where={"original_id": {"$eq": "BFO:0000002"}}, collection="other_collection", limit=2000
+        )
+    )
     assert len(objs) == 1
 
 
@@ -231,7 +243,10 @@ def combo_db(example_combo_texts) -> DuckDBAdapter:
 def test_diversified_search(combo_db):
     relevance_factor = 0.5
     results = combo_db.search(
-        "pineapple helicopter 5", collection="test_collection", relevance_factor=relevance_factor, limit=20
+        "pineapple helicopter 5",
+        collection="test_collection",
+        relevance_factor=relevance_factor,
+        limit=20,
     )
     for i, res in enumerate(results):
         obj, distance, id_field, doc = res.metadata, res.distance, res.id, res.documents
@@ -245,6 +260,9 @@ def test_diversified_search(combo_db):
 def test_diversified_search_on_empty_db(empty_db):
     relevance_factor = 0.5
     results = empty_db.search(
-        "pineapple helicopter 5", collection="test_collection", relevance_factor=relevance_factor, limit=20
+        "pineapple helicopter 5",
+        collection="test_collection",
+        relevance_factor=relevance_factor,
+        limit=20,
     )
     assert len(list(results)) == 0
