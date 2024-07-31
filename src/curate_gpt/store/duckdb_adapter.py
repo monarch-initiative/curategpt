@@ -2,11 +2,12 @@
 This is a DuckDB adapter for the Vector Similarity Search (VSS) extension
 using the experimental persistence feature
 """
-
+import psutil
 import yaml
 import logging
 import os
 import time
+import re
 
 import numpy as np
 from dataclasses import dataclass, field
@@ -78,7 +79,19 @@ class DuckDBAdapter(DBAdapter):
         self.ef_search = self._validate_ef_search(self.ef_search)
         self.M = self._validate_m(self.M)
         logger.info(f"Using DuckDB at {self.path}")
-        self.conn = duckdb.connect(self.path, read_only=False)
+        # handling concurrency
+        try:
+            self.conn = duckdb.connect(self.path, read_only=False)
+        except duckdb.IOException as e:
+            match = re.search(r'PID (\d+)', str(e))
+            if match:
+                pid = int(match.group(1))
+                logger.info(f"Got {e}.Attempting to kill process with PID: {pid}")
+                self.kill_process(pid)
+                self.conn = duckdb.connect(self.path, read_only=False)
+            else:
+                logger.error(f"{e} without PID information.")
+                raise
         self.conn.execute("INSTALL vss;")
         self.conn.execute("LOAD vss;")
         self.conn.execute("SET hnsw_enable_experimental_persistence=true;")
@@ -304,18 +317,11 @@ class DuckDBAdapter(DBAdapter):
                 self.conn.execute("COMMIT;")
             except Exception as e:
                 self.conn.execute("ROLLBACK;")
-                logger.error(f"Trransaction failed: {e}")
+                logger.error(f"Transaction failed: {e}")
                 raise
-            self.create_index(collection)
+            finally:
+                self.create_index(collection)
 
-    def _generate_sql_command(self, collection: str, method: str) -> str:
-        safe_collection_name = f'"{collection}"'
-        if method == "insert":
-            return f"""
-            INSERT INTO {safe_collection_name} (id,metadata, embeddings, documents) VALUES (?, ?, ?, ?)
-            """
-        else:
-            raise ValueError(f"Unknown method: {method}")
 
     def remove_collection(self, collection: str = None, exists_ok=False, **kwargs):
         """
@@ -715,6 +721,38 @@ class DuckDBAdapter(DBAdapter):
         for idx in reranked_indices:
             yield parsed_results[idx]
 
+    @staticmethod
+    def kill_process(pid):
+        """
+        Kill the process with the given PID
+        Returns
+        -------
+
+        """
+        process = None
+        try:
+            process = psutil.Process(pid)
+            process.terminate()  # Sends SIGTERM
+            process.wait(timeout=5)
+        except psutil.NoSuchProcess:
+            logger.info("Process already terminated.")
+        except psutil.TimeoutExpired:
+            if process is not None:
+                logger.warning("Process did not terminate in time, forcing kill.")
+                process.kill()  # Sends SIGKILL as a last resort
+        except Exception as e:
+            logger.error(f"Failed to terminate process: {e}")
+
+    @staticmethod
+    def _generate_sql_command(collection: str, method: str) -> str:
+        safe_collection_name = f'"{collection}"'
+        if method == "insert":
+            return f"""
+                INSERT INTO {safe_collection_name} (id,metadata, embeddings, documents) VALUES (?, ?, ?, ?)
+                """
+        else:
+            raise ValueError(f"Unknown method: {method}")
+
     def _is_openai(self, collection: str) -> bool:
         """
         Check if the collection uses a OpenAI Embedding model
@@ -798,7 +836,7 @@ class DuckDBAdapter(DBAdapter):
                 metadata=json.loads(obj[1]),
                 embeddings=obj[2],
                 documents=obj[3],
-                cosim=obj[4],
+                distance=obj[4]
             )
 
     @staticmethod
@@ -871,18 +909,51 @@ class DuckDBAdapter(DBAdapter):
 
     @staticmethod
     def _validate_ef_construction(value: int) -> int:
+        """
+        The number of candidate vertices to consider during the construction of the index. A higher value will result
+        in a more accurate index, but will also increase the time it takes to build the index.
+        Parameters
+        ----------
+        value
+
+        Returns
+        -------
+
+        """
         if not (10 <= value <= 200):
             raise ValueError("ef_construction must be between 10 and 200")
         return value
 
     @staticmethod
     def _validate_ef_search(value: int) -> int:
+        """
+        The number of candidate vertices to consider during the search phase of the index.
+        A higher value will result in a more accurate index, but will also increase the time it takes to perform a search.
+        Parameters
+        ----------
+        value
+
+        Returns
+        -------
+
+        """
         if not (10 <= value <= 200):
             raise ValueError("ef_search must be between 10 and 200")
         return value
 
     @staticmethod
     def _validate_m(value: int) -> int:
+        """
+        The maximum number of neighbors to keep for each vertex in the graph.
+        A higher value will result in a more accurate index, but will also increase the time it takes to build the index.
+        Parameters
+        ----------
+        value
+
+        Returns
+        -------
+
+        """
         if not (5 <= value <= 48):
             raise ValueError("M must be between 5 and 48")
         return value
