@@ -25,7 +25,8 @@ from .schema_proxy import SchemaProxy
 __all__ = [
     "DBAdapter",
     "ChromaDBAdapter",
-    "DuckDBAdapter" "SchemaProxy",
+    "DuckDBAdapter",
+    "SchemaProxy",
     "CollectionMetadata",
     "get_store",
 ]

@@ -182,16 +182,16 @@ class EvidenceAgent(BaseAgent):
                 if "evidence" in input_obj:
                     if self.evidence_update_policy == EvidenceUpdatePolicyEnum.skip:
                         return input_obj
-                q = f"Subject: {label} Predicate: {k} Value: {yaml.dump(input_obj)}"
+                q = f"Subject: {label} Value: {yaml.dump(input_obj)}"
                 evidence = self.find_evidence_simple(q)
                 if evidence:
                     if (
                         "evidence" in input_obj
                         and self.evidence_update_policy == EvidenceUpdatePolicyEnum.append
                     ):
-                        sub_obj["evidence"].append(evidence)
+                        input_obj["evidence"].append(evidence)
                     else:
-                        sub_obj["evidence"] = evidence
+                        input_obj["evidence"] = evidence
                     new_evidences.append(evidence)
 
             if isinstance(v, list):

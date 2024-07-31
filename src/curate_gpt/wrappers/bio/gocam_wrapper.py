@@ -262,7 +262,7 @@ class GOCAMWrapper(BaseWrapper):
             adapter = get_adapter("amigo:")
             if not isinstance(adapter, AssociationProviderInterface):
                 raise ValueError(f"Invalid adapter: {adapter}")
-            std_anns_accounted_for = set()
+            # std_anns_accounted_for = set()
             for assoc in adapter.associations(actual_gene_ids):
                 gene_obj = {
                     "id": assoc.subject,

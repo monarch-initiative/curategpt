@@ -1672,7 +1672,7 @@ def apply_patch(input_file, patch, primary_key):
                 logging.debug(f"Applying: {actual_patch}")
                 jsonpatch.apply_patch(inner_obj, actual_patch, in_place=True)
     else:
-        for obj in objs:
+        for _obj in objs:
             jsonpatch.apply_patch(objs, patch, in_place=True)
     logging.info(f"Writing patch output for {len(objs)} objects")
     for obj in objs:
@@ -1784,7 +1784,7 @@ def citeseek(query, path, collection, model, show_references, _continue, select,
                 print(yaml.dump(enhanced_obj, sort_keys=False), flush=True)
             return
         except Exception as ex:
-            raise ValueError(f"Error reading {query}: {ex}")
+            print(f"Error reading {query}: {ex}")
     logging.info(f"Query: {query}")
     response = ea.find_evidence_simple(query)
     print(yaml.dump(response, sort_keys=False))
@@ -2127,7 +2127,7 @@ def download_file(url):
     return local_filename
 
 
-def load_embeddings(file_path, embedding_format=None):
+def load_embeddings_from_file(file_path, embedding_format=None):
     """
     Helper function to load embeddings from a file. Supports Parquet and CSV formats.
     """

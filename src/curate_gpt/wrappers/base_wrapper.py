@@ -1,7 +1,7 @@
 """Chat with a KB."""
 
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional, Union
@@ -216,6 +216,16 @@ class BaseWrapper(ABC):
         :param obj:
         :param store:
         :param kwargs:
+        :return:
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def objects_from_list(self, input_objs: List[Dict]) -> List[Dict]:
+        """
+        Convert a list of objects from the source representation to the store representation.
+
+        :param input_objs:
         :return:
         """
         raise NotImplementedError

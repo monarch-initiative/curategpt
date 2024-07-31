@@ -282,7 +282,7 @@ class DuckDBAdapter(DBAdapter):
         if text_field is None:
             text_field = self.text_lookup
         id_field = self.id_field
-        num_objs = len(objs) if isinstance(objs, list) else "?"
+        # num_objs = len(objs) if isinstance(objs, list) else "?"
         cumulative_len = 0
         sql_command = self._generate_sql_command(collection, method)
         sql_command = sql_command.format(collection=collection)
@@ -300,7 +300,9 @@ class DuckDBAdapter(DBAdapter):
             embeddings = self._embedding_function(docs, model)
             try:
                 self.conn.execute("BEGIN TRANSACTION;")
-                self.conn.executemany(sql_command, list(zip(ids, metadatas, embeddings, docs)))
+                self.conn.executemany(
+                    sql_command, list(zip(ids, metadatas, embeddings, docs, strict=False))
+                )
                 self.conn.execute("COMMIT;")
             except Exception as e:
                 self.conn.execute("ROLLBACK;")
@@ -641,7 +643,9 @@ class DuckDBAdapter(DBAdapter):
         documents = data["documents"]
         objects = [
             {"id": id, "embeddings": embedding, "metadata": metadata, "documents": document}
-            for id, embedding, metadata, document in zip(ids, embeddings, metadatas, documents)
+            for id, embedding, metadata, document in zip(
+                ids, embeddings, metadatas, documents, strict=False
+            )
         ]
         target.remove_collection(collection, exists_ok=True)
         target.set_collection_metadata(collection, metadata)

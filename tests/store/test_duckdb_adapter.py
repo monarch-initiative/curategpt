@@ -4,13 +4,13 @@ import shutil
 from typing import Dict
 
 import pytest
-from linkml_runtime.utils.schema_builder import SchemaBuilder
-from oaklib import get_adapter
-
 from curate_gpt.store import CollectionMetadata
 from curate_gpt.store.duckdb_adapter import DuckDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.wrappers.ontology import OntologyWrapper
+from linkml_runtime.utils.schema_builder import SchemaBuilder
+from oaklib import get_adapter
+
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_DIR, OUTPUT_DUCKDB_PATH
 
 EMPTY_DB_PATH = os.path.join(OUTPUT_DIR, "empty_duckdb")

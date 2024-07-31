@@ -1,6 +1,6 @@
 """Base Agent."""
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Union
 
@@ -26,3 +26,7 @@ class BaseAgent(ABC):
 
     extractor: Extractor = None
     """Engine performing LLM operations, including extracting from prompt responses"""
+
+    @abstractmethod
+    def search(self):
+        raise NotImplementedError("Search method must be implemented by subclass")
