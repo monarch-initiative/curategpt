@@ -228,6 +228,7 @@ def main(verbose: int, quiet: bool):
 @click.option("--text-field")
 @object_type_option
 @description_option
+@database_type_option
 @click.option(
     "--view",
     "-V",
@@ -263,10 +264,14 @@ def index(
     collect,
     encoding,
     remove_field,
+    database_type,
     **kwargs,
 ):
     """
     Index files.
+
+    Indexing a json file:
+        curategpt index -p duckdb/cities.duckdb -c cities -D duckdb ~/json_examples/cities.json -m all-MiniLM-L6-v2
 
     Indexing a folder of JSON files:
 
@@ -291,7 +296,9 @@ def index(
     This will index the DataElementQueryResults from each file.
 
     """
-    db = ChromaDBAdapter(path, **kwargs)
+    if os.path.isdir(path) & (database_type == "duckdb"):
+        default_duckdb_path(path)
+    db = get_store(database_type, path)
     db.text_lookup = text_field
     if glob:
         files = [str(gf.absolute()) for f in files for gf in Path().glob(f) if gf.is_file()]
@@ -375,6 +382,7 @@ def index(
 @collection_option
 @limit_option
 @relevance_factor_option
+@database_type_option
 @click.option(
     "--show-documents/--no-show-documents",
     default=False,
@@ -382,19 +390,18 @@ def index(
     help="Whether to show documents/text (e.g. for chromadb).",
 )
 @click.argument("query")
-def search(query, path, collection, show_documents, **kwargs):
-    """Search a collection using embedding search."""
-    db = ChromaDBAdapter(path)
+def search(query, path, collection, show_documents, database_type, **kwargs):
+    """Search a collection using embedding search.
+
+    curategpt search "Statue of Liberty" -p stagedb -c cities -D chromadb
+    curategpt search "Statue of Liberty" -p duckdb/cities.duckdb -c cities -D duckdb --show-documents
+
+    """
+    if os.path.isdir(path) & (database_type == "duckdb"):
+        default_duckdb_path(path)
+    db = get_store(database_type, path)
     results = db.search(query, collection=collection, **kwargs)
-    i = 0
-    for obj, distance, meta in results:
-        i += 1
-        print(f"## {i} DISTANCE: {distance}")
-        print(yaml.dump(obj, sort_keys=False))
-        if show_documents:
-            print("```")
-            print(meta)
-            print("```")
+    handle_search_results(results, database_type, show_documents)
 
 
 @main.command(name="all-by-all")
@@ -449,6 +456,7 @@ def all_by_all(
     **kwargs,
 ):
     """Match two collections."""
+    # TODO: add support for duckdb, needs more work -> match_collection logic
     db = ChromaDBAdapter(path)
     if other_path is None:
         other_path = path
@@ -490,19 +498,25 @@ def all_by_all(
 @main.command()
 @path_option
 @collection_option
+@database_type_option
 @click.argument("id")
-def matches(id, path, collection):
+def matches(id, path, collection, database_type):
     """Find matches for an ID."""
-    db = ChromaDBAdapter(path)
+    if os.path.isdir(path) & (database_type == "duckdb"):
+        default_duckdb_path(path)
+    db = get_store(database_type, path)
     # TODO: persist this in the database
     db.text_lookup = "label"
     obj = db.lookup(id, collection=collection)
     print(obj)
     results = db.matches(obj, collection=collection)
-    i = 0
-    for obj, distance in results:
-        print(f"## {i} DISTANCE: {distance}")
-        print(yaml.dump(obj, sort_keys=False))
+    handle_search_results(results, database_type, show_documents=True)
+
+
+""" delete later:
+❯ curategpt index -p duckdb/apgar.duckdb -c apgar -D duckdb ~/json_examples/apgar.json -m all-MiniLM-L6-v2
+❯ curategpt index -p stagedb -c apgar -D chromadb ~/json_examples/apgar.json -m all-MiniLM-L6-v2
+"""
 
 
 @main.command()
@@ -510,6 +524,7 @@ def matches(id, path, collection):
 @collection_option
 @model_option
 @limit_option
+@database_type_option
 @click.option(
     "--identifier-field",
     "-I",
@@ -565,9 +580,16 @@ def annotate(
     prefix,
     identifier_field,
     label_field,
+    database_type,
     **kwargs,
 ):
-    """Concept recognition."""
+    """Concept recognition
+    curategpt annotate -p stagedb -c apgar -D chromaDB "Let's talk about the Apgar score"
+    """
+    # TODO: takes some time to get to work with duckdb for now because of the result format
+    # if os.path.isdir(path) & (database_type == "duckdb"):
+    #     default_duckdb_path(path)
+    # db = get_store(database_type, path)
     db = ChromaDBAdapter(path)
     extractor = BasicExtractor()
     if input_file:
@@ -598,6 +620,7 @@ def annotate(
 @main.command()
 @path_option
 @collection_option
+@database_type_option
 @click.option(
     "-C/--no-C",
     "--conversation/--no-conversation",
@@ -643,6 +666,7 @@ def extract(
     model,
     schema,
     output_format,
+    database_type,
     **kwargs,
 ):
     """Extract a structured object from text.
@@ -657,6 +681,10 @@ def extract(
             a buttered roll filled with deep fried potato wedges"
 
     """
+    # TODO: takes some time to get to work with duckdb adapter, because of the result format
+    # if os.path.isdir(path) & (database_type == "duckdb"):
+    #     default_duckdb_path(path)
+    # db = get_store(database_type, path)
     db = ChromaDBAdapter(path)
     if schema:
         schema_manager = SchemaProxy(schema)
@@ -687,6 +715,7 @@ def extract(
 @main.command()
 @path_option
 @collection_option
+@database_type_option
 @click.option(
     "-C/--no-C",
     "--conversation/--no-conversation",
@@ -733,12 +762,17 @@ def extract_from_pubmed(
     rule: List[str],
     model,
     schema,
+    database_type,
     **kwargs,
 ):
     """Extract structured knowledge from a publication using its PubMed ID.
 
     See the `extract` command
     """
+    # TODO: takes some time to get to work with duckdb adapter, because of the result format and agent.extract use of it
+    # if os.path.isdir(path) & (database_type == "duckdb"):
+    #     default_duckdb_path(path)
+    # db = get_store(database_type, path)
     db = ChromaDBAdapter(path)
     if schema:
         schema_manager = SchemaProxy(schema)
@@ -833,6 +867,7 @@ def bootstrap_data(config, schema, model):
 @main.command()
 @path_option
 @collection_option
+@database_type_option
 @click.option(
     "-C/--no-C",
     "--conversation/--no-conversation",
@@ -877,6 +912,7 @@ def complete(
     schema,
     extract_format,
     output_format,
+    database_type,
     **kwargs,
 ):
     """
@@ -892,11 +928,14 @@ def complete(
     E.g
 
         curategpt complete  -c obo_go "label: umbelliferose biosynthetic process"
+        curategpt complete -p stagedb -c apgar "label: 10-minute APGAR score of 2"
 
     Pass ``--extract-format`` to make the extractor use a different internal representation
     when communicating to the LLM
     """
-    db = ChromaDBAdapter(path)
+    if os.path.isdir(path) & (database_type == "duckdb"):
+        default_duckdb_path(path)
+    db = get_store(database_type, path)
     if schema:
         schema_manager = SchemaProxy(schema)
     else:
@@ -925,6 +964,7 @@ def complete(
 @main.command()
 @path_option
 @collection_option
+@database_type_option
 @click.option(
     "-C/--no-C",
     "--conversation/--no-conversation",
@@ -973,25 +1013,30 @@ def update(
     extract_format,
     output_format,
     primary_key,
+    database_type,
     **kwargs,
 ):
     """
     Update an entry from a database using object completion.
-
     Example:
     -------
-
         curategpt update -X yaml --model gpt-4o -p db -c disease -Z description name: Asthma --primary-key name -t patch > patch.yaml
-
+        curategpt update -X yaml --model gpt-4o -p duckdb/apgar_2.db -c apgar_2 -D duckdb -Z definition id: \
+        High10MinuteAPGARScore --primary-key id -t patch > patch.yaml
     """
+    click.echo("anything")
+    if os.path.isdir(path) & (database_type == "duckdb"):
+        default_duckdb_path(path)
+    db = get_store(database_type, path)
+    click.echo("here")
     where_str = " ".join(where)
     where_q = yaml.safe_load(where_str)
-    db = ChromaDBAdapter(path)
+    # db = ChromaDBAdapter(path)
     if schema:
         schema_manager = SchemaProxy(schema)
     else:
         schema_manager = None
-
+    click.echo("here")
     # TODO: generalize
     filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
     extractor = BasicExtractor()
@@ -999,6 +1044,7 @@ def update(
         extractor.serialization_format = extract_format
     if model:
         extractor.model_name = model
+    click.echo("here")
     if schema_manager:
         db.schema_proxy = schema
         extractor.schema_proxy = schema_manager
@@ -1007,6 +1053,7 @@ def update(
         dac.document_adapter = ChromaDBAdapter(docstore_path)
         dac.document_adapter_collection = docstore_collection
     for obj, _s, _meta in db.find(where_q, collection=collection):
+        click.echo(f"{obj}")
         logging.debug(f"Updating {obj}")
         ao = dac.complete(
             obj,
@@ -1016,7 +1063,7 @@ def update(
             **filtered_kwargs,
         )
         if output_format == "yaml":
-            print("---")
+            click.echo("---")
         dump(ao.object, format=output_format, old_object=obj, primary_key=primary_key)
 
 
@@ -1861,42 +1908,76 @@ def collections():
 @database_type_option
 @path_option
 def list_collections(database_type, path, peek: bool, minimal: bool, derived: bool):
-    """List all collections."""
+    """List all collections"""
     logging.info(f"Listing collections in {path}")
     db = get_store(database_type, path)
     logging.info(f"Initialized: {db}")
-    for cn in db.collections():
+    for cn in db.list_collection_names():
         if minimal:
             print(f"## Collection: {cn}")
             continue
         cm = db.collection_metadata(cn, include_derived=derived)
-        c = db.client.get_or_create_collection(cn)
-        print(f"## Collection: {cn} N={c.count()} meta={c.metadata} // {cm}")
-        if peek:
-            r = c.peek()
-            for id in r["ids"]:
-                print(f" - {id}")
+        if database_type == "chromadb":
+            # TODO: make get_or_create abstract and implement in DBAdapter?
+            c = db.client.get_or_create_collection(cn)
+            print(f"## Collection: {cn} N={c.count()} meta={c.metadata} // {cm}")
+            if peek:
+                r = c.peek()
+                for id_ in r["ids"]:
+                    print(f" - {id_}")
+        if database_type == "duckdb":
+            # print(f"## Collection: {cn} meta={cm}")
+            if peek:
+                # this is experimental and might needs to be adapted for other metadata structures
+                def find_key(data, key='id'):
+                    key_array = []
+
+                    def recurse(items):
+                        """Recursively search for a key in a nested dictionary."""
+                        if isinstance(items, dict):
+                            if key in items:
+                                key_array.append(items[key])
+                            for value in items.values():
+                                recurse(value)
+                        elif isinstance(items, list):
+                            for item in items:
+                                recurse(item)
+
+                    recurse(data)
+                    return key_array
+
+                r = db.peek(cn)
+                for obj in r:
+                    ids = find_key(obj.metadata, key="id")
+                    print(obj.metadata)
+                    print(f" - {ids}")
 
 
 @collections.command(name="delete")
 @collection_option
 @path_option
-def delete_collection(path, collection):
+@database_type_option
+def delete_collection(path, collection, database_type):
     """Delete a collections."""
-    db = ChromaDBAdapter(path)
+    db = get_store(database_type, path)
     db.remove_collection(collection)
 
 
 @collections.command(name="peek")
 @collection_option
+@database_type_option
 @limit_option
 @path_option
-def peek_collection(path, collection, **kwargs):
+def peek_collection(path, collection, database_type, **kwargs):
     """Inspect a collection."""
     logging.info(f"Peeking at {collection} in {path}")
-    db = ChromaDBAdapter(path)
-    for obj in db.peek(collection, **kwargs):
-        print(yaml.dump(obj, sort_keys=False))
+    db = get_store(database_type, path)
+    if database_type == "chromadb":
+        for obj in db.peek(collection, **kwargs):
+            print(yaml.dump(obj, sort_keys=False))
+    if database_type == "duckdb":
+        for obj in db.peek(collection, **kwargs):
+            print(yaml.dump(obj.metadata, sort_keys=False))
 
 
 @collections.command(name="dump")
@@ -2079,9 +2160,8 @@ def index_ontology_command(
 
     s = time.time()
 
-    if os.path.isdir(path):
-        path = os.path.join(path, "duck.duckdb")
-        click.echo("You have to provide a path to a file : Defaulting to" + path)
+    if os.path.isdir(path) & (database_type == "duckdb"):
+        default_duckdb_path(path)
 
     oak_adapter = get_adapter(ont)
     view = OntologyWrapper(oak_adapter=oak_adapter)
@@ -2281,9 +2361,8 @@ def view_index(
     curategpt -v index -p stagedb/hpoa.duckdb --batch-size 10 -V hpoa  -c hpoa -m openai: -D duckdb
 
     """
-    if os.path.isdir(path):
-        path = os.path.join(path, "duck.duckdb")
-        click.echo("You have to provide a path to a file : Defaulting to " + path)
+    if os.path.isdir(path) & (database_type == "duckdb"):
+        default_duckdb_path(path)
 
     if init_with:
         for k, v in yaml.safe_load(init_with).items():
@@ -2378,6 +2457,32 @@ def pubmed_ask(query, path, model, show_references, **kwargs):
         for ref, ref_text in response.references.items():
             print(f"## {ref}")
             print(ref_text)
+
+
+def default_duckdb_path(path):
+    path = os.path.join(path, "duck.duckdb")
+    click.echo("You have to provide a path to a file : Defaulting to " + path)
+    return path
+
+
+def handle_search_results(results, database_type, show_documents):
+    if database_type == "chromadb":
+        i = 0
+        for obj, distance, meta in results:
+            i += 1
+            print(f"## {i} DISTANCE: {distance}")
+            print(yaml.dump(obj, sort_keys=False))
+            if show_documents:
+                print("```\n", obj, "\n```")
+    elif database_type == "duckdb":
+        for obj in results:
+            # TODO: for now this shows everything in the table including embeddings, metadata, etc.
+            # print(yaml.dump(obj, sort_keys=False))
+            if show_documents:
+                print("```\n", obj.metadata, "\n```")
+                print("```\n", obj.documents, "\n```")
+                # print(obj.embeddings)
+                # print(obj.documents)
 
 
 if __name__ == "__main__":

@@ -377,7 +377,6 @@ class DuckDBAdapter(DBAdapter):
             )
             return
         query_embedding = self._embedding_function(text, model)
-        print("embedding", query_embedding)
         safe_collection_name = f'"{collection}"'
         results = self.conn.execute(
             f"""
