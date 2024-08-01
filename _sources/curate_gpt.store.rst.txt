@@ -20,6 +20,22 @@ curate\_gpt.store.db\_adapter module
    :undoc-members:
    :show-inheritance:
 
+curate\_gpt.store.duckdb\_adapter module
+----------------------------------------
+
+.. automodule:: curate_gpt.store.duckdb_adapter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.store.duckdb\_result module
+---------------------------------------
+
+.. automodule:: curate_gpt.store.duckdb_result
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 curate\_gpt.store.in\_memory\_adapter module
 --------------------------------------------
 
