@@ -1,4 +1,5 @@
 """Basic Extractor that is purely example driven."""
+
 import json
 import logging
 import re
@@ -17,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class BasicExtractor(Extractor):
-
     """
     Extractor that is purely example driven.
     """
@@ -126,5 +126,5 @@ class BasicExtractor(Extractor):
                     obj = {}
             return AnnotatedObject(object=obj)
         except Exception as e:
-            logger.warning(f"Could not parse {text}")
+            logger.warning(f"Could not parse {text} due to {e}")
             return AnnotatedObject(object={})

@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -22,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class OntologyWrapper(BaseWrapper):
-
     """
     A wrapper to pull from ontologies using OAK.
 

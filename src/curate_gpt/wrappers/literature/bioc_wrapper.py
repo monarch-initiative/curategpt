@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import gzip
 import logging
 from dataclasses import dataclass
@@ -17,7 +18,6 @@ RMAP = {"CID": "induces"}
 
 @dataclass
 class BiocWrapper(BaseWrapper):
-
     """
     A wrapper over a bioc source file.
 

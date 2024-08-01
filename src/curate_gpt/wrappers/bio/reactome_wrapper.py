@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, List, Optional
@@ -71,7 +72,6 @@ OBJECT_FUNCTION_MAP = {
 
 @dataclass
 class ReactomeWrapper(BaseWrapper):
-
     """
     A wrapper over a Reactome API.
     """

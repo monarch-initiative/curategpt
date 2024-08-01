@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 import time
 from dataclasses import dataclass
@@ -16,7 +17,6 @@ BASE_URL = "https://en.wikipedia.org/w/api.php"
 
 @dataclass
 class WikipediaWrapper(BaseWrapper):
-
     """
     A wrapper to provide a search facade over Wikipedia.
 

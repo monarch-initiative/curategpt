@@ -14,7 +14,6 @@ BASE_URL = "https://mediadive.dsmz.de/rest"
 
 @dataclass
 class MediaDiveWrapper(BaseWrapper):
-
     """
     A wrapper over MediaDive.
     """

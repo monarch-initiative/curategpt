@@ -24,4 +24,3 @@ def patches_to_oak_commands(patch_dict: Dict[str, List[Dict]], ont_path: str) ->
             if not notes:
                 notes = f"Applying {len(changes)}"
             print(f'git commit -m "{notes}"')
-

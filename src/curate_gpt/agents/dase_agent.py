@@ -1,4 +1,5 @@
 """Autocomplete objects using RAG."""
+
 import logging
 from dataclasses import dataclass, field
 from typing import Any, ClassVar, Dict, List, Optional, Union
@@ -33,7 +34,6 @@ def _dict2str(d: Dict[str, Any]) -> str:
 
 @dataclass
 class DatabaseAugmentedStructuredExtraction(BaseAgent):
-
     """
     Extracts structured objects from unstructured documents.
 

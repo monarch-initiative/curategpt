@@ -1,4 +1,5 @@
 """ChromaDB adapter."""
+
 import json
 import logging
 import os
@@ -33,7 +34,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ChromaDBAdapter(DBAdapter):
-
     """
     An Adapter that wraps a ChromaDB client
     """

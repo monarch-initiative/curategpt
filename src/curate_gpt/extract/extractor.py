@@ -1,4 +1,5 @@
 """Retrieval Augmented Generation (RAG) Base Class."""
+
 import logging
 from abc import ABC, abstractmethod
 from copy import copy
@@ -15,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class AnnotatedObject(BaseModel):
-
     """
     Annotated object shadows a basic dictionary object
     """

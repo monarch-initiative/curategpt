@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 from dataclasses import dataclass, field
 from time import sleep
@@ -54,7 +55,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ESSDeepDiveWrapper(BaseWrapper):
-
     """
     A wrapper over the ESSDeepDive API.
     """

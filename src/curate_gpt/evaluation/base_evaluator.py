@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import TextIO
 
@@ -8,7 +8,6 @@ from curate_gpt.evaluation.evaluation_datamodel import ClassificationMetrics
 
 @dataclass
 class BaseEvaluator(ABC):
-
     """Base class for evaluators."""
 
     agent: BaseAgent = None
@@ -22,6 +21,17 @@ class BaseEvaluator(ABC):
         :param test_collection:
         :param num_tests:
         :param report_file:
+        :param kwargs:
+        :return:
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def evaluate_object(self, obj, **kwargs) -> ClassificationMetrics:
+        """
+        Evaluate the agent on a single object.
+
+        :param obj:
         :param kwargs:
         :return:
         """

@@ -6,7 +6,6 @@ from curate_gpt import DBAdapter
 
 @dataclass
 class Namer:
-
     """
     Maps between opaque IDs and names
 
