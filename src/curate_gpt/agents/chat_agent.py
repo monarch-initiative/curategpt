@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 import re
 from dataclasses import dataclass
@@ -16,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 
 class ChatResponse(BaseModel):
-
     """
     Response from chat engine.
 
@@ -48,7 +48,6 @@ def replace_references_with_links(text):
 
 @dataclass
 class ChatAgent(BaseAgent):
-
     """
     An agent that allows chat to a knowledge source.
 
@@ -69,7 +68,7 @@ class ChatAgent(BaseAgent):
         conversation: Optional[Conversation] = None,
         limit: int = 10,
         collection: str = None,
-        expand = True,
+        expand=True,
         **kwargs,
     ) -> ChatResponse:
         """

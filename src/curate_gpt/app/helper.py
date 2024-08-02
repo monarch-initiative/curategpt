@@ -1,4 +1,5 @@
 """Utilities for streamlit app."""
+
 from typing import Dict, List, Optional
 
 import yaml

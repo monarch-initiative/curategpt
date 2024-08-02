@@ -1,4 +1,5 @@
 """Abstract DB adapter."""
+
 import json
 import logging
 from abc import ABC, abstractmethod
@@ -13,16 +14,16 @@ from jsonlines import jsonlines
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
 
+from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.store.schema_proxy import SchemaProxy
 
-OBJECT = Union[YAMLRoot, BaseModel, Dict]
-QUERY = Union[str, YAMLRoot, BaseModel, Dict]
+OBJECT = Union[YAMLRoot, BaseModel, Dict, DuckDBSearchResult]
+QUERY = Union[str, YAMLRoot, BaseModel, Dict, DuckDBSearchResult]
 PROJECTION = Union[str, List[str]]
-DEFAULT_COLLECTION = "default"
-SEARCH_RESULT = Tuple[Dict, float, Optional[Dict]]
+DEFAULT_COLLECTION = "test_collection"
+SEARCH_RESULT = Tuple[DuckDBSearchResult, Dict, float, Optional[Dict]]
 FILE_LIKE = Union[str, TextIO, Path]
-
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,6 @@ def _get_file(file: Optional[FILE_LIKE] = None, mode="r") -> Optional[TextIO]:
 
 @dataclass
 class DBAdapter(ABC):
-
     """
     Base class for stores.
 
@@ -353,6 +353,7 @@ class DBAdapter(ABC):
                 return candidate
         return field_names[0] if field_names else "label"
 
+    # TODO: Might be abstract as currently gives not same values for DuckDBVSSAdapter and ChromaDBAdapter
     def field_names(self, collection: str = None) -> List[str]:
         """
         Return the names of all top level fields in the database for a collection.
@@ -410,17 +411,24 @@ class DBAdapter(ABC):
         if format.startswith("venomx"):
             import venomx as vx
             from venomx.tools.file_io import save_index
+
             cm = self.collection_metadata(collection_name, include_derived=False)
             label_field = self.label_field(collection_name)
             id_field = self.identifier_field(collection_name)
+
             def _label(obj):
                 return obj.get(label_field, None)
+
             def _id(obj):
                 original_id = obj.get("original_id", None)
                 if original_id:
                     return original_id
                 return obj.get(id_field, None)
-            rows = [{"id": _id(obj), "text": meta["document"], "values": meta["_embeddings"]} for obj, _, meta in objects]
+
+            rows = [
+                {"id": _id(obj), "text": meta["document"], "values": meta["_embeddings"]}
+                for obj, _, meta in objects
+            ]
             vx_objects = [{"id": _id(obj), "label": _label(obj)} for obj, _, _ in objects]
             logger.info(f"Num vx objects: {len(vx_objects)}")
             vx_index = vx.Index(

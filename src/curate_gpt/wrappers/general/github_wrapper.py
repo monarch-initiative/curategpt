@@ -1,4 +1,5 @@
 """Chat with a Google Drive."""
+
 import logging
 import os
 from dataclasses import dataclass
@@ -47,7 +48,6 @@ def get_token(token: str = None) -> Optional[str]:
 
 @dataclass
 class GitHubWrapper(BaseWrapper):
-
     """
     A wrapper to provide a search facade over GitHub.
 

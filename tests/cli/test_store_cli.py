@@ -6,7 +6,15 @@ ONT_DB = str(INPUT_DIR / "go-nucleus.db")
 
 
 def test_store_management(runner):
-    result = runner.invoke(main, ["ontology", "index", ONT_DB, "-m", "openai:", "-c", "oai"])
+    # test index ontology with duckdb
+    result = runner.invoke(
+        main, ["ontology", "index", ONT_DB, "-m", "all-MiniLM-L6-v2", "-c", "oai", "-D", "duckdb"]
+    )
+    assert result.exit_code == 0
+    # test index ontology with chromadb
+    result = runner.invoke(
+        main, ["ontology", "index", ONT_DB, "-D", "chromadb", "-m", "all-MiniLM-L6-v2", "-c", "oai"]
+    )
     assert result.exit_code == 0
     result = runner.invoke(main, ["ontology", "index", ONT_DB, "-c", "default"])
     assert result.exit_code == 0
@@ -18,7 +26,6 @@ def test_store_management(runner):
     assert "nuclear membrane" in result.output
     result = runner.invoke(main, ["collections", "list"])
     assert result.exit_code == 0
-    print(result.output)
     assert "default" in result.output
     assert "oai" in result.output
     assert "OntologyClass" in result.output

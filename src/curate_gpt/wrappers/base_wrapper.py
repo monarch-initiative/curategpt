@@ -1,4 +1,5 @@
 """Chat with a KB."""
+
 import logging
 from abc import ABC
 from dataclasses import dataclass
@@ -16,8 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class BaseWrapper(ABC):
-
+class BaseWrapper(ABC):  # noqa: B024
     """
     A virtual store that implements a view over some remote or external source.
     """

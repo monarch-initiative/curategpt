@@ -1,4 +1,5 @@
 """Wrapper for LinkML Schema documents."""
+
 import logging
 from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
@@ -13,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class LinkMLSchemarapper(BaseWrapper):
-
     """
     A wrapper over linkml schema documents.
 

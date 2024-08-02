@@ -1,4 +1,5 @@
 """Chat with a Google Drive."""
+
 import logging
 import os
 from dataclasses import dataclass
@@ -20,7 +21,6 @@ SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 @dataclass
 class GoogleDriveWrapper(BaseWrapper):
-
     """
     A wrapper to provide a search facade over Wikipedia.
 

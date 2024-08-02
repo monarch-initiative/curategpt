@@ -1,4 +1,5 @@
 """Chat with a Google Drive."""
+
 import logging
 from dataclasses import dataclass
 from typing import Any, ClassVar, Dict, Iterable, Iterator, Optional
@@ -16,7 +17,6 @@ SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 @dataclass
 class GSpreadWrapper(BaseWrapper):
-
     """
     A wrapper to provide a search facade over gspread layer onto google sheets.
 

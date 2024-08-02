@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 
 class CollectionMetadata(BaseModel):
-
     """
     Metadata about a collection.
 
