@@ -10,7 +10,6 @@ Subpackages
    curate_gpt.wrappers.bio
    curate_gpt.wrappers.clinical
    curate_gpt.wrappers.general
-   curate_gpt.wrappers.genes
    curate_gpt.wrappers.investigation
    curate_gpt.wrappers.legal
    curate_gpt.wrappers.literature

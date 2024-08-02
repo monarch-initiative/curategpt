@@ -117,6 +117,8 @@
       </ul></li>
       <li><a href="curate_gpt.evaluation.html#curate_gpt.evaluation.evaluation_datamodel.Task.additional_collections">additional_collections (curate_gpt.evaluation.evaluation_datamodel.Task attribute)</a>
 </li>
+      <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper.additional_info">additional_info() (curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper method)</a>
+</li>
       <li><a href="curate_gpt.evaluation.html#curate_gpt.evaluation.base_evaluator.BaseEvaluator.agent">agent (curate_gpt.evaluation.base_evaluator.BaseEvaluator attribute)</a>
 
       <ul>
@@ -667,8 +669,6 @@
         <li><a href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.evaluation_datamodel">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     curate_gpt.evaluation.runner
 
@@ -676,6 +676,8 @@
         <li><a href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.runner">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     curate_gpt.evaluation.splitter
 
@@ -894,10 +896,24 @@
 </li>
       </ul></li>
       <li>
+    curate_gpt.wrappers.bio.omicsdi_wrapper
+
+      <ul>
+        <li><a href="curate_gpt.wrappers.bio.html#module-curate_gpt.wrappers.bio.omicsdi_wrapper">module</a>
+</li>
+      </ul></li>
+      <li>
     curate_gpt.wrappers.bio.reactome_wrapper
 
       <ul>
         <li><a href="curate_gpt.wrappers.bio.html#module-curate_gpt.wrappers.bio.reactome_wrapper">module</a>
+</li>
+      </ul></li>
+      <li>
+    curate_gpt.wrappers.bio.uniprot_wrapper
+
+      <ul>
+        <li><a href="curate_gpt.wrappers.bio.html#module-curate_gpt.wrappers.bio.uniprot_wrapper">module</a>
 </li>
       </ul></li>
       <li>
@@ -989,13 +1005,6 @@
 
       <ul>
         <li><a href="curate_gpt.wrappers.general.html#module-curate_gpt.wrappers.general.linkml_schema_wrapper">module</a>
-</li>
-      </ul></li>
-      <li>
-    curate_gpt.wrappers.genes
-
-      <ul>
-        <li><a href="curate_gpt.wrappers.genes.html#module-curate_gpt.wrappers.genes">module</a>
 </li>
       </ul></li>
       <li>
@@ -1227,7 +1236,11 @@
 </li>
         <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.mediadive_wrapper.MediaDiveWrapper.default_object_type">(curate_gpt.wrappers.bio.mediadive_wrapper.MediaDiveWrapper attribute)</a>
 </li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper.default_object_type">(curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper attribute)</a>
+</li>
         <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper.default_object_type">(curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper attribute)</a>
+</li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper.default_object_type">(curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper attribute)</a>
 </li>
         <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.clinvar_wrapper.ClinVarWrapper.default_object_type">(curate_gpt.wrappers.clinical.clinvar_wrapper.ClinVarWrapper attribute)</a>
 </li>
@@ -1270,6 +1283,8 @@
       </ul></li>
       <li><a href="curate_gpt.wrappers.ontology.html#curate_gpt.wrappers.ontology.ontology.OntologyClass.definition">definition (curate_gpt.wrappers.ontology.ontology.OntologyClass attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curate_gpt.html#curate_gpt.DBAdapter.delete">delete() (curate_gpt.DBAdapter method)</a>
 
       <ul>
@@ -1282,8 +1297,6 @@
         <li><a href="curate_gpt.store.html#curate_gpt.store.in_memory_adapter.InMemoryAdapter.delete">(curate_gpt.store.in_memory_adapter.InMemoryAdapter method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curate_gpt.agents.html#curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification.description">description (curate_gpt.agents.bootstrap_agent.KnowledgeBaseSpecification attribute)</a>
 
       <ul>
@@ -1502,6 +1515,8 @@
 
       <ul>
         <li><a href="curate_gpt.wrappers.html#curate_gpt.wrappers.BaseWrapper.external_search">(curate_gpt.wrappers.BaseWrapper method)</a>
+</li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper.external_search">(curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper method)</a>
 </li>
         <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.external_search">(curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper method)</a>
 </li>
@@ -2568,7 +2583,11 @@
 </li>
         <li><a href="curate_gpt.wrappers.bio.html#module-curate_gpt.wrappers.bio.mediadive_wrapper">curate_gpt.wrappers.bio.mediadive_wrapper</a>
 </li>
+        <li><a href="curate_gpt.wrappers.bio.html#module-curate_gpt.wrappers.bio.omicsdi_wrapper">curate_gpt.wrappers.bio.omicsdi_wrapper</a>
+</li>
         <li><a href="curate_gpt.wrappers.bio.html#module-curate_gpt.wrappers.bio.reactome_wrapper">curate_gpt.wrappers.bio.reactome_wrapper</a>
+</li>
+        <li><a href="curate_gpt.wrappers.bio.html#module-curate_gpt.wrappers.bio.uniprot_wrapper">curate_gpt.wrappers.bio.uniprot_wrapper</a>
 </li>
         <li><a href="curate_gpt.wrappers.clinical.html#module-curate_gpt.wrappers.clinical">curate_gpt.wrappers.clinical</a>
 </li>
@@ -2595,8 +2614,6 @@
         <li><a href="curate_gpt.wrappers.general.html#module-curate_gpt.wrappers.general.json_wrapper">curate_gpt.wrappers.general.json_wrapper</a>
 </li>
         <li><a href="curate_gpt.wrappers.general.html#module-curate_gpt.wrappers.general.linkml_schema_wrapper">curate_gpt.wrappers.general.linkml_schema_wrapper</a>
-</li>
-        <li><a href="curate_gpt.wrappers.genes.html#module-curate_gpt.wrappers.genes">curate_gpt.wrappers.genes</a>
 </li>
         <li><a href="curate_gpt.wrappers.investigation.html#module-curate_gpt.wrappers.investigation">curate_gpt.wrappers.investigation</a>
 </li>
@@ -2684,7 +2701,11 @@
 </li>
         <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.mediadive_wrapper.MediaDiveWrapper.name">(curate_gpt.wrappers.bio.mediadive_wrapper.MediaDiveWrapper attribute)</a>
 </li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper.name">(curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper attribute)</a>
+</li>
         <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper.name">(curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper attribute)</a>
+</li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper.name">(curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper attribute)</a>
 </li>
         <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.clinvar_wrapper.ClinVarWrapper.name">(curate_gpt.wrappers.clinical.clinvar_wrapper.ClinVarWrapper attribute)</a>
 </li>
@@ -2818,6 +2839,8 @@
 </li>
         <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper.object_ids">(curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper method)</a>
 </li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper.object_ids">(curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper method)</a>
+</li>
       </ul></li>
       <li><a href="curate_gpt.app.html#curate_gpt.app.cart.CartItem.object_type">object_type (curate_gpt.app.cart.CartItem attribute)</a>
 
@@ -2843,6 +2866,8 @@
         <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.mediadive_wrapper.MediaDiveWrapper.objects">(curate_gpt.wrappers.bio.mediadive_wrapper.MediaDiveWrapper method)</a>
 </li>
         <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper.objects">(curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper method)</a>
+</li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper.objects">(curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper method)</a>
 </li>
         <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.hpoa_wrapper.HPOAWrapper.objects">(curate_gpt.wrappers.clinical.hpoa_wrapper.HPOAWrapper method)</a>
 </li>
@@ -2884,6 +2909,10 @@
       <ul>
         <li><a href="curate_gpt.wrappers.html#curate_gpt.wrappers.BaseWrapper.objects_by_ids">(curate_gpt.wrappers.BaseWrapper method)</a>
 </li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper.objects_by_ids">(curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper method)</a>
+</li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper.objects_by_ids">(curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper method)</a>
+</li>
         <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.google_drive_wrapper.GoogleDriveWrapper.objects_by_ids">(curate_gpt.wrappers.general.google_drive_wrapper.GoogleDriveWrapper method)</a>
 </li>
         <li><a href="curate_gpt.wrappers.literature.html#curate_gpt.wrappers.literature.eutils_wrapper.EUtilsWrapper.objects_by_ids">(curate_gpt.wrappers.literature.eutils_wrapper.EUtilsWrapper method)</a>
@@ -2922,6 +2951,8 @@
 </li>
       </ul></li>
       <li><a href="curate_gpt.wrappers.ontology.html#curate_gpt.wrappers.ontology.oboformat_wrapper.OBOFormatWrapper">OBOFormatWrapper (class in curate_gpt.wrappers.ontology.oboformat_wrapper)</a>
+</li>
+      <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper">OmicsDIWrapper (class in curate_gpt.wrappers.bio.omicsdi_wrapper)</a>
 </li>
       <li><a href="curate_gpt.wrappers.ontology.html#curate_gpt.wrappers.ontology.ontology.Ontology">Ontology (class in curate_gpt.wrappers.ontology.ontology)</a>
 </li>
@@ -3374,6 +3405,8 @@
       <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.session">session (curate_gpt.wrappers.bio.gocam_wrapper.GOCAMWrapper attribute)</a>
 
       <ul>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper.session">(curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper attribute)</a>
+</li>
         <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper.session">(curate_gpt.wrappers.clinical.ctgov_wrapper.ClinicalTrialsWrapper attribute)</a>
 </li>
         <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.github_wrapper.GitHubWrapper.session">(curate_gpt.wrappers.general.github_wrapper.GitHubWrapper attribute)</a>
@@ -3453,6 +3486,8 @@
         <li><a href="curate_gpt.store.html#curate_gpt.store.CollectionMetadata.source">(curate_gpt.store.CollectionMetadata attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.metadata.CollectionMetadata.source">(curate_gpt.store.metadata.CollectionMetadata attribute)</a>
+</li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper.source">(curate_gpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper attribute)</a>
 </li>
       </ul></li>
       <li><a href="curate_gpt.evaluation.html#curate_gpt.evaluation.evaluation_datamodel.Task.source_collection">source_collection (curate_gpt.evaluation.evaluation_datamodel.Task attribute)</a>
@@ -3542,6 +3577,8 @@
       <ul>
         <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper.taxon_id">(curate_gpt.wrappers.bio.reactome_wrapper.ReactomeWrapper attribute)</a>
 </li>
+        <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper.taxon_id">(curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper attribute)</a>
+</li>
       </ul></li>
       <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.hpoa_wrapper.term_label">term_label() (in module curate_gpt.wrappers.clinical.hpoa_wrapper)</a>
 
@@ -3630,6 +3667,8 @@
       <li><a href="curate_gpt.app.html#curate_gpt.app.components.DimensionalityReductionOptions.UMAP">UMAP (curate_gpt.app.components.DimensionalityReductionOptions attribute)</a>
 </li>
       <li><a href="curate_gpt.agents.html#curate_gpt.agents.chat_agent.ChatResponse.uncited_references">uncited_references (curate_gpt.agents.chat_agent.ChatResponse attribute)</a>
+</li>
+      <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.uniprot_wrapper.UniprotWrapper">UniprotWrapper (class in curate_gpt.wrappers.bio.uniprot_wrapper)</a>
 </li>
       <li><a href="curate_gpt.agents.html#curate_gpt.agents.mapping_agent.MappingPredicate.UNKNOWN">UNKNOWN (curate_gpt.agents.mapping_agent.MappingPredicate attribute)</a>
 </li>
