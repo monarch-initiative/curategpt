@@ -178,6 +178,7 @@ class GOCAMWrapper(BaseWrapper):
                 logger.warning(f"Missing object {o} in {individual_to_term}")
                 continue
             gene_id = individual_to_term[o]
+            # we only include a single pmid for each activity
             activity = {
                 "gene": gene_id,
                 "activity": individual_to_term[s],
