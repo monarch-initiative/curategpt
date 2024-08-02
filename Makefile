@@ -78,6 +78,9 @@ load-bacdive:
 load-cdr:
 	$(CURATE) -v index -p $(DB_PATH) -V bioc -c cdr_test -m openai: data/CDR_TestSet.BioC.xml.gz
 
+load-uniprot-%:
+	$(CURATE) -v index -p $(DB_PATH) -V uniprot -c uniprot_$* -m openai: --view-settings "taxon_id: $*"
+
 ## -- GitHub issues --
 
 # TODO: patternize

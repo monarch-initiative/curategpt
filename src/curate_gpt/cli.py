@@ -233,6 +233,7 @@ def main(verbose: int, quiet: bool):
     "-V",
     help="View/Proxy to use for the database, e.g. bioc.",
 )
+@click.option("--view-settings", help="YAML settings for the view wrapper.")
 @click.option(
     "--glob/--no-glob", default=False, show_default=True, help="Whether to glob the files."
 )
@@ -263,6 +264,7 @@ def index(
     collect,
     encoding,
     remove_field,
+    view_settings,
     **kwargs,
 ):
     """
@@ -296,7 +298,11 @@ def index(
     if glob:
         files = [str(gf.absolute()) for f in files for gf in Path().glob(f) if gf.is_file()]
     if view:
-        wrapper = get_wrapper(view)
+        view_args = {}
+        if view_settings:
+            view_args = yaml.safe_load(view_settings)
+            logging.info(f"View settings: {view_args}")
+        wrapper = get_wrapper(view, **view_args)
         if not object_type:
             object_type = wrapper.default_object_type
         if not description:
@@ -310,6 +316,8 @@ def index(
             db.remove_collection(collection)
     if model is None:
         model = "openai:"
+    if not files and wrapper:
+        files = ["API"]
     for file in files:
         if encoding == "detect":
             import chardet
@@ -1078,16 +1086,10 @@ def review(
     Example:
     -------
 
-        curategpt complete  -c obo_go "umbelliferose biosynthetic process"
+        curategpt review  -c obo_obi "{}" -Z definition -t patch \
+          --primary-key original_id --rule "make definitions simple and easy to read by domain scientists. \
+             At the same time, conform to genus-differentia style and OBO best practice."
 
-    If the string looks like yaml (if it has a ':') then it will be parsed as yaml.
-
-    E.g
-
-        curategpt complete  -c obo_go "label: umbelliferose biosynthetic process"
-
-    Pass ``--extract-format`` to make the extractor use a different internal representation
-    when communicating to the LLM
     """
     where_str = " ".join(where)
     where_q = yaml.safe_load(where_str)
@@ -2303,13 +2305,19 @@ def view_index(
 @click.option("--source-locator")
 @limit_option
 @model_option
+@click.option(
+    "--expand/--no-expand",
+    default=True,
+    show_default=True,
+    help="Whether to expand the search term using an LLM.",
+)
 @click.argument("query")
-def view_ask(query, view, model, limit, **kwargs):
+def view_ask(query, view, model, limit, expand, **kwargs):
     """Ask a knowledge source wrapper."""
     vstore: BaseWrapper = get_wrapper(view)
     vstore.extractor = BasicExtractor(model_name=model)
     chatbot = ChatAgent(knowledge_source=vstore)
-    response = chatbot.chat(query, limit=limit)
+    response = chatbot.chat(query, limit=limit, expand=expand)
     show_chat_response(response, True)
 
 
