@@ -4,6 +4,22 @@ curate\_gpt.utils package
 Submodules
 ----------
 
+curate\_gpt.utils.eval\_utils module
+------------------------------------
+
+.. automodule:: curate_gpt.utils.eval_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curate\_gpt.utils.llm\_utils module
+-----------------------------------
+
+.. automodule:: curate_gpt.utils.llm_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 curate\_gpt.utils.patch\_utils module
 -------------------------------------
 
