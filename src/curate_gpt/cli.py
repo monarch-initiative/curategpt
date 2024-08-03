@@ -1216,6 +1216,92 @@ def complete_multiple(
 @main.command()
 @path_option
 @collection_option
+@model_option
+@limit_option
+@click.option(
+    "-P", "--query-property", default="label", show_default=True, help="Property to use for query."
+)
+@click.option(
+    "--fields-to-predict",
+    multiple=True,
+)
+@click.option(
+    "--number-of-entries",
+    "-N",
+    default=5,
+    show_default=True,
+    help="number of entries to generate",
+)
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@generate_background_option
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@schema_option
+@extract_format_option
+@output_format_option
+def complete_auto(
+    path,
+    collection,
+    docstore_path,
+    docstore_collection,
+    rule: List[str],
+    model,
+    query_property,
+    schema,
+    output_format,
+    extract_format,
+    number_of_entries,
+    **kwargs,
+):
+    """
+    Generate new KB entries, using model to choose new entities.
+
+    Example:
+    -------
+        curategpt complete-auto -c obo_go -N 5
+    """
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor(serialization_format=extract_format)
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    dac = DragonAgent(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        dac.document_adapter = ChromaDBAdapter(docstore_path)
+        dac.document_adapter_collection = docstore_collection
+    i = 0
+    while i < number_of_entries:
+        queries = dac.generate_queries(context_property=query_property, n=number_of_entries, collection=collection)
+        logging.info(f"SUGGESTIONS: {queries}")
+        if not queries:
+            raise ValueError("No results")
+        for query in queries:
+            logging.info(f"SUGGESTION: {query}")
+            ao = dac.complete(query, context_property=query_property, rules=rule, collection=collection, **filtered_kwargs)
+            print("---")
+            dump(ao.object, format=output_format)
+            i += 1
+
+@main.command()
+@path_option
+@collection_option
 @click.option(
     "-C/--no-C",
     "--conversation/--no-conversation",
@@ -1674,8 +1760,8 @@ def apply_patch(input_file, patch, primary_key):
                 logging.debug(f"Applying: {actual_patch}")
                 jsonpatch.apply_patch(inner_obj, actual_patch, in_place=True)
     else:
-        for _obj in objs:
-            jsonpatch.apply_patch(objs, patch, in_place=True)
+        for obj in objs:
+            jsonpatch.apply_patch(obj, patch, in_place=True)
     logging.info(f"Writing patch output for {len(objs)} objects")
     for obj in objs:
         print("---")

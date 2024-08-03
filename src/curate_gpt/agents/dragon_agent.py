@@ -258,16 +258,41 @@ class DragonAgent(BaseAgent):
                 current_value=curr_val,
             )
 
-    def review(
-        self,
-        obj: dict,
-        context_property: str = None,
-        rules=None,
-        collection=None,
-        fields_to_predict=None,
-        primary_key=None,
-        **kwargs,
-    ) -> AnnotatedObject:
+    def generate_queries(self, context_property="name", n=5, **kwargs) -> List[str]:
+        ks = self.knowledge_source
+        ids = []
+        for obj, _, _x in ks.find({}, **kwargs):
+            ids.append(obj.get(context_property))
+        system = f"""Suggest {n} additional entities to complement the existing supplied entities.
+        Return as a comma separated list. Do not return additional information. Keep the same
+        level of specificity. You can return similar entities, but not identical/equivalent.
+        
+        ## Example (n=2)
+        
+        Current:
+        Margarita Pizza, Hawaiian Pizza, Veggie Pizza
+        
+        Suggested:
+        Mushroom Pizza, Meat Lovers Pizza.
+        """
+        ids_str = ", ".join(ids)
+        prompt = f"""Current:
+        {ids_str}
+        Suggested:
+        """
+        logger.info(f"PROMPT: {prompt}")
+        response = self.extractor.model.prompt(prompt, system=system)
+        txt = response.text()
+        if "." in txt:
+            txt = txt[0:txt.index(".")]
+        suggestions = txt.split(",")
+        suggestions = [x.strip() for x in suggestions]
+        ids_norm = [x.lower() for x in ids]
+        suggestions = [x for x in suggestions if x.lower() not in ids_norm]
+        return suggestions
+
+
+    def review(self, obj: dict, context_property: str = None, rules = None, collection = None, fields_to_predict=None, primary_key=None, **kwargs) -> AnnotatedObject:
         """
         Review an object for correctness, completeness, and consistency.
 

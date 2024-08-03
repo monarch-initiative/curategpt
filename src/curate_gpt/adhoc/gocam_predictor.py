@@ -1,231 +1,20 @@
 import json
 import logging
 import sys
-from copy import copy, deepcopy
+from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, Any
 
 import click
 import yaml
-from openai import BaseModel
+from curate_gpt.utils.eval_utils import Outcome, score_prediction
 
 from curate_gpt import BasicExtractor, DBAdapter
 from curate_gpt.store import get_store
+from curate_gpt.utils.llm_utils import query_model
 from curate_gpt.wrappers.bio.gocam_wrapper import GOCAMWrapper
 
 logger = logging.getLogger(__name__)
-
-
-class Outcome(BaseModel):
-    prediction: Union[Dict[str, Any], List[Dict[str, Any]]] = {}
-    expected: Union[Dict[str, Any], List[Dict[str, Any]]] = {}
-    parameters: Dict[str, Any] = {}
-    tp: int = 0
-    tn: int = 0
-    fp: int = 0
-    fn: int = 0
-
-    precision: Optional[float] = None
-    recall: Optional[float] = None
-    f1: Optional[float] = None
-
-    by_field: Dict[str, int] = {}
-    ixn_by_field: Dict[str, List[str]] = {}
-
-    def calculate_metrics(self):
-        self.precision = self.tp / (self.tp + self.fp) if self.tp + self.fp > 0 else 0
-        self.recall = self.tp / (self.tp + self.fn) if self.tp + self.fn > 0 else 0
-        self.f1 = (
-            2 * self.precision * self.recall / (self.precision + self.recall)
-            if self.precision + self.recall > 0
-            else 0
-        )
-
-    def append_outcomes(self, outcomes: List["Outcome"]) -> None:
-        for sub_outcome in outcomes:
-            self.tp += sub_outcome.tp
-            self.fp += sub_outcome.fp
-            self.fn += sub_outcome.fn
-            for key, value in sub_outcome.by_field.items():
-                self.by_field[key] = self.by_field.get(key, 0) + value
-            for key, value in sub_outcome.ixn_by_field.items():
-                curr = set(self.ixn_by_field.get(key, []))
-                self.ixn_by_field[key] = list(curr.union(value))
-        self.calculate_metrics()
-
-    def flatten(self) -> Dict[str, Any]:
-        obj = self.model_dump()
-        for k, v in copy(obj).items():
-            if k == "parameters":
-                obj.update(v)
-                del obj[k]
-            elif isinstance(v, dict):
-                del obj[k]
-            elif isinstance(v, list):
-                obj[k] = [x for x in v if x]
-        return obj
-
-
-def score_prediction(
-    predicted: Union[Dict, List], expected: Union[Dict, List], exclude: List = None
-) -> Outcome:
-    """
-    Score the predicted activity.
-
-    >>> outcome = score_prediction({"x": 1}, {"x": 1})
-    >>> outcome.tp
-    1
-
-    >>> outcome = score_prediction([{"x": 1}], {"x": 1})
-    >>> outcome.tp
-    1
-
-
-    >>> outcome = score_prediction({"x": 1}, {"x": 2})
-    >>> outcome.tp
-    0
-    >>> outcome.recall
-    0.0
-
-    >>> outcome = score_prediction({"x": 1, "y": 2}, {"x": 1})
-    >>> outcome.tp
-    1
-    >>> outcome.fp
-    1
-
-    >>> outcome = score_prediction([{"x": 1}, {"y": 1}], {"x": 1})
-    >>> outcome.tp
-    1
-    >>> outcome.fp
-    1
-
-
-    :param predicted: The predicted activity
-    :param expected: The expected activity
-    :return: The score
-    """
-    if exclude is None:
-        exclude = ["reference_title", "reference"]
-    if isinstance(expected, list) or isinstance(predicted, list):
-        if isinstance(expected, dict):
-            expected = [expected]
-        if isinstance(predicted, dict):
-            predicted = [predicted]
-        outcomes = best_matches(predicted, expected)
-        outcome = Outcome(prediction=predicted, expected=expected)
-        for sub_outcome in outcomes:
-            outcome.tp += sub_outcome.tp
-            outcome.fp += sub_outcome.fp
-            outcome.fn += sub_outcome.fn
-            for key, value in sub_outcome.by_field.items():
-                outcome.by_field[key] = outcome.by_field.get(key, 0) + value
-            for key, value in sub_outcome.ixn_by_field.items():
-                outcome.ixn_by_field[key] = list(
-                    set(outcome.ixn_by_field.get(key, [])).union(value)
-                )
-        outcome.calculate_metrics()
-        return outcome
-    outcome = Outcome(prediction=predicted, expected=expected)
-    all_keys = set(predicted.keys()).union(expected.keys()).difference(exclude)
-    for key in all_keys:
-        if key in predicted and key in expected:
-            if key == "relationships":
-                pred_rels = predicted[key]
-                exp_rels = expected[key]
-                sub_outcomes = best_matches(pred_rels, exp_rels)
-                n_tps = 0
-                ixn = set()
-                for sub_outcome in sub_outcomes:
-                    outcome.tp += sub_outcome.tp
-                    outcome.fp += sub_outcome.fp
-                    outcome.fn += sub_outcome.fn
-                    n_tps += sub_outcome.tp
-                    if sub_outcome.precision == 1.0:
-                        ixn = ixn.union({str(predicted[key])})
-                outcome.by_field[key] = outcome.by_field.get(key, 0) + n_tps
-                outcome.ixn_by_field[key] = list(set(outcome.ixn_by_field.get(key, [])).union(ixn))
-                continue
-            if predicted[key] == expected[key]:
-                outcome.tp += 1
-                outcome.by_field[key] = outcome.by_field.get(key, 0) + 1
-                outcome.ixn_by_field[key] = list(
-                    set(outcome.ixn_by_field.get(key, [])).union({predicted[key]})
-                )
-            else:
-                outcome.fp += 1
-                outcome.fn += 1
-        elif key in predicted:
-            outcome.fp += 1
-        else:
-            outcome.fn += 1
-    outcome.calculate_metrics()
-    return outcome
-
-
-def best_matches(pred_rels, exp_rels) -> List[Outcome]:
-    """
-    Find the best matching pairs of relationships.
-
-    Example:
-
-    >>> outcomes = best_matches([], [])
-    >>> len(outcomes)
-    1
-    >>> outcome = outcomes[0]
-    >>> (outcome.tp, outcome.fp, outcome.fn)
-    (0, 0, 0)
-    >>> best_matches([{"x:": 1}], [])[0].precision
-    0.0
-    >>> outcome = best_matches([{"x": 1}], [{"x": 1}])[0]
-    >>> outcome.precision
-    1.0
-    >>> outcome = best_matches([{"x": 1}], [{"y": 1}])[0]
-    >>> outcome.precision
-    0.0
-    >>> pred_rels = [{"x":1}, {"y": 2}, {"z": 3}]
-    >>> exp_rels = [{"y":2}, {"x": 1}, {"z": 3}]
-    >>> outcomes = best_matches(pred_rels, exp_rels)
-    >>> [o.precision for o in outcomes]
-    [1.0, 1.0, 1.0]
-    >>> exp_rels.append({"z": 4})
-    >>> outcomes = best_matches(pred_rels, exp_rels)
-    >>> sorted([o.precision for o in outcomes])
-    [0.0, 1.0, 1.0, 1.0]
-
-    """
-    import numpy as np
-
-    if not pred_rels:
-        pred_rels = [{}]
-    if not exp_rels:
-        exp_rels = [{}]
-
-    # Create a matrix to store the scores
-    outcome_matrix = np.zeros((len(pred_rels), len(exp_rels)), dtype=object)
-    outcome_ix = {}
-
-    # Calculate the scores for each pair of pred_rel and exp_rel
-    for i, pred_rel in enumerate(pred_rels):
-        for j, exp_rel in enumerate(exp_rels):
-            sub_outcome = score_prediction(pred_rel, exp_rel)
-            outcome_matrix[i, j] = sub_outcome.tp
-            outcome_ix[(i, j)] = sub_outcome
-
-    # Find the best matching pairs
-    outcomes = []
-    max_row_indices = np.argmax(outcome_matrix, axis=1)
-    max_col_indices = np.argmax(outcome_matrix, axis=0)
-    best = []
-    for i, _pred_rel in enumerate(pred_rels):
-        best_j = max_row_indices[i]
-        best.append((i, best_j))
-        outcomes.append(outcome_ix[(i, best_j)])
-    for j, _exp_rel in enumerate(exp_rels):
-        best_i = max_col_indices[j]
-        if (best_i, j) not in best:
-            best.append((best_i, j))
-            outcomes.append(outcome_ix[(best_i, j)])
-    return outcomes
 
 
 @dataclass
@@ -238,7 +27,7 @@ class GOCAMPredictor:
     model_name: str = field(default="gpt-4o")
     extractor: BasicExtractor = None
     include_standard_annotations: bool = False
-    gocam_wrapper: GOCAMWrapper = field(default=GOCAMWrapper())
+    gocam_wrapper: GOCAMWrapper = field(default_factory=lambda: GOCAMWrapper())
     strict: bool = field(default=False)
 
     def __post_init__(self):
@@ -255,11 +44,10 @@ class GOCAMPredictor:
         #    raise ValueError(f"GO-CAM model not found: {id}")
         # return objs[0][0]
 
-    def predict(
-        self, gocam: Dict[str, Any], stub: Dict[str, Any], num_examples=0
-    ) -> Dict[str, Any]:
+    def predict_activity_unit(self, gocam: Dict[str, Any], stub: Dict[str, Any], num_examples=0) -> Dict[str, Any]:
         """
         Predict the missing activity in a GO-CAM model.
+
         :param gocam: The GO-CAM model
         :param stub: The stub to fill in
         :param num_examples: The number of examples to generate
@@ -327,7 +115,8 @@ class GOCAMPredictor:
         if self.model_name.startswith("gemini"):
             response = model.prompt(prompt=system + "\n===\n" + prompt)
         else:
-            response = model.prompt(prompt=prompt, system=system)
+            response = query_model(model, prompt=prompt, system=system)
+            # response = model.prompt(prompt=prompt, system=system)
         text = response.text()
         toks = text.split("```")
         if len(toks) < 3:
@@ -435,18 +224,26 @@ def main(verbose: int, quiet: bool):
     help="Include standard annotations",
 )
 @click.option("--prior-results-file", help="Previous results")
-def predict(
-    gocam_id,
-    pmid,
-    model_name,
-    database_type,
-    database_path,
-    collection_name,
-    num_examples,
-    output,
-    include_standard_annotations,
-    prior_results_file,
-):
+def predict(gocam_id, pmid, model_name, database_type, database_path, collection_name, num_examples, output, include_standard_annotations, prior_results_file):
+    """
+    Predict GO-CAMs.
+
+    Example:
+
+        gcpr -v  predict -N 5 --model-name claude-3-opus  -o results/gocam-run-claude3-opus-N5-run1.yaml
+
+    We try and defend against API failures, e.g. implementing exponential backoff, but there is still
+    potential for runs to fail, so we allow `--prior-results-file` to start off where we left off.
+
+    Example (initial run):
+
+        gcpr -v  predict -N 5 -o results/gocam-run-N5-run1.yaml
+
+    After failure:
+
+        gcpr -v  predict -N 5 --prior-results-file results/gocam-run-N5-run1.yaml -o results/gocam-run-N5-run1.yaml
+
+    """
     already_done = []
     if prior_results_file:
         with open(prior_results_file, "r", encoding="utf-8") as f:
@@ -456,13 +253,12 @@ def predict(
         output_file = open(output, "w", encoding="utf-8")
     else:
         output_file = sys.stdout
-    predictor = GOCAMPredictor(
-        database_type=database_type,
-        database_path=database_path,
-        collection_name=collection_name,
-        model_name=model_name,
-        include_standard_annotations=include_standard_annotations,
-    )
+    predictor = GOCAMPredictor(database_type=database_type,
+                               database_path=database_path,
+                               collection_name=collection_name,
+                               model_name=model_name,
+                               include_standard_annotations=include_standard_annotations)
+    # set the list of GO-CAMs to predict; may be a specified singleton or ALL go-cams
     if gocam_id:
         gocam_ids = [gocam_id]
     else:
@@ -489,9 +285,8 @@ def predict(
         main_outcome = Outcome(prediction=[], expected=[])
         for pmid in pmids:
             refs = [a["reference"] for a in test_gocam["activities"]]
-            test_gocam["activities"] = [
-                a for a in original_gocam["activities"] if a["reference"] != pmid
-            ]
+            # the gocam model used here is simplified in that each activity has a single ref
+            test_gocam["activities"] = [a for a in original_gocam["activities"] if a["reference"] != pmid]
             expected = [a for a in original_gocam["activities"] if a["reference"] == pmid]
             if not expected:
                 raise ValueError(
@@ -499,7 +294,11 @@ def predict(
                 )
             if len(test_gocam["activities"]) >= len(original_gocam["activities"]):
                 raise ValueError(f"Invalid number of activities in GO-CAM model {gocam_id}")
-            result = predictor.predict(test_gocam, {"reference": pmid}, num_examples=num_examples)
+            try:
+                result = predictor.predict_activity_unit(test_gocam, {"reference": pmid}, num_examples=num_examples)
+            except Exception as e:
+                logger.error(f"Encountered error: {e}")
+                continue
             print("## PREDICTION")
             print(yaml.dump(result, sort_keys=False))
             print("## EXPECTED")
@@ -511,6 +310,7 @@ def predict(
                 "pmid": pmid,
                 "num_examples": num_examples,
                 "model_name": predictor.model_name,
+                "include_standard_annotations": include_standard_annotations,
             }
             print("## OUTCOME")
             print(
@@ -539,6 +339,11 @@ def predict(
 @click.option("--add-species/--no-add-species", default=False, help="Add species to the output")
 @click.argument("results_file")
 def summarize_results(results_file, tsv, output, add_species):
+    """
+    Summarize the results of a previous run through gocam-predict.
+
+    Takes the YAML output of the prediction step.
+    """
     wrapper = GOCAMWrapper()
     species_by_gocam_id = {}
 
@@ -553,6 +358,7 @@ def summarize_results(results_file, tsv, output, add_species):
             logger.debug(f"Getting species for {id} => {species_by_gocam_id[id]}")
         return species_by_gocam_id[id]
 
+    # read in results file YAML, flattening outcomes
     with open(results_file, "r", encoding="utf-8") as f:
 
         def _outcome(x: dict):
