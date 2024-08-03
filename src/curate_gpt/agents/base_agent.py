@@ -27,6 +27,5 @@ class BaseAgent(ABC):
     extractor: Extractor = None
     """Engine performing LLM operations, including extracting from prompt responses"""
 
-    @abstractmethod
     def search(self):
         raise NotImplementedError("Search method must be implemented by subclass")
