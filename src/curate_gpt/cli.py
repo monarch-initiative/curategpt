@@ -775,11 +775,15 @@ def extract_from_pubmed(
     for pmid in ids:
         pmid_esc = pmid.replace(":", "_")
         text = pmw.fetch_full_text(pmid)
-        ao = agent.extract(text, rules=rule, **filtered_kwargs)
-        with open(output_directory / f"{pmid_esc}.yaml", "w") as f:
-            f.write(yaml.dump(ao.object, sort_keys=False))
-        with open(output_directory / f"{pmid_esc}.txt", "w") as f:
-            f.write(text)
+        if not text:
+            logging.warning(f"Could not fetch text for {pmid}")
+            continue
+        else:
+            ao = agent.extract(text, rules=rule, **filtered_kwargs)
+            with open(output_directory / f"{pmid_esc}.yaml", "w") as f:
+                f.write(yaml.dump(ao.object, sort_keys=False))
+            with open(output_directory / f"{pmid_esc}.txt", "w") as f:
+                f.write(text)
 
 
 @main.group()
