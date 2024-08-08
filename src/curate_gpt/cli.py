@@ -745,6 +745,12 @@ def extract_from_pubmed(
 ):
     """Extract structured knowledge from a publication using its PubMed ID.
 
+    For best results, use the PMID: prefix with PubMed IDs and the PMC: prefix with PMC IDs.
+    Do not include the PMC prefix in the ID.
+
+    Example:
+    curategpt extract-from-pubmed -c ont_hp -o temp/ PMID:31851653
+
     See the `extract` command
     """
     db = ChromaDBAdapter(path)
