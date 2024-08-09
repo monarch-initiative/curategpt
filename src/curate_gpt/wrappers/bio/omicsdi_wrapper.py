@@ -95,7 +95,7 @@ class OmicsDIWrapper(BaseWrapper):
         Augment the local ID with information from the database.
         """
         source = source or self.source
-        datas = []
+        data_objects = []
         for id in ids:
             if ":" in id:
                 source, local_id = id.split(":")
@@ -109,7 +109,7 @@ class OmicsDIWrapper(BaseWrapper):
             response = requests.get(url)
             response.raise_for_status()
             data = response.json()
-            datas.append(data)
+            data_objects.append(data)
 
-        return datas
+        return data_objects
 
