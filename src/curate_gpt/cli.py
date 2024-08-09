@@ -1298,16 +1298,25 @@ def complete_auto(
         dac.document_adapter_collection = docstore_collection
     i = 0
     while i < number_of_entries:
-        queries = dac.generate_queries(context_property=query_property, n=number_of_entries, collection=collection)
+        queries = dac.generate_queries(
+            context_property=query_property, n=number_of_entries, collection=collection
+        )
         logging.info(f"SUGGESTIONS: {queries}")
         if not queries:
             raise ValueError("No results")
         for query in queries:
             logging.info(f"SUGGESTION: {query}")
-            ao = dac.complete(query, context_property=query_property, rules=rule, collection=collection, **filtered_kwargs)
+            ao = dac.complete(
+                query,
+                context_property=query_property,
+                rules=rule,
+                collection=collection,
+                **filtered_kwargs,
+            )
             print("---")
             dump(ao.object, format=output_format)
             i += 1
+
 
 @main.command()
 @path_option

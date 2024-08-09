@@ -266,12 +266,12 @@ class DragonAgent(BaseAgent):
         system = f"""Suggest {n} additional entities to complement the existing supplied entities.
         Return as a comma separated list. Do not return additional information. Keep the same
         level of specificity. You can return similar entities, but not identical/equivalent.
-        
+
         ## Example (n=2)
-        
+
         Current:
         Margarita Pizza, Hawaiian Pizza, Veggie Pizza
-        
+
         Suggested:
         Mushroom Pizza, Meat Lovers Pizza.
         """
@@ -284,15 +284,23 @@ class DragonAgent(BaseAgent):
         response = self.extractor.model.prompt(prompt, system=system)
         txt = response.text()
         if "." in txt:
-            txt = txt[0:txt.index(".")]
+            txt = txt[0 : txt.index(".")]
         suggestions = txt.split(",")
         suggestions = [x.strip() for x in suggestions]
         ids_norm = [x.lower() for x in ids]
         suggestions = [x for x in suggestions if x.lower() not in ids_norm]
         return suggestions
 
-
-    def review(self, obj: dict, context_property: str = None, rules = None, collection = None, fields_to_predict=None, primary_key=None, **kwargs) -> AnnotatedObject:
+    def review(
+        self,
+        obj: dict,
+        context_property: str = None,
+        rules=None,
+        collection=None,
+        fields_to_predict=None,
+        primary_key=None,
+        **kwargs,
+    ) -> AnnotatedObject:
         """
         Review an object for correctness, completeness, and consistency.
 

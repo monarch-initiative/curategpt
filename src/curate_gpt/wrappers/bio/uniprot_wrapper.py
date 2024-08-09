@@ -1,9 +1,9 @@
 """Chat with a KB."""
+
 import logging
 from dataclasses import dataclass, field
-from typing import ClassVar, Dict, Iterable, Iterator, Optional, List
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional
 
-import requests
 import requests_cache
 from oaklib import BasicOntologyInterface
 
@@ -16,7 +16,6 @@ BASE_URL = "https://rest.uniprot.org/uniprotkb"
 
 @dataclass
 class UniprotWrapper(BaseWrapper):
-
     """
     A wrapper over the UniProt API.
     """
@@ -27,7 +26,7 @@ class UniprotWrapper(BaseWrapper):
 
     default_object_type = "Protein"
 
-    #taxon_id: str = field(default="NCBITaxon:9606")
+    # taxon_id: str = field(default="NCBITaxon:9606")
     taxon_id: Optional[str] = None
 
     session: requests_cache.CachedSession = field(
@@ -35,7 +34,7 @@ class UniprotWrapper(BaseWrapper):
     )
 
     def objects(
-            self, collection: str = None, object_ids: Iterable[str] = None, **kwargs
+        self, collection: str = None, object_ids: Iterable[str] = None, **kwargs
     ) -> Iterator[Dict]:
         """
         All proteins
@@ -58,11 +57,11 @@ class UniprotWrapper(BaseWrapper):
             raise ValueError("Taxon ID is required")
         taxon_id = str(taxon_id).replace("NCBITaxon:", "")
         params = {
-            f"query": f"organism_id:{taxon_id} AND reviewed:true",
+            "query": f"organism_id:{taxon_id} AND reviewed:true",
             # Query for E. coli using NCBI taxon ID and reviewed (Swiss-Prot) proteins
             "format": "json",  # Response format
             "size": 500,  # Number of results per page (max 500)
-            "fields": "accession,id"  # Fields to retrieve
+            "fields": "accession,id",  # Fields to retrieve
         }
 
         # Send the request
@@ -90,9 +89,3 @@ class UniprotWrapper(BaseWrapper):
             data = response.json()
             objs.append(data)
         return objs
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 """Base Agent."""
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass
 from typing import Union
 
@@ -9,7 +9,7 @@ from curate_gpt.wrappers import BaseWrapper
 
 
 @dataclass
-class BaseAgent(ABC):
+class BaseAgent(ABC):  # noqa: B024
     """
     Base class for agents.
 

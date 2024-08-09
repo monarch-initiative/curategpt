@@ -1,16 +1,18 @@
+"""GO-CAM predictor class."""
+
 import json
 import logging
 import sys
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import Dict, Any
+from typing import Any, Dict
 
 import click
 import yaml
-from curate_gpt.utils.eval_utils import Outcome, score_prediction
 
 from curate_gpt import BasicExtractor, DBAdapter
 from curate_gpt.store import get_store
+from curate_gpt.utils.eval_utils import Outcome, score_prediction
 from curate_gpt.utils.llm_utils import query_model
 from curate_gpt.wrappers.bio.gocam_wrapper import GOCAMWrapper
 
@@ -44,7 +46,9 @@ class GOCAMPredictor:
         #    raise ValueError(f"GO-CAM model not found: {id}")
         # return objs[0][0]
 
-    def predict_activity_unit(self, gocam: Dict[str, Any], stub: Dict[str, Any], num_examples=0) -> Dict[str, Any]:
+    def predict_activity_unit(
+        self, gocam: Dict[str, Any], stub: Dict[str, Any], num_examples=0
+    ) -> Dict[str, Any]:
         """
         Predict the missing activity in a GO-CAM model.
 
@@ -224,7 +228,18 @@ def main(verbose: int, quiet: bool):
     help="Include standard annotations",
 )
 @click.option("--prior-results-file", help="Previous results")
-def predict(gocam_id, pmid, model_name, database_type, database_path, collection_name, num_examples, output, include_standard_annotations, prior_results_file):
+def predict(
+    gocam_id,
+    pmid,
+    model_name,
+    database_type,
+    database_path,
+    collection_name,
+    num_examples,
+    output,
+    include_standard_annotations,
+    prior_results_file,
+):
     """
     Predict GO-CAMs.
 
@@ -253,11 +268,13 @@ def predict(gocam_id, pmid, model_name, database_type, database_path, collection
         output_file = open(output, "w", encoding="utf-8")
     else:
         output_file = sys.stdout
-    predictor = GOCAMPredictor(database_type=database_type,
-                               database_path=database_path,
-                               collection_name=collection_name,
-                               model_name=model_name,
-                               include_standard_annotations=include_standard_annotations)
+    predictor = GOCAMPredictor(
+        database_type=database_type,
+        database_path=database_path,
+        collection_name=collection_name,
+        model_name=model_name,
+        include_standard_annotations=include_standard_annotations,
+    )
     # set the list of GO-CAMs to predict; may be a specified singleton or ALL go-cams
     if gocam_id:
         gocam_ids = [gocam_id]
@@ -286,7 +303,9 @@ def predict(gocam_id, pmid, model_name, database_type, database_path, collection
         for pmid in pmids:
             refs = [a["reference"] for a in test_gocam["activities"]]
             # the gocam model used here is simplified in that each activity has a single ref
-            test_gocam["activities"] = [a for a in original_gocam["activities"] if a["reference"] != pmid]
+            test_gocam["activities"] = [
+                a for a in original_gocam["activities"] if a["reference"] != pmid
+            ]
             expected = [a for a in original_gocam["activities"] if a["reference"] == pmid]
             if not expected:
                 raise ValueError(
@@ -295,7 +314,9 @@ def predict(gocam_id, pmid, model_name, database_type, database_path, collection
             if len(test_gocam["activities"]) >= len(original_gocam["activities"]):
                 raise ValueError(f"Invalid number of activities in GO-CAM model {gocam_id}")
             try:
-                result = predictor.predict_activity_unit(test_gocam, {"reference": pmid}, num_examples=num_examples)
+                result = predictor.predict_activity_unit(
+                    test_gocam, {"reference": pmid}, num_examples=num_examples
+                )
             except Exception as e:
                 logger.error(f"Encountered error: {e}")
                 continue
