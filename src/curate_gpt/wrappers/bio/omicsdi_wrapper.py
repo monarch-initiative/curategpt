@@ -1,12 +1,11 @@
 """Chat with a KB."""
+
 import logging
 import time
 from dataclasses import dataclass
-from typing import ClassVar, List, Optional, Dict
+from typing import ClassVar, Dict, List, Optional
 
-import inflection
 import requests
-import yaml
 
 from curate_gpt.wrappers.base_wrapper import BaseWrapper
 
@@ -17,7 +16,6 @@ BASE_URL = "http://wwwdev.ebi.ac.uk/Tools/omicsdi/ws"
 
 @dataclass
 class OmicsDIWrapper(BaseWrapper):
-
     """
     A wrapper to provide a search facade over OMICS DI Search.
 
@@ -29,9 +27,11 @@ class OmicsDIWrapper(BaseWrapper):
 
     default_object_type = "Dataset"
 
-    source: str = None # pride, ...
+    source: str = None  # pride, ...
 
-    def external_search(self, text: str, expand: bool = False, where: Optional[Dict] = None, **kwargs) -> List[Dict]:
+    def external_search(
+        self, text: str, expand: bool = False, where: Optional[Dict] = None, **kwargs
+    ) -> List[Dict]:
         """
         Search the OmicsDI database for the given text.
 
@@ -42,19 +42,22 @@ class OmicsDIWrapper(BaseWrapper):
             "faceCount": 30,
         }
         if expand:
+
             def qt(t: str):
                 t = t.strip()
                 if " " in t:
                     return f'"{t}"'
                 return t
+
             logger.info(f"Expanding search term: {text} to create OmicsDI query")
             model = self.extractor.model
             response = model.prompt(
-                text, system="""
+                text,
+                system="""
                 Take the specified search text, and expand it to a list
                 of key terms used to construct a query. You will return results as
                 semi-colon separated list of the most relevant terms. Make sure to
-                include all relevant concepts in the returned terms."""
+                include all relevant concepts in the returned terms.""",
             )
             terms = response.text().split(";")
             logger.info(f"Expanded terms: {terms}")
@@ -95,7 +98,7 @@ class OmicsDIWrapper(BaseWrapper):
         Augment the local ID with information from the database.
         """
         source = source or self.source
-        datas = []
+        data_objects = []
         for id in ids:
             if ":" in id:
                 source, local_id = id.split(":")
@@ -109,7 +112,6 @@ class OmicsDIWrapper(BaseWrapper):
             response = requests.get(url)
             response.raise_for_status()
             data = response.json()
-            datas.append(data)
+            data_objects.append(data)
 
-        return datas
-
+        return data_objects

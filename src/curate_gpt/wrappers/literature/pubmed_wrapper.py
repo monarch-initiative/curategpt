@@ -228,6 +228,10 @@ class PubmedWrapper(BaseWrapper):
             pmcid = self.fetch_pmcid(object_id)
         else:
             pmcid = object_id
+
+        if not pmcid:
+            return None
+
         # PMC is a banana - get rid of the PMC prefix as well as local prefix
         pmcid = pmcid.replace("PMC:", "")
         pmcid = pmcid.replace("PMC", "")

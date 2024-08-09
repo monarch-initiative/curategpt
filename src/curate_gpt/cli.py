@@ -745,6 +745,12 @@ def extract_from_pubmed(
 ):
     """Extract structured knowledge from a publication using its PubMed ID.
 
+    For best results, use the PMID: prefix with PubMed IDs and the PMC: prefix with PMC IDs.
+    Do not include the PMC prefix in the ID.
+
+    Example:
+    curategpt extract-from-pubmed -c ont_hp -o temp/ PMID:31851653
+
     See the `extract` command
     """
     db = ChromaDBAdapter(path)
@@ -775,11 +781,15 @@ def extract_from_pubmed(
     for pmid in ids:
         pmid_esc = pmid.replace(":", "_")
         text = pmw.fetch_full_text(pmid)
-        ao = agent.extract(text, rules=rule, **filtered_kwargs)
-        with open(output_directory / f"{pmid_esc}.yaml", "w") as f:
-            f.write(yaml.dump(ao.object, sort_keys=False))
-        with open(output_directory / f"{pmid_esc}.txt", "w") as f:
-            f.write(text)
+        if not text:
+            logging.warning(f"Could not fetch text for {pmid}")
+            continue
+        else:
+            ao = agent.extract(text, rules=rule, **filtered_kwargs)
+            with open(output_directory / f"{pmid_esc}.yaml", "w") as f:
+                f.write(yaml.dump(ao.object, sort_keys=False))
+            with open(output_directory / f"{pmid_esc}.txt", "w") as f:
+                f.write(text)
 
 
 @main.group()
@@ -1288,16 +1298,25 @@ def complete_auto(
         dac.document_adapter_collection = docstore_collection
     i = 0
     while i < number_of_entries:
-        queries = dac.generate_queries(context_property=query_property, n=number_of_entries, collection=collection)
+        queries = dac.generate_queries(
+            context_property=query_property, n=number_of_entries, collection=collection
+        )
         logging.info(f"SUGGESTIONS: {queries}")
         if not queries:
             raise ValueError("No results")
         for query in queries:
             logging.info(f"SUGGESTION: {query}")
-            ao = dac.complete(query, context_property=query_property, rules=rule, collection=collection, **filtered_kwargs)
+            ao = dac.complete(
+                query,
+                context_property=query_property,
+                rules=rule,
+                collection=collection,
+                **filtered_kwargs,
+            )
             print("---")
             dump(ao.object, format=output_format)
             i += 1
+
 
 @main.command()
 @path_option

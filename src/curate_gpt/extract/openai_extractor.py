@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import List
 
 import openai
-import yaml
 
 from curate_gpt.extract.extractor import AnnotatedObject, Extractor
 

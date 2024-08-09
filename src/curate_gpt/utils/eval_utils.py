@@ -1,5 +1,7 @@
+"""Evaluation utilities."""
+
 from copy import copy
-from typing import Union, Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
@@ -14,7 +16,7 @@ class Outcome(BaseModel):
     fn: int = 0
 
     precision: Optional[float] = None
-    recall:  Optional[float] = None
+    recall: Optional[float] = None
     f1: Optional[float] = None
 
     by_field: Dict[str, int] = {}
@@ -23,7 +25,11 @@ class Outcome(BaseModel):
     def calculate_metrics(self):
         self.precision = self.tp / (self.tp + self.fp) if self.tp + self.fp > 0 else 0
         self.recall = self.tp / (self.tp + self.fn) if self.tp + self.fn > 0 else 0
-        self.f1 = 2 * self.precision * self.recall / (self.precision + self.recall) if self.precision + self.recall > 0 else 0
+        self.f1 = (
+            2 * self.precision * self.recall / (self.precision + self.recall)
+            if self.precision + self.recall > 0
+            else 0
+        )
 
     def append_outcomes(self, outcomes: List["Outcome"]) -> None:
         for sub_outcome in outcomes:
@@ -50,7 +56,9 @@ class Outcome(BaseModel):
         return obj
 
 
-def score_prediction(predicted: Union[Dict, List], expected: Union[Dict, List], exclude: List = None) -> Outcome:
+def score_prediction(
+    predicted: Union[Dict, List], expected: Union[Dict, List], exclude: List = None
+) -> Outcome:
     """
     Score the predicted activity.
 
@@ -102,7 +110,9 @@ def score_prediction(predicted: Union[Dict, List], expected: Union[Dict, List], 
             for key, value in sub_outcome.by_field.items():
                 outcome.by_field[key] = outcome.by_field.get(key, 0) + value
             for key, value in sub_outcome.ixn_by_field.items():
-                outcome.ixn_by_field[key] = list(set(outcome.ixn_by_field.get(key, [])).union(value))
+                outcome.ixn_by_field[key] = list(
+                    set(outcome.ixn_by_field.get(key, [])).union(value)
+                )
         outcome.calculate_metrics()
         return outcome
     outcome = Outcome(prediction=predicted, expected=expected)
@@ -128,7 +138,9 @@ def score_prediction(predicted: Union[Dict, List], expected: Union[Dict, List], 
             if predicted[key] == expected[key]:
                 outcome.tp += 1
                 outcome.by_field[key] = outcome.by_field.get(key, 0) + 1
-                outcome.ixn_by_field[key] = list(set(outcome.ixn_by_field.get(key, [])).union({predicted[key]}))
+                outcome.ixn_by_field[key] = list(
+                    set(outcome.ixn_by_field.get(key, [])).union({predicted[key]})
+                )
             else:
                 outcome.fp += 1
                 outcome.fn += 1
@@ -194,11 +206,11 @@ def best_matches(pred_rels, exp_rels) -> List[Outcome]:
     max_row_indices = np.argmax(outcome_matrix, axis=1)
     max_col_indices = np.argmax(outcome_matrix, axis=0)
     best = []
-    for i, pred_rel in enumerate(pred_rels):
+    for i, _pred_rel in enumerate(pred_rels):
         best_j = max_row_indices[i]
         best.append((i, best_j))
         outcomes.append(outcome_ix[(i, best_j)])
-    for j, exp_rel in enumerate(exp_rels):
+    for j, _exp_rel in enumerate(exp_rels):
         best_i = max_col_indices[j]
         if (best_i, j) not in best:
             best.append((best_i, j))

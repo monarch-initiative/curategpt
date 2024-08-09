@@ -1,7 +1,7 @@
 import logging
 
 from llm import Model, Response
-from tenacity import wait_random_exponential, stop_after_attempt, retry_if_exception, retry
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 logger = logging.getLogger(__name__)
 
