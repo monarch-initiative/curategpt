@@ -138,20 +138,24 @@ class MappingAgent(BaseAgent):
         response = model.prompt(prompt)
         response_text = response.text()
         mappings = []
-        for m in json.loads(response_text):
-            m = str(m)
-            if m in objects:
-                object_id = objects.get(m)["id"]
-            else:
-                object_id = m
-            mappings.append(
-                Mapping(
-                    subject_id=query,
-                    object_id=object_id,
-                    predicate=MappingPredicate.SAME_AS,
-                    prompt=prompt,
+        try:
+            for m in json.loads(response_text):
+                m = str(m)
+                if m in objects:
+                    object_id = objects.get(m)["id"]
+                else:
+                    object_id = m
+                mappings.append(
+                    Mapping(
+                        subject_id=query,
+                        object_id=object_id,
+                        predicate=MappingPredicate.SAME_AS,
+                        prompt=prompt,
+                    )
                 )
-            )
+        except json.decoder.JSONDecodeError:
+            return MappingSet(mappings=mappings, prompt=prompt, response_text=response_text)
+
         return MappingSet(mappings=mappings, prompt=prompt, response_text=response_text)
 
     def categorize_mappings(
