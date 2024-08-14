@@ -24,22 +24,14 @@ from openai import OpenAI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 
-from curate_gpt.store.db_adapter import OBJECT, PROJECTION, QUERY, SEARCH_RESULT, DBAdapter
+from curate_gpt.store.db_adapter import DBAdapter
 from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.utils.vector_algorithms import mmr_diversified_search
+from curate_gpt.store.vocab import OBJECT, QUERY, PROJECTION, EMBEDDINGS, DOCUMENTS, \
+    METADATAS, MODEL_DIMENSIONS, MODELS, OPENAI_MODEL_DIMENSIONS, IDS, SEARCH_RESULT, DISTANCES
 
 logger = logging.getLogger(__name__)
-
-MODEL_DIMENSIONS = {"all-MiniLM-L6-v2": 384}
-
-OPENAI_MODEL_DIMENSIONS = {
-    "text-embedding-ada-002": 1536,
-    "text-embedding-3-small": 1536,
-    "text-embedding-3-large": 3072,
-}
-
-MODELS = ["text-embedding-ada-002", "text-embedding-3-small", "text-embedding-3-large"]
 
 
 @dataclass
@@ -107,12 +99,19 @@ class DuckDBAdapter(DBAdapter):
         """
         return self._get_collection(collection)
 
-    def _create_table_if_not_exists(self, collection: str, vec_dimension: int, model: str = None):
+    def _create_table_if_not_exists(self, collection: str, vec_dimension: int, distance: str, model: str = None):
         """
         Create a table for the given collection if it does not exist
         :param collection:
         :return:
         """
+        logger.info(f"Table {collection} does not exist, creating ...: PARAMS: model: {model}, distance: {distance},\
+        vec_dimension: {vec_dimension}")
+        if model is None:
+            model = self.default_model
+            logger.info(f"Model in create_table_if_not_exists: {model}")
+        if distance is None:
+            distance = self.distance_metric
         safe_collection_name = f'"{collection}"'
         create_table_sql = f"""
             CREATE TABLE IF NOT EXISTS {safe_collection_name} (
@@ -124,12 +123,8 @@ class DuckDBAdapter(DBAdapter):
         """
         self.conn.execute(create_table_sql)
 
-        # metadata row that holds table metadata (CollectionMetadata)
-        if model is not None:
-            metadata = CollectionMetadata(name=collection, model=model)
-        else:
-            metadata = CollectionMetadata(name=collection, model=self.default_model)
-        metadata_json = json.dumps(metadata.model_dump(exclude_none=True))
+        metadata = CollectionMetadata(name=collection, model=model, hnsw_space=distance)
+        metadata_json = json.dumps(metadata.dict(exclude_none=True))
         safe_collection_name = f'"{collection}"'
         self.conn.execute(
             f"""
@@ -139,7 +134,7 @@ class DuckDBAdapter(DBAdapter):
             [metadata_json],
         )
 
-    def create_index(self, collection: str, metric: str = "cosine"):
+    def create_index(self, collection: str):
         """
         Create an index for the given collection
         Parameters
@@ -150,15 +145,13 @@ class DuckDBAdapter(DBAdapter):
         -------
 
         """
-
-        # metrics = ['l2sq', 'cosine', 'ip'] #l2sq,ip
-        # for metric in metrics:
+        cm = self.collection_metadata(collection)
         safe_collection_name = f'"{collection}"'
         index_name = f"{collection}_index"
         create_index_sql = f"""
             CREATE INDEX IF NOT EXISTS "{index_name}" ON {safe_collection_name}
             USING HNSW (embeddings) WITH (
-                metric='{metric}',
+                metric='{cm.hnsw_space}',
                 ef_construction={self.ef_construction},
                 ef_search={self.ef_search},
                 M={self.M}
@@ -183,7 +176,12 @@ class DuckDBAdapter(DBAdapter):
 
         if model.startswith("openai:"):
             self._initialize_openai_client()
-            openai_model = model.split(":", 1)[1] if ":" in model else MODELS[1]
+            openai_model = model.split(":", 1)[1]
+            if openai_model == "" or openai_model not in MODELS:
+                logger.info(f"The model {openai_model} is not "
+                            f"one of {MODELS}. Defaulting to {MODELS[1]}")
+                openai_model = MODELS[1]
+
             responses = [
                 self.openai_client.embeddings.create(input=text, model=openai_model)
                 .data[0]
@@ -203,6 +201,7 @@ class DuckDBAdapter(DBAdapter):
         :param kwargs:
         :return:
         """
+        logger.info(f"\n\nIn insert duckdb, {kwargs.get('model')}\n\n")
         self._process_objects(objs, method="insert", **kwargs)
 
     # DELETE first to ensure primary key  constraint https://duckdb.org/docs/sql/indexes
@@ -217,7 +216,9 @@ class DuckDBAdapter(DBAdapter):
         ids = [self._id(o, self.id_field) for o in objs]
         safe_collection_name = f'"{collection}"'
         delete_sql = f"DELETE FROM {safe_collection_name} WHERE id = ?"
+        logger.info("DELETED collection: {collection}")
         self.conn.executemany(delete_sql, [(id_,) for id_ in ids])
+        logger.info(f"INSERTING collection: {collection}")
         self.insert(objs, **kwargs)
 
     def upsert(self, objs: Union[OBJECT, Iterable[OBJECT]], **kwargs):
@@ -228,6 +229,11 @@ class DuckDBAdapter(DBAdapter):
         :return:
         """
         collection = kwargs.get("collection")
+        logger.info(f"\n\nUpserting objects into collection {collection}\n\n")
+        logger.info(f"model in upsert: {kwargs.get('model')}, distance: {self.distance_metric}")
+        if collection not in self.list_collection_names():
+            vec_dimension = self._get_embedding_dimension(kwargs.get("model"))
+            self._create_table_if_not_exists(collection, vec_dimension, model=kwargs.get("model"), distance=self.distance_metric)
         ids = [self._id(o, self.id_field) for o in objs]
         existing_ids = set()
         for id_ in ids:
@@ -240,21 +246,24 @@ class DuckDBAdapter(DBAdapter):
         objs_to_update = [o for o in objs if self._id(o, self.id_field) in existing_ids]
         objs_to_insert = [o for o in objs if self._id(o, self.id_field) not in existing_ids]
         if objs_to_update:
+            logger.info(f"in Upsert and updating now in collection: {collection}")
             self.update(objs_to_update, **kwargs)
 
         if objs_to_insert:
+            logger.info(f"in Upsert and inserting now in collection: {collection}")
             self.insert(objs_to_insert, **kwargs)
 
     def _process_objects(
-        self,
-        objs: Union[OBJECT, Iterable[OBJECT]],
-        collection: str = None,
-        batch_size: int = None,
-        object_type: str = None,
-        model: str = None,
-        text_field: Union[str, Callable] = None,
-        method: str = "insert",
-        **kwargs,
+            self,
+            objs: Union[OBJECT, Iterable[OBJECT]],
+            collection: str = None,
+            batch_size: int = None,
+            object_type: str = None,
+            model: str = None,
+            distance: str = None,
+            text_field: Union[str, Callable] = None,
+            method: str = "insert",
+            **kwargs,
     ):
         """
         Process objects by inserting, updating or upserting them into the collection
@@ -269,25 +278,30 @@ class DuckDBAdapter(DBAdapter):
         :return:
         """
         collection = self._get_collection_name(collection)
+        logger.info(f"Processing objects for collection {collection}")
         self.vec_dimension = self._get_embedding_dimension(model)
-        self._create_table_if_not_exists(collection, self.vec_dimension, model=model)
-        cm = self.update_collection_metadata(collection, metadata=kwargs)
-        if model is None:
-            if cm:
-                model = cm.model
-            if model is None:
-                model = self.default_model
+        logger.info(f"(process_objects: Model: {model}, vec_dimension: {self.vec_dimension}")
+        if collection not in self.list_collection_names():
+            logger.info(f"(process)Creating table for collection {collection}")
+            self._create_table_if_not_exists(collection, self.vec_dimension, model=model, distance=distance)
+        if isinstance(objs, Iterable) and not isinstance(objs, str):
+            objs = list(objs)
+        else:
+            objs = [objs]
+        obj_count = len(objs)
+        kwargs.update({"object_count": obj_count})
+        cm = self.collection_metadata(collection)
         if batch_size is None:
             batch_size = 100000
         if text_field is None:
             text_field = self.text_lookup
         id_field = self.id_field
-        # num_objs = len(objs) if isinstance(objs, list) else "?"
         cumulative_len = 0
         sql_command = self._generate_sql_command(collection, method)
         sql_command = sql_command.format(collection=collection)
         for next_objs in chunk(objs, batch_size):
             next_objs = list(next_objs)
+            logger.info("Processing batch of objects in DuckDB process_objects ...")
             docs = [self._text(o, text_field) for o in next_objs]
             docs_len = sum([len(d) for d in docs])
             cumulative_len += docs_len
@@ -297,7 +311,7 @@ class DuckDBAdapter(DBAdapter):
                 cumulative_len = 0
             metadatas = [self._dict(o) for o in next_objs]
             ids = [self._id(o, id_field) for o in next_objs]
-            embeddings = self._embedding_function(docs, model)
+            embeddings = self._embedding_function(docs, cm.model)
             try:
                 self.conn.execute("BEGIN TRANSACTION;")
                 self.conn.executemany(
@@ -306,7 +320,7 @@ class DuckDBAdapter(DBAdapter):
                 self.conn.execute("COMMIT;")
             except Exception as e:
                 self.conn.execute("ROLLBACK;")
-                logger.error(f"Transaction failed: {e}")
+                logger.error(f"Transaction failed: {e}, default model: {self.default_model}, model used: {model}, len(embeddings): {len(embeddings[0])}")
                 raise
             finally:
                 self.create_index(collection)
@@ -328,13 +342,14 @@ class DuckDBAdapter(DBAdapter):
         self.conn.execute(f"DROP TABLE IF EXISTS {safe_collection_name}")
 
     def search(
-        self,
-        text: str,
-        where: QUERY = None,
-        collection: str = None,
-        limit: int = 10,
-        relevance_factor: float = None,
-        **kwargs,
+            self,
+            text: str,
+            where: QUERY = None,
+            collection: str = None,
+            limit: int = 10,
+            relevance_factor: float = None,
+            include=None,
+            **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         """
         Search for objects in the collection that match the given text
@@ -343,21 +358,45 @@ class DuckDBAdapter(DBAdapter):
         :param collection:
         :param limit:
         :param relevance_factor:
+        :param include:
         :param kwargs:
         :return:
         """
-        return self._search(text, where, collection, limit, relevance_factor, **kwargs)
+        yield from self._search(
+            text=text,
+            where=where,
+            collection=collection,
+            limit=limit,
+            relevance_factor=relevance_factor,
+            include=include,
+            **kwargs)
 
     def _search(
-        self,
-        text: str,
-        where: QUERY = None,
-        collection: str = None,
-        limit: int = 10,
-        relevance_factor: float = None,
-        model: str = None,
-        **kwargs,
+            self,
+            text: str,
+            where: QUERY = None,
+            collection: str = None,
+            limit: int = 10,
+            relevance_factor: float = None,
+            model: str = None,
+            include=None,
+            **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
+        if relevance_factor is not None and relevance_factor < 1.0:
+            yield from self._diversified_search(
+                text=text,
+                where=where,
+                collection=collection,
+                limit=limit,
+                include=include,
+                relevance_factor=relevance_factor,
+                **kwargs,
+            )
+            return
+        if include is None:
+            include = {METADATAS, DOCUMENTS, DISTANCES}
+        else:
+            include = set(include)
         collection = self._get_collection(collection)
         cm = self.collection_metadata(collection)
         if model is None:
@@ -373,15 +412,22 @@ class DuckDBAdapter(DBAdapter):
             where_clause = f"WHERE {where_clause}"
         if relevance_factor is not None and relevance_factor < 1.0:
             yield from self._diversified_search(
-                text, where, collection, limit, relevance_factor, **kwargs
+                text, where, collection, limit, relevance_factor, include, **kwargs
             )
             return
         query_embedding = self._embedding_function(text, model)
         safe_collection_name = f'"{collection}"'
+
+        # TODO: !VERY IMPORTANT! distance metrics between Chroma and DuckDB have very different, unclear implementations
+        # https://duckdb.org/docs/sql/functions/array.html#array_distancearray1-array2
+        # https://docs.trychroma.com/guides
+        # chromaDB: by default l2, other options are ip and cosine
+        # duckDB: by default none, array_distance() or 1-array_cosine_similarity(), both bring different distances
+        # than chromaDBs distance metric
         results = self.conn.execute(
             f"""
-            SELECT *, (1 - array_cosine_similarity(embeddings::FLOAT[{self.vec_dimension}],
-            {query_embedding}::FLOAT[{self.vec_dimension}])) as distance
+            SELECT *, array_distance(embeddings::FLOAT[{self.vec_dimension}],
+            {query_embedding}::FLOAT[{self.vec_dimension}]) as distance
             FROM {safe_collection_name}
             {where_clause}
             ORDER BY distance
@@ -389,10 +435,55 @@ class DuckDBAdapter(DBAdapter):
         """,
             [limit],
         ).fetchall()
-        # first row currently always with distance None as id = '__metadata__'
-        results = [r for r in results if r[-1] is not None]
-        results = sorted(results, key=lambda x: x[-1])
-        yield from self.parse_duckdb_result(results)
+        yield from self.parse_duckdb_result(results, include)
+
+    def _diversified_search(
+            self,
+            text: str,
+            where: QUERY = None,
+            collection: str = None,
+            limit: int = 10,
+            relevance_factor: float = 0.5,
+            include=None,
+            **kwargs,
+    ) -> Iterator[SEARCH_RESULT]:
+        if limit is None:
+            limit = 10
+        # we need to set this as we need EMBEDDINGS
+        include = {METADATAS, DOCUMENTS, EMBEDDINGS, DISTANCES}
+        collection = self._get_collection(collection)
+        cm = self.collection_metadata(collection)
+        where_conditions = []
+        if where:
+            for key, value in where.items():
+                where_conditions.append(f"json_extract(metadata, '$.{key}') = '{value}'")
+        where_clause = " AND ".join(where_conditions)
+        if where_clause:
+            where_clause = f"WHERE {where_clause}"
+        query_embedding = self._embedding_function(text, model=cm.model)
+        safe_collection_name = f'"{collection}"'
+        results = self.conn.execute(
+            f"""
+                    SELECT *, array_distance(embeddings::FLOAT[{self.vec_dimension}],
+                    {query_embedding}::FLOAT[{self.vec_dimension}]) as distance
+                    FROM {safe_collection_name}
+                    {where_clause}
+                    ORDER BY distance
+                    LIMIT ?
+                """,
+            [limit * 10],
+        ).fetchall()
+        results = list(self.parse_duckdb_result(results, include))
+        if not results:
+            return
+        rows = [np.array(r[2]["_embeddings"]) for r in results]
+        query = np.array(query_embedding)
+        reranked_indices = mmr_diversified_search(
+            query, rows, relevance_factor=relevance_factor, top_n=limit
+        )
+        for i in reranked_indices:
+            yield results[i]
+
 
     def list_collection_names(self):
         """
@@ -403,7 +494,7 @@ class DuckDBAdapter(DBAdapter):
         return [row[0] for row in result]
 
     def collection_metadata(
-        self, collection_name: Optional[str] = None, include_derived=False, **kwargs
+            self, collection_name: Optional[str] = None, include_derived=False, **kwargs
     ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for the collection
@@ -412,44 +503,56 @@ class DuckDBAdapter(DBAdapter):
         :param kwargs:
         :return:
         """
+        collection_name = self._get_collection(collection_name)
         safe_collection_name = f'"{collection_name}"'
-        result = self.conn.execute(
-            f"SELECT metadata FROM {safe_collection_name} WHERE id = '__metadata__'"
-        ).fetchone()
-        if result:
-            metadata = json.loads(result[0])
-            return CollectionMetadata(**metadata)
-        return None
+        try:
+            result = self.conn.execute(
+                f"SELECT metadata FROM {safe_collection_name} WHERE id = '__metadata__'"
+            ).fetchone()
+            if result:
+                metadata = json.loads(result[0])
+                metadata_instance = CollectionMetadata(**metadata)
+                if include_derived:
+                    # not implemented yet
+                    # metadata_instance.object_count = compute_object_count(collection_name
+                    pass
+                return metadata_instance
+        except Exception as e:
+            logger.error(f"Failed to retrieve metadata for collection {collection_name}: {str(e)}")
+            return None
 
     def update_collection_metadata(self, collection: str, **kwargs):
         """
-        Update the metadata for the collection
+        Update the metadata for a collection. This function will merge new metadata provided
+        via kwargs with existing metadata, if any, ensuring that only the specified fields
+        are updated.
         :param collection:
         :param kwargs:
         :return:
         """
-        if collection is None:
+        if not collection:
             raise ValueError("Collection name must be provided.")
-
         current_metadata = self.collection_metadata(collection)
         if current_metadata is None:
             current_metadata = CollectionMetadata(**kwargs)
         else:
-            current_metadata = current_metadata.model_copy(update=kwargs)
-        metadata_json = json.dumps(current_metadata.model_dump(exclude_none=True))
+            for key, value in kwargs.items():
+                if hasattr(current_metadata, key):
+                    setattr(current_metadata, key, value)
+        metadata_dict = current_metadata.dict(exclude_none=True)
+        metadata_json = json.dumps(metadata_dict)
         safe_collection_name = f'"{collection}"'
         self.conn.execute(
             f"""
-            UPDATE {safe_collection_name}
-            SET metadata = ?
-            WHERE id = '__metadata__'
-            """,
-            [metadata_json],
+                UPDATE {safe_collection_name} SET metadata = ?
+                WHERE id = '__metadata__'
+                """,
+            [metadata_json]
         )
         return current_metadata
 
     def set_collection_metadata(
-        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+            self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
     ):
         """
         Set the metadata for the collection
@@ -473,32 +576,33 @@ class DuckDBAdapter(DBAdapter):
         )
 
     def find(
-        self,
-        where: QUERY = None,
-        projection: PROJECTION = None,
-        collection: str = None,
-        include: Optional[List[str]] = None,
-        limit: int = 10,
-        **kwargs,
-    ) -> Iterator[DuckDBSearchResult]:
+            self,
+            where: QUERY = None,
+            projection: PROJECTION = None,
+            collection: str = None,
+            include=None,
+            limit: int = 10,
+            **kwargs,
+    ) -> Iterator[SEARCH_RESULT]:
         """
         Find objects in the collection that match the given query and projection
 
         :param where: the query to filter the results
-        :param projection: TODO: what is this?
+        :param projection:
         :param collection: name of the collection to search
+        :param include: fields to be included in output
         :param limit: maximum number of results to return
         :param kwargs:
         :return:
 
         Parameters
         ----------
-        limit
-        include
         """
         collection = self._get_collection(collection)
         where_clause = self._parse_where_clause(where) if where else ""
         where_clause = f"WHERE {where_clause}" if where_clause else ""
+        if include is None:
+            include = [IDS, METADATAS, DOCUMENTS]
         safe_collection_name = f'"{collection}"'
         query = f"""
                     SELECT id, metadata, embeddings, documents, NULL as distance
@@ -507,22 +611,28 @@ class DuckDBAdapter(DBAdapter):
                     LIMIT ?
                 """
         results = self.conn.execute(query, [limit]).fetchall()
-        yield from self.parse_duckdb_result(results)
+        yield from self.parse_duckdb_result(results, include)
 
-    def matches(self, obj: OBJECT, **kwargs) -> Iterator[SEARCH_RESULT]:
+    def matches(self, obj: OBJECT, include=None, **kwargs) -> Iterator[SEARCH_RESULT]:
         """
         Find objects in the collection that match the given object
         :param obj:
+        :param include:
         :param kwargs:
         :return:
         """
-
+        if include is None:
+            include = {IDS, METADATAS, DOCUMENTS, DISTANCES}
+        else:
+            include = set(include)
         text_field = self.text_lookup
+        logger.info(f"## TEXT FIELD:{text_field}")
         text = self._text(obj, text_field)
+        logger.info(f"{text}")
         logger.info(f"Query term: {text}")
-        yield from self.search(text, **kwargs)
+        yield from self.search(text=text, include=include, **kwargs)
 
-    def lookup(self, id: str, collection: str = None, **kwargs) -> OBJECT:
+    def lookup(self, id: str, collection: str = None, include=None, **kwargs) -> OBJECT:
         """
         Lookup an object by its id
         :param id: ID of the object to lookup
@@ -531,6 +641,10 @@ class DuckDBAdapter(DBAdapter):
         :param kwargs:
         :return:
         """
+        if include is None:
+            include = {METADATAS}
+        else:
+            include = set(include)
         safe_collection_name = f'"{collection}"'
         result = self.conn.execute(
             f"""
@@ -541,18 +655,28 @@ class DuckDBAdapter(DBAdapter):
             [id],
         ).fetchone()
         if isinstance(result, tuple) and len(result) > 1:
-            metadata = result[1]
-            metadata_object = json.loads(metadata)
-            return metadata_object
+            search_result = DuckDBSearchResult(
+                ids=result[0],
+                metadatas=json.loads(result[1]),
+                embeddings=result[2],
+                documents=result[3],
+                include=include,
+            )
+            return search_result.to_dict().get(METADATAS)
 
-    def peek(self, collection: str = None, limit=5, **kwargs) -> Iterator[OBJECT]:
+    def peek(self, collection: str = None, limit=5, include=None, **kwargs) -> Iterator[SEARCH_RESULT]:
         """
         Peek at the first N objects in the collection
         :param collection:
         :param limit:
+        :param include:
         :param kwargs:
         :return:
         """
+        if include is None:
+            include = {IDS, METADATAS, DOCUMENTS}
+        else:
+            include = set(include)
         safe_collection_name = f'"{collection}"'
         results = self.conn.execute(
             f"""
@@ -563,57 +687,28 @@ class DuckDBAdapter(DBAdapter):
             [limit],
         ).fetchall()
 
-        yield from self.parse_duckdb_result(results)
+        yield from self.parse_duckdb_result(results, include)
 
-    def dump(
-        self,
-        collection: str = None,
-        to_file: Union[str, Path] = None,
-        format: str = "json",
-        **kwargs,
-    ):
+    def get_raw_objects(self, collection) -> Iterator[Dict]:
         """
-        Dump the collection to a file
+        Get all raw objects in the collection as they were inserted into the database
         :param collection:
-        :param to_file:
-        :param format:
-        :param kwargs:
         :return:
         """
-        if collection is None:
-            raise ValueError("Collection name must be provided.")
-
-        collection_name = self._get_collection_name(collection)
-        safe_collection_name = f'"{collection_name}"'
-        query = f"SELECT id, embeddings, metadata, documents FROM {safe_collection_name}"
-        data = self.conn.execute(query).fetchall()
-        metadata = self.collection_metadata(collection_name).dict(exclude_none=True)
-
-        result = {
-            "metadata": metadata,
-            "ids": [row[0] for row in data],
-            "embeddings": [row[1] for row in data],
-            "metadatas": [json.loads(row[2]) for row in data],
-            "documents": [row[3] for row in data],
-        }
-
-        if to_file:
-            with open(to_file, "w") as f:
-                if format == "json":
-                    json.dump(result, f)
-                elif format == "yaml":
-                    yaml.dump(result, f)
-                else:
-                    raise ValueError(f"Unsupported format: {format}")
-
-        return result
+        safe_collection_name = f'"{collection}"'
+        results = self.conn.execute(
+            f"""
+                SELECT metadata
+                FROM {safe_collection_name}
+            """
+        ).fetchall()
+        for result in results:
+            yield json.loads(result[0])
 
     def dump_then_load(
-        self,
-        collection: str = None,
-        target: DBAdapter = None,
-        temp_file: Union[str, Path] = "temp_dump.json",
-        format: str = "json",
+            self,
+            collection: str = None,
+            target: DBAdapter = None,
     ):
         """
         Dump the collection to a file and then load it into the target adapter
@@ -626,89 +721,30 @@ class DuckDBAdapter(DBAdapter):
         if collection is None:
             raise ValueError("Collection name must be provided.")
         if not isinstance(target, DuckDBAdapter):
-            raise ValueError("Target must be a DuckDBVSSAdapter instance")
-        self.dump(collection=collection, to_file=temp_file, format=format)
-        with open(temp_file, "r") as f:
-            if format == "json":
-                data = json.load(f)
-            elif format == "yaml":
-                data = yaml.load(f, Loader=yaml.FullLoader)
-            else:
-                raise ValueError(f"Unsupported format: {format}")
-        metadata = data["metadata"]
-        ids = data["ids"]
-        embeddings = data["embeddings"]
-        metadatas = data["metadatas"]
-        documents = data["documents"]
-        objects = [
-            {"id": id, "embeddings": embedding, "metadata": metadata, "documents": document}
-            for id, embedding, metadata, document in zip(
-                ids, embeddings, metadatas, documents, strict=False
-            )
-        ]
+            raise ValueError("Target must be a DuckDBAdapter instance")
+
+        result = self.get_raw_objects(collection)
+
+        metadata = self.collection_metadata(collection)
+        model = metadata["model"]
+        vec_dimension = self._get_embedding_dimension(model)
+        distance = metadata["hnsw_space"]
+        # in case it exists already, remove
         target.remove_collection(collection, exists_ok=True)
+        # using same collection name in target database
+        target._create_table_if_not_exists(
+            collection,
+            vec_dimension,
+            distance,
+            model
+        )
         target.set_collection_metadata(collection, metadata)
         batch_size = 5000
-        for i in range(0, len(objects), batch_size):
-            batch = objects[i : i + batch_size]
+        for i in range(0, len(list(result)), batch_size):
+            batch = result[i: i + batch_size]
             target.insert(batch, collection=collection)
-        Path(temp_file).unlink()
 
-    def _diversified_search(
-        self,
-        text: str,
-        where: QUERY = None,
-        collection: str = None,
-        limit: int = 10,
-        relevance_factor: float = 0.5,
-        **kwargs,
-    ) -> Iterator[SEARCH_RESULT]:
-        collection = self._get_collection(collection)
-        cm = self.collection_metadata(collection)
-        where_conditions = []
-        if where:
-            for key, value in where.items():
-                where_conditions.append(f"json_extract(metadata, '$.{key}') = '{value}'")
-        where_clause = " AND ".join(where_conditions)
-        if where_clause:
-            where_clause = f"WHERE {where_clause}"
 
-        query_embedding = self._embedding_function(text, model=cm.model)
-        safe_collection_name = f'"{collection}"'
-        results = self.conn.execute(
-            f"""
-                    SELECT *, (1 - array_cosine_similarity(embeddings::FLOAT[{self.vec_dimension}],
-                    {query_embedding}::FLOAT[{self.vec_dimension}])) as distance
-                    FROM {safe_collection_name}
-                    {where_clause}
-                    ORDER BY distance
-                    LIMIT ?
-                """,
-            [limit * 10],
-        ).fetchall()
-
-        # first row currently always with distance None as id = '__metadata__'
-        results = [r for r in results if r[-1] is not None]
-        results = sorted(results, key=lambda x: x[-1])
-        parsed_results = list(self.parse_duckdb_result(results))
-        print(parsed_results)
-        document_vectors = [
-            np.array(result.embeddings)
-            for result in parsed_results
-            if result.embeddings is not None
-        ]
-        query_vector = np.array(self._embedding_function(text, model=cm.model))
-        if not document_vectors:
-            logger.info("The database might be empty. No diversified search results to return.")
-            return
-        reranked_indices = mmr_diversified_search(
-            query_vector=query_vector,
-            document_vectors=document_vectors,
-            relevance_factor=relevance_factor,
-            top_n=limit,
-        )
-        for idx in reranked_indices:
-            yield parsed_results[idx]
 
     @staticmethod
     def kill_process(pid):
@@ -813,20 +849,23 @@ class DuckDBAdapter(DBAdapter):
         return "id"
 
     @staticmethod
-    def parse_duckdb_result(results) -> Iterator[DuckDBSearchResult]:
+    def parse_duckdb_result(results, include) -> Iterator[SEARCH_RESULT]:
         """
         Parse the results from the SQL
-        :return: Iterator of DuckDBResult objects
+        :return: DuckDBSearchResultIterator
         ----------
         """
-        for obj in results:
-            yield DuckDBSearchResult(
-                id=obj[0],
-                metadata=json.loads(obj[1]),
-                embeddings=obj[2],
-                documents=obj[3],
-                distance=obj[4],
-            )
+        for res in results:
+            if res[0] != "__metadata__":
+                D = DuckDBSearchResult(
+                    ids=res[0],
+                    metadatas=json.loads(res[1]),
+                    embeddings=res[2],
+                    documents=res[3],
+                    distances=res[4],
+                    include=include,
+                )
+                yield from D.__iter__()
 
     @staticmethod
     def _parse_where_clause(where: Dict[str, Any]) -> str:
@@ -956,12 +995,12 @@ class DuckDBAdapter(DBAdapter):
         :return: Comma-separated string of fields to include
         """
         fields = []
-        if include is None or "id" in include:
-            fields.append("id")
-        if include is None or "metadata" in include:
-            fields.append("metadata")
-        if include is None or "embeddings" in include:
-            fields.append("embeddings")
-        if include is None or "documents" in include:
-            fields.append("documents")
+        if include is None or IDS in include:
+            fields.append(IDS)
+        if include is None or METADATAS in include:
+            fields.append(METADATAS)
+        if include is None or EMBEDDINGS in include:
+            fields.append(EMBEDDINGS)
+        if include is None or DOCUMENTS in include:
+            fields.append(DOCUMENTS)
         return ", ".join(fields)
