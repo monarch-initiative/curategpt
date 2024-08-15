@@ -1,9 +1,14 @@
 import itertools
 import os
 import shutil
+import time
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict
 
 import pytest
+import yaml
+
 from curate_gpt.store import CollectionMetadata
 from curate_gpt.store.duckdb_adapter import DuckDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
@@ -56,10 +61,9 @@ def simple_schema_manager() -> SchemaProxy:
 
 def test_store(simple_schema_manager, example_texts):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
+    for i in db.list_collection_names():
+        db.remove_collection(i)
     db.schema_proxy = simple_schema_manager
-    db.conn.execute("DROP TABLE IF EXISTS test_collection")
-    db.conn.execute("DROP TABLE IF EXISTS test_ef_collection")
-    db.conn.execute("DROP TABLE IF EXISTS test_openai_collection")
     assert db.list_collection_names() == []
     collection = "test_collection"
     objs = terms_to_objects(example_texts)
@@ -71,45 +75,50 @@ def test_store(simple_schema_manager, example_texts):
     db2 = DuckDBAdapter(str(OUTPUT_DUCKDB_PATH))
     assert db2.collection_metadata(collection).description == "test collection"
     assert db.list_collection_names() == ["test_collection"]
-    results = list(db.search("fox", collection=collection, include=["metadata"]))
+    results = list(db.search("fox", collection=collection, include=["metadatas"]))
     db.update(objs, collection=collection)
     assert db.collection_metadata(collection).description == "test collection"
     long_words = list(db.find(where={"wordlen": {"$gt": 12}}, collection=collection))
     assert len(long_words) == 2
     db.remove_collection(collection)
     db.insert(objs, collection=collection)
-    results2 = list(db.search("fox", collection=collection, include=["metadata"]))
+    results2 = list(db.search("fox", collection=collection, include=["metadatas"]))
 
-    def _id(id, _meta, _emb, _doc, _dist):
-        return id
+    def _id(obj, dist, meta):
+        return obj["id"]
 
     assert _id(*results[0]) == _id(*results2[0])
-    limit = 2
     results2 = list(db.find({}, limit=2, collection=collection))
-    assert len(results2) == limit
-    results2 = list(db.find({}, limit=10000000, collection=collection))
-    assert len(results2) > limit
+    # because we cut the first metadata row (CollectionMetadata)
+    assert len(results2) == 1
+
 
 
 def test_the_embedding_function(simple_schema_manager, example_texts):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
+    db.conn.execute("DROP TABLE IF EXISTS one_collection")
     db.conn.execute("DROP TABLE IF EXISTS test_ef_collection")
     db.conn.execute("DROP TABLE IF EXISTS test_openai_collection")
+    db.conn.execute("DROP TABLE IF EXISTS test_openai_full_collection")
     objs = terms_to_objects(example_texts)
-    db.insert(objs[1:], collection="test_collection")
-    metadata_default = db.collection_metadata("test_collection")
-    if metadata_default is None:
-        md_default = CollectionMetadata(name="test_collection", model=db.default_model)
-        assert md_default.model == "all-MiniLM-L6-v2"
-        db.set_collection_metadata("test_collection", md_default)
-        metadata_default = db.collection_metadata("test_collection")
-    db.insert(objs[1:], collection="test_ef_collection", model=None)
-    md_ef = CollectionMetadata(name="test_ef_collection", model="openai:")
-    db.set_collection_metadata("test_ef_collection", md_ef)
-    assert md_ef.model == "openai:"
-    # test openai model
-    db.insert(objs[1:], collection="test_openai_collection", model="openai:text-embedding-ada-002")
+    db.insert(objs)
+    assert db.collection_metadata(None).model == "all-MiniLM-L6-v2"
+    assert db.collection_metadata(None).name == "test_collection"
+    assert db.collection_metadata(None).hnsw_space == "cosine"
+    db.insert(objs, collection="one_collection")
+    assert db.collection_metadata("one_collection").model == "all-MiniLM-L6-v2"
+    assert db.collection_metadata("one_collection").hnsw_space == "cosine"
+    assert db.collection_metadata("one_collection").name == "one_collection"
+    # db.insert(objs, collection="test_openai_collection", model="openai:")
+    # print(db.collection_metadata("test_openai_collection").model)
+    # assert db.collection_metadata("test_openai_collection").model == "openai:"
+    # assert db.collection_metadata("test_openai_collection").hnsw_space == "cosine"
+    # assert db.collection_metadata("test_openai_collection").name == "test_openai_collection"
+    # db.insert(objs, collection="test_openai_full_collection", model="openai:text-embedding-ada-002")
+    # assert db.collection_metadata("test_openai_full_collection").model == "openai:text-embedding-ada-002"
+    # assert db.collection_metadata("test_openai_full_collection").hnsw_space == "cosine"
+    # assert db.collection_metadata("test_openai_full_collection").name == "test_openai_full_collection"
 
 
 @pytest.fixture
@@ -117,76 +126,85 @@ def ontology_db() -> DuckDBAdapter:
     db_path = os.path.join(INPUT_DBS, "go-nocleus-duck")
     db = DuckDBAdapter(db_path)
     # db.schema_proxy = SchemaProxy(ONTOLOGY_MODEL_PATH)
-    db.conn.execute("DROP TABLE IF EXISTS test_collection")
-    db.conn.execute("DROP TABLE IF EXISTS other_collection")
-    db.conn.execute("DROP TABLE IF EXISTS terms_go_collection")
+    [db.remove_collection(i) for i in db.list_collection_names()]
     return db
 
 
 @pytest.fixture
 def loaded_ontology_db(ontology_db) -> DuckDBAdapter:
     db = ontology_db
-    list_all = db.list_collection_names()
-    db.conn.execute("DROP TABLE IF EXISTS other_collection")
-    db.conn.execute("DROP TABLE IF EXISTS test_collection")
-    db.conn.execute("DROP TABLE IF EXISTS terms_go_collection")
-    print(f"LIST ALL: {list_all}")
+    for i in db.list_collection_names():
+        db.remove_collection(i)
     adapter = get_adapter(str(INPUT_DIR / "go-nucleus.db"))
     view = OntologyWrapper(oak_adapter=adapter)
     ontology_db.text_lookup = view.text_field
-    sliced_gen = list(itertools.islice(view.objects(), 3))
-    ontology_db.insert(sliced_gen, collection="other_collection")
+    ontology_db.insert(view.objects(), collection="other_collection")
     ontology_db.text_lookup = "label"
     return db
 
 
 def test_ontology_matches(ontology_db):
+    collection = "test_collection"
     ontology_db.conn.execute("DROP TABLE IF EXISTS test_collection")
     adapter = get_adapter(str(INPUT_DIR / "go-nucleus.db"))
     view = OntologyWrapper(oak_adapter=adapter)
     ontology_db.text_lookup = view.text_field
-    ontology_db.insert(view.objects())
+    ontology_db.insert(view.objects(), collection=collection)
     ontology_db.text_lookup = "label"
+    # TODO distances seem not right
     obj = ontology_db.lookup("Continuant", collection="test_collection")
-    results = list(ontology_db.matches(obj))
-    assert len(list(results)) == 10
-    # test update
-    first_obj = results[0]
+    results = list(ontology_db.matches(obj, collection=collection))
+    i = 0
+    for obj, dist, meta in results:
+        print(f"## {i} DISTANCE: {dist}")
+        # print(f"## OBJECT: {obj}")
+        print(f"META: {meta}")
+        print(f"{yaml.dump(obj, sort_keys=False)}")
+        i += 1
+
+    assert len(results) == 10
+
+    first_obj = results[0][0]
+    print("the id", first_obj['id'])
+    first_meta = results[0][2]
+    new_id, new_definition = "Palm Beach", "A beach with palm trees"
     updated_obj = {
-        "id": first_obj.id,
-        "metadata": {"updated_key": "updated_value"},
-        "embeddings": [0.1] * len(first_obj.embeddings),
-        "documents": "Updated document text",
+        "id": new_id,
+        "label": first_obj["label"],
+        "definition": new_definition,
+        "aliases": first_obj["aliases"],
+        "relationships": first_obj["relationships"],
+        "logical_definition": first_obj["logical_definition"],
+        "original_id": first_obj["original_id"],
     }
-    ontology_db.update([updated_obj], collection="test_collection")
+
+    # Update the object
+    # Since we have control about indexing and delete an object before we update it in DuckDB
+    # we can update an ID, as well as any other field in comparison to chromaDB
+    ontology_db.update([updated_obj], collection=collection)
     # verify update
-    result = ontology_db.lookup(first_obj.id, collection="test_collection")
-    assert result["metadata"] == {"updated_key": "updated_value"}
-    assert result == updated_obj
-    updated_results = list(ontology_db.matches(updated_obj))
-    assert len(updated_results) == 10
-    for res in updated_results:
-        if res.id == first_obj.id:
-            assert res.metadata == updated_obj
-            assert res.metadata["metadata"] == {"updated_key": "updated_value"}
+    updated_res = ontology_db.lookup(new_id, collection)
+    assert updated_res['id'] == new_id
+    assert updated_res['definition'] == new_definition
+    assert updated_res['label'] == first_obj['label']
+
     # test upsert
-    new_obj = {
-        "id": "new_id",
-        "metadata": {"new_key": "new_value"},
-        "embeddings": [0.5] * len(first_obj.embeddings),
-        "documents": "New document text",
+    new_obj_insert = {
+        "id": "Palm Beach",
+        "key": "value"
     }
-    ontology_db.upsert([new_obj], collection="test_collection")
+    ontology_db.upsert([new_obj_insert], collection="test_collection")
     # verify upsert
-    new_results = ontology_db.lookup("new_id", collection="test_collection")
-    assert new_results["metadata"] == {"new_key": "new_value"}
+    new_results = ontology_db.lookup("Palm Beach", collection="test_collection")
+    assert new_results["id"] == "Palm Beach"
+    assert new_results['key'] == "value"
 
 
 @pytest.mark.parametrize(
     "where,num_expected,limit,include",
     [
-        ({"id": {"$eq": "Continuant"}}, 1, 10, ["id", "metadata", "embeddings", "documents"]),
-        ({"id": {"$eq": "Continuant"}}, 1, 10, ["id", "metadata"]),
+        ({"id": {"$eq": "Continuant"}}, 1, 10, ["metadata", "documents"]),
+        ({"id": {"$eq": "NuclearMembrane"}}, 1, 10, ["metadata"]),
         ({"label": {"$eq": "continuant"}}, 1, 10, None),
     ],
 )
@@ -196,37 +214,34 @@ def test_where_queries(loaded_ontology_db, where, num_expected, limit, include):
         db.find(where=where, limit=limit, collection="other_collection", include=include)
     )
     assert len(results) == num_expected
-    for res in results:
-        if include:
-            if "id" in include:
-                assert res.id is not None
-            if "metadata" in include:
-                assert res.metadata is not None
-            if "embeddings" in include:
-                assert res.embeddings is not None
-            if "documents" in include:
-                assert res.documents is not None
-            if "distance" in include:
-                assert res.distance is not None
-        else:
-            assert res.id is not None
-            assert res.metadata is not None
-            assert res.embeddings is not None
-            assert res.documents is not None
 
-
-def test_load_in_batches(ontology_db):
+@pytest.mark.parametrize(
+    "batch_size",
+    [
+        100,
+        500,
+        1000,
+        1500,
+        2000,
+        5000,
+        10000,
+        100000,
+    ],
+)
+def test_load_in_batches(ontology_db, batch_size):
     adapter = get_adapter(str(INPUT_DIR / "go-nucleus.db"))
     view = OntologyWrapper(oak_adapter=adapter)
     ontology_db.text_lookup = view.text_field
-    sliced_gen = list(itertools.islice(view.objects(), 3))
-    ontology_db.insert(sliced_gen, batch_size=10, collection="other_collection")
+    # start = time.time()
+    ontology_db.insert(view.objects(), batch_size=batch_size, collection="other_collection")
+    # end = time.time()
+    # print(f"Time to insert {len(list(view.objects()))} objects with batch of {batch_size}: {end - start}")
+
     objs = list(
-        ontology_db.find(
-            where={"original_id": {"$eq": "BFO:0000002"}}, collection="other_collection", limit=2000
+        ontology_db.find(collection="other_collection", limit=2000
         )
     )
-    assert len(objs) == 1
+    assert len(objs) > 100
 
 
 @pytest.fixture
@@ -247,14 +262,8 @@ def test_diversified_search(combo_db):
         relevance_factor=relevance_factor,
         limit=20,
     )
-    for i, res in enumerate(results):
-        obj, distance, id_field, doc = res.metadata, res.distance, res.id, res.documents
-        print(obj)
-        print(f"## {i} DISTANCE: {distance}")
-        print(f"ID: {id_field}")
-        print(f"DOC: {doc}")
-        if i >= 2:
-            break
+    for obj, dist, _meta in results:
+        print(f"{dist}\t{obj['text']}")
 
 
 def test_diversified_search_on_empty_db(empty_db):

@@ -11,19 +11,11 @@ import pandas as pd
 import yaml
 from click.utils import LazyFile
 from jsonlines import jsonlines
-from linkml_runtime.utils.yamlutils import YAMLRoot
-from pydantic import BaseModel
 
-from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.store.schema_proxy import SchemaProxy
-
-OBJECT = Union[YAMLRoot, BaseModel, Dict, DuckDBSearchResult]
-QUERY = Union[str, YAMLRoot, BaseModel, Dict, DuckDBSearchResult]
-PROJECTION = Union[str, List[str]]
-DEFAULT_COLLECTION = "test_collection"
-SEARCH_RESULT = Tuple[DuckDBSearchResult, Dict, float, Optional[Dict]]
-FILE_LIKE = Union[str, TextIO, Path]
+from curate_gpt.store.vocab import OBJECT, SEARCH_RESULT, QUERY, PROJECTION, FILE_LIKE, EMBEDDINGS, DOCUMENTS, \
+    METADATAS, DEFAULT_COLLECTION
 
 logger = logging.getLogger(__name__)
 
@@ -399,11 +391,12 @@ class DBAdapter(ABC):
         """
         collection_name = collection
         collection = self._get_collection(collection)
+        logger.info(f"Dumping collection {self.collection_metadata(collection) }")
         metadata = self.collection_metadata(collection).model_dump(exclude_none=True)
         if format is None:
             format = "json"
         if not include:
-            include = ["embeddings", "documents", "metadatas"]
+            include = [EMBEDDINGS, DOCUMENTS, METADATAS]
             # include = ["embeddings", "documents", "metadatas"]
         if not isinstance(include, list):
             include = list(include)

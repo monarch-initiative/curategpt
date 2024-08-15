@@ -1,10 +1,14 @@
+import json
 import shutil
-from typing import Dict
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, Iterator
 
 import pytest
 import yaml
 from curate_gpt.store.chromadb_adapter import ChromaDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
+from curate_gpt.wrappers.general.json_wrapper import JSONWrapper
 from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 from oaklib import get_adapter
@@ -158,20 +162,55 @@ def test_ontology_matches(ontology_db):
     """
     Tests a pre-existing db
     """
+    collection = "test_collection"
     adapter = get_adapter(str(INPUT_DIR / "go-nucleus.db"))
     # ontology_db.linkml_schema_path = ONTOLOGY_MODEL_PATH
     view = OntologyWrapper(oak_adapter=adapter)
     ontology_db.text_lookup = view.text_field
-    ontology_db.insert(view.objects())
-    # TODO
+    ontology_db.insert(view.objects(), collection=collection)
     ontology_db.text_lookup = "label"
-    obj = ontology_db.lookup("NuclearMembrane")
-    results = ontology_db.matches(obj)
-    i = 0
-    for obj, distance, _meta in results:
+    obj: dict = ontology_db.lookup("NuclearMembrane")
+    results: list = list(ontology_db.matches(obj, collection=collection))
+    for i, (obj, distance, _meta) in enumerate(results):
+        assert obj == results[i][0]
+        assert distance == results[i][1]
+        assert _meta == results[i][2]
         print(f"## {i} DISTANCE: {distance}")
-        print(yaml.dump(obj, sort_keys=False))
+        print(f"## _META: {_meta}")
+        print(f"{yaml.dump(obj, sort_keys=False)}")
+    assert len(results) == 10
 
+    first_obj = results[0][0]
+    new_definition = "A beach with palm trees"
+    updated_obj = {
+        "id": first_obj['id'],
+        "label": first_obj["label"],
+        "definition": new_definition,
+        "aliases": first_obj["aliases"],
+        "relationships": first_obj["relationships"],
+        "logical_definition": first_obj["logical_definition"],
+        "original_id": first_obj["original_id"],
+    }
+
+    # Update the object
+    # Since we dont have control over indexing with ChromaDB, we cannot update an ID but all other fields
+    # if you wish to update an ID you must insert a new one
+    ontology_db.update([updated_obj], collection=collection)
+    # verify update
+    updated_res = ontology_db.lookup(first_obj['id'], collection=collection)
+    assert updated_res['id'] == first_obj['id']
+    assert updated_res['definition'] == new_definition
+    assert updated_res['label'] == first_obj['label']
+
+    # test upsert
+    new_obj_insert = {
+        "id": "Palm Beach",
+        "key": "value"
+    }
+    ontology_db.upsert([new_obj_insert], collection="test_collection")
+    # verify upsert
+    new_results = ontology_db.lookup("Palm Beach", collection="test_collection")
+    assert new_results['key'] == "value"
 
 @pytest.mark.parametrize(
     "where,num_expected,limit",

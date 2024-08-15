@@ -69,7 +69,7 @@ class BaseWrapper(ABC):  # noqa: B024
         db = self.local_store
         if db is None:
             tmpdir = Path("/tmp")
-            db = ChromaDBAdapter(tmpdir)
+            db = ChromaDBAdapter(str(tmpdir))
         if collection is None:
             collection = self._cached_collection_name(is_temp=not cache)
         if not cache:

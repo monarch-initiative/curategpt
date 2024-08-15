@@ -119,7 +119,7 @@ zucchini // DB:12345
 Then for the text 'I love courgettes!' you should return
 'I love [courgettes DB:12345]!'
 Always try and match the longest span.
-he concept ID should come only from the list of candidate concepts supplied to you.
+The concept ID should come only from the list of candidate concepts supplied to you.
 """
 
 
@@ -367,6 +367,7 @@ class ConceptRecognitionAgent(BaseAgent):
         logger.debug(f"Prompting with: {text}")
         response = model.prompt(text, system=system_prompt)
         anns = parse_annotations(response.text())
+
         logger.info(f"Anns: {anns}")
         spans = [
             Span(text=ann[0], concept_id=ann[1], concept_label=concept_dict.get(ann[1], None))

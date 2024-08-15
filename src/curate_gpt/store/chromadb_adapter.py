@@ -18,15 +18,10 @@ from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk
 from pydantic import BaseModel
+from curate_gpt.store.metadata import CollectionMetadata
 
-from curate_gpt.store.db_adapter import (
-    OBJECT,
-    PROJECTION,
-    QUERY,
-    SEARCH_RESULT,
-    CollectionMetadata,
-    DBAdapter,
-)
+from curate_gpt.store.vocab import OBJECT, QUERY, PROJECTION, SEARCH_RESULT
+from curate_gpt.store.db_adapter import DBAdapter
 from curate_gpt.utils.vector_algorithms import mmr_diversified_search
 
 logger = logging.getLogger(__name__)
@@ -129,6 +124,7 @@ class ChromaDBAdapter(DBAdapter):
         :param model:
         :return:
         """
+        logger.info(f"Getting embedding function for {model}")
         if model is None:
             raise ValueError("Model must be specified")
         if model.startswith("openai:"):
@@ -272,6 +268,9 @@ class ChromaDBAdapter(DBAdapter):
 
         :param collection_name:
         :return:
+
+        Parameters
+        ----------
         """
         logger.info(f"Getting metadata for {collection_name}")
         collection_name = self._get_collection(collection_name)
@@ -327,6 +326,7 @@ class ChromaDBAdapter(DBAdapter):
             assert metadata.name == collection_name
         else:
             metadata.name = collection_name
+        metadata.hnsw_space = "cosine"
         self.client.get_or_create_collection(
             name=collection_name, metadata=metadata.dict(exclude_none=True)
         )
@@ -552,6 +552,8 @@ class ChromaDBAdapter(DBAdapter):
             raise ValueError("Target must be a ChromaDBAdapter")
         cm = self.collection_metadata(collection)
         ef = self._embedding_function(cm.model)
+        # this currently prevents interadapter copying (duck to chroma)
+        # target.get_collection (abstract) should be implemented
         target_collection_obj = target.client.get_or_create_collection(
             name=collection,
             embedding_function=ef,
