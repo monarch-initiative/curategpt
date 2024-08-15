@@ -111,6 +111,22 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.store.db_metadata">curate_gpt.store.db_metadata module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings"><code class="docutils literal notranslate"><span class="pre">DBSettings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.M"><code class="docutils literal notranslate"><span class="pre">DBSettings.M</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.ef_construction"><code class="docutils literal notranslate"><span class="pre">DBSettings.ef_construction</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.ef_search"><code class="docutils literal notranslate"><span class="pre">DBSettings.ef_search</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.hnsw_space"><code class="docutils literal notranslate"><span class="pre">DBSettings.hnsw_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.load_config"><code class="docutils literal notranslate"><span class="pre">DBSettings.load_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.model"><code class="docutils literal notranslate"><span class="pre">DBSettings.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">DBSettings.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.model_config"><code class="docutils literal notranslate"><span class="pre">DBSettings.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.model_fields"><code class="docutils literal notranslate"><span class="pre">DBSettings.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.db_metadata.DBSettings.name"><code class="docutils literal notranslate"><span class="pre">DBSettings.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.store.duckdb_adapter">curate_gpt.store.duckdb_adapter module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.M"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.M</span></code></a></li>
@@ -121,11 +137,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.default_model"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.default_model</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.determine_fields_to_include"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.determine_fields_to_include()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.distance_metric"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.distance_metric</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.dump"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.dump()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.dump_then_load"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.dump_then_load()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.ef_construction"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.ef_construction</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.ef_search"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.ef_search</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.find"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.get_raw_objects"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.get_raw_objects()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.id_field"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.id_field</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.id_to_object"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.id_to_object</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.identifier_field"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.identifier_field()</span></code></a></li>
@@ -152,14 +168,17 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.store.duckdb_result">curate_gpt.store.duckdb_result module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.distance"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.distances"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.distances</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.documents"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.documents</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.embeddings"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.embeddings</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.id"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.metadata"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.metadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.ids"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.include"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.include</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.metadatas"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.metadatas</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_config"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_fields"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.to_dict"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.to_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.to_json"><code class="docutils literal notranslate"><span class="pre">DuckDBSearchResult.to_json()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -208,6 +227,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.annotations"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.annotations</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.description"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.hnsw_space"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.hnsw_space</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.model"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.metadata.CollectionMetadata.model_config"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_config</span></code></a></li>
@@ -232,6 +252,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.store.vocab">curate_gpt.store.vocab module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.store">Module contents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.ChromaDBAdapter"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.ChromaDBAdapter.client"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.client</span></code></a></li>
@@ -263,6 +284,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.annotations"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.annotations</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.description"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.hnsw_space"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.hnsw_space</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.model"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.CollectionMetadata.model_config"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_config</span></code></a></li>
@@ -311,11 +333,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.default_model"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.default_model</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.determine_fields_to_include"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.determine_fields_to_include()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.distance_metric"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.distance_metric</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.dump"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.dump()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.dump_then_load"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.dump_then_load()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.ef_construction"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.ef_construction</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.ef_search"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.ef_search</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.find"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.get_raw_objects"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.get_raw_objects()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.id_field"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.id_field</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.id_to_object"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.id_to_object</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.DuckDBAdapter.identifier_field"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.identifier_field()</span></code></a></li>
@@ -417,6 +439,9 @@
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1220,6 +1245,78 @@ overridden.</p>
 </dd></dl>
 
 </section>
+<section id="module-curate_gpt.store.db_metadata">
+<span id="curate-gpt-store-db-metadata-module"></span><h2>curate_gpt.store.db_metadata module<a class="headerlink" href="#module-curate_gpt.store.db_metadata" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.store.db_metadata.</span></span><span class="sig-name descname"><span class="pre">DBSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.M">
+<span class="sig-name descname"><span class="pre">M</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.M" title="Link to this definition"></a></dt>
+<dd><p>M parameter for hnsw index</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.ef_construction">
+<span class="sig-name descname"><span class="pre">ef_construction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.ef_construction" title="Link to this definition"></a></dt>
+<dd><p>Construction parameter for hnsw index. 
+Higher values are more accurate but slower.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.ef_search">
+<span class="sig-name descname"><span class="pre">ef_search</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.ef_search" title="Link to this definition"></a></dt>
+<dd><p>Search parameter for hnsw index.
+Higher values are more accurate but slower.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.hnsw_space">
+<span class="sig-name descname"><span class="pre">hnsw_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.hnsw_space" title="Link to this definition"></a></dt>
+<dd><p>Space used for hnsw index (e.g. ‘cosine’).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.load_config">
+<span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.load_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.model" title="Link to this definition"></a></dt>
+<dd><p>Name of any embedding model</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'M':</span> <span class="pre">FieldInfo(annotation=int,</span> <span class="pre">required=False,</span> <span class="pre">default=16),</span> <span class="pre">'ef_construction':</span> <span class="pre">FieldInfo(annotation=int,</span> <span class="pre">required=False,</span> <span class="pre">default=128),</span> <span class="pre">'ef_search':</span> <span class="pre">FieldInfo(annotation=int,</span> <span class="pre">required=False,</span> <span class="pre">default=64),</span> <span class="pre">'hnsw_space':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='cosine'),</span> <span class="pre">'model':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='all-MiniLM-L6-v2'),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='duckdb')}</span></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.model_fields" title="Link to this definition"></a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.name" title="Link to this definition"></a></dt>
+<dd><p>Name of the database.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-curate_gpt.store.duckdb_adapter">
 <span id="curate-gpt-store-duckdb-adapter-module"></span><h2>curate_gpt.store.duckdb_adapter module<a class="headerlink" href="#module-curate_gpt.store.duckdb_adapter" title="Link to this heading"></a></h2>
 <p>This is a DuckDB adapter for the Vector Similarity Search (VSS) extension
@@ -1254,7 +1351,7 @@ using the experimental persistence feature</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.create_index">
-<span class="sig-name descname"><span class="pre">create_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.create_index" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">create_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.create_index" title="Link to this definition"></a></dt>
 <dd><p>Create an index for the given collection
 Parameters
 ———-
@@ -1297,31 +1394,14 @@ collection</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.dump" title="Link to this definition"></a></dt>
-<dd><p>Dump the collection to a file
-:type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
-:param collection:
-:type to_file: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>
-:param to_file:
-:type format: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
-:param format:
-:type kwargs: 
-:param kwargs:
-:return:</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.dump_then_load">
-<span class="sig-name descname"><span class="pre">dump_then_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'temp_dump.json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.dump_then_load" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_then_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.dump_then_load" title="Link to this definition"></a></dt>
 <dd><p>Dump the collection to a file and then load it into the target adapter
 :type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
 :param collection:
 :type target: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curate_gpt.store.db_adapter.DBAdapter" title="curate_gpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a>]</span>
 :param target:
-:type temp_file: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>
 :param temp_file:
-:type format: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param format:
 :return:</p>
 </dd></dl>
@@ -1344,24 +1424,33 @@ collection</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>where</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">YAMLRoot</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) – the query to filter the results</p></li>
-<li><p><strong>projection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) – TODO: what is this?</p></li>
+<li><p><strong>projection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>)</p></li>
 <li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – name of the collection to search</p></li>
+<li><p><strong>include</strong> – fields to be included in output</p></li>
 <li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – maximum number of results to return</p></li>
 <li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
-<section id="parameters">
-<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
-<p>limit
-include</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 </section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.get_raw_objects">
+<span class="sig-name descname"><span class="pre">get_raw_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.get_raw_objects" title="Link to this definition"></a></dt>
+<dd><p>Get all raw objects in the collection as they were inserted into the database
+:type collection: 
+:param collection:
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span>
+:return:</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1412,12 +1501,13 @@ Returns
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.lookup">
-<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.lookup" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.lookup" title="Link to this definition"></a></dt>
 <dd><p>Lookup an object by its id
 :type id: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param id: ID of the object to lookup
 :type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
 :param collection: Name of the collection to search
+:type include: 
 :param include: List of fields to include in the output [‘metadata’, ‘embeddings’, ‘documents’]
 :type kwargs: 
 :param kwargs:
@@ -1427,10 +1517,12 @@ Returns
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.matches">
-<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.matches" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.matches" title="Link to this definition"></a></dt>
 <dd><p>Find objects in the collection that match the given object
 :type obj: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">YAMLRoot</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>]</span>
 :param obj:
+:type include: 
+:param include:
 :type kwargs: 
 :param kwargs:
 :rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>
@@ -1449,24 +1541,26 @@ Returns
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.parse_duckdb_result">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_duckdb_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.parse_duckdb_result" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_duckdb_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.parse_duckdb_result" title="Link to this definition"></a></dt>
 <dd><p>Parse the results from the SQL
-:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>]</span>
-:return: Iterator of DuckDBResult objects
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>
+:return: DuckDBSearchResultIterator
 ———-</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.peek">
-<span class="sig-name descname"><span class="pre">peek</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.peek" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">peek</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.peek" title="Link to this definition"></a></dt>
 <dd><p>Peek at the first N objects in the collection
 :type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
 :param collection:
 :type limit: 
 :param limit:
+:type include: 
+:param include:
 :type kwargs: 
 :param kwargs:
-:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">YAMLRoot</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>]]</span>
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>
 :return:</p>
 </dd></dl>
 
@@ -1485,7 +1579,7 @@ Returns
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.search">
-<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevance_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.search" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevance_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.search" title="Link to this definition"></a></dt>
 <dd><p>Search for objects in the collection that match the given text
 :type text: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param text:
@@ -1497,6 +1591,8 @@ Returns
 :param limit:
 :type relevance_factor: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>
 :param relevance_factor:
+:type include: 
+:param include:
 :type kwargs: 
 :param kwargs:
 :rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>
@@ -1535,7 +1631,9 @@ Returns
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_adapter.DuckDBAdapter.update_collection_metadata">
 <span class="sig-name descname"><span class="pre">update_collection_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_adapter.DuckDBAdapter.update_collection_metadata" title="Link to this definition"></a></dt>
-<dd><p>Update the metadata for the collection
+<dd><p>Update the metadata for a collection. This function will merge new metadata provided
+via kwargs with existing metadata, if any, ensuring that only the specified fields
+are updated.
 :type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param collection:
 :type kwargs: 
@@ -1569,8 +1667,8 @@ Returns
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.store.duckdb_result.</span></span><span class="sig-name descname"><span class="pre">DuckDBSearchResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.distance">
-<span class="sig-name descname"><span class="pre">distance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.distance" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.distances">
+<span class="sig-name descname"><span class="pre">distances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.distances" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1584,13 +1682,18 @@ Returns
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.id">
-<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.id" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.ids">
+<span class="sig-name descname"><span class="pre">ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.ids" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.metadata">
-<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">]]</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.metadata" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.include">
+<span class="sig-name descname"><span class="pre">include</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]]</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.include" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.metadatas">
+<span class="sig-name descname"><span class="pre">metadatas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">]]</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.metadatas" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1607,11 +1710,21 @@ Returns
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'distance':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=0),</span> <span class="pre">'documents':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'embeddings':</span> <span class="pre">FieldInfo(annotation=Union[List[float],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'metadata':</span> <span class="pre">FieldInfo(annotation=Union[Dict[str,</span> <span class="pre">Any],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'distances':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=0),</span> <span class="pre">'documents':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'embeddings':</span> <span class="pre">FieldInfo(annotation=Union[List[float],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'ids':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'include':</span> <span class="pre">FieldInfo(annotation=Union[Set[str],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'metadatas':</span> <span class="pre">FieldInfo(annotation=Union[Dict[str,</span> <span class="pre">Any],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.to_json" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -2008,6 +2121,12 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.metadata.CollectionMetadata.hnsw_space">
+<span class="sig-name descname"><span class="pre">hnsw_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.metadata.CollectionMetadata.hnsw_space" title="Link to this definition"></a></dt>
+<dd><p>Space used for hnsw index (e.g. ‘cosine’)</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.metadata.CollectionMetadata.model">
 <span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.metadata.CollectionMetadata.model" title="Link to this definition"></a></dt>
 <dd><p>Name of any ML model</p>
@@ -2027,7 +2146,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.metadata.CollectionMetadata.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotations':</span> <span class="pre">FieldInfo(annotation=Union[Dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'model':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_type':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'source':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.store.metadata.CollectionMetadata.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotations':</span> <span class="pre">FieldInfo(annotation=Union[Dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'hnsw_space':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'model':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_type':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'source':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.store.metadata.CollectionMetadata.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -2128,6 +2247,9 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 </dd></dl>
 
 </section>
+<section id="module-curate_gpt.store.vocab">
+<span id="curate-gpt-store-vocab-module"></span><h2>curate_gpt.store.vocab module<a class="headerlink" href="#module-curate_gpt.store.vocab" title="Link to this heading"></a></h2>
+</section>
 <section id="module-curate_gpt.store">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-curate_gpt.store" title="Link to this heading"></a></h2>
 <p>Adapters for different document stores.</p>
@@ -2170,6 +2292,9 @@ in the future.</p>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+</section>
 </dd></dl>
 
 <dl class="py method">
@@ -2515,6 +2640,12 @@ in the future.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.CollectionMetadata.hnsw_space">
+<span class="sig-name descname"><span class="pre">hnsw_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.CollectionMetadata.hnsw_space" title="Link to this definition"></a></dt>
+<dd><p>Space used for hnsw index (e.g. ‘cosine’)</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.CollectionMetadata.model">
 <span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curate_gpt.store.CollectionMetadata.model" title="Link to this definition"></a></dt>
 <dd><p>Name of any ML model</p>
@@ -2534,7 +2665,7 @@ in the future.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.CollectionMetadata.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotations':</span> <span class="pre">FieldInfo(annotation=Union[Dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'model':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_type':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'source':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.store.CollectionMetadata.model_fields" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotations':</span> <span class="pre">FieldInfo(annotation=Union[Dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'hnsw_space':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'model':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_type':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'source':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curate_gpt.store.CollectionMetadata.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
@@ -2625,8 +2756,8 @@ gives you a collection object:</p>
 <dt class="sig sig-object py" id="curate_gpt.store.DBAdapter.create_view">
 <span class="sig-name descname"><span class="pre">create_view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expression</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DBAdapter.create_view" title="Link to this definition"></a></dt>
 <dd><p>Create a view in the database.</p>
-<section id="id1">
-<h3>Todo:<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="id3">
+<h3>Todo:<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <dl class="field-list simple">
 <dt class="field-odd">param view<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
@@ -3068,13 +3199,13 @@ overridden.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.create_index">
-<span class="sig-name descname"><span class="pre">create_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.create_index" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">create_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.create_index" title="Link to this definition"></a></dt>
 <dd><p>Create an index for the given collection
 Parameters
 ———-
 collection</p>
-<section id="id2">
-<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 </section>
 </dd></dl>
 
@@ -3111,31 +3242,14 @@ collection</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.dump" title="Link to this definition"></a></dt>
-<dd><p>Dump the collection to a file
-:type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
-:param collection:
-:type to_file: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>
-:param to_file:
-:type format: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
-:param format:
-:type kwargs: 
-:param kwargs:
-:return:</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.dump_then_load">
-<span class="sig-name descname"><span class="pre">dump_then_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'temp_dump.json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.dump_then_load" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_then_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.dump_then_load" title="Link to this definition"></a></dt>
 <dd><p>Dump the collection to a file and then load it into the target adapter
 :type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
 :param collection:
 :type target: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curate_gpt.store.db_adapter.DBAdapter" title="curate_gpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a>]</span>
 :param target:
-:type temp_file: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>
 :param temp_file:
-:type format: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param format:
 :return:</p>
 </dd></dl>
@@ -3158,24 +3272,33 @@ collection</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>where</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">YAMLRoot</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) – the query to filter the results</p></li>
-<li><p><strong>projection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) – TODO: what is this?</p></li>
+<li><p><strong>projection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>)</p></li>
 <li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – name of the collection to search</p></li>
+<li><p><strong>include</strong> – fields to be included in output</p></li>
 <li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – maximum number of results to return</p></li>
 <li><p><strong>kwargs</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
-<section id="id3">
-<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
-<p>limit
-include</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 </section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.get_raw_objects">
+<span class="sig-name descname"><span class="pre">get_raw_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.get_raw_objects" title="Link to this definition"></a></dt>
+<dd><p>Get all raw objects in the collection as they were inserted into the database
+:type collection: 
+:param collection:
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span>
+:return:</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3226,12 +3349,13 @@ Returns
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.lookup">
-<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.lookup" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.lookup" title="Link to this definition"></a></dt>
 <dd><p>Lookup an object by its id
 :type id: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param id: ID of the object to lookup
 :type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
 :param collection: Name of the collection to search
+:type include: 
 :param include: List of fields to include in the output [‘metadata’, ‘embeddings’, ‘documents’]
 :type kwargs: 
 :param kwargs:
@@ -3241,10 +3365,12 @@ Returns
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.matches">
-<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.matches" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.matches" title="Link to this definition"></a></dt>
 <dd><p>Find objects in the collection that match the given object
 :type obj: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">YAMLRoot</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>]</span>
 :param obj:
+:type include: 
+:param include:
 :type kwargs: 
 :param kwargs:
 :rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>
@@ -3263,24 +3389,26 @@ Returns
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.parse_duckdb_result">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_duckdb_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.parse_duckdb_result" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_duckdb_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.parse_duckdb_result" title="Link to this definition"></a></dt>
 <dd><p>Parse the results from the SQL
-:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>]</span>
-:return: Iterator of DuckDBResult objects
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>
+:return: DuckDBSearchResultIterator
 ———-</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.peek">
-<span class="sig-name descname"><span class="pre">peek</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.peek" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">peek</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.peek" title="Link to this definition"></a></dt>
 <dd><p>Peek at the first N objects in the collection
 :type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
 :param collection:
 :type limit: 
 :param limit:
+:type include: 
+:param include:
 :type kwargs: 
 :param kwargs:
-:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">YAMLRoot</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>]]</span>
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>
 :return:</p>
 </dd></dl>
 
@@ -3299,7 +3427,7 @@ Returns
 
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.search">
-<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevance_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.search" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevance_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.search" title="Link to this definition"></a></dt>
 <dd><p>Search for objects in the collection that match the given text
 :type text: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param text:
@@ -3311,6 +3439,8 @@ Returns
 :param limit:
 :type relevance_factor: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>
 :param relevance_factor:
+:type include: 
+:param include:
 :type kwargs: 
 :param kwargs:
 :rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult" title="curate_gpt.store.duckdb_result.DuckDBSearchResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBSearchResult</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]]</span>
@@ -3349,7 +3479,9 @@ Returns
 <dl class="py method">
 <dt class="sig sig-object py" id="curate_gpt.store.DuckDBAdapter.update_collection_metadata">
 <span class="sig-name descname"><span class="pre">update_collection_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.store.DuckDBAdapter.update_collection_metadata" title="Link to this definition"></a></dt>
-<dd><p>Update the metadata for the collection
+<dd><p>Update the metadata for a collection. This function will merge new metadata provided
+via kwargs with existing metadata, if any, ensuring that only the specified fields
+are updated.
 :type collection: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param collection:
 :type kwargs: 

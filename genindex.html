@@ -684,8 +684,6 @@
         <li><a href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.splitter">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     curate_gpt.extract
 
@@ -693,6 +691,8 @@
         <li><a href="curate_gpt.extract.html#module-curate_gpt.extract">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     curate_gpt.extract.basic_extractor
 
@@ -757,6 +757,13 @@
 </li>
       </ul></li>
       <li>
+    curate_gpt.store.db_metadata
+
+      <ul>
+        <li><a href="curate_gpt.store.html#module-curate_gpt.store.db_metadata">module</a>
+</li>
+      </ul></li>
+      <li>
     curate_gpt.store.duckdb_adapter
 
       <ul>
@@ -789,6 +796,13 @@
 
       <ul>
         <li><a href="curate_gpt.store.html#module-curate_gpt.store.schema_proxy">module</a>
+</li>
+      </ul></li>
+      <li>
+    curate_gpt.store.vocab
+
+      <ul>
+        <li><a href="curate_gpt.store.html#module-curate_gpt.store.vocab">module</a>
 </li>
       </ul></li>
       <li>
@@ -1192,6 +1206,8 @@
         <li><a href="curate_gpt.store.html#curate_gpt.store.db_adapter.DBAdapter">(class in curate_gpt.store.db_adapter)</a>
 </li>
       </ul></li>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings">DBSettings (class in curate_gpt.store.db_metadata)</a>
+</li>
       <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.google_drive_wrapper.GoogleDriveWrapper.default_doc_types">default_doc_types (curate_gpt.wrappers.general.google_drive_wrapper.GoogleDriveWrapper attribute)</a>
 </li>
       <li><a href="curate_gpt.wrappers.html#curate_gpt.wrappers.base_wrapper.BaseWrapper.default_embedding_model">default_embedding_model (curate_gpt.wrappers.base_wrapper.BaseWrapper attribute)</a>
@@ -1296,10 +1312,10 @@
         <li><a href="curate_gpt.agents.html#curate_gpt.agents.DragonAgent.default_target_class">(curate_gpt.agents.DragonAgent attribute)</a>
 </li>
       </ul></li>
-      <li><a href="curate_gpt.wrappers.ontology.html#curate_gpt.wrappers.ontology.ontology.OntologyClass.definition">definition (curate_gpt.wrappers.ontology.ontology.OntologyClass attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="curate_gpt.wrappers.ontology.html#curate_gpt.wrappers.ontology.ontology.OntologyClass.definition">definition (curate_gpt.wrappers.ontology.ontology.OntologyClass attribute)</a>
+</li>
       <li><a href="curate_gpt.html#curate_gpt.DBAdapter.delete">delete() (curate_gpt.DBAdapter method)</a>
 
       <ul>
@@ -1356,14 +1372,14 @@
 </li>
       <li><a href="curate_gpt.app.html#curate_gpt.app.components.DimensionalityReductionOptions">DimensionalityReductionOptions (class in curate_gpt.app.components)</a>
 </li>
-      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.distance">distance (curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
-</li>
       <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.distance_metric">distance_metric (curate_gpt.store.duckdb_adapter.DuckDBAdapter attribute)</a>
 
       <ul>
         <li><a href="curate_gpt.store.html#curate_gpt.store.DuckDBAdapter.distance_metric">(curate_gpt.store.DuckDBAdapter attribute)</a>
 </li>
       </ul></li>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.distances">distances (curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
+</li>
       <li><a href="curate_gpt.html#curate_gpt.ChromaDBAdapter.diversified_search">diversified_search() (curate_gpt.ChromaDBAdapter method)</a>
 
       <ul>
@@ -1411,10 +1427,6 @@
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.DBAdapter.dump">(curate_gpt.store.DBAdapter method)</a>
 </li>
-        <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.dump">(curate_gpt.store.duckdb_adapter.DuckDBAdapter method)</a>
-</li>
-        <li><a href="curate_gpt.store.html#curate_gpt.store.DuckDBAdapter.dump">(curate_gpt.store.DuckDBAdapter method)</a>
-</li>
       </ul></li>
       <li><a href="curate_gpt.html#curate_gpt.ChromaDBAdapter.dump_then_load">dump_then_load() (curate_gpt.ChromaDBAdapter method)</a>
 
@@ -1440,15 +1452,19 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.ef_construction">ef_construction (curate_gpt.store.duckdb_adapter.DuckDBAdapter attribute)</a>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.ef_construction">ef_construction (curate_gpt.store.db_metadata.DBSettings attribute)</a>
 
       <ul>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.ef_construction">(curate_gpt.store.duckdb_adapter.DuckDBAdapter attribute)</a>
+</li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.DuckDBAdapter.ef_construction">(curate_gpt.store.DuckDBAdapter attribute)</a>
 </li>
       </ul></li>
-      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.ef_search">ef_search (curate_gpt.store.duckdb_adapter.DuckDBAdapter attribute)</a>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.ef_search">ef_search (curate_gpt.store.db_metadata.DBSettings attribute)</a>
 
       <ul>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.ef_search">(curate_gpt.store.duckdb_adapter.DuckDBAdapter attribute)</a>
+</li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.DuckDBAdapter.ef_search">(curate_gpt.store.DuckDBAdapter attribute)</a>
 </li>
       </ul></li>
@@ -1810,6 +1826,12 @@
 </li>
       <li><a href="curate_gpt.app.html#curate_gpt.app.state.ApplicationState.get_page_state">get_page_state() (curate_gpt.app.state.ApplicationState method)</a>
 </li>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.get_raw_objects">get_raw_objects() (curate_gpt.store.duckdb_adapter.DuckDBAdapter method)</a>
+
+      <ul>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.DuckDBAdapter.get_raw_objects">(curate_gpt.store.DuckDBAdapter method)</a>
+</li>
+      </ul></li>
       <li><a href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.ess_deepdive_wrapper.get_records">get_records() (in module curate_gpt.wrappers.investigation.ess_deepdive_wrapper)</a>
 </li>
       <li><a href="curate_gpt.wrappers.investigation.html#curate_gpt.wrappers.investigation.nmdc_wrapper.get_samples">get_samples() (in module curate_gpt.wrappers.investigation.nmdc_wrapper)</a>
@@ -1818,10 +1840,10 @@
 </li>
       <li><a href="curate_gpt.store.html#curate_gpt.store.get_store">get_store() (in module curate_gpt.store)</a>
 </li>
-      <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.github_wrapper.get_token">get_token() (in module curate_gpt.wrappers.general.github_wrapper)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.github_wrapper.get_token">get_token() (in module curate_gpt.wrappers.general.github_wrapper)</a>
+</li>
       <li><a href="curate_gpt.wrappers.html#curate_gpt.wrappers.get_wrapper">get_wrapper() (in module curate_gpt.wrappers)</a>
 </li>
       <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.github_wrapper.GitHubWrapper">GitHubWrapper (class in curate_gpt.wrappers.general.github_wrapper)</a>
@@ -1868,14 +1890,22 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.github_wrapper.GitHubWrapper.headers">headers (curate_gpt.wrappers.general.github_wrapper.GitHubWrapper property)</a>
 </li>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.CollectionMetadata.hnsw_space">hnsw_space (curate_gpt.store.CollectionMetadata attribute)</a>
+
+      <ul>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.hnsw_space">(curate_gpt.store.db_metadata.DBSettings attribute)</a>
+</li>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.metadata.CollectionMetadata.hnsw_space">(curate_gpt.store.metadata.CollectionMetadata attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.hpoa_wrapper.hpo_ont_adapter">hpo_ont_adapter() (in module curate_gpt.wrappers.clinical.hpoa_wrapper)</a>
 
       <ul>
         <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.maxoa_wrapper.hpo_ont_adapter">(in module curate_gpt.wrappers.clinical.maxoa_wrapper)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.hpoa_by_pub_wrapper.HPOAByPubWrapper">HPOAByPubWrapper (class in curate_gpt.wrappers.clinical.hpoa_by_pub_wrapper)</a>
 </li>
       <li><a href="curate_gpt.wrappers.clinical.html#curate_gpt.wrappers.clinical.hpoa_wrapper.HPOAWrapper">HPOAWrapper (class in curate_gpt.wrappers.clinical.hpoa_wrapper)</a>
@@ -1894,8 +1924,6 @@
         <li><a href="curate_gpt.agents.html#curate_gpt.agents.dragon_agent.PredictedFieldValue.id">(curate_gpt.agents.dragon_agent.PredictedFieldValue attribute)</a>
 </li>
         <li><a href="curate_gpt.evaluation.html#curate_gpt.evaluation.evaluation_datamodel.Task.id">(curate_gpt.evaluation.evaluation_datamodel.Task property)</a>
-</li>
-        <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.id">(curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
 </li>
         <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.github_wrapper.Comment.id">(curate_gpt.wrappers.general.github_wrapper.Comment attribute)</a>
 </li>
@@ -1962,9 +1990,13 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.ids">ids (curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
+</li>
       <li><a href="curate_gpt.wrappers.bio.html#curate_gpt.wrappers.bio.reactome_wrapper.ids_from_tree">ids_from_tree() (in module curate_gpt.wrappers.bio.reactome_wrapper)</a>
 </li>
       <li><a href="curate_gpt.views.html#curate_gpt.views.namer.Namer.ids_to_names">ids_to_names() (curate_gpt.views.namer.Namer method)</a>
+</li>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.include">include (curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
 </li>
       <li><a href="curate_gpt.adhoc.html#curate_gpt.adhoc.gocam_predictor.GOCAMPredictor.include_standard_annotations">include_standard_annotations (curate_gpt.adhoc.gocam_predictor.GOCAMPredictor attribute)</a>
 
@@ -2126,6 +2158,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.load_config">load_config() (curate_gpt.store.db_metadata.DBSettings method)</a>
+</li>
       <li><a href="curate_gpt.wrappers.html#curate_gpt.wrappers.base_wrapper.BaseWrapper.local_store">local_store (curate_gpt.wrappers.base_wrapper.BaseWrapper attribute)</a>
 
       <ul>
@@ -2168,9 +2202,11 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.M">M (curate_gpt.store.duckdb_adapter.DuckDBAdapter attribute)</a>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.M">M (curate_gpt.store.db_metadata.DBSettings attribute)</a>
 
       <ul>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_adapter.DuckDBAdapter.M">(curate_gpt.store.duckdb_adapter.DuckDBAdapter attribute)</a>
+</li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.DuckDBAdapter.M">(curate_gpt.store.DuckDBAdapter attribute)</a>
 </li>
       </ul></li>
@@ -2257,11 +2293,11 @@
       <li><a href="curate_gpt.app.html#curate_gpt.app.cart.CartItem.metadata">metadata (curate_gpt.app.cart.CartItem attribute)</a>
 
       <ul>
-        <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.metadata">(curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
-</li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.in_memory_adapter.Collection.metadata">(curate_gpt.store.in_memory_adapter.Collection attribute)</a>
 </li>
       </ul></li>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.metadatas">metadatas (curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
+</li>
       <li><a href="curate_gpt.evaluation.html#curate_gpt.evaluation.evaluation_datamodel.Task.method">method (curate_gpt.evaluation.evaluation_datamodel.Task attribute)</a>
 </li>
       <li><a href="curate_gpt.evaluation.html#curate_gpt.evaluation.evaluation_datamodel.AggregationMethod.MICRO">MICRO (curate_gpt.evaluation.evaluation_datamodel.AggregationMethod attribute)</a>
@@ -2280,6 +2316,8 @@
         <li><a href="curate_gpt.html#curate_gpt.Extractor.model">(curate_gpt.Extractor property)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.CollectionMetadata.model">(curate_gpt.store.CollectionMetadata attribute)</a>
+</li>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.model">(curate_gpt.store.db_metadata.DBSettings attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.metadata.CollectionMetadata.model">(curate_gpt.store.metadata.CollectionMetadata attribute)</a>
 </li>
@@ -2318,6 +2356,8 @@
         <li><a href="curate_gpt.extract.html#curate_gpt.extract.extractor.AnnotatedObject.model_computed_fields">(curate_gpt.extract.extractor.AnnotatedObject attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.CollectionMetadata.model_computed_fields">(curate_gpt.store.CollectionMetadata attribute)</a>
+</li>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.model_computed_fields">(curate_gpt.store.db_metadata.DBSettings attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_computed_fields">(curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
 </li>
@@ -2381,6 +2421,8 @@
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.CollectionMetadata.model_config">(curate_gpt.store.CollectionMetadata attribute)</a>
 </li>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.model_config">(curate_gpt.store.db_metadata.DBSettings attribute)</a>
+</li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_config">(curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.in_memory_adapter.Collection.model_config">(curate_gpt.store.in_memory_adapter.Collection attribute)</a>
@@ -2436,6 +2478,8 @@
         <li><a href="curate_gpt.extract.html#curate_gpt.extract.extractor.AnnotatedObject.model_fields">(curate_gpt.extract.extractor.AnnotatedObject attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.CollectionMetadata.model_fields">(curate_gpt.store.CollectionMetadata attribute)</a>
+</li>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.model_fields">(curate_gpt.store.db_metadata.DBSettings attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_fields">(curate_gpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
 </li>
@@ -2566,6 +2610,8 @@
 </li>
         <li><a href="curate_gpt.store.html#module-curate_gpt.store.db_adapter">curate_gpt.store.db_adapter</a>
 </li>
+        <li><a href="curate_gpt.store.html#module-curate_gpt.store.db_metadata">curate_gpt.store.db_metadata</a>
+</li>
         <li><a href="curate_gpt.store.html#module-curate_gpt.store.duckdb_adapter">curate_gpt.store.duckdb_adapter</a>
 </li>
         <li><a href="curate_gpt.store.html#module-curate_gpt.store.duckdb_result">curate_gpt.store.duckdb_result</a>
@@ -2575,6 +2621,8 @@
         <li><a href="curate_gpt.store.html#module-curate_gpt.store.metadata">curate_gpt.store.metadata</a>
 </li>
         <li><a href="curate_gpt.store.html#module-curate_gpt.store.schema_proxy">curate_gpt.store.schema_proxy</a>
+</li>
+        <li><a href="curate_gpt.store.html#module-curate_gpt.store.vocab">curate_gpt.store.vocab</a>
 </li>
         <li><a href="curate_gpt.utils.html#module-curate_gpt.utils">curate_gpt.utils</a>
 </li>
@@ -2701,6 +2749,8 @@
         <li><a href="curate_gpt.store.html#curate_gpt.store.CollectionMetadata.name">(curate_gpt.store.CollectionMetadata attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.db_adapter.DBAdapter.name">(curate_gpt.store.db_adapter.DBAdapter attribute)</a>
+</li>
+        <li><a href="curate_gpt.store.html#curate_gpt.store.db_metadata.DBSettings.name">(curate_gpt.store.db_metadata.DBSettings attribute)</a>
 </li>
         <li><a href="curate_gpt.store.html#curate_gpt.store.DBAdapter.name">(curate_gpt.store.DBAdapter attribute)</a>
 </li>
@@ -3666,6 +3716,10 @@
       <li><a href="curate_gpt.wrappers.general.html#curate_gpt.wrappers.general.github_wrapper.Issue.title">title (curate_gpt.wrappers.general.github_wrapper.Issue attribute)</a>
 </li>
       <li><a href="curate_gpt.utils.html#curate_gpt.utils.eval_utils.Outcome.tn">tn (curate_gpt.utils.eval_utils.Outcome attribute)</a>
+</li>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.to_dict">to_dict() (curate_gpt.store.duckdb_result.DuckDBSearchResult method)</a>
+</li>
+      <li><a href="curate_gpt.store.html#curate_gpt.store.duckdb_result.DuckDBSearchResult.to_json">to_json() (curate_gpt.store.duckdb_result.DuckDBSearchResult method)</a>
 </li>
       <li><a href="curate_gpt.utils.html#curate_gpt.utils.vector_algorithms.top_matches">top_matches() (in module curate_gpt.utils.vector_algorithms)</a>
 </li>
