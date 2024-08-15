@@ -399,11 +399,13 @@ class DuckDBAdapter(DBAdapter):
             include = set(include)
         collection = self._get_collection(collection)
         cm = self.collection_metadata(collection)
+        logger.info(f"Collection metadata={cm}")
         if model is None:
             if cm:
                 model = cm.model
             if model is None:
                 model = self.default_model
+        logger.info(f"Model={model}")
         where_conditions = []
         if where:
             where_conditions.append(where)
@@ -418,6 +420,8 @@ class DuckDBAdapter(DBAdapter):
         query_embedding = self._embedding_function(text, model)
         safe_collection_name = f'"{collection}"'
 
+        vec_dimension = self._get_embedding_dimension(model)
+
         # TODO: !VERY IMPORTANT! distance metrics between Chroma and DuckDB have very different, unclear implementations
         # https://duckdb.org/docs/sql/functions/array.html#array_distancearray1-array2
         # https://docs.trychroma.com/guides
@@ -426,8 +430,8 @@ class DuckDBAdapter(DBAdapter):
         # than chromaDBs distance metric
         results = self.conn.execute(
             f"""
-            SELECT *, array_distance(embeddings::FLOAT[{self.vec_dimension}],
-            {query_embedding}::FLOAT[{self.vec_dimension}]) as distance
+            SELECT *, array_distance(embeddings::FLOAT[{vec_dimension}],
+            {query_embedding}::FLOAT[{vec_dimension}]) as distance
             FROM {safe_collection_name}
             {where_clause}
             ORDER BY distance
@@ -462,10 +466,11 @@ class DuckDBAdapter(DBAdapter):
             where_clause = f"WHERE {where_clause}"
         query_embedding = self._embedding_function(text, model=cm.model)
         safe_collection_name = f'"{collection}"'
+        vec_dimension = self._get_embedding_dimension(cm.model)
         results = self.conn.execute(
             f"""
-                    SELECT *, array_distance(embeddings::FLOAT[{self.vec_dimension}],
-                    {query_embedding}::FLOAT[{self.vec_dimension}]) as distance
+                    SELECT *, array_distance(embeddings::FLOAT[{vec_dimension}],
+                    {query_embedding}::FLOAT[{vec_dimension}]) as distance
                     FROM {safe_collection_name}
                     {where_clause}
                     ORDER BY distance
