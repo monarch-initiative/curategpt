@@ -136,22 +136,30 @@ class MappingAgent(BaseAgent):
                     raise ValueError(f"Prompt too long: {prompt}.")
                 kb_results.pop()
         response = model.prompt(prompt)
+        # Need to remove Markdown formatting here or it won't parse as JSON
         response_text = response.text()
+        if response_text.startswith("```json"):
+            response_text = response_text[7:-3]
         mappings = []
-        for m in json.loads(response_text):
-            m = str(m)
-            if m in objects:
-                object_id = objects.get(m)["id"]
-            else:
-                object_id = m
-            mappings.append(
-                Mapping(
-                    subject_id=query,
-                    object_id=object_id,
-                    predicate=MappingPredicate.SAME_AS,
-                    prompt=prompt,
+        try:
+            for m in json.loads(response_text):
+                m = str(m)
+                if m in objects:
+                    object_id = objects.get(m)["id"]
+                else:
+                    object_id = m
+                mappings.append(
+                    Mapping(
+                        subject_id=query,
+                        object_id=object_id,
+                        predicate=MappingPredicate.SAME_AS,
+                        prompt=prompt,
+                    )
                 )
-            )
+        except json.decoder.JSONDecodeError:
+            # This returns an empty set of mappings, but the prompt and response text are retained
+            return MappingSet(mappings=mappings, prompt=prompt, response_text=response_text)
+
         return MappingSet(mappings=mappings, prompt=prompt, response_text=response_text)
 
     def categorize_mappings(

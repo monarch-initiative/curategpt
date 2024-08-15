@@ -240,6 +240,7 @@ def main(verbose: int, quiet: bool):
     "-V",
     help="View/Proxy to use for the database, e.g. bioc.",
 )
+@click.option("--view-settings", help="YAML settings for the view wrapper.")
 @click.option(
     "--glob/--no-glob", default=False, show_default=True, help="Whether to glob the files."
 )
@@ -271,6 +272,7 @@ def index(
     encoding,
     remove_field,
     database_type,
+    view_settings,
     **kwargs,
 ):
     """
@@ -309,7 +311,11 @@ def index(
     if glob:
         files = [str(gf.absolute()) for f in files for gf in Path().glob(f) if gf.is_file()]
     if view:
-        wrapper = get_wrapper(view)
+        view_args = {}
+        if view_settings:
+            view_args = yaml.safe_load(view_settings)
+            logging.info(f"View settings: {view_args}")
+        wrapper = get_wrapper(view, **view_args)
         if not object_type:
             object_type = wrapper.default_object_type
         if not description:
@@ -323,6 +329,8 @@ def index(
             db.remove_collection(collection)
     if model is None:
         model = "openai:"
+    if not files and wrapper:
+        files = ["API"]
     for file in files:
         if encoding == "detect":
             import chardet
@@ -772,6 +780,12 @@ def extract_from_pubmed(
 ):
     """Extract structured knowledge from a publication using its PubMed ID.
 
+    For best results, use the PMID: prefix with PubMed IDs and the PMC: prefix with PMC IDs.
+    Do not include the PMC prefix in the ID.
+
+    Example:
+    curategpt extract-from-pubmed -c ont_hp -o temp/ PMID:31851653
+
     See the `extract` command
     """
     db = get_store(database_type, path)
@@ -802,11 +816,15 @@ def extract_from_pubmed(
     for pmid in ids:
         pmid_esc = pmid.replace(":", "_")
         text = pmw.fetch_full_text(pmid)
-        ao = agent.extract(text, rules=rule, **filtered_kwargs)
-        with open(output_directory / f"{pmid_esc}.yaml", "w") as f:
-            f.write(yaml.dump(ao.object, sort_keys=False))
-        with open(output_directory / f"{pmid_esc}.txt", "w") as f:
-            f.write(text)
+        if not text:
+            logging.warning(f"Could not fetch text for {pmid}")
+            continue
+        else:
+            ao = agent.extract(text, rules=rule, **filtered_kwargs)
+            with open(output_directory / f"{pmid_esc}.yaml", "w") as f:
+                f.write(yaml.dump(ao.object, sort_keys=False))
+            with open(output_directory / f"{pmid_esc}.txt", "w") as f:
+                f.write(text)
 
 
 @main.group()
@@ -1125,16 +1143,10 @@ def review(
     Example:
     -------
 
-        curategpt complete  -c obo_go "umbelliferose biosynthetic process"
+        curategpt review  -c obo_obi "{}" -Z definition -t patch \
+          --primary-key original_id --rule "make definitions simple and easy to read by domain scientists. \
+             At the same time, conform to genus-differentia style and OBO best practice."
 
-    If the string looks like yaml (if it has a ':') then it will be parsed as yaml.
-
-    E.g
-
-        curategpt complete  -c obo_go "label: umbelliferose biosynthetic process"
-
-    Pass ``--extract-format`` to make the extractor use a different internal representation
-    when communicating to the LLM
     """
     where_str = " ".join(where)
     where_q = yaml.safe_load(where_str)
@@ -1268,6 +1280,101 @@ def complete_multiple(
 @collection_option
 @database_type_option
 @docstore_database_type_option
+@model_option
+@limit_option
+@click.option(
+    "-P", "--query-property", default="label", show_default=True, help="Property to use for query."
+)
+@click.option(
+    "--fields-to-predict",
+    multiple=True,
+)
+@click.option(
+    "--number-of-entries",
+    "-N",
+    default=5,
+    show_default=True,
+    help="number of entries to generate",
+)
+@click.option(
+    "--docstore-path",
+    default=None,
+    help="Path to a docstore to for additional unstructured knowledge.",
+)
+@click.option("--docstore-collection", default=None, help="Collection to use in the docstore.")
+@generate_background_option
+@click.option(
+    "--rule",
+    multiple=True,
+    help="Rule to use for generating background knowledge.",
+)
+@schema_option
+@extract_format_option
+@output_format_option
+def complete_auto(
+    path,
+    collection,
+    docstore_path,
+    docstore_collection,
+    rule: List[str],
+    model,
+    query_property,
+    schema,
+    output_format,
+    extract_format,
+    number_of_entries,
+    **kwargs,
+):
+    """
+    Generate new KB entries, using model to choose new entities.
+
+    Example:
+    -------
+        curategpt complete-auto -c obo_go -N 5
+    """
+    db = ChromaDBAdapter(path)
+    if schema:
+        schema_manager = SchemaProxy(schema)
+    else:
+        schema_manager = None
+
+    # TODO: generalize
+    filtered_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    extractor = BasicExtractor(serialization_format=extract_format)
+    if model:
+        extractor.model_name = model
+    if schema_manager:
+        db.schema_proxy = schema
+        extractor.schema_proxy = schema_manager
+    dac = DragonAgent(knowledge_source=db, extractor=extractor)
+    if docstore_path or docstore_collection:
+        dac.document_adapter = ChromaDBAdapter(docstore_path)
+        dac.document_adapter_collection = docstore_collection
+    i = 0
+    while i < number_of_entries:
+        queries = dac.generate_queries(
+            context_property=query_property, n=number_of_entries, collection=collection
+        )
+        logging.info(f"SUGGESTIONS: {queries}")
+        if not queries:
+            raise ValueError("No results")
+        for query in queries:
+            logging.info(f"SUGGESTION: {query}")
+            ao = dac.complete(
+                query,
+                context_property=query_property,
+                rules=rule,
+                collection=collection,
+                **filtered_kwargs,
+            )
+            print("---")
+            dump(ao.object, format=output_format)
+            i += 1
+
+
+@main.command()
+@path_option
+@collection_option
 @click.option(
     "-C/--no-C",
     "--conversation/--no-conversation",
@@ -1739,8 +1846,8 @@ def apply_patch(input_file, patch, primary_key):
                 logging.debug(f"Applying: {actual_patch}")
                 jsonpatch.apply_patch(inner_obj, actual_patch, in_place=True)
     else:
-        for _obj in objs:
-            jsonpatch.apply_patch(objs, patch, in_place=True)
+        for obj in objs:
+            jsonpatch.apply_patch(obj, patch, in_place=True)
     logging.info(f"Writing patch output for {len(objs)} objects")
     for obj in objs:
         print("---")
@@ -2404,13 +2511,19 @@ def view_index(
 @click.option("--source-locator")
 @limit_option
 @model_option
+@click.option(
+    "--expand/--no-expand",
+    default=True,
+    show_default=True,
+    help="Whether to expand the search term using an LLM.",
+)
 @click.argument("query")
-def view_ask(query, view, model, limit, **kwargs):
+def view_ask(query, view, model, limit, expand, **kwargs):
     """Ask a knowledge source wrapper."""
     vstore: BaseWrapper = get_wrapper(view)
     vstore.extractor = BasicExtractor(model_name=model)
     chatbot = ChatAgent(knowledge_source=vstore)
-    response = chatbot.chat(query, limit=limit)
+    response = chatbot.chat(query, limit=limit, expand=expand)
     show_chat_response(response, True)
 
 

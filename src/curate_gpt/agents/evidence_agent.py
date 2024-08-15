@@ -199,6 +199,6 @@ class EvidenceAgent(BaseAgent):
                     if isinstance(sub_obj, dict):
                         _add_evidence(sub_obj)
             elif isinstance(v, dict):
-                _add_evidence(sub_obj)
+                _add_evidence(v)
         logger.info(f"Found {len(new_evidences)} evidence objects.")
         return obj

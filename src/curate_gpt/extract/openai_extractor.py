@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import List
 
 import openai
-import yaml
 
 from curate_gpt.extract.extractor import AnnotatedObject, Extractor
 
@@ -53,7 +52,7 @@ class OpenAIExtractor(Extractor):
         for example in examples:
             ex_text = example.text
             ex_object = example.object
-            print(f"EXAMPLE = {ex_text}")
+            # print(f"EXAMPLE = {ex_text}")
             messages.append(
                 {
                     "role": "user",
@@ -89,7 +88,7 @@ class OpenAIExtractor(Extractor):
                 "content": content,
             }
         )
-        print(yaml.dump(messages))
+        # print(yaml.dump(messages))
         response = openai.ChatCompletion.create(
             model=self.model,
             functions=self.functions(),
@@ -97,7 +96,7 @@ class OpenAIExtractor(Extractor):
             max_tokens=self.max_tokens,
         )
         logger.debug(f"RESPONSE = {response}")
-        print(response)
+        # print(response)
         choice = response.choices[0]
         message = choice["message"]
         if "function_call" not in message:

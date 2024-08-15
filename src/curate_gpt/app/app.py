@@ -190,6 +190,8 @@ def ask_chatbot(query, expand=False) -> ChatResponse:
 
 
 def html_table(rows: List[dict]) -> str:
+    if len(rows) == 0:
+        rows = [{"No data": "No data"}]
     hdr = rows[0].keys()
     html_content = '<table border="1">'
     cols = [f"<th>{h}</th>" for h in hdr]

@@ -343,6 +343,7 @@ class ChromaDBAdapter(DBAdapter):
         limit=10,
         include=None,
         relevance_factor: float = None,
+        expand: bool = None,
         **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         logger.info(f"Searching for {text} in {collection}")
