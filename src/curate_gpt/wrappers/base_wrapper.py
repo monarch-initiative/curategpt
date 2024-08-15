@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class BaseWrapper(ABC):
+class BaseWrapper(ABC):  # noqa: B024
     """
     A virtual store that implements a view over some remote or external source.
     """
@@ -69,7 +69,7 @@ class BaseWrapper(ABC):
         db = self.local_store
         if db is None:
             tmpdir = Path("/tmp")
-            db = ChromaDBAdapter(tmpdir)
+            db = ChromaDBAdapter(str(tmpdir))
         if collection is None:
             collection = self._cached_collection_name(is_temp=not cache)
         if not cache:

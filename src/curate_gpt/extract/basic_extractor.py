@@ -126,5 +126,5 @@ class BasicExtractor(Extractor):
                     obj = {}
             return AnnotatedObject(object=obj)
         except Exception as e:
-            logger.warning(f"Could not parse {text}")
+            logger.warning(f"Could not parse {text} due to {e}")
             return AnnotatedObject(object={})

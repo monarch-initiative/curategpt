@@ -306,10 +306,10 @@ class DragonAgent(BaseAgent):
         Your are an expert database curator. Your job is to take an input record and review it for correctness,
         completeness, and consistency. In particular, the input record may be incomplete so you should
         use your expert domain knowledge to fill things in more detail and granularity,
-        
+
         I will give you a list of example objects that are similar to the
         input record for you to follow as a guide to the schema (but these may themselves be incomplete).
-        
+
         You should return results in YAML in a ```yaml...``` block.
         You should follow the examples for a consistent schema, but you can add an optional
         `review_notes:` field at either the top level or within individual objects to provide additional
@@ -317,7 +317,7 @@ class DragonAgent(BaseAgent):
         """
         if rules:
             system += f"\n\nAdditional considerations: {'. '.join(list(rules))}"
-        prompt = f"Example records:\n\n" + "\n\n".join(texts)
+        prompt = "Example records:\n\n" + "\n\n".join(texts)
 
         prompt += f"\n\nInput record:\n\n{_obj_as_str(obj)}"
         response = self.extractor.model.prompt(prompt, system=system)

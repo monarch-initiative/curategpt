@@ -1,15 +1,15 @@
 import json
 import logging
 import sys
-from copy import deepcopy, copy
+from copy import copy, deepcopy
 from dataclasses import dataclass, field
-from typing import Dict, Any, Union, List, Optional, Set
+from typing import Any, Dict, List, Optional, Union
 
 import click
 import yaml
 from openai import BaseModel
 
-from curate_gpt import DBAdapter, BasicExtractor
+from curate_gpt import BasicExtractor, DBAdapter
 from curate_gpt.store import get_store
 from curate_gpt.wrappers.bio.gocam_wrapper import GOCAMWrapper
 
@@ -216,11 +216,11 @@ def best_matches(pred_rels, exp_rels) -> List[Outcome]:
     max_row_indices = np.argmax(outcome_matrix, axis=1)
     max_col_indices = np.argmax(outcome_matrix, axis=0)
     best = []
-    for i, pred_rel in enumerate(pred_rels):
+    for i, _pred_rel in enumerate(pred_rels):
         best_j = max_row_indices[i]
         best.append((i, best_j))
         outcomes.append(outcome_ix[(i, best_j)])
-    for j, exp_rel in enumerate(exp_rels):
+    for j, _exp_rel in enumerate(exp_rels):
         best_i = max_col_indices[j]
         if (best_i, j) not in best:
             best.append((best_i, j))
@@ -292,23 +292,23 @@ class GOCAMPredictor:
                 """
         prompt = f"""
         I will first provide the GO-CAM as YAML:
-        
+
         ```yaml
         {gocam_yaml}
         ```
-        
+
         Your job is to fill in this stub:
-        
+
         ```yaml
         {stub_yaml}
         ```
-        
+
         Provide YAML *ONLY* for this activity. DO NOT provide or correct
         YAML for existing activities. Try and include all relevant fields:
         gene, activity, process, and relationships.
-        
+
         Example:
-        
+
         ```yaml
         gene: <GeneName>
         activity: <MolecularActivityName>
@@ -319,7 +319,7 @@ class GOCAMPredictor:
             target_gene: <TargetGeneName>
             target_activity: <TargetMolecularActivityName>
         ```
-        
+
         In your response, enclose the YAML in triple backticks.
         """
         logger.debug(f"System: {system}")

@@ -4,12 +4,10 @@ import json
 import logging
 import os
 from dataclasses import dataclass, field
-from time import sleep
-from typing import ClassVar, Dict, Iterable, Iterator, Optional, List
+from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests
 import requests_cache
-from oaklib import BasicOntologyInterface, get_adapter
 
 from curate_gpt.wrappers import BaseWrapper
 

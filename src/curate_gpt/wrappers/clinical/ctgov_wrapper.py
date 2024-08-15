@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar, Dict, List, Optional
 
 import requests
+import requests_cache
 from oaklib import BasicOntologyInterface
 
 from curate_gpt.wrappers import BaseWrapper

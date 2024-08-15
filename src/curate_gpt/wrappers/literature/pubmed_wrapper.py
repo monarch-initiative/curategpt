@@ -302,8 +302,6 @@ class PubmedWrapper(BaseWrapper):
             logger.debug(f"Sleeping for {RATE_LIMIT_DELAY} seconds")
             time.sleep(RATE_LIMIT_DELAY)
         if not efetch_response.ok:
-            logger.error(f"Failed to fetch data for {pubmed_ids}")
-            raise ValueError(
-                f"Failed to fetch data for {pubmed_ids} using {session} and {efetch_params}"
-            )
+            logger.error(f"Failed to fetch data for {pmc_id}")
+            raise ValueError(f"Failed to fetch data for {pmc_id} using {session} and {params}")
         return efetch_response.text

@@ -31,3 +31,6 @@ class CollectionMetadata(BaseModel):
 
     object_count: Optional[int] = None
     """Number of objects in the collection"""
+
+    hnsw_space: Optional[str] = None
+    """Space used for hnsw index (e.g. 'cosine')"""
