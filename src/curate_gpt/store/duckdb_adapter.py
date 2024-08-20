@@ -174,36 +174,6 @@ class DuckDBAdapter(DBAdapter):
         """
         self.conn.execute(create_index_sql)
 
-    def _embedding_function_langchain(self, texts: Union[str, List[str], List[List[str]]], model: str = None) -> list:
-        """
-        Get the embeddings for the given texts using the specified model
-        :param texts: A single text or a list of texts or list of list of texts to embed
-        :param model: Model to use for embedding, defaults to "text-embedding-ada-002" if none provided
-        :return: A list of embeddings or a list of list of embeddings depending on input format
-        """
-        if model is None:
-            model = "text-embedding-ada-002"  # Default model
-
-        # Flatten the input if it's a list of lists
-        flatten = False
-        if any(isinstance(i, list) for i in texts):
-            original_structure = [len(sublist) for sublist in texts if isinstance(sublist, list)]
-            texts = [item for sublist in texts for item in sublist]  # Flatten the list
-            flatten = True
-
-        embeddings = embeddings.embed_documents(texts, model)
-
-        # If the input was a list of lists, reconstruct the nested list structure
-        if flatten:
-            new_embeddings = []
-            index = 0
-            for size in original_structure:
-                new_embeddings.append(embeddings[index:index + size])
-                index += size
-            embeddings = new_embeddings
-
-        return embeddings
-
     def _embedding_function(self, texts: Union[str, List[str], List[List[str]]], model: str = None) -> list:
         """
         Get the embeddings for the given texts using the specified model
