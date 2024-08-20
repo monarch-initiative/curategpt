@@ -1,21 +1,15 @@
-import itertools
 import os
 import shutil
-import time
-from dataclasses import dataclass
-from pathlib import Path
 from typing import Dict
 
 import pytest
 import yaml
-
-from curate_gpt.store import CollectionMetadata
-from curate_gpt.store.duckdb_adapter import DuckDBAdapter
-from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.wrappers.ontology import OntologyWrapper
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 from oaklib import get_adapter
 
+from curate_gpt.store.duckdb_adapter import DuckDBAdapter
+from curate_gpt.store.schema_proxy import SchemaProxy
+from curate_gpt.wrappers.ontology import OntologyWrapper
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_DIR, OUTPUT_DUCKDB_PATH
 
 EMPTY_DB_PATH = os.path.join(OUTPUT_DIR, "empty_duckdb")
@@ -165,7 +159,7 @@ def test_ontology_matches(ontology_db):
 
     first_obj = results[0][0]
     print("the id", first_obj["id"])
-    first_meta = results[0][2]
+    # first_meta = results[0][2]
     new_id, new_definition = "Palm Beach", "A beach with palm trees"
     updated_obj = {
         "id": new_id,

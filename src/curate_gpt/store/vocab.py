@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union, Dict, List, Tuple, Optional, TextIO
+from typing import Dict, List, Optional, TextIO, Tuple, Union
 
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel

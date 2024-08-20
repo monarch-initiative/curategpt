@@ -1,6 +1,7 @@
 import re
 
 import pytest
+
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
 
