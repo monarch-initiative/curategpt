@@ -14,8 +14,17 @@ from jsonlines import jsonlines
 
 from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.store.vocab import OBJECT, SEARCH_RESULT, QUERY, PROJECTION, FILE_LIKE, EMBEDDINGS, DOCUMENTS, \
-    METADATAS, DEFAULT_COLLECTION
+from curate_gpt.store.vocab import (
+    OBJECT,
+    SEARCH_RESULT,
+    QUERY,
+    PROJECTION,
+    FILE_LIKE,
+    EMBEDDINGS,
+    DOCUMENTS,
+    METADATAS,
+    DEFAULT_COLLECTION,
+)
 
 logger = logging.getLogger(__name__)
 

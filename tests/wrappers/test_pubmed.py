@@ -6,7 +6,6 @@ from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature import PubmedWrapper
-
 from tests import OUTPUT_DIR
 
 TEMP_PUBMED_DB = OUTPUT_DIR / "pmid_tmp"

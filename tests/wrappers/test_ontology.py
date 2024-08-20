@@ -2,11 +2,11 @@ import logging
 import shutil
 
 import pytest
+from oaklib import get_adapter
+
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
-from oaklib import get_adapter
-
 from tests import INPUT_DIR, OUTPUT_DIR
 
 TEMP_OAKVIEW_DB = OUTPUT_DIR / "oaktmp"
