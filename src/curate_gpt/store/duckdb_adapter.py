@@ -10,7 +10,7 @@ import re
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Union
-from langchain_openai import OpenAIEmbeddings
+import llm
 import duckdb
 import numpy as np
 import openai
@@ -33,6 +33,8 @@ from curate_gpt.store.vocab import (
     IDS,
     METADATAS,
     MODEL_DIMENSIONS,
+    MODEL_MAP,
+    DEFAULT_MODEL,
     MODELS,
     OBJECT,
     OPENAI_MODEL_DIMENSIONS,
@@ -192,12 +194,12 @@ class DuckDBAdapter(DBAdapter):
         if model.startswith("openai:"):
             self._initialize_openai_client()
             openai_model = model.split(":", 1)[1]
-            if openai_model == "" or openai_model not in MODELS:
+            if openai_model == "" or openai_model not in MODEL_MAP.keys():
                 logger.info(
                     f"The model {openai_model} is not "
-                    f"one of {MODELS}. Defaulting to {MODELS[1]}"
+                    f"one of {[MODEL_MAP.keys()]}. Defaulting to {DEFAULT_MODEL}"
                 )
-                openai_model = MODELS[1]
+                openai_model = DEFAULT_MODEL
 
             responses = [
                 self.openai_client.embeddings.create(input=text, model=openai_model)
@@ -343,10 +345,10 @@ class DuckDBAdapter(DBAdapter):
         else:
             if model.startswith("openai:"):
                 openai_model = model.split(":", 1)[1]
-                if openai_model == "" or openai_model not in MODELS:
+                if openai_model == "" or openai_model not in MODEL_MAP.keys():
                     logger.info(f"The model {openai_model} is not "
-                                f"one of {MODELS}. Defaulting to {MODELS[0]}")
-                    openai_model = MODELS[0] #ada 002
+                                f"one of {MODEL_MAP.keys()}. Defaulting to {DEFAULT_MODEL}")
+                    openai_model = DEFAULT_MODEL #ada 002
                 else:
                     logger.error(f"Something went wonky ## model: {model}")
             from transformers import GPT2Tokenizer
@@ -373,11 +375,12 @@ class DuckDBAdapter(DBAdapter):
                         i += 1
                     else:
                         if current_batch:
-                            logger.info(f"Curent token count to embed: {current_token_count}")
+                            logger.info(f"Tokens: {current_token_count}")
                             texts = [tokenizer.decode(tokens) for tokens in current_batch]
-                            embeddings = OpenAIEmbeddings(model=openai_model, tiktoken_model_name=model).embed_documents(texts,
-                                                                                                                  openai_model)
-                            logger.info(f"len embeddings: {len(embeddings)}")
+                            short_name, _ = MODEL_MAP[openai_model]
+                            embedding_model = llm.get_embedding_model(short_name)
+                            embeddings = list(embedding_model.embed_multi(texts))
+                            logger.info(f"Number of Documents in batch: {len(embeddings)}")
                             batch_embeddings.extend(embeddings)
 
                         if len(doc_tokens) > 8192:
@@ -385,7 +388,7 @@ class DuckDBAdapter(DBAdapter):
                                 f"Document with ID {ids[i]} exceeds the token limit alone and will be skipped.")
                             # try:
                             #     embeddings = OpenAIEmbeddings(model=model, tiktoken_model_name=model).embed_query(texts,
-                            #                                                                                       model)
+                            #     embeddings.average                                                                                model)
                             #     batch_embeddings.extend(embeddings)
                             # skipping
                             i += 1
@@ -395,9 +398,11 @@ class DuckDBAdapter(DBAdapter):
                             current_token_count = 0
 
                 if current_batch:
+                    logger.info(f"Last batch, token count: {current_token_count}")
                     texts = [tokenizer.decode(tokens) for tokens in current_batch]
-                    embeddings = OpenAIEmbeddings(model=openai_model, tiktoken_model_name=openai_model).embed_documents(texts,
-                                                                                                                        openai_model)
+                    short_name, _ = MODEL_MAP[openai_model]
+                    embedding_model = llm.get_embedding_model(short_name)
+                    embeddings = list(embedding_model.embed_multi(texts))
                     batch_embeddings.extend(embeddings)
                 logger.info(f"Trying to insert: {len(ids)} IDS, {len(metadatas)} METADATAS, {len(batch_embeddings)} EMBEDDINGS")
                 try:
