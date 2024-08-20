@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, ConfigDict, Extra
 
 
 class Relationship(BaseModel):
@@ -10,6 +10,7 @@ class Relationship(BaseModel):
     Corresponds to an edge in an OBO graph.
     """
 
+    model_config = ConfigDict(protected_namespaces=())
     predicate: str
     target: str
 
@@ -21,6 +22,7 @@ class OntologyClass(BaseModel, extra=Extra.allow):
     Corresponds to a node in an OBO graph.
     """
 
+    model_config = ConfigDict(protected_namespaces=())
     id: str
     label: str = None
     definition: str = None
@@ -37,4 +39,5 @@ class Ontology(BaseModel):
     Corresponds to an OBO graph.
     """
 
+    model_config = ConfigDict(protected_namespaces=())
     elements: List[OntologyClass] = None

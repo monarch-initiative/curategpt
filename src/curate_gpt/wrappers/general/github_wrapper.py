@@ -8,7 +8,7 @@ from typing import ClassVar, Dict, Iterable, Iterator, List, Optional
 
 import requests
 import requests_cache
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.wrappers.base_wrapper import BaseWrapper
 
@@ -16,12 +16,14 @@ logger = logging.getLogger(__name__)
 
 
 class Comment(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     id: str
     user: str = None
     body: str = None
 
 
 class Issue(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     id: str
     number: int = None
     type: str = None

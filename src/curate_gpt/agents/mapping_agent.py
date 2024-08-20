@@ -10,7 +10,7 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import inflection
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.store.db_adapter import SEARCH_RESULT
@@ -46,12 +46,15 @@ class MappingPredicate(str, Enum):
 class Mapping(BaseModel):
     """Response from chat engine."""
 
+    model_config = ConfigDict(protected_namespaces=())
     subject_id: str
     object_id: str
     predicate_id: Optional[MappingPredicate] = None
 
 
 class MappingSet(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
     mappings: List[Mapping]
     prompt: str = None
     response_text: str = None

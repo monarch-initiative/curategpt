@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, ClassVar, Dict, List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.agents.chat_agent import ChatResponse
@@ -17,6 +17,8 @@ OBJECT = Dict[str, Any]
 
 
 class PredictedFieldValue(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
     id: str
     original_id: Optional[str] = None
     predicted_value: Optional[str] = None

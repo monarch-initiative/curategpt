@@ -4,7 +4,7 @@ from typing import Dict, Optional, Union
 
 from linkml_runtime import SchemaView
 from linkml_runtime.linkml_model import SchemaDefinition
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 @dataclass
@@ -12,6 +12,8 @@ class SchemaProxy:
     """
     Manage connection to a schema
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     schema_source: Union[str, Path, SchemaDefinition] = None
     _pydantic_root_model: BaseModel = None

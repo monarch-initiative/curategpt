@@ -3,12 +3,15 @@ from typing import Any, Dict, List, Optional, Set, Iterator, Tuple
 
 import jsonlines
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 SEARCH_RESULT = Tuple[Dict[str, Any], Dict, float, Optional[Dict]]
 
 
 class DuckDBSearchResult(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
+
     ids: Optional[str] = None
     metadatas: Optional[Dict[str, Any]] = None
     embeddings: Optional[List[float]] = None

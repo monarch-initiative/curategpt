@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import llm
 from linkml_runtime import SchemaView
 from pydantic import BaseModel as BaseModel
+from pydantic import ConfigDict
 
 from curate_gpt.store.schema_proxy import SchemaProxy
 
@@ -19,6 +20,8 @@ class AnnotatedObject(BaseModel):
     """
     Annotated object shadows a basic dictionary object
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     # object: Union[Dict[str, Any], List[Dict[str, Any]]] = {} - TODO: pydantic bug?
     object: Any = {}

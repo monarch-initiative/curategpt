@@ -7,15 +7,17 @@ from curate_gpt.extract.openai_extractor import OpenAIExtractor
 from curate_gpt.extract.recursive_extractor import RecursiveExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
 from linkml_runtime.utils.schema_builder import SchemaBuilder
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Occupation(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     category: str
     current: bool
 
 
 class Person(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     name: str
     age: int
     occupations: List[Occupation]

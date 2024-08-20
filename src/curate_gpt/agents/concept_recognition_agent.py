@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.agents.base_agent import BaseAgent
 
@@ -17,6 +17,8 @@ CONCEPT = Tuple[str, str]
 
 class Span(BaseModel):
     """An individual span of text containing a single concept."""
+
+    model_config = ConfigDict(protected_namespaces=())
 
     text: str
 
@@ -35,6 +37,8 @@ class Span(BaseModel):
 
 class GroundingResult(BaseModel):
     """Result of grounding text."""
+
+    model_config = ConfigDict(protected_namespaces=())
 
     input_text: str
     """Text that is supplied for grounding, assumed to contain a single context."""
@@ -61,6 +65,8 @@ class AnnotationMethod(str, Enum):
 
 class AnnotatedText(BaseModel):
     """In input text annotated with concept instances."""
+
+    model_config = ConfigDict(protected_namespaces=())
 
     input_text: str
     """Text that is supplied for annotation."""
