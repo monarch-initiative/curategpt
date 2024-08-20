@@ -415,7 +415,7 @@ def search(query, path, collection, show_documents, database_type, **kwargs):
     db = get_store(database_type, path)
     results = db.search(query, collection=collection, **kwargs)
     i = 0
-    for obj, distance, meta in results:
+    for obj, distance, _meta in results:
         i += 1
         print(f"## {i} DISTANCE: {distance}")
         print(yaml.dump(obj, sort_keys=False))
@@ -537,7 +537,7 @@ def matches(id, path, collection, database_type):
     print(obj)
     results = db.matches(obj, collection=collection)
     i = 0
-    for obj, distance, meta in results:
+    for obj, distance, _meta in results:
         i += 1
         print(f"## ID:- {obj['id']}")
         print(f"## DISTANCE- {distance}")

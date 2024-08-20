@@ -1,4 +1,5 @@
 import pytest
+
 from curate_gpt.agents import MappingAgent
 from curate_gpt.agents.mapping_agent import MappingPredicate
 from curate_gpt.extract import BasicExtractor

@@ -2,6 +2,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 import yaml
+from pydantic import BaseModel
 
 
 class DBSettings(BaseModel):
@@ -19,7 +20,7 @@ class DBSettings(BaseModel):
 
     ef_construction: int = 128
     """
-    Construction parameter for hnsw index. 
+    Construction parameter for hnsw index.
     Higher values are more accurate but slower.
     """
 

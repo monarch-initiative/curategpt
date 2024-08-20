@@ -1,5 +1,4 @@
 from curate_gpt.wrappers import get_wrapper
-
 from tests import INPUT_DIR
 
 

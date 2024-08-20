@@ -9,7 +9,6 @@ import os
 import re
 import time
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Union
 
 import duckdb
@@ -27,21 +26,21 @@ from sentence_transformers import SentenceTransformer
 from curate_gpt.store.db_adapter import DBAdapter
 from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from curate_gpt.store.metadata import CollectionMetadata
-from curate_gpt.utils.vector_algorithms import mmr_diversified_search
 from curate_gpt.store.vocab import (
-    OBJECT,
-    QUERY,
-    PROJECTION,
-    EMBEDDINGS,
+    DISTANCES,
     DOCUMENTS,
+    EMBEDDINGS,
+    IDS,
     METADATAS,
     MODEL_DIMENSIONS,
     MODELS,
+    OBJECT,
     OPENAI_MODEL_DIMENSIONS,
-    IDS,
+    PROJECTION,
+    QUERY,
     SEARCH_RESULT,
-    DISTANCES,
 )
+from curate_gpt.utils.vector_algorithms import mmr_diversified_search
 
 logger = logging.getLogger(__name__)
 
