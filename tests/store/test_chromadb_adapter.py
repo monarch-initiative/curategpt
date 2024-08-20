@@ -183,7 +183,7 @@ def test_ontology_matches(ontology_db):
     first_obj = results[0][0]
     new_definition = "A beach with palm trees"
     updated_obj = {
-        "id": first_obj['id'],
+        "id": first_obj["id"],
         "label": first_obj["label"],
         "definition": new_definition,
         "aliases": first_obj["aliases"],
@@ -197,20 +197,18 @@ def test_ontology_matches(ontology_db):
     # if you wish to update an ID you must insert a new one
     ontology_db.update([updated_obj], collection=collection)
     # verify update
-    updated_res = ontology_db.lookup(first_obj['id'], collection=collection)
-    assert updated_res['id'] == first_obj['id']
-    assert updated_res['definition'] == new_definition
-    assert updated_res['label'] == first_obj['label']
+    updated_res = ontology_db.lookup(first_obj["id"], collection=collection)
+    assert updated_res["id"] == first_obj["id"]
+    assert updated_res["definition"] == new_definition
+    assert updated_res["label"] == first_obj["label"]
 
     # test upsert
-    new_obj_insert = {
-        "id": "Palm Beach",
-        "key": "value"
-    }
+    new_obj_insert = {"id": "Palm Beach", "key": "value"}
     ontology_db.upsert([new_obj_insert], collection="test_collection")
     # verify upsert
     new_results = ontology_db.lookup("Palm Beach", collection="test_collection")
-    assert new_results['key'] == "value"
+    assert new_results["key"] == "value"
+
 
 @pytest.mark.parametrize(
     "where,num_expected,limit",
