@@ -243,6 +243,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.store.schema_proxy">curate_gpt.store.schema_proxy module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.schema_proxy.SchemaProxy"><code class="docutils literal notranslate"><span class="pre">SchemaProxy</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.schema_proxy.SchemaProxy.json_schema"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.json_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.schema_proxy.SchemaProxy.model_config"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.schema_proxy.SchemaProxy.name"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.schema_proxy.SchemaProxy.pydantic_root_model"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.pydantic_root_model</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.schema_proxy.SchemaProxy.schema"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.schema</span></code></a></li>
@@ -362,6 +363,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.store.SchemaProxy"><code class="docutils literal notranslate"><span class="pre">SchemaProxy</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.SchemaProxy.json_schema"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.json_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.SchemaProxy.model_config"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.SchemaProxy.name"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.SchemaProxy.pydantic_root_model"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.pydantic_root_model</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.store.SchemaProxy.schema"><code class="docutils literal notranslate"><span class="pre">SchemaProxy.schema</span></code></a></li>
@@ -1296,7 +1298,7 @@ Higher values are more accurate but slower.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.db_metadata.DBSettings.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.model_config" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curate_gpt.store.db_metadata.DBSettings.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
@@ -1704,7 +1706,7 @@ are updated.
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.duckdb_result.DuckDBSearchResult.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_config" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curate_gpt.store.duckdb_result.DuckDBSearchResult.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
@@ -1769,7 +1771,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.in_memory_adapter.Collection.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.in_memory_adapter.Collection.model_config" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curate_gpt.store.in_memory_adapter.Collection.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
@@ -1815,7 +1817,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.in_memory_adapter.CollectionIndex.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.in_memory_adapter.CollectionIndex.model_config" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curate_gpt.store.in_memory_adapter.CollectionIndex.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
@@ -2140,7 +2142,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.metadata.CollectionMetadata.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.metadata.CollectionMetadata.model_config" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curate_gpt.store.metadata.CollectionMetadata.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
@@ -2193,6 +2195,11 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 :rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>
 :return:</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.schema_proxy.SchemaProxy.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curate_gpt.store.schema_proxy.SchemaProxy.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="curate_gpt.store.schema_proxy.SchemaProxy.name">
@@ -2659,7 +2666,7 @@ in the future.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curate_gpt.store.CollectionMetadata.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curate_gpt.store.CollectionMetadata.model_config" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curate_gpt.store.CollectionMetadata.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
@@ -3519,6 +3526,11 @@ are updated.
 :rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>
 :return:</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curate_gpt.store.SchemaProxy.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curate_gpt.store.SchemaProxy.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="curate_gpt.store.SchemaProxy.name">
