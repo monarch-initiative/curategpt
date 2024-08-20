@@ -3,7 +3,7 @@ from typing import Dict
 
 import yaml
 from jinja2 import Template
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.conf.prompts import PROMPTS_DIR
@@ -11,6 +11,7 @@ from curate_gpt.extract import AnnotatedObject
 
 
 class KnowledgeBaseSpecification(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     kb_name: str
     description: str
     attributes: str

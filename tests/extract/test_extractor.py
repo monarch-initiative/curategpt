@@ -2,7 +2,7 @@ from typing import List
 
 import pytest
 from linkml_runtime.utils.schema_builder import SchemaBuilder
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.extract.extractor import AnnotatedObject
@@ -12,11 +12,13 @@ from curate_gpt.store.schema_proxy import SchemaProxy
 
 
 class Occupation(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     category: str
     current: bool
 
 
 class Person(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     name: str
     age: int
     occupations: List[Occupation]

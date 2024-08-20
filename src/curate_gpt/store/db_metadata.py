@@ -1,10 +1,13 @@
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class DBSettings(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
+
     name: str = "duckdb"
     """Name of the database."""
 

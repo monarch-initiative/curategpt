@@ -2,7 +2,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class StratifiedCollection(BaseModel):
@@ -10,6 +10,7 @@ class StratifiedCollection(BaseModel):
     A collection of objects that have been split into training, test, and validation sets.
     """
 
+    model_config = ConfigDict(protected_namespaces=())
     source: str = None
     training_set: List[Dict] = None
     testing_set: List[Dict] = None
@@ -33,6 +34,8 @@ class AggregationMethod(str, Enum):
 
 
 class ClassificationMetrics(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
     precision: float
     recall: float
     f1_score: float
@@ -49,6 +52,7 @@ class Task(BaseModel):
     A task to be run by the evaluation runner.
     """
 
+    model_config = ConfigDict(protected_namespaces=())
     model_name: str = "gpt-3.5-turbo"
     embedding_model_name: str = "openai:"
     generate_background: bool = False

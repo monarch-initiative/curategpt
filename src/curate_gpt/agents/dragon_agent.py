@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import Any, ClassVar, Dict, Iterable, List, Optional, Tuple, Union
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.extract import AnnotatedObject
@@ -17,6 +17,8 @@ OBJECT = Dict[str, Any]
 
 
 class PredictedFieldValue(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
     id: str
     original_id: Optional[str] = None
     predicted_value: Optional[str] = None

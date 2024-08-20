@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt import DBAdapter
 from curate_gpt.store.db_adapter import OBJECT, PROJECTION, QUERY, SEARCH_RESULT
@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 class Collection(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
+
     objects: List[Dict] = []
     metadata: Dict = {}
 
@@ -25,6 +28,9 @@ class Collection(BaseModel):
 
 
 class CollectionIndex(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
+
     collections: Dict[str, Collection] = {}
 
     def get_collection(self, name: str) -> Collection:

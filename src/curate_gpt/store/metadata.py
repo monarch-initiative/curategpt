@@ -1,6 +1,6 @@
 from typing import Dict, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class CollectionMetadata(BaseModel):
@@ -9,6 +9,8 @@ class CollectionMetadata(BaseModel):
 
     This is an open class, so additional metadata can be added.
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     name: Optional[str] = None
     """Name of the collection"""

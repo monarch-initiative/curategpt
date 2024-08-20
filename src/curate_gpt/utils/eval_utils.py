@@ -3,10 +3,13 @@
 from copy import copy
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Outcome(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
+
     prediction: Union[Dict[str, Any], List[Dict[str, Any]]] = {}
     expected: Union[Dict[str, Any], List[Dict[str, Any]]] = {}
     parameters: Dict[str, Any] = {}

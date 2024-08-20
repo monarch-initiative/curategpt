@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 
 import yaml
 from llm import Conversation
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
@@ -22,6 +22,8 @@ class ChatResponse(BaseModel):
 
     TODO: Rename class to indicate that it is provenance-enabled chat
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     body: str
     """Text of response."""

@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class CartItem(BaseModel):
@@ -8,6 +8,7 @@ class CartItem(BaseModel):
     A cart item is a single item in a cart
     """
 
+    model_config = ConfigDict(protected_namespaces=())
     object: Union[Dict, BaseModel]
     object_type: Optional[str] = None
     source: Optional[str] = None
@@ -19,6 +20,7 @@ class Cart(BaseModel):
     A cart is a list of items that can be added to or removed from
     """
 
+    model_config = ConfigDict(protected_namespaces=())
     items: List[CartItem] = []
 
     @property

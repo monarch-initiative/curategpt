@@ -1,11 +1,14 @@
 from typing import Any, Dict, Iterator, List, Optional, Set, Tuple
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 SEARCH_RESULT = Tuple[Dict[str, Any], Dict, float, Optional[Dict]]
 
 
 class DuckDBSearchResult(BaseModel):
+
+    model_config = ConfigDict(protected_namespaces=())
+
     ids: Optional[str] = None
     metadatas: Optional[Dict[str, Any]] = None
     embeddings: Optional[List[float]] = None
