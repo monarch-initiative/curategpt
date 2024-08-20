@@ -1,21 +1,15 @@
-import itertools
 import os
 import shutil
-import time
-from dataclasses import dataclass
-from pathlib import Path
 from typing import Dict
 
 import pytest
 import yaml
-
-from curate_gpt.store import CollectionMetadata
-from curate_gpt.store.duckdb_adapter import DuckDBAdapter
-from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.wrappers.ontology import OntologyWrapper
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 from oaklib import get_adapter
 
+from curate_gpt.store.duckdb_adapter import DuckDBAdapter
+from curate_gpt.store.schema_proxy import SchemaProxy
+from curate_gpt.wrappers.ontology import OntologyWrapper
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_DIR, OUTPUT_DUCKDB_PATH
 
 EMPTY_DB_PATH = os.path.join(OUTPUT_DIR, "empty_duckdb")
@@ -93,7 +87,6 @@ def test_store(simple_schema_manager, example_texts):
     assert len(results2) == 1
 
 
-
 def test_the_embedding_function(simple_schema_manager, example_texts):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
@@ -165,8 +158,8 @@ def test_ontology_matches(ontology_db):
     assert len(results) == 10
 
     first_obj = results[0][0]
-    print("the id", first_obj['id'])
-    first_meta = results[0][2]
+    print("the id", first_obj["id"])
+    # first_meta = results[0][2]
     new_id, new_definition = "Palm Beach", "A beach with palm trees"
     updated_obj = {
         "id": new_id,
@@ -184,20 +177,17 @@ def test_ontology_matches(ontology_db):
     ontology_db.update([updated_obj], collection=collection)
     # verify update
     updated_res = ontology_db.lookup(new_id, collection)
-    assert updated_res['id'] == new_id
-    assert updated_res['definition'] == new_definition
-    assert updated_res['label'] == first_obj['label']
+    assert updated_res["id"] == new_id
+    assert updated_res["definition"] == new_definition
+    assert updated_res["label"] == first_obj["label"]
 
     # test upsert
-    new_obj_insert = {
-        "id": "Palm Beach",
-        "key": "value"
-    }
+    new_obj_insert = {"id": "Palm Beach", "key": "value"}
     ontology_db.upsert([new_obj_insert], collection="test_collection")
     # verify upsert
     new_results = ontology_db.lookup("Palm Beach", collection="test_collection")
     assert new_results["id"] == "Palm Beach"
-    assert new_results['key'] == "value"
+    assert new_results["key"] == "value"
 
 
 @pytest.mark.parametrize(
@@ -214,6 +204,7 @@ def test_where_queries(loaded_ontology_db, where, num_expected, limit, include):
         db.find(where=where, limit=limit, collection="other_collection", include=include)
     )
     assert len(results) == num_expected
+
 
 @pytest.mark.parametrize(
     "batch_size",
@@ -237,10 +228,7 @@ def test_load_in_batches(ontology_db, batch_size):
     # end = time.time()
     # print(f"Time to insert {len(list(view.objects()))} objects with batch of {batch_size}: {end - start}")
 
-    objs = list(
-        ontology_db.find(collection="other_collection", limit=2000
-        )
-    )
+    objs = list(ontology_db.find(collection="other_collection", limit=2000))
     assert len(objs) > 100
 
 

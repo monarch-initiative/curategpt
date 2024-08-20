@@ -9,7 +9,6 @@ import os
 import re
 import time
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Union
 
 import duckdb
@@ -27,9 +26,21 @@ from sentence_transformers import SentenceTransformer
 from curate_gpt.store.db_adapter import DBAdapter
 from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from curate_gpt.store.metadata import CollectionMetadata
+from curate_gpt.store.vocab import (
+    DISTANCES,
+    DOCUMENTS,
+    EMBEDDINGS,
+    IDS,
+    METADATAS,
+    MODEL_DIMENSIONS,
+    MODELS,
+    OBJECT,
+    OPENAI_MODEL_DIMENSIONS,
+    PROJECTION,
+    QUERY,
+    SEARCH_RESULT,
+)
 from curate_gpt.utils.vector_algorithms import mmr_diversified_search
-from curate_gpt.store.vocab import OBJECT, QUERY, PROJECTION, EMBEDDINGS, DOCUMENTS, \
-    METADATAS, MODEL_DIMENSIONS, MODELS, OPENAI_MODEL_DIMENSIONS, IDS, SEARCH_RESULT, DISTANCES
 
 logger = logging.getLogger(__name__)
 
@@ -99,14 +110,18 @@ class DuckDBAdapter(DBAdapter):
         """
         return self._get_collection(collection)
 
-    def _create_table_if_not_exists(self, collection: str, vec_dimension: int, distance: str, model: str = None):
+    def _create_table_if_not_exists(
+        self, collection: str, vec_dimension: int, distance: str, model: str = None
+    ):
         """
         Create a table for the given collection if it does not exist
         :param collection:
         :return:
         """
-        logger.info(f"Table {collection} does not exist, creating ...: PARAMS: model: {model}, distance: {distance},\
-        vec_dimension: {vec_dimension}")
+        logger.info(
+            f"Table {collection} does not exist, creating ...: PARAMS: model: {model}, distance: {distance},\
+        vec_dimension: {vec_dimension}"
+        )
         if model is None:
             model = self.default_model
             logger.info(f"Model in create_table_if_not_exists: {model}")
@@ -178,8 +193,10 @@ class DuckDBAdapter(DBAdapter):
             self._initialize_openai_client()
             openai_model = model.split(":", 1)[1]
             if openai_model == "" or openai_model not in MODELS:
-                logger.info(f"The model {openai_model} is not "
-                            f"one of {MODELS}. Defaulting to {MODELS[1]}")
+                logger.info(
+                    f"The model {openai_model} is not "
+                    f"one of {MODELS}. Defaulting to {MODELS[1]}"
+                )
                 openai_model = MODELS[1]
 
             responses = [
@@ -233,7 +250,9 @@ class DuckDBAdapter(DBAdapter):
         logger.info(f"model in upsert: {kwargs.get('model')}, distance: {self.distance_metric}")
         if collection not in self.list_collection_names():
             vec_dimension = self._get_embedding_dimension(kwargs.get("model"))
-            self._create_table_if_not_exists(collection, vec_dimension, model=kwargs.get("model"), distance=self.distance_metric)
+            self._create_table_if_not_exists(
+                collection, vec_dimension, model=kwargs.get("model"), distance=self.distance_metric
+            )
         ids = [self._id(o, self.id_field) for o in objs]
         existing_ids = set()
         for id_ in ids:
@@ -254,16 +273,16 @@ class DuckDBAdapter(DBAdapter):
             self.insert(objs_to_insert, **kwargs)
 
     def _process_objects(
-            self,
-            objs: Union[OBJECT, Iterable[OBJECT]],
-            collection: str = None,
-            batch_size: int = None,
-            object_type: str = None,
-            model: str = None,
-            distance: str = None,
-            text_field: Union[str, Callable] = None,
-            method: str = "insert",
-            **kwargs,
+        self,
+        objs: Union[OBJECT, Iterable[OBJECT]],
+        collection: str = None,
+        batch_size: int = None,
+        object_type: str = None,
+        model: str = None,
+        distance: str = None,
+        text_field: Union[str, Callable] = None,
+        method: str = "insert",
+        **kwargs,
     ):
         """
         Process objects by inserting, updating or upserting them into the collection
@@ -283,7 +302,9 @@ class DuckDBAdapter(DBAdapter):
         logger.info(f"(process_objects: Model: {model}, vec_dimension: {self.vec_dimension}")
         if collection not in self.list_collection_names():
             logger.info(f"(process)Creating table for collection {collection}")
-            self._create_table_if_not_exists(collection, self.vec_dimension, model=model, distance=distance)
+            self._create_table_if_not_exists(
+                collection, self.vec_dimension, model=model, distance=distance
+            )
         if isinstance(objs, Iterable) and not isinstance(objs, str):
             objs = list(objs)
         else:
@@ -320,7 +341,9 @@ class DuckDBAdapter(DBAdapter):
                 self.conn.execute("COMMIT;")
             except Exception as e:
                 self.conn.execute("ROLLBACK;")
-                logger.error(f"Transaction failed: {e}, default model: {self.default_model}, model used: {model}, len(embeddings): {len(embeddings[0])}")
+                logger.error(
+                    f"Transaction failed: {e}, default model: {self.default_model}, model used: {model}, len(embeddings): {len(embeddings[0])}"
+                )
                 raise
             finally:
                 self.create_index(collection)
@@ -342,14 +365,14 @@ class DuckDBAdapter(DBAdapter):
         self.conn.execute(f"DROP TABLE IF EXISTS {safe_collection_name}")
 
     def search(
-            self,
-            text: str,
-            where: QUERY = None,
-            collection: str = None,
-            limit: int = 10,
-            relevance_factor: float = None,
-            include=None,
-            **kwargs,
+        self,
+        text: str,
+        where: QUERY = None,
+        collection: str = None,
+        limit: int = 10,
+        relevance_factor: float = None,
+        include=None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         """
         Search for objects in the collection that match the given text
@@ -369,18 +392,19 @@ class DuckDBAdapter(DBAdapter):
             limit=limit,
             relevance_factor=relevance_factor,
             include=include,
-            **kwargs)
+            **kwargs,
+        )
 
     def _search(
-            self,
-            text: str,
-            where: QUERY = None,
-            collection: str = None,
-            limit: int = 10,
-            relevance_factor: float = None,
-            model: str = None,
-            include=None,
-            **kwargs,
+        self,
+        text: str,
+        where: QUERY = None,
+        collection: str = None,
+        limit: int = 10,
+        relevance_factor: float = None,
+        model: str = None,
+        include=None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         if relevance_factor is not None and relevance_factor < 1.0:
             yield from self._diversified_search(
@@ -442,14 +466,14 @@ class DuckDBAdapter(DBAdapter):
         yield from self.parse_duckdb_result(results, include)
 
     def _diversified_search(
-            self,
-            text: str,
-            where: QUERY = None,
-            collection: str = None,
-            limit: int = 10,
-            relevance_factor: float = 0.5,
-            include=None,
-            **kwargs,
+        self,
+        text: str,
+        where: QUERY = None,
+        collection: str = None,
+        limit: int = 10,
+        relevance_factor: float = 0.5,
+        include=None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         if limit is None:
             limit = 10
@@ -489,7 +513,6 @@ class DuckDBAdapter(DBAdapter):
         for i in reranked_indices:
             yield results[i]
 
-
     def list_collection_names(self):
         """
         List the names of all collections in the database
@@ -499,7 +522,7 @@ class DuckDBAdapter(DBAdapter):
         return [row[0] for row in result]
 
     def collection_metadata(
-            self, collection_name: Optional[str] = None, include_derived=False, **kwargs
+        self, collection_name: Optional[str] = None, include_derived=False, **kwargs
     ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for the collection
@@ -552,12 +575,12 @@ class DuckDBAdapter(DBAdapter):
                 UPDATE {safe_collection_name} SET metadata = ?
                 WHERE id = '__metadata__'
                 """,
-            [metadata_json]
+            [metadata_json],
         )
         return current_metadata
 
     def set_collection_metadata(
-            self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
     ):
         """
         Set the metadata for the collection
@@ -581,13 +604,13 @@ class DuckDBAdapter(DBAdapter):
         )
 
     def find(
-            self,
-            where: QUERY = None,
-            projection: PROJECTION = None,
-            collection: str = None,
-            include=None,
-            limit: int = 10,
-            **kwargs,
+        self,
+        where: QUERY = None,
+        projection: PROJECTION = None,
+        collection: str = None,
+        include=None,
+        limit: int = 10,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         """
         Find objects in the collection that match the given query and projection
@@ -669,7 +692,9 @@ class DuckDBAdapter(DBAdapter):
             )
             return search_result.to_dict().get(METADATAS)
 
-    def peek(self, collection: str = None, limit=5, include=None, **kwargs) -> Iterator[SEARCH_RESULT]:
+    def peek(
+        self, collection: str = None, limit=5, include=None, **kwargs
+    ) -> Iterator[SEARCH_RESULT]:
         """
         Peek at the first N objects in the collection
         :param collection:
@@ -711,9 +736,9 @@ class DuckDBAdapter(DBAdapter):
             yield json.loads(result[0])
 
     def dump_then_load(
-            self,
-            collection: str = None,
-            target: DBAdapter = None,
+        self,
+        collection: str = None,
+        target: DBAdapter = None,
     ):
         """
         Dump the collection to a file and then load it into the target adapter
@@ -737,19 +762,12 @@ class DuckDBAdapter(DBAdapter):
         # in case it exists already, remove
         target.remove_collection(collection, exists_ok=True)
         # using same collection name in target database
-        target._create_table_if_not_exists(
-            collection,
-            vec_dimension,
-            distance,
-            model
-        )
+        target._create_table_if_not_exists(collection, vec_dimension, distance, model)
         target.set_collection_metadata(collection, metadata)
         batch_size = 5000
         for i in range(0, len(list(result)), batch_size):
-            batch = result[i: i + batch_size]
+            batch = result[i : i + batch_size]
             target.insert(batch, collection=collection)
-
-
 
     @staticmethod
     def kill_process(pid):

@@ -3,11 +3,11 @@ import shutil
 import time
 
 import yaml
+
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.investigation.ncbi_biosample_wrapper import NCBIBiosampleWrapper
-
 from tests import OUTPUT_DIR
 
 TEMP_BIOSAMPLE_DB = OUTPUT_DIR / "biosample_tmp"

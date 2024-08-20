@@ -1,8 +1,5 @@
-import json
-from typing import Any, Dict, List, Optional, Set, Iterator, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Set, Tuple
 
-import jsonlines
-import yaml
 from pydantic import BaseModel
 
 SEARCH_RESULT = Tuple[Dict[str, Any], Dict, float, Optional[Dict]]
@@ -13,9 +10,7 @@ class DuckDBSearchResult(BaseModel):
     metadatas: Optional[Dict[str, Any]] = None
     embeddings: Optional[List[float]] = None
     documents: Optional[str] = None
-    distances: Optional[float] = (
-        0  # TODO: technically this is simple cosim similarity
-    )
+    distances: Optional[float] = 0  # TODO: technically this is simple cosim similarity
     include: Optional[Set[str]] = None
 
     def to_json(self, indent: int = 2):
@@ -31,15 +26,15 @@ class DuckDBSearchResult(BaseModel):
 
     def __iter__(self) -> Iterator[SEARCH_RESULT]:
         # TODO vocab.py for 'VARIABLES', but circular import
-        metadata_include = 'metadatas' in self.include if self.include else True
-        embeddings_include = 'embeddings' in self.include if self.include else True
-        documents_include = 'documents' in self.include if self.include else True
-        similarity_include = 'distances' in self.include if self.include else True
+        metadata_include = "metadatas" in self.include if self.include else True
+        embeddings_include = "embeddings" in self.include if self.include else True
+        documents_include = "documents" in self.include if self.include else True
+        similarity_include = "distances" in self.include if self.include else True
 
         obj = self.metadatas if metadata_include else {}
         meta = {
-            '_embeddings': self.embeddings if embeddings_include else None,
-            'documents': self.documents if documents_include else None
+            "_embeddings": self.embeddings if embeddings_include else None,
+            "documents": self.documents if documents_include else None,
         }
         distance = self.distances if similarity_include else None
 

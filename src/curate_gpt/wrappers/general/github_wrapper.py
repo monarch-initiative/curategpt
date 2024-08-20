@@ -191,6 +191,10 @@ class GitHubWrapper(BaseWrapper):
             url = response.links.get("next", {}).get("url")
 
     def transform_issue(self, obj: Dict) -> Issue:
+
+        if not obj.get("body"):
+            obj["body"] = ""
+
         issue = Issue(
             id=obj.get("url"),
             number=obj.get("number"),

@@ -107,7 +107,8 @@ docstore_database_type_option = click.option(
     "--docstore_database_type",
     default="chromadb",
     show_default=True,
-    help="Docstore database type.")
+    help="Docstore database type.",
+)
 
 model_option = click.option(
     "-m", "--model", help="Model to use for generation or embedding, e.g. gpt-4."
@@ -414,7 +415,7 @@ def search(query, path, collection, show_documents, database_type, **kwargs):
     db = get_store(database_type, path)
     results = db.search(query, collection=collection, **kwargs)
     i = 0
-    for obj, distance, meta in results:
+    for obj, distance, _meta in results:
         i += 1
         print(f"## {i} DISTANCE: {distance}")
         print(yaml.dump(obj, sort_keys=False))
@@ -485,6 +486,7 @@ def all_by_all(
     if other_path is None:
         other_path = path
     results = match_collections(db, collection, other_collection, other_db)
+
     def _obj(obj: Dict, is_left=False) -> Any:
         if ids_only:
             obj = {"id": obj["id"]}
@@ -525,7 +527,7 @@ def all_by_all(
 def matches(id, path, collection, database_type):
     """Find matches for an ID.
 
-        curategpt matches "Continuant" -p duckdb/objects.duckdb -c objects_a -D duckdb
+    curategpt matches "Continuant" -p duckdb/objects.duckdb -c objects_a -D duckdb
 
     """
     db = get_store(database_type, path)
@@ -535,7 +537,7 @@ def matches(id, path, collection, database_type):
     print(obj)
     results = db.matches(obj, collection=collection)
     i = 0
-    for obj, distance, meta in results:
+    for obj, distance, _meta in results:
         i += 1
         print(f"## ID:- {obj['id']}")
         print(f"## DISTANCE- {distance}")
@@ -972,7 +974,7 @@ def complete(
         extractor.schema_proxy = schema_manager
     dac = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
-        dac.document_adapter = get_store(docstore_database_type,docstore_path)
+        dac.document_adapter = get_store(docstore_database_type, docstore_path)
         dac.document_adapter_collection = docstore_collection
     if ":" in query:
         query = yaml.safe_load(query)
@@ -1064,7 +1066,7 @@ def update(
         extractor.schema_proxy = schema_manager
     dac = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
-        dac.document_adapter = get_store(docstore_database_type,docstore_path)
+        dac.document_adapter = get_store(docstore_database_type, docstore_path)
         dac.document_adapter_collection = docstore_collection
     for obj, _s, _meta in db.find(where_q, collection=collection):
         # click.echo(f"{obj}")
@@ -1262,7 +1264,7 @@ def complete_multiple(
         extractor.schema_proxy = schema_manager
     dac = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
-        dac.document_adapter = get_store(docstore_database_type,docstore_path)
+        dac.document_adapter = get_store(docstore_database_type, docstore_path)
         dac.document_adapter_collection = docstore_collection
     with open(input_file) as f:
         queries = [l.strip() for l in f.readlines()]
@@ -1454,7 +1456,7 @@ def complete_all(
         extractor.schema_proxy = schema_manager
     dae = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
-        dae.document_adapter = get_store(docstore_database_type,docstore_path)
+        dae.document_adapter = get_store(docstore_database_type, docstore_path)
         dae.document_adapter_collection = docstore_collection
     object_ids = None
     if id_file:
@@ -1541,7 +1543,7 @@ def generate_evaluate(
     -------
         curategpt -v generate-evaluate -c cdr_training -T cdr_test -F statements -m gpt-4
     """
-    db = get_store(database_type,path)
+    db = get_store(database_type, path)
     if schema:
         schema_manager = SchemaProxy(schema)
     else:
@@ -1556,7 +1558,7 @@ def generate_evaluate(
         extractor.schema_proxy = schema_manager
     rage = DragonAgent(knowledge_source=db, extractor=extractor)
     if docstore_path or docstore_collection:
-        rage.document_adapter = get_store(docstore_database_type,docstore_path)
+        rage.document_adapter = get_store(docstore_database_type, docstore_path)
         rage.document_adapter_collection = docstore_collection
     hold_back_fields = hold_back_fields.split(",")
     mask_fields = mask_fields.split(",") if mask_fields else []
@@ -1884,7 +1886,17 @@ def apply_patch(input_file, patch, primary_key):
     help="jsonpath expression to select objects from the input file.",
 )
 @click.argument("query")
-def citeseek(query, path, collection, model, show_references, _continue, select, conversation_id, database_type):
+def citeseek(
+    query,
+    path,
+    collection,
+    model,
+    show_references,
+    _continue,
+    select,
+    conversation_id,
+    database_type,
+):
     """Find citations for an object or statement.
 
     You can pass in a statement directly as an argument
@@ -2063,7 +2075,7 @@ def list_collections(database_type, path, peek: bool, minimal: bool, derived: bo
                 # making sure if o[id] finds nothing we get the full obj
                 r = list(db.peek(cn))
                 for o, _, _ in r:
-                    if 'id' in o:
+                    if "id" in o:
                         print(f" - {o['id']}")
                     else:
                         print(f" - {o}")
@@ -2202,7 +2214,14 @@ def copy_collection(path, collection, target_path, database_type, **kwargs):
 )
 @path_option
 def split_collection(
-    path, collection, derived_collection_base, output_path, model, test_id_file, database_type, **kwargs
+    path,
+    collection,
+    derived_collection_base,
+    output_path,
+    model,
+    test_id_file,
+    database_type,
+    **kwargs,
 ):
     """
     Split a collection into test/train/validation.
@@ -2224,7 +2243,7 @@ def split_collection(
         )
         logging.info(f"First 10: {kwargs['testing_identifiers'][:10]}")
     sc = stratify_collection(db, collection, **kwargs)
-    output_db = get_store(database_type ,output_path)
+    output_db = get_store(database_type, output_path)
     if not derived_collection_base:
         derived_collection_base = collection
     for sn in ["training", "testing", "validation"]:

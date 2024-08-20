@@ -18,10 +18,10 @@ from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk
 from pydantic import BaseModel
-from curate_gpt.store.metadata import CollectionMetadata
 
-from curate_gpt.store.vocab import OBJECT, QUERY, PROJECTION, SEARCH_RESULT
 from curate_gpt.store.db_adapter import DBAdapter
+from curate_gpt.store.metadata import CollectionMetadata
+from curate_gpt.store.vocab import OBJECT, PROJECTION, QUERY, SEARCH_RESULT
 from curate_gpt.utils.vector_algorithms import mmr_diversified_search
 
 logger = logging.getLogger(__name__)

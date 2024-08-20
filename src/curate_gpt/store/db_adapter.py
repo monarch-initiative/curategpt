@@ -5,7 +5,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Tuple, Union
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Union
 
 import pandas as pd
 import yaml
@@ -14,8 +14,17 @@ from jsonlines import jsonlines
 
 from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.store.vocab import OBJECT, SEARCH_RESULT, QUERY, PROJECTION, FILE_LIKE, EMBEDDINGS, DOCUMENTS, \
-    METADATAS, DEFAULT_COLLECTION
+from curate_gpt.store.vocab import (
+    DEFAULT_COLLECTION,
+    DOCUMENTS,
+    EMBEDDINGS,
+    FILE_LIKE,
+    METADATAS,
+    OBJECT,
+    PROJECTION,
+    QUERY,
+    SEARCH_RESULT,
+)
 
 logger = logging.getLogger(__name__)
 

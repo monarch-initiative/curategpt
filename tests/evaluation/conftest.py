@@ -1,9 +1,9 @@
 import pytest
+from oaklib import get_adapter
+
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.store import SchemaProxy
 from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
-from oaklib import get_adapter
-
 from tests import INPUT_DBS, INPUT_DIR
 
 
