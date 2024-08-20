@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class DBSettings(BaseModel):
