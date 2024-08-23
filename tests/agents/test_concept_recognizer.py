@@ -48,7 +48,7 @@ def test_concept_recognizer(go_test_chroma_db, text, categories, prefixes, expec
     cr.identifier_field = "original_id"
     print(f"## METHOD: {method} CATEGORY: {categories} PREFIXES: {prefixes}")
     ann = cr.annotate(
-        text, collection="terms_go", method=method, categories=categories, limit=limit
+        text, collection="test", method=method, categories=categories, limit=limit
     )
     print("RESULT:")
     print(yaml.dump(ann.dict(), sort_keys=False))

@@ -28,10 +28,10 @@ class Span(BaseModel):
     concept_id: str = None
     """Concept ID."""
 
-    concept_label: str = None
+    concept_label: Optional[str] = None
     """Concept label."""
 
-    is_suspect: bool = False
+    is_suspect: Optional[bool] = False
     """Potential hallucination due to ID/label mismatch."""
 
 
