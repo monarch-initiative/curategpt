@@ -2059,8 +2059,6 @@ def list_collections(database_type, path, peek: bool, minimal: bool, derived: bo
             print(f"## Collection: {cn}")
             continue
         cm = db.collection_metadata(cn, include_derived=derived)
-        # click.echo("printing metadata")
-        # click.echo(cm)
         if database_type == "chromadb":
             # TODO: make get_or_create abstract and implement in DBAdapter?
             c = db.client.get_or_create_collection(cn)
