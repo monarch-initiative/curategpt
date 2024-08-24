@@ -124,7 +124,6 @@ class ChromaDBAdapter(DBAdapter):
         :param model:
         :return:
         """
-        logger.info(f"Getting embedding function for {model}")
         if model is None:
             raise ValueError("Model must be specified")
         if model.startswith("openai:"):
@@ -272,7 +271,6 @@ class ChromaDBAdapter(DBAdapter):
         Parameters
         ----------
         """
-        logger.info(f"Getting metadata for {collection_name}")
         collection_name = self._get_collection(collection_name)
         try:
             logger.info(f"Getting collection object {collection_name}")
