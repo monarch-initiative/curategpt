@@ -19,14 +19,6 @@ EMBEDDINGS = "embeddings"
 DOCUMENTS = "documents"
 DISTANCES = "distances"
 
-MODEL_DIMENSIONS = {"all-MiniLM-L6-v2": 384}
-OPENAI_MODEL_DIMENSIONS = {
-    "text-embedding-ada-002": 1536,
-    "text-embedding-3-small": 1536,
-    "text-embedding-3-large": 3072,
-}
-MODELS = ["text-embedding-ada-002", "text-embedding-3-small", "text-embedding-3-large"]
-
 MODEL_MAP = {
         "text-embedding-ada-002": ("ada-002", 1536),
         "text-embedding-3-small": ("3-small", 1536),
@@ -34,6 +26,7 @@ MODEL_MAP = {
         "text-embedding-3-small-512": ("3-small-512", 512),
         "text-embedding-3-large-256": ("3-large-256", 256),
         "text-embedding-3-large-1024": ("3-large-1024", 1024)
-    }
+}
 
-DEFAULT_MODEL = "text-embedding-ada-002"
+DEFAULT_OPENAI_MODEL = "text-embedding-ada-002"
+DEFAULT_MODEL= {"all-MiniLM-L6-v2":384}
