@@ -1,0 +1,8 @@
+adapter_name: "duckdb"
+ef_construction: 128
+ef_search: 64
+M: 16
+distance_metric: "cosine"
+path: "./duck.db"
+vec_dimension: 384
+default_model: "all-MiniLM-L6-v2"
