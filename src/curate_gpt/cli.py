@@ -2436,6 +2436,7 @@ def view_objects(view, init_with, settings, object_ids, **kwargs):
     else:
         for obj in vstore.objects():
             print(yaml.dump(obj, sort_keys=False))
+            print("---")
 
 
 @view.command(name="unwrap")

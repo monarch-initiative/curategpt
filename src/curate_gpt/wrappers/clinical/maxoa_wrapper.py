@@ -96,6 +96,8 @@ class MAXOAWrapper(BaseWrapper):
         # open a file handle from a URL using requests
         if source_locator is None:
             source_locator = self.source_locator
+        if source_locator is None:
+            source_locator = self.source_url
         if source_locator.startswith("http"):
             logger.info(f"Fetching {source_locator}")
             with requests.get(source_locator, stream=True) as response:
