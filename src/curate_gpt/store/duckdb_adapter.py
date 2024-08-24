@@ -32,12 +32,10 @@ from curate_gpt.store.vocab import (
     EMBEDDINGS,
     IDS,
     METADATAS,
-    MODEL_DIMENSIONS,
     MODEL_MAP,
+    DEFAULT_OPENAI_MODEL,
     DEFAULT_MODEL,
-    MODELS,
     OBJECT,
-    OPENAI_MODEL_DIMENSIONS,
     PROJECTION,
     QUERY,
     SEARCH_RESULT,
@@ -65,8 +63,12 @@ class DuckDBAdapter(DBAdapter):
 
     def __post_init__(self):
         if not self.path:
-            self.path = "./duck.db"
-        os.makedirs(os.path.dirname(self.path), exist_ok=True)
+            self.path = "./db/db_file.duckdb"
+        if os.path.isdir(self.path):
+            self.path = os.path.join("./db", self.path, "db_file.duckdb")
+            os.makedirs(os.path.dirname(self.path), exist_ok=True)
+            logger.info(f"Path {self.path} is a directory. Using {self.path} as the database path\n\
+            as duckdb needs a file path")
         self.ef_construction = self._validate_ef_construction(self.ef_construction)
         self.ef_search = self._validate_ef_search(self.ef_search)
         self.M = self._validate_m(self.M)
@@ -197,9 +199,10 @@ class DuckDBAdapter(DBAdapter):
             if openai_model == "" or openai_model not in MODEL_MAP.keys():
                 logger.info(
                     f"The model {openai_model} is not "
-                    f"one of {[MODEL_MAP.keys()]}. Defaulting to {DEFAULT_MODEL}"
+                    f"one of {[MODEL_MAP.keys()]}. Defaulting to {DEFAULT_OPENAI_MODEL}"
                 )
-                openai_model = DEFAULT_MODEL
+                openai_model = DEFAULT_OPENAI_MODEL
+
 
             responses = [
                 self.openai_client.embeddings.create(input=text, model=openai_model)
@@ -347,8 +350,8 @@ class DuckDBAdapter(DBAdapter):
                 openai_model = model.split(":", 1)[1]
                 if openai_model == "" or openai_model not in MODEL_MAP.keys():
                     logger.info(f"The model {openai_model} is not "
-                                f"one of {MODEL_MAP.keys()}. Defaulting to {DEFAULT_MODEL}")
-                    openai_model = DEFAULT_MODEL #ada 002
+                                f"one of {MODEL_MAP.keys()}. Defaulting to {DEFAULT_OPENAI_MODEL}")
+                    openai_model = DEFAULT_OPENAI_MODEL #ada 002
                 else:
                     logger.error(f"Something went wonky ## model: {model}")
             from transformers import GPT2Tokenizer
@@ -1018,16 +1021,15 @@ class DuckDBAdapter(DBAdapter):
 
     def _get_embedding_dimension(self, model_name: str) -> int:
         if model_name is None:
-            return MODEL_DIMENSIONS[self.default_model]
+            return DEFAULT_MODEL[self.default_model]
         if isinstance(model_name, str):
+            logger.info("somehow here")
             if model_name.startswith("openai:"):
                 model_key = model_name.split("openai:", 1)[1]
-                return OPENAI_MODEL_DIMENSIONS.get(
-                    model_key, OPENAI_MODEL_DIMENSIONS["text-embedding-3-small"]
-                )
+                model_info = MODEL_MAP.get(model_key, DEFAULT_OPENAI_MODEL)
+                return MODEL_MAP[model_info][1]
             else:
-                if model_name in MODEL_DIMENSIONS:
-                    return MODEL_DIMENSIONS[model_name]
+                return MODEL_MAP[DEFAULT_OPENAI_MODEL][1]
 
     @staticmethod
     def _validate_ef_construction(value: int) -> int:
