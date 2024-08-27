@@ -305,8 +305,6 @@ def index(
     This will index the DataElementQueryResults from each file.
 
     """
-    if os.path.isdir(path) & (database_type == "duckdb"):
-        default_duckdb_path(path)
     db = get_store(database_type, path)
     db.text_lookup = text_field
     if glob:
@@ -2301,10 +2299,6 @@ def index_ontology_command(
     """
 
     s = time.time()
-
-    if os.path.isdir(path) & (database_type == "duckdb"):
-        default_duckdb_path(path)
-
     oak_adapter = get_adapter(ont)
     view = OntologyWrapper(oak_adapter=oak_adapter)
     if branches:
@@ -2510,9 +2504,6 @@ def view_index(
     curategpt -v index -p stagedb/hpoa.duckdb --batch-size 10 -V hpoa  -c hpoa -m openai: -D duckdb
 
     """
-    if os.path.isdir(path) & (database_type == "duckdb"):
-        default_duckdb_path(path)
-
     if init_with:
         for k, v in yaml.safe_load(init_with).items():
             kwargs[k] = v
@@ -2614,12 +2605,6 @@ def pubmed_ask(query, path, model, show_references, database_type, **kwargs):
         for ref, ref_text in response.references.items():
             print(f"## {ref}")
             print(ref_text)
-
-
-def default_duckdb_path(path):
-    path = os.path.join(path, "duck.duckdb")
-    click.echo("You have to provide a path to a file : Defaulting to " + path)
-    return path
 
 
 if __name__ == "__main__":
