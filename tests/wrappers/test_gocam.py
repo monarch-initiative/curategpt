@@ -26,7 +26,7 @@ def test_gocam_object(gocam_wrapper):
 
 
 # TODO: redo
-# Skipping as it takes too long, casue it goes through all objects
+# Skipping as it takes too long
 @pytest.mark.skip
 def test_all_objects(gocam_wrapper):
     for obj in gocam_wrapper.objects():
