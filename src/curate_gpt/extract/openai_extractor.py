@@ -5,7 +5,9 @@ import logging
 from dataclasses import dataclass
 from typing import List
 
-import openai
+from openai import OpenAI
+
+client = OpenAI()
 
 from curate_gpt.extract.extractor import AnnotatedObject, Extractor
 
@@ -89,7 +91,7 @@ class OpenAIExtractor(Extractor):
             }
         )
         # print(yaml.dump(messages))
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model=self.model,
             functions=self.functions(),
             messages=messages,
