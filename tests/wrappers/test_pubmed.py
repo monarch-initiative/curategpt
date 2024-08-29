@@ -7,6 +7,7 @@ from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature import PubmedWrapper
 from tests import OUTPUT_DIR
+from tests.store.conftest import requires_openai_api_key
 
 TEMP_PUBMED_DB = OUTPUT_DIR / "pmid_tmp"
 
@@ -40,6 +41,7 @@ def test_full_text():
     print(txt)
 
 
+@requires_openai_api_key
 def test_pubmed_search():
     shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
     db = ChromaDBAdapter(str(TEMP_PUBMED_DB))

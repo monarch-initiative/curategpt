@@ -10,6 +10,7 @@ from curate_gpt.store.chromadb_adapter import ChromaDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_CHROMA_DB_PATH, OUTPUT_DIR
+from tests.store.conftest import requires_openai_api_key
 
 EMPTY_DB_PATH = OUTPUT_DIR / "empty_db"
 
@@ -100,6 +101,7 @@ def test_autoschema(example_texts):
     assert fields == fields2
 
 
+@requires_openai_api_key
 def test_embedding_function(simple_schema_manager, example_texts):
     """
     Tests having two collections with different models and embedding functions.

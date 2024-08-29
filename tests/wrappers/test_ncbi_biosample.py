@@ -9,12 +9,14 @@ from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.investigation.ncbi_biosample_wrapper import NCBIBiosampleWrapper
 from tests import OUTPUT_DIR
+from tests.store.conftest import requires_openai_api_key
 
 TEMP_BIOSAMPLE_DB = OUTPUT_DIR / "biosample_tmp"
 
 logger = logging.getLogger(__name__)
 
 
+@requires_openai_api_key
 def test_biosample_search():
     shutil.rmtree(TEMP_BIOSAMPLE_DB, ignore_errors=True)
     db = ChromaDBAdapter(str(TEMP_BIOSAMPLE_DB))
@@ -30,6 +32,7 @@ def test_biosample_search():
     assert len(results2) > 0
 
 
+@requires_openai_api_key
 def test_biosample_chat():
     shutil.rmtree(TEMP_BIOSAMPLE_DB, ignore_errors=True)
     db = ChromaDBAdapter(str(TEMP_BIOSAMPLE_DB))

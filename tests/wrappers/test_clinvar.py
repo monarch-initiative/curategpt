@@ -11,6 +11,7 @@ from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.clinical.clinvar_wrapper import ClinVarWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
+from tests.store.conftest import requires_openai_api_key
 
 TEMP_DB = OUTPUT_DIR / "obj_tmp"
 
@@ -34,6 +35,7 @@ def wrapper() -> ClinVarWrapper:
     return ClinVarWrapper(local_store=db, extractor=extractor)
 
 
+@requires_openai_api_key
 def test_clinvar_search(wrapper):
     results = list(wrapper.search("IBD Crohn's disease and related diseases"))
     assert len(results) > 0
@@ -44,6 +46,7 @@ def test_clinvar_search(wrapper):
     assert len(results2) > 0
 
 
+@requires_openai_api_key
 def test_clinvar_chat(wrapper):
     extractor = DragonAgent()
     extractor = BasicExtractor()

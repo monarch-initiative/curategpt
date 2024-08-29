@@ -55,7 +55,7 @@ def schema_manager() -> SchemaProxy:
         pytest.param(
             OpenAIExtractor, {"examples_as_functions": True}, 99, marks=requires_openai_api_key
         ),
-        (BasicExtractor, {}, 99),
+        pytest.param(BasicExtractor, {}, 99, marks=requires_openai_api_key),
     ],
 )
 def test_extract(extractor_type, kwargs, num_examples, schema_manager):

@@ -11,6 +11,7 @@ from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers import BaseWrapper
 from curate_gpt.wrappers.literature import PubmedWrapper, WikipediaWrapper
 from tests import OUTPUT_DIR
+from tests.store.conftest import requires_openai_api_key
 
 TEMP_PUBMED_DB = OUTPUT_DIR / "pmid_tmp"
 
@@ -21,6 +22,7 @@ logger = logging.root
 logger.setLevel(logging.DEBUG)
 
 
+@requires_openai_api_key
 @pytest.mark.parametrize(
     "source",
     [
