@@ -57,6 +57,7 @@ def test_pubmed_search():
     assert len(results2) > 0
 
 
+@requires_openai_api_key
 def test_pubmed_chat():
     shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
     db = ChromaDBAdapter(str(TEMP_PUBMED_DB))

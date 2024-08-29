@@ -50,8 +50,8 @@ def schema_manager() -> SchemaProxy:
     [
         pytest.param(RecursiveExtractor, {}, 5, marks=requires_openai_api_key),
         pytest.param(RecursiveExtractor, {}, 99, marks=requires_openai_api_key),
-        (OpenAIExtractor, {}, 99),
-        (OpenAIExtractor, {}, 0),
+        pytest.param(OpenAIExtractor, {}, 99, marks=requires_openai_api_key),
+        pytest.param(OpenAIExtractor, {}, 0, marks=requires_openai_api_key),
         pytest.param(
             OpenAIExtractor, {"examples_as_functions": True}, 99, marks=requires_openai_api_key
         ),

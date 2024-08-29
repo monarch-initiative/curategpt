@@ -8,12 +8,14 @@ from curate_gpt import ChromaDBAdapter
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature import WikipediaWrapper
 from tests import OUTPUT_DIR
+from tests.store.conftest import requires_openai_api_key
 
 TEMP_Wikipedia_DB = OUTPUT_DIR / "wp_tmp"
 
 logger = logging.getLogger(__name__)
 
 
+@requires_openai_api_key
 def test_wikipedia_search():
     shutil.rmtree(TEMP_Wikipedia_DB, ignore_errors=True)
     db = ChromaDBAdapter(str(TEMP_Wikipedia_DB))
