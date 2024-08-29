@@ -11,6 +11,7 @@ from curate_gpt.store.duckdb_adapter import DuckDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.wrappers.ontology import OntologyWrapper
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_DIR, OUTPUT_DUCKDB_PATH
+from tests.store.conftest import requires_openai_api_key
 
 EMPTY_DB_PATH = os.path.join(OUTPUT_DIR, "empty_duckdb")
 
@@ -53,7 +54,12 @@ def simple_schema_manager() -> SchemaProxy:
     return SchemaProxy(sb.schema)
 
 
-def test_store(simple_schema_manager, example_texts):
+@pytest.mark.parametrize("model, requires_key", [
+    pytest.param("openai:", True, marks=requires_openai_api_key),
+    ("all-MiniLM-L6-v2", False),
+    (None, False)
+])
+def test_store_variations(simple_schema_manager, example_texts, model, requires_key):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     for i in db.list_collection_names():
         db.remove_collection(i)
@@ -61,21 +67,42 @@ def test_store(simple_schema_manager, example_texts):
     assert db.list_collection_names() == []
     collection = "test_collection"
     objs = terms_to_objects(example_texts)
-    db.insert(objs, collection=collection)
+    if model:
+        db.insert(objs, collection=collection, model=model)
+    else:
+        db.insert(objs, collection=collection)
+
     md = db.collection_metadata(collection)
     md.description = "test collection"
     db.set_collection_metadata(collection, md)
     assert db.collection_metadata(collection).description == "test collection"
+    if model:
+        assert db.collection_metadata(collection).model == model
+    else:
+        assert db.collection_metadata(collection).model == "all-MiniLM-L6-v2"
+
     db2 = DuckDBAdapter(str(OUTPUT_DUCKDB_PATH))
     assert db2.collection_metadata(collection).description == "test collection"
+    if model:
+        assert db2.collection_metadata(collection).model == model
+    else:
+        assert db2.collection_metadata(collection).model == "all-MiniLM-L6-v2"
     assert db.list_collection_names() == ["test_collection"]
+
     results = list(db.search("fox", collection=collection, include=["metadatas"]))
-    db.update(objs, collection=collection)
+    if model:
+        db.update(objs, collection=collection, model=model)
+    else:
+        db.update(objs, collection=collection)
     assert db.collection_metadata(collection).description == "test collection"
     long_words = list(db.find(where={"wordlen": {"$gt": 12}}, collection=collection))
     assert len(long_words) == 2
+
     db.remove_collection(collection)
-    db.insert(objs, collection=collection)
+    if model:
+        db.insert(objs, collection=collection, model=model)
+    else:
+        db.insert(objs, collection=collection)
     results2 = list(db.search("fox", collection=collection, include=["metadatas"]))
 
     def _id(obj, dist, meta):
@@ -83,11 +110,16 @@ def test_store(simple_schema_manager, example_texts):
 
     assert _id(*results[0]) == _id(*results2[0])
     results2 = list(db.find({}, limit=2, collection=collection))
-    # because we cut the first metadata row (CollectionMetadata)
     assert len(results2) == 1
 
 
-def test_the_embedding_function(simple_schema_manager, example_texts):
+@pytest.mark.parametrize("collection, model, requires_key", [
+    (None, None, False),  # Default model "all-MiniLM-L6-v2"
+    ("one_collection", None, False),  # Explicit collection, default model
+    pytest.param("test_openai_collection", "openai:", True, marks=requires_openai_api_key),
+    pytest.param("test_openai_full_collection", "openai:text-embedding-ada-002", True, marks=requires_openai_api_key)
+])
+def test_the_embedding_function_variations(simple_schema_manager, example_texts, collection, model, requires_key):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
     db.conn.execute("DROP TABLE IF EXISTS one_collection")
@@ -95,23 +127,19 @@ def test_the_embedding_function(simple_schema_manager, example_texts):
     db.conn.execute("DROP TABLE IF EXISTS test_openai_collection")
     db.conn.execute("DROP TABLE IF EXISTS test_openai_full_collection")
     objs = terms_to_objects(example_texts)
-    db.insert(objs)
-    assert db.collection_metadata(None).model == "all-MiniLM-L6-v2"
-    assert db.collection_metadata(None).name == "test_collection"
-    assert db.collection_metadata(None).hnsw_space == "cosine"
-    db.insert(objs, collection="one_collection")
-    assert db.collection_metadata("one_collection").model == "all-MiniLM-L6-v2"
-    assert db.collection_metadata("one_collection").hnsw_space == "cosine"
-    assert db.collection_metadata("one_collection").name == "one_collection"
-    # db.insert(objs, collection="test_openai_collection", model="openai:")
-    # print(db.collection_metadata("test_openai_collection").model)
-    # assert db.collection_metadata("test_openai_collection").model == "openai:"
-    # assert db.collection_metadata("test_openai_collection").hnsw_space == "cosine"
-    # assert db.collection_metadata("test_openai_collection").name == "test_openai_collection"
-    # db.insert(objs, collection="test_openai_full_collection", model="openai:text-embedding-ada-002")
-    # assert db.collection_metadata("test_openai_full_collection").model == "openai:text-embedding-ada-002"
-    # assert db.collection_metadata("test_openai_full_collection").hnsw_space == "cosine"
-    # assert db.collection_metadata("test_openai_full_collection").name == "test_openai_full_collection"
+    if collection is None:
+        # Default case: No collection or model specified
+        db.insert(objs)
+        expected_model = "all-MiniLM-L6-v2"
+        expected_name = "test_collection"
+    else:
+        # Specific case: Collection specified, model may or may not be specified
+        db.insert(objs, collection=collection, model=model)
+        expected_model = model if model else "all-MiniLM-L6-v2"
+        expected_name = collection
+    assert db.collection_metadata(collection).model == expected_model
+    assert db.collection_metadata(collection).name == expected_name
+    assert db.collection_metadata(collection).hnsw_space == "cosine"
 
 
 @pytest.fixture
