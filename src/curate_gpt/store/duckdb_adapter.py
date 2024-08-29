@@ -337,8 +337,8 @@ class DuckDBAdapter(DBAdapter):
                 try:
                     self.conn.execute("BEGIN TRANSACTION;")
                     self.conn.executemany(
-                        sql_command, list(zip(ids, metadatas, embeddings, docs))
-                    )  # noqa: B905
+                        sql_command, list(zip(ids, metadatas, embeddings, docs))  # noqa: B905
+                    )
                     # reason to block B905: codequality check
                     # blocking 3.11 because only code quality issue and 3.9 gives value error with keyword strict
                     # TODO: delete after PR#76 is merged
