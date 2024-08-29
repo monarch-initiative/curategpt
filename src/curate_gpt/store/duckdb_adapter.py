@@ -1029,10 +1029,9 @@ class DuckDBAdapter(DBAdapter):
         return " AND ".join(conditions)
 
     def _get_embedding_dimension(self, model_name: str) -> int:
-        if model_name is None:
+        if model_name is None or model_name.startswith(self.default_model):
             return DEFAULT_MODEL[self.default_model]
         if isinstance(model_name, str):
-            logger.info("somehow here")
             if model_name.startswith("openai:"):
                 model_key = model_name.split("openai:", 1)[1]
                 model_info = MODEL_MAP.get(model_key, DEFAULT_OPENAI_MODEL)
