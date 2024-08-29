@@ -9,6 +9,7 @@ from curate_gpt.extract.extractor import AnnotatedObject
 from curate_gpt.extract.openai_extractor import OpenAIExtractor
 from curate_gpt.extract.recursive_extractor import RecursiveExtractor
 from curate_gpt.store.schema_proxy import SchemaProxy
+from tests.store.conftest import requires_openai_api_key
 
 
 class Occupation(BaseModel):
@@ -47,11 +48,11 @@ def schema_manager() -> SchemaProxy:
 @pytest.mark.parametrize(
     "extractor_type,kwargs,num_examples",
     [
-        (RecursiveExtractor, {}, 5),
-        (RecursiveExtractor, {}, 99),
+        pytest.param(RecursiveExtractor, {}, 5, marks=requires_openai_api_key),
+        pytest.param(RecursiveExtractor, {}, 99, marks=requires_openai_api_key),
         (OpenAIExtractor, {}, 99),
         (OpenAIExtractor, {}, 0),
-        (OpenAIExtractor, {"examples_as_functions": True}, 99),
+        pytest.param(OpenAIExtractor, {"examples_as_functions": True}, 99, marks=requires_openai_api_key),
         (BasicExtractor, {}, 99),
     ],
 )
