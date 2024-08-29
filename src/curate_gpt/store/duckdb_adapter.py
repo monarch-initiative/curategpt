@@ -387,7 +387,8 @@ class DuckDBAdapter(DBAdapter):
                             texts = [tokenizer.decode(tokens) for tokens in current_batch]
                             short_name, _ = MODEL_MAP[openai_model]
                             embedding_model = llm.get_embedding_model(short_name)
-                            embeddings = list(embedding_model.embed_multi(texts))
+                            logger.info(f"Number of texts/docs to embed in batch: {len(texts)}")
+                            embeddings = list(embedding_model.embed_multi(texts, len(texts)))
                             logger.info(f"Number of Documents in batch: {len(embeddings)}")
                             batch_embeddings.extend(embeddings)
 
