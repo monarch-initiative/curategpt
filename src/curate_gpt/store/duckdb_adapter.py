@@ -337,7 +337,7 @@ class DuckDBAdapter(DBAdapter):
                 try:
                     self.conn.execute("BEGIN TRANSACTION;")
                     self.conn.executemany(
-                        sql_command, list(zip(ids, metadatas, embeddings, docs, strict=False))
+                        sql_command, list(zip(ids, metadatas, embeddings, docs))
                     )
                     self.conn.execute("COMMIT;")
                 except Exception as e:
