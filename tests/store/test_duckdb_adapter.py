@@ -54,11 +54,14 @@ def simple_schema_manager() -> SchemaProxy:
     return SchemaProxy(sb.schema)
 
 
-@pytest.mark.parametrize("model, requires_key", [
-    pytest.param("openai:", True, marks=requires_openai_api_key),
-    ("all-MiniLM-L6-v2", False),
-    (None, False)
-])
+@pytest.mark.parametrize(
+    "model, requires_key",
+    [
+        pytest.param("openai:", True, marks=requires_openai_api_key),
+        ("all-MiniLM-L6-v2", False),
+        (None, False),
+    ],
+)
 def test_store_variations(simple_schema_manager, example_texts, model, requires_key):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     for i in db.list_collection_names():
@@ -113,13 +116,23 @@ def test_store_variations(simple_schema_manager, example_texts, model, requires_
     assert len(results2) == 1
 
 
-@pytest.mark.parametrize("collection, model, requires_key", [
-    (None, None, False),  # Default model "all-MiniLM-L6-v2"
-    ("one_collection", None, False),  # Explicit collection, default model
-    pytest.param("test_openai_collection", "openai:", True, marks=requires_openai_api_key),
-    pytest.param("test_openai_full_collection", "openai:text-embedding-ada-002", True, marks=requires_openai_api_key)
-])
-def test_the_embedding_function_variations(simple_schema_manager, example_texts, collection, model, requires_key):
+@pytest.mark.parametrize(
+    "collection, model, requires_key",
+    [
+        (None, None, False),  # Default model "all-MiniLM-L6-v2"
+        ("one_collection", None, False),  # Explicit collection, default model
+        pytest.param("test_openai_collection", "openai:", True, marks=requires_openai_api_key),
+        pytest.param(
+            "test_openai_full_collection",
+            "openai:text-embedding-ada-002",
+            True,
+            marks=requires_openai_api_key,
+        ),
+    ],
+)
+def test_the_embedding_function_variations(
+    simple_schema_manager, example_texts, collection, model, requires_key
+):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     db.conn.execute("DROP TABLE IF EXISTS test_collection")
     db.conn.execute("DROP TABLE IF EXISTS one_collection")
