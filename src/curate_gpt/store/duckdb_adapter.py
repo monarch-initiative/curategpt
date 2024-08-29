@@ -336,9 +336,7 @@ class DuckDBAdapter(DBAdapter):
                 embeddings = self._embedding_function(docs, cm.model)
                 try:
                     self.conn.execute("BEGIN TRANSACTION;")
-                    self.conn.executemany(
-                        sql_command, list(zip(ids, metadatas, embeddings, docs))
-                    )
+                    self.conn.executemany(sql_command, list(zip(ids, metadatas, embeddings, docs)))
                     self.conn.execute("COMMIT;")
                 except Exception as e:
                     self.conn.execute("ROLLBACK;")
