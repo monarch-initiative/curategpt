@@ -2,12 +2,11 @@
 
 import json
 import logging
+import os
 from dataclasses import dataclass
 from typing import List
 
-from openai import OpenAI
-
-client = OpenAI()
+from openai import OpenAI, OpenAIError
 
 from curate_gpt.extract.extractor import AnnotatedObject, Extractor
 
@@ -26,6 +25,18 @@ class OpenAIExtractor(Extractor):
     model: str = "gpt-4"
     # conversation: List[Dict[str, Any]] = None
     # conversation_mode: bool = False
+
+    @staticmethod
+    def _get_openai_client():
+        """
+        Private method to get an instance of the OpenAI client.
+        """
+        api_key = os.getenv("OPENAI_API_KEY")
+        if api_key is None:
+            raise OpenAIError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable"
+            )
+        return OpenAI(api_key=api_key)
 
     def functions(self):
         return [
@@ -91,6 +102,8 @@ class OpenAIExtractor(Extractor):
             }
         )
         # print(yaml.dump(messages))
+        client = self._get_openai_client()
+
         response = client.chat.completions.create(
             model=self.model,
             functions=self.functions(),
