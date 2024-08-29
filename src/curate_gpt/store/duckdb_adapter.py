@@ -117,7 +117,7 @@ class DuckDBAdapter(DBAdapter):
         return self._get_collection(collection)
 
     def _create_table_if_not_exists(
-            self, collection: str, vec_dimension: int, distance: str, model: str = None
+        self, collection: str, vec_dimension: int, distance: str, model: str = None
     ):
         """
         Create a table for the given collection if it does not exist
@@ -181,7 +181,7 @@ class DuckDBAdapter(DBAdapter):
         self.conn.execute(create_index_sql)
 
     def _embedding_function(
-            self, texts: Union[str, List[str], List[List[str]]], model: str = None
+        self, texts: Union[str, List[str], List[List[str]]], model: str = None
     ) -> list:
         """
         Get the embeddings for the given texts using the specified model
@@ -281,16 +281,16 @@ class DuckDBAdapter(DBAdapter):
             self.insert(objs_to_insert, **kwargs)
 
     def _process_objects(
-            self,
-            objs: Union[OBJECT, Iterable[OBJECT]],
-            collection: str = None,
-            batch_size: int = None,
-            object_type: str = None,
-            model: str = None,
-            distance: str = None,
-            text_field: Union[str, Callable] = None,
-            method: str = "insert",
-            **kwargs,
+        self,
+        objs: Union[OBJECT, Iterable[OBJECT]],
+        collection: str = None,
+        batch_size: int = None,
+        object_type: str = None,
+        model: str = None,
+        distance: str = None,
+        text_field: Union[str, Callable] = None,
+        method: str = "insert",
+        **kwargs,
     ):
         """
         Process objects by inserting, updating or upserting them into the collection
@@ -336,7 +336,12 @@ class DuckDBAdapter(DBAdapter):
                 embeddings = self._embedding_function(docs, cm.model)
                 try:
                     self.conn.execute("BEGIN TRANSACTION;")
-                    self.conn.executemany(sql_command, list(zip(ids, metadatas, embeddings, docs)))  # noqa: B905
+                    self.conn.executemany(
+                        sql_command, list(zip(ids, metadatas, embeddings, docs))
+                    )  # noqa: B905
+                    # reason to block B905: codequality check
+                    # blocking 3.11 because only code quality issue and 3.9 gives value error with keyword strict
+                    # TODO: delete after PR#76 is merged
                     self.conn.execute("COMMIT;")
                 except Exception as e:
                     self.conn.execute("ROLLBACK;")
@@ -447,14 +452,14 @@ class DuckDBAdapter(DBAdapter):
         self.conn.execute(f"DROP TABLE IF EXISTS {safe_collection_name}")
 
     def search(
-            self,
-            text: str,
-            where: QUERY = None,
-            collection: str = None,
-            limit: int = 10,
-            relevance_factor: float = None,
-            include=None,
-            **kwargs,
+        self,
+        text: str,
+        where: QUERY = None,
+        collection: str = None,
+        limit: int = 10,
+        relevance_factor: float = None,
+        include=None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         """
         Search for objects in the collection that match the given text
@@ -478,15 +483,15 @@ class DuckDBAdapter(DBAdapter):
         )
 
     def _search(
-            self,
-            text: str,
-            where: QUERY = None,
-            collection: str = None,
-            limit: int = 10,
-            relevance_factor: float = None,
-            model: str = None,
-            include=None,
-            **kwargs,
+        self,
+        text: str,
+        where: QUERY = None,
+        collection: str = None,
+        limit: int = 10,
+        relevance_factor: float = None,
+        model: str = None,
+        include=None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         if relevance_factor is not None and relevance_factor < 1.0:
             yield from self._diversified_search(
@@ -548,14 +553,14 @@ class DuckDBAdapter(DBAdapter):
         yield from self.parse_duckdb_result(results, include)
 
     def _diversified_search(
-            self,
-            text: str,
-            where: QUERY = None,
-            collection: str = None,
-            limit: int = 10,
-            relevance_factor: float = 0.5,
-            include=None,
-            **kwargs,
+        self,
+        text: str,
+        where: QUERY = None,
+        collection: str = None,
+        limit: int = 10,
+        relevance_factor: float = 0.5,
+        include=None,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         if limit is None:
             limit = 10
@@ -604,7 +609,7 @@ class DuckDBAdapter(DBAdapter):
         return [row[0] for row in result]
 
     def collection_metadata(
-            self, collection_name: Optional[str] = None, include_derived=False, **kwargs
+        self, collection_name: Optional[str] = None, include_derived=False, **kwargs
     ) -> Optional[CollectionMetadata]:
         """
         Get the metadata for the collection
@@ -662,7 +667,7 @@ class DuckDBAdapter(DBAdapter):
         return current_metadata
 
     def set_collection_metadata(
-            self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
     ):
         """
         Set the metadata for the collection
@@ -686,13 +691,13 @@ class DuckDBAdapter(DBAdapter):
         )
 
     def find(
-            self,
-            where: QUERY = None,
-            projection: PROJECTION = None,
-            collection: str = None,
-            include=None,
-            limit: int = 10,
-            **kwargs,
+        self,
+        where: QUERY = None,
+        projection: PROJECTION = None,
+        collection: str = None,
+        include=None,
+        limit: int = 10,
+        **kwargs,
     ) -> Iterator[SEARCH_RESULT]:
         """
         Find objects in the collection that match the given query and projection
@@ -775,7 +780,7 @@ class DuckDBAdapter(DBAdapter):
             return search_result.to_dict().get(METADATAS)
 
     def peek(
-            self, collection: str = None, limit=5, include=None, **kwargs
+        self, collection: str = None, limit=5, include=None, **kwargs
     ) -> Iterator[SEARCH_RESULT]:
         """
         Peek at the first N objects in the collection
@@ -818,9 +823,9 @@ class DuckDBAdapter(DBAdapter):
             yield json.loads(result[0])
 
     def dump_then_load(
-            self,
-            collection: str = None,
-            target: DBAdapter = None,
+        self,
+        collection: str = None,
+        target: DBAdapter = None,
     ):
         """
         Dump the collection to a file and then load it into the target adapter
@@ -848,7 +853,7 @@ class DuckDBAdapter(DBAdapter):
         target.set_collection_metadata(collection, metadata)
         batch_size = 5000
         for i in range(0, len(list(result)), batch_size):
-            batch = result[i: i + batch_size]
+            batch = result[i : i + batch_size]
             target.insert(batch, collection=collection)
 
     @staticmethod
