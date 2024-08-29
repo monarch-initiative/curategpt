@@ -20,13 +20,13 @@ DOCUMENTS = "documents"
 DISTANCES = "distances"
 
 MODEL_MAP = {
-        "text-embedding-ada-002": ("ada-002", 1536),
-        "text-embedding-3-small": ("3-small", 1536),
-        "text-embedding-3-large": ("3-large", 3072),
-        "text-embedding-3-small-512": ("3-small-512", 512),
-        "text-embedding-3-large-256": ("3-large-256", 256),
-        "text-embedding-3-large-1024": ("3-large-1024", 1024)
+    "text-embedding-ada-002": ("ada-002", 1536),
+    "text-embedding-3-small": ("3-small", 1536),
+    "text-embedding-3-large": ("3-large", 3072),
+    "text-embedding-3-small-512": ("3-small-512", 512),
+    "text-embedding-3-large-256": ("3-large-256", 256),
+    "text-embedding-3-large-1024": ("3-large-1024", 1024),
 }
 
 DEFAULT_OPENAI_MODEL = "text-embedding-ada-002"
-DEFAULT_MODEL= {"all-MiniLM-L6-v2":384}
+DEFAULT_MODEL = {"all-MiniLM-L6-v2": 384}

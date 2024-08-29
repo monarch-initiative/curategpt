@@ -100,13 +100,15 @@ line-length = 100
 target-version = ["py38", "py39", "py310"]
 
 [tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]  # New section for linter-specific settings
 extend-ignore = [
     "D211",  # `no-blank-line-before-class`
     "D212",  # `multi-line-summary-first-line`
     ]
-line-length = 100
 
-# Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 
 # Select or ignore from https://beta.ruff.rs/docs/rules/
@@ -121,11 +123,12 @@ select = [
 ]
 
 unfixable = []
-target-version = "py310"
 
-[tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
-max-complexity = 10
+mccabe = { max-complexity = 10 }
+
+[tool.ruff.lint.isort]
+known-third-party = ["duckdb"]
 
 [tool.codespell]
 skip = "*.po,*.ts,.git,pyproject.toml"

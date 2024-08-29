@@ -7,11 +7,11 @@ import json
 import logging
 import os
 import re
-import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Union
-import llm
+
 import duckdb
+import llm
 import numpy as np
 import openai
 import psutil
@@ -27,14 +27,14 @@ from curate_gpt.store.db_adapter import DBAdapter
 from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from curate_gpt.store.metadata import CollectionMetadata
 from curate_gpt.store.vocab import (
+    DEFAULT_MODEL,
+    DEFAULT_OPENAI_MODEL,
     DISTANCES,
     DOCUMENTS,
     EMBEDDINGS,
     IDS,
     METADATAS,
     MODEL_MAP,
-    DEFAULT_OPENAI_MODEL,
-    DEFAULT_MODEL,
     OBJECT,
     PROJECTION,
     QUERY,
@@ -67,8 +67,10 @@ class DuckDBAdapter(DBAdapter):
         if os.path.isdir(self.path):
             self.path = os.path.join("./db", self.path, "db_file.duckdb")
             os.makedirs(os.path.dirname(self.path), exist_ok=True)
-            logger.info(f"Path {self.path} is a directory. Using {self.path} as the database path\n\
-            as duckdb needs a file path")
+            logger.info(
+                f"Path {self.path} is a directory. Using {self.path} as the database path\n\
+            as duckdb needs a file path"
+            )
         self.ef_construction = self._validate_ef_construction(self.ef_construction)
         self.ef_search = self._validate_ef_search(self.ef_search)
         self.M = self._validate_m(self.M)
@@ -178,7 +180,9 @@ class DuckDBAdapter(DBAdapter):
         """
         self.conn.execute(create_index_sql)
 
-    def _embedding_function(self, texts: Union[str, List[str], List[List[str]]], model: str = None) -> list:
+    def _embedding_function(
+        self, texts: Union[str, List[str], List[List[str]]], model: str = None
+    ) -> list:
         """
         Get the embeddings for the given texts using the specified model
         :param texts: A single text or a list of texts to embed
@@ -202,7 +206,6 @@ class DuckDBAdapter(DBAdapter):
                     f"one of {[MODEL_MAP.keys()]}. Defaulting to {DEFAULT_OPENAI_MODEL}"
                 )
                 openai_model = DEFAULT_OPENAI_MODEL
-
 
             responses = [
                 self.openai_client.embeddings.create(input=text, model=openai_model)
@@ -322,44 +325,46 @@ class DuckDBAdapter(DBAdapter):
         if text_field is None:
             text_field = self.text_lookup
         id_field = self.id_field
-        cumulative_len = 0
         sql_command = self._generate_sql_command(collection, method)
         sql_command = sql_command.format(collection=collection)
         if not self._is_openai(collection):
             for next_objs in chunk(objs, batch_size):
-                    next_objs = list(next_objs)
-                    docs = [self._text(o, text_field) for o in next_objs]
-                    docs_len = sum([len(d) for d in docs])
-                    metadatas = [self._dict(o) for o in next_objs]
-                    ids = [self._id(o, id_field) for o in next_objs]
-                    embeddings = self._embedding_function(docs, cm.model)
-                    try:
-                        self.conn.execute("BEGIN TRANSACTION;")
-                        self.conn.executemany(
-                            sql_command, list(zip(ids, metadatas, embeddings, docs, strict=False))
-                        )
-                        self.conn.execute("COMMIT;")
-                    except Exception as e:
-                        self.conn.execute("ROLLBACK;")
-                        logger.error(f"Transaction failed: {e}, default model: {self.default_model}, model used: {model}, len(embeddings): {len(embeddings[0])}")
-                        raise
-                    finally:
-                        self.create_index(collection)
+                next_objs = list(next_objs)
+                docs = [self._text(o, text_field) for o in next_objs]
+                metadatas = [self._dict(o) for o in next_objs]
+                ids = [self._id(o, id_field) for o in next_objs]
+                embeddings = self._embedding_function(docs, cm.model)
+                try:
+                    self.conn.execute("BEGIN TRANSACTION;")
+                    self.conn.executemany(
+                        sql_command, list(zip(ids, metadatas, embeddings, docs, strict=False))
+                    )
+                    self.conn.execute("COMMIT;")
+                except Exception as e:
+                    self.conn.execute("ROLLBACK;")
+                    logger.error(
+                        f"Transaction failed: {e}, default model: {self.default_model}, model used: {model}, len(embeddings): {len(embeddings[0])}"
+                    )
+                    raise
+                finally:
+                    self.create_index(collection)
         else:
             if model.startswith("openai:"):
                 openai_model = model.split(":", 1)[1]
                 if openai_model == "" or openai_model not in MODEL_MAP.keys():
-                    logger.info(f"The model {openai_model} is not "
-                                f"one of {MODEL_MAP.keys()}. Defaulting to {DEFAULT_OPENAI_MODEL}")
-                    openai_model = DEFAULT_OPENAI_MODEL #ada 002
+                    logger.info(
+                        f"The model {openai_model} is not "
+                        f"one of {MODEL_MAP.keys()}. Defaulting to {DEFAULT_OPENAI_MODEL}"
+                    )
+                    openai_model = DEFAULT_OPENAI_MODEL  # ada 002
                 else:
                     logger.error(f"Something went wonky ## model: {model}")
             from transformers import GPT2Tokenizer
+
             tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
             for next_objs in chunk(objs, batch_size):  # Existing chunking
                 next_objs = list(next_objs)
                 docs = [self._text(o, text_field) for o in next_objs]
-                docs_len = sum([len(d) for d in docs])
                 metadatas = [self._dict(o) for o in next_objs]
                 ids = [self._id(o, id_field) for o in next_objs]
 
@@ -382,13 +387,15 @@ class DuckDBAdapter(DBAdapter):
                             texts = [tokenizer.decode(tokens) for tokens in current_batch]
                             short_name, _ = MODEL_MAP[openai_model]
                             embedding_model = llm.get_embedding_model(short_name)
-                            embeddings = list(embedding_model.embed_multi(texts))
+                            logger.info(f"Number of texts/docs to embed in batch: {len(texts)}")
+                            embeddings = list(embedding_model.embed_multi(texts, len(texts)))
                             logger.info(f"Number of Documents in batch: {len(embeddings)}")
                             batch_embeddings.extend(embeddings)
 
                         if len(doc_tokens) > 8192:
                             logger.warning(
-                                f"Document with ID {ids[i]} exceeds the token limit alone and will be skipped.")
+                                f"Document with ID {ids[i]} exceeds the token limit alone and will be skipped."
+                            )
                             # try:
                             #     embeddings = OpenAIEmbeddings(model=model, tiktoken_model_name=model).embed_query(texts,
                             #     embeddings.average                                                                                model)
@@ -407,7 +414,9 @@ class DuckDBAdapter(DBAdapter):
                     embedding_model = llm.get_embedding_model(short_name)
                     embeddings = list(embedding_model.embed_multi(texts))
                     batch_embeddings.extend(embeddings)
-                logger.info(f"Trying to insert: {len(ids)} IDS, {len(metadatas)} METADATAS, {len(batch_embeddings)} EMBEDDINGS")
+                logger.info(
+                    f"Trying to insert: {len(ids)} IDS, {len(metadatas)} METADATAS, {len(batch_embeddings)} EMBEDDINGS"
+                )
                 try:
                     self.conn.execute("BEGIN TRANSACTION;")
                     self.conn.executemany(
@@ -417,7 +426,8 @@ class DuckDBAdapter(DBAdapter):
                 except Exception as e:
                     self.conn.execute("ROLLBACK;")
                     logger.error(
-                        f"Transaction failed: {e}, default model: {self.default_model}, model used: {model}, len(embeddings): {len(embeddings[0])}")
+                        f"Transaction failed: {e}, default model: {self.default_model}, model used: {model}, len(embeddings): {len(embeddings[0])}"
+                    )
                     raise
                 finally:
                     self.create_index(collection)
@@ -1020,10 +1030,9 @@ class DuckDBAdapter(DBAdapter):
         return " AND ".join(conditions)
 
     def _get_embedding_dimension(self, model_name: str) -> int:
-        if model_name is None:
+        if model_name is None or model_name.startswith(self.default_model):
             return DEFAULT_MODEL[self.default_model]
         if isinstance(model_name, str):
-            logger.info("somehow here")
             if model_name.startswith("openai:"):
                 model_key = model_name.split("openai:", 1)[1]
                 model_info = MODEL_MAP.get(model_key, DEFAULT_OPENAI_MODEL)
