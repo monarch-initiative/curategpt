@@ -3,8 +3,10 @@ import pytest
 from curate_gpt.agents import MappingAgent
 from curate_gpt.agents.mapping_agent import MappingPredicate
 from curate_gpt.extract import BasicExtractor
+from tests.store.conftest import requires_openai_api_key
 
 
+@requires_openai_api_key
 @pytest.mark.parametrize(
     "subject_id,object_id",
     [

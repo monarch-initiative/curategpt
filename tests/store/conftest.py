@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 import pytest
@@ -41,3 +42,10 @@ def example_combo_texts() -> List[str]:
         "chopper apple",
         "helicopter golden delicious",
     ]
+
+
+requires_openai_api_key = pytest.mark.skipif(
+    os.getenv('OPENAI_API_KEY') is None,
+    reason="Skipping test: OPENAI_API_KEY environment variable is not set. \
+            This test requires an OPENAI_API_KEY to run and is not included in the results.",
+)

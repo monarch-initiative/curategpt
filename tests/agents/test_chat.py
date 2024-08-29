@@ -4,8 +4,10 @@ import pytest
 
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
+from tests.store.conftest import requires_openai_api_key
 
 
+@requires_openai_api_key
 @pytest.mark.parametrize("limit", [100, 10])
 def test_chat(go_test_chroma_db, limit):
     """Tests asking questions over a knowledge base."""
