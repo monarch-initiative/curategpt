@@ -12,7 +12,7 @@ def gocam_wrapper() -> GOCAMWrapper:
     view = GOCAMWrapper()
     return view
 
-
+@pytest.mark.skip(reason="This test requires a specific example file")
 def test_gocam_object(gocam_wrapper):
     doc = json.load(open(str(INPUT_DIR / "gocam-613aae0000000813.json")))
     obj = gocam_wrapper.object_from_dict(doc)
