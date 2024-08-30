@@ -7,6 +7,7 @@ from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapp
 
 import oaklib.datamodels.obograph as og
 from oaklib import BasicOntologyInterface
+from oaklib.datamodels.obograph import GraphDocument
 from oaklib.datamodels.search import SearchConfiguration
 from oaklib.datamodels.vocabulary import IS_A
 from oaklib.interfaces import OboGraphInterface, SearchInterface
@@ -182,7 +183,7 @@ class OntologyWrapper(BaseWrapper):
                 self.shorthand_to_id[obj["id"]] = obj["original_id"]
         return self.shorthand_to_id
 
-    def unwrap_object(self, obj: Dict[str, Any], store: DBAdapter, **kwargs) -> og.Graph:
+    def unwrap_object(self, obj: Dict[str, Any], store: DBAdapter, **kwargs) -> GraphDocument:
         return self.unwrap_objects([obj], store, **kwargs)
 
     def unwrap_objects(
