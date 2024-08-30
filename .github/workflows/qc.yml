@@ -30,7 +30,7 @@ jobs:
         run: poetry run tox -e codespell
 
       - name: Check code quality with ruff
-        run: poetry run tox -e lint-py$(echo ${{ matrix.python-version }} | sed 's/[^0-9]//g')
+        run: poetry run tox -e lint
 
       - name: Test with pytest and generate coverage file
         run: poetry run tox -e py
