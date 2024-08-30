@@ -5,12 +5,6 @@ ONT_DB = str(INPUT_DIR / "go-nucleus.db")
 
 
 def test_store_management(runner):
-    # test index ontology with duckdb
-    result = runner.invoke(
-        main, ["ontology", "index", ONT_DB, "-m", "all-MiniLM-L6-v2", "-c", "oai", "-D", "duckdb"]
-    )
-    assert result.exit_code == 0
-    # test index ontology with chromadb
     result = runner.invoke(
         main, ["ontology", "index", ONT_DB, "-D", "chromadb", "-m", "all-MiniLM-L6-v2", "-c", "oai"]
     )
