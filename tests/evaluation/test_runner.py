@@ -4,6 +4,7 @@ import yaml
 from curate_gpt.evaluation.evaluation_datamodel import Task
 from curate_gpt.evaluation.runner import run_task
 from tests import OUTPUT_DIR
+from tests.store.conftest import requires_openai_api_key
 
 
 @pytest.mark.parametrize(
@@ -14,6 +15,7 @@ from tests import OUTPUT_DIR
         (20, 4, ["relationships"], []),
     ],
 )
+@requires_openai_api_key
 def test_runner(loaded_ontology_db, num_training, num_testing, fields_to_predict, fields_to_mask):
     task = Task(
         source_db_path=loaded_ontology_db.path,
@@ -26,4 +28,4 @@ def test_runner(loaded_ontology_db, num_training, num_testing, fields_to_predict
         working_directory=str(OUTPUT_DIR / "runner_test"),
     )
     results = run_task(task)
-    print(yaml.dump(results.dict(), sort_keys=False))
+    print(yaml.dump(results.model_dump(), sort_keys=False))
