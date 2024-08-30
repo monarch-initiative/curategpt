@@ -29,8 +29,8 @@ jobs:
       - name: Check common spelling errors
         run: poetry run tox -e codespell
 
-      - name: Check code quality with flake8
-        run: poetry run tox -e lint
+      - name: Check code quality with ruff
+        run: poetry run tox -e py$(echo ${{ matrix.python-version }} | tr -d .)
 
       - name: Test with pytest and generate coverage file
         run: poetry run tox -e py
