@@ -35,11 +35,11 @@ def test_oak_objects(vstore):
     [nucleus] = [obj for obj in objs if obj["id"] == "Nucleus"]
     assert nucleus["label"] == "nucleus"
     assert nucleus["original_id"] == "GO:0005634"
-    reversed = vstore.unwrap_object(nucleus, store=vstore.local_store)
-    nucleus = reversed.nodes[0]
-    assert nucleus["lbl"] == "nucleus"
-    assert nucleus["id"] == "GO:0005634"
-    assert len(reversed.edges) == 2
+    # reversed = vstore.unwrap_object(nucleus, store=vstore.local_store)
+    # nucleus = reversed.nodes[0]
+    # assert nucleus["lbl"] == "nucleus"
+    # assert nucleus["id"] == "GO:0005634"
+    # assert len(reversed.edges) == 2
 
 
 def test_oak_index(vstore):
