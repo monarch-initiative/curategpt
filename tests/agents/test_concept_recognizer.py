@@ -3,8 +3,10 @@ import yaml
 
 from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
 from curate_gpt.extract.basic_extractor import BasicExtractor
+from tests.store.conftest import requires_openai_api_key
 
 
+@requires_openai_api_key
 @pytest.mark.parametrize(
     "text,categories,prefixes,expected",
     [

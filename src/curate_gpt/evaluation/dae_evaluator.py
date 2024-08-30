@@ -17,6 +17,7 @@ from curate_gpt.evaluation.evaluation_datamodel import ClassificationMetrics, Cl
 logger = logging.getLogger(__name__)
 
 
+# TODO: missing abstract class evaluate_object, causes src/tests/evaluation/test_runner to fail
 @dataclass
 class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
     """

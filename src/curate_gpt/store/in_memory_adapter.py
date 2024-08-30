@@ -2,7 +2,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Union
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Union, get_origin
 
 from pydantic import BaseModel, ConfigDict
 
@@ -70,7 +70,7 @@ class InMemoryAdapter(DBAdapter):
         :return:
         """
         collection_obj = self._get_collection_object(collection)
-        if isinstance(objs, OBJECT):
+        if get_origin(type(objs)) is not Dict:
             objs = [objs]
         collection_obj.add(objs)
 

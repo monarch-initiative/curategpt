@@ -1,13 +1,18 @@
 import logging
+import os
 import shutil
+import tempfile
+from pprint import pprint
 
 import pytest
 from oaklib import get_adapter
+from oaklib.datamodels.obograph import GraphDocument
 
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
+from tests.store.conftest import requires_openai_api_key
 
 TEMP_OAKVIEW_DB = OUTPUT_DIR / "oaktmp"
 TEMP_OAKVIEW_DB2 = OUTPUT_DIR / "oaktmp2"
@@ -20,11 +25,14 @@ logger.setLevel(logging.DEBUG)
 
 
 @pytest.fixture
-def vstore() -> OntologyWrapper:
-    adapter = get_adapter(INPUT_DIR / "go-nucleus.db")
-    db = ChromaDBAdapter(str(TEMP_OAKVIEW_DB))
-    db.reset()
-    return OntologyWrapper(oak_adapter=adapter, local_store=db, extractor=BasicExtractor())
+def vstore():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        db_path = os.path.join(temp_dir, "test_db")
+        adapter = get_adapter(INPUT_DIR / "go-nucleus.db")
+        db = ChromaDBAdapter(db_path)
+        wrapper = OntologyWrapper(oak_adapter=adapter, local_store=db, extractor=BasicExtractor())
+        db.insert(wrapper.objects())
+        yield wrapper
 
 
 def test_oak_objects(vstore):
@@ -36,10 +44,10 @@ def test_oak_objects(vstore):
     assert nucleus["label"] == "nucleus"
     assert nucleus["original_id"] == "GO:0005634"
     reversed = vstore.unwrap_object(nucleus, store=vstore.local_store)
-    nucleus = reversed.nodes[0]
+    nucleus = reversed.graphs[0].nodes[0]
     assert nucleus["lbl"] == "nucleus"
     assert nucleus["id"] == "GO:0005634"
-    assert len(reversed.edges) == 2
+    assert len(reversed.graphs[0].edges) == 2
 
 
 def test_oak_index(vstore):
@@ -50,7 +58,7 @@ def test_oak_index(vstore):
     db.reset()
     wrapper = OntologyWrapper(oak_adapter=adapter, local_store=db, extractor=BasicExtractor())
     db.insert(wrapper.objects())
-    g = wrapper.wrap_object(
+    g = wrapper.unwrap_object(
         {
             "id": "Nucleus",
             "label": "nucleus",
@@ -59,10 +67,20 @@ def test_oak_index(vstore):
         },
         store=db,
     )
-    print(g.nodes)
-    print(g.edges)
+    if isinstance(g, GraphDocument):
+        pprint(g.__dict__, width=100, indent=2)
+        print(f"Number of Graphs in GraphDocument: {len(g.graphs)}")
+        g = g.graphs[0] if g.graphs else None
+        print("\n", g.nodes, "\n")
+        print("\n", g.edges, "\n")
+        # access node and edge attributes
+        node = g.nodes[0]
+        edge = g.edges[0]
+        print(node.id, node.lbl)
+        print(edge.sub, edge.pred, edge.obj)
 
 
+@requires_openai_api_key
 def test_oak_search(vstore):
     """Test that the objects are indexed and searchable in the local store."""
     results = list(vstore.search("nucl"))

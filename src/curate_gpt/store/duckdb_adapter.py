@@ -337,8 +337,11 @@ class DuckDBAdapter(DBAdapter):
                 try:
                     self.conn.execute("BEGIN TRANSACTION;")
                     self.conn.executemany(
-                        sql_command, list(zip(ids, metadatas, embeddings, docs, strict=False))
+                        sql_command, list(zip(ids, metadatas, embeddings, docs))  # noqa: B905
                     )
+                    # reason to block B905: codequality check
+                    # blocking 3.11 because only code quality issue and 3.9 gives value error with keyword strict
+                    # TODO: delete after PR#76 is merged
                     self.conn.execute("COMMIT;")
                 except Exception as e:
                     self.conn.execute("ROLLBACK;")
@@ -1014,7 +1017,7 @@ class DuckDBAdapter(DBAdapter):
                         conditions.append(
                             f"json_extract_string(metadata, '$.{key}') IN ({', '.join([f'{v}' for v in value])})"
                         )
-                    elif op == "$not_in":
+                    elif op == "$nin":
                         conditions.append(
                             f"json_extract_string(metadata, '$.{key}') NOT IN ({', '.join([f'{v}' for v in value])})"
                         )
