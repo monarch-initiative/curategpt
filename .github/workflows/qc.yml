@@ -29,7 +29,7 @@ jobs:
       - name: Check common spelling errors
         run: poetry run tox -e codespell
 
-      - name: Check code quality with flake8
+      - name: Check code quality with ruff
         run: poetry run tox -e lint
 
       - name: Test with pytest and generate coverage file
