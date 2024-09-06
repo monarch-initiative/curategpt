@@ -24,6 +24,7 @@ from oaklib import get_adapter
 from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
+from curate_gpt.store.huggingface_adapter import HuggingFaceAdapter
 from curate_gpt.agents.bootstrap_agent import BootstrapAgent, KnowledgeBaseSpecification
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
@@ -2400,6 +2401,34 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
     # Insert embeddings into the collection
     db.insert(embeddings, model=model, collection=collection)
     print(f"Successfully indexed embeddings into collection '{collection}'.")
+
+@embeddings.command(name="upload")
+@click.option("--repo-id", required=True, help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.")
+@click.option("--collection", required=True, help="The name of the collection to upload.")
+@click.option("--private/--public", default=False, help="Whether the repository should be private.")
+@click.option(
+    "--adapter",
+    default="huggingface",
+    show_default=True,
+    type=click.Choice(["huggingface"]),  # Add other adapters here as needed
+    help="The adapter to use for uploading the collection.",
+)
+def upload_embeddings(repo_id, collection, private, adapter):
+    """
+    Upload embeddings and their metadata from a specified collection to a repository,
+    e.g. huggingface
+
+    Example:
+        curategpt embeddings upload --repo-id biomedical-translator/my_repo --collection my_collection --adapter huggingface
+    """
+
+    if adapter == "huggingface":
+        db_adapter = HuggingFaceAdapter(path="")  # Initialize with relevant path or parameters if needed
+    else:
+        raise NotImplementedError(f"The adapter '{adapter}' is not implemented. Currently, only 'huggingface' is supported.")
+
+    # Upload the collection
+    db_adapter.upload_collection(collection, repo_id, private=private)
 
 
 @main.group()
