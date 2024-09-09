@@ -1,17 +1,14 @@
+import logging
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 import pandas as pd
 import yaml
 from huggingface_hub import HfApi, create_repo
+
 from curate_gpt import DBAdapter
 
-import logging
 logger = logging.getLogger(__name__)
-
-from huggingface_hub import HfApi, create_repo
-from dataclasses import dataclass
-from curate_gpt.store import DBAdapter, CollectionMetadata
 
 
 @dataclass
@@ -33,7 +30,7 @@ class HuggingFaceAdapter(DBAdapter):
         """
         return []
 
-    def collection_metadata(self, collection_name: Optional[str] = None, include_derived=False, **kwargs) -> Optional[CollectionMetadata]:
+    def collection_metadata(self, collection_name: Optional[str] = None, include_derived=False, **kwargs):
         """
         Dummy collection_metadata method. Not implemented for HuggingFaceAdapter.
         """

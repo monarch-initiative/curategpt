@@ -24,7 +24,6 @@ from oaklib import get_adapter
 from pydantic import BaseModel
 
 from curate_gpt import ChromaDBAdapter, __version__
-from curate_gpt.store.huggingface_adapter import HuggingFaceAdapter
 from curate_gpt.agents.bootstrap_agent import BootstrapAgent, KnowledgeBaseSpecification
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
@@ -39,6 +38,7 @@ from curate_gpt.evaluation.splitter import stratify_collection
 from curate_gpt.extract import AnnotatedObject
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.store import get_store
+from curate_gpt.store.huggingface_adapter import HuggingFaceAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.utils.vectordb_operations import match_collections
 from curate_gpt.wrappers import BaseWrapper, get_wrapper
