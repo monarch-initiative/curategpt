@@ -242,19 +242,6 @@ class DBAdapter(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def upload_collection(self, collection: str, repo_id: str,
-                          private: bool = False, **kwargs):
-        """
-        Abstract method to upload an entire collection to a specified destination.
-
-        :param collection: The name of the collection to upload.
-        :param repo_id: The repository ID where the collection will be uploaded.
-        """
-        raise NotImplementedError
-
-    # Query operations
-
-    @abstractmethod
     def search(
         self, text: str, where: QUERY = None, collection: str = None, **kwargs
     ) -> Iterator[SEARCH_RESULT]:

@@ -2403,8 +2403,9 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
     print(f"Successfully indexed embeddings into collection '{collection}'.")
 
 @embeddings.command(name="upload")
+@path_option
+@collection_option
 @click.option("--repo-id", required=True, help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.")
-@click.option("--collection", required=True, help="The name of the collection to upload.")
 @click.option("--private/--public", default=False, help="Whether the repository should be private.")
 @click.option(
     "--adapter",
@@ -2413,22 +2414,38 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
     type=click.Choice(["huggingface"]),  # Add other adapters here as needed
     help="The adapter to use for uploading the collection.",
 )
-def upload_embeddings(repo_id, collection, private, adapter):
+@database_type_option
+def upload_embeddings(path, collection, repo_id, private, adapter, database_type):
     """
     Upload embeddings and their metadata from a specified collection to a repository,
-    e.g. huggingface
+    e.g. huggingface.
 
     Example:
         curategpt embeddings upload --repo-id biomedical-translator/my_repo --collection my_collection --adapter huggingface
     """
+    # Initialize the database adapter to access the collection
+    db = get_store(database_type, path)
 
+    # Fetch the objects and metadata from the specified collection
+    try:
+        objects = list(db.peek(collection=collection))
+        metadata = db.collection_metadata(collection)
+    except Exception as e:
+        print(f"Error accessing collection '{collection}' from database: {e}")
+        return
+
+    # Initialize the appropriate adapter
     if adapter == "huggingface":
         db_adapter = HuggingFaceAdapter(path="")  # Initialize with relevant path or parameters if needed
     else:
         raise NotImplementedError(f"The adapter '{adapter}' is not implemented. Currently, only 'huggingface' is supported.")
 
-    # Upload the collection
-    db_adapter.upload_collection(collection, repo_id, private=private)
+    # Upload the fetched objects and metadata to the specified repository
+    try:
+        db_adapter.upload_collection(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+    except Exception as e:
+        print(f"Error uploading collection to {repo_id}: {e}")
+
 
 
 @main.group()

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 import pandas as pd
+import tempfile
 import yaml
 from huggingface_hub import HfApi, create_repo
 
@@ -60,33 +61,77 @@ class HuggingFaceAdapter(DBAdapter):
         """
         return []
 
-    def upload_collection(self, collection: str, repo_id: str, private: bool = False, **kwargs):
+    def upload_collection(self, objects, metadata, repo_id, private=False, **kwargs):
         """
         Upload an entire collection to a Hugging Face repository.
 
-        :param collection: The name of the collection to upload.
+        :param objects: The objects to upload.
+        :param metadata: The metadata associated with the collection.
         :param repo_id: The repository ID on Hugging Face.
         :param private: Whether the repository should be private.
         :param kwargs: Additional arguments such as batch size or metadata options.
         """
-        # Ensure the repository exists
-        self._create_repo(repo_id, private=private)
+        # Transform metadata into VenomX format using the private method
+        venomx_metadata = self._transform_metadata_to_venomx(metadata)
 
-        # Fetch objects and metadata from the collection
-        objects = list(self.find(collection=collection))  # <- fix
+        # Create a temporary directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Define paths for the temporary files
+            embedding_file = f"{temp_dir}/{metadata.name or 'collection'}_embeddings.parquet"
+            metadata_file = f"{temp_dir}/{metadata.name or 'collection'}_metadata.yaml"
 
-        metadata = self.collection_metadata(collection)
+            # Save objects and metadata to temporary files
+            pd.DataFrame(objects).to_parquet(
+                embedding_file)  # Serialize objects to Parquet
+            with open(metadata_file, "w") as f:
+                yaml.dump(venomx_metadata, f, sort_keys=False)
 
-        # Save objects and metadata to temporary files
-        embedding_file = f"{collection}_embeddings.parquet"
-        metadata_file = f"{collection}_metadata.yaml"
+            # Ensure the repository exists
+            self._create_repo(repo_id, private=private)
 
-        pd.DataFrame(objects).to_parquet(embedding_file)  # Example serialization to Parquet
-        with open(metadata_file, "w") as f:
-            yaml.dump(metadata.model_dump(), f, sort_keys=False)
+            # Upload files to the repository
+            self._upload_files(repo_id, {embedding_file: embedding_file,
+                                         metadata_file: metadata_file})
 
-        # Upload files to the repository
-        self._upload_files(repo_id, {embedding_file: embedding_file, metadata_file: metadata_file})
+    def _transform_metadata_to_venomx(self, metadata):
+        """
+        Transform metadata from ChromaDB format to VenomX format.
+
+        :param metadata: Metadata object from store
+        :return: A dictionary formatted according to VenomX
+        """
+
+        prefixes = metadata.prefixes if hasattr(metadata,
+                                                'prefixes') and metadata.prefixes else {}
+
+        venomx_metadata = {
+            "description": metadata.description or "No description provided",
+            "prefixes": prefixes,
+            "model": {
+                "name": metadata.model or "unknown",
+                # Default to a known model if not specified
+            },
+            "model_input_method": {
+                "description": "Simple pass through of labels only",
+                "fields": ["rdfs:label"]
+                # Adjust fields based on actual data structure if needed
+            },
+            "dataset": {
+                "name": metadata.name or "Unknown Dataset",
+                "url": metadata.source or "Unknown URL"
+                # Adjust based on available metadata
+            }
+        }
+
+        # Enrich VenomX format with annotations if available
+        if metadata.annotations:
+            venomx_metadata["annotations"] = metadata.annotations
+
+        # Include any additional fields from metadata that are relevant
+        if hasattr(metadata, 'extra_fields') and metadata.extra_fields:
+            venomx_metadata.update(metadata.extra_fields)
+
+        return venomx_metadata
 
     def _create_repo(self, repo_id: str, private: bool = False):
         """
