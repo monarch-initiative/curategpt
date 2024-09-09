@@ -74,24 +74,23 @@ class HuggingFaceAdapter(DBAdapter):
         # Transform metadata into VenomX format using the private method
         venomx_metadata = self._transform_metadata_to_venomx(metadata)
 
-        # Create a temporary directory
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # Define paths for the temporary files
-            embedding_file = f"{temp_dir}/{metadata.name or 'collection'}_embeddings.parquet"
-            metadata_file = f"{temp_dir}/{metadata.name or 'collection'}_metadata.yaml"
+        # Define the file names to be saved in the current working directory
+        embedding_file = "embeddings.parquet"
+        metadata_file = "metadata.yaml"
 
-            # Save objects and metadata to temporary files
-            pd.DataFrame(objects).to_parquet(
-                embedding_file)  # Serialize objects to Parquet
-            with open(metadata_file, "w") as f:
-                yaml.dump(venomx_metadata, f, sort_keys=False)
+        # Save objects and metadata to files in the cwd
+        pd.DataFrame(objects).to_parquet(embedding_file)  # Serialize objects to Parquet
+        with open(metadata_file, "w") as f:
+            yaml.dump(venomx_metadata, f, sort_keys=False)
 
-            # Ensure the repository exists
-            self._create_repo(repo_id, private=private)
+        # Ensure the repository exists
+        self._create_repo(repo_id, private=private)
 
-            # Upload files to the repository
-            self._upload_files(repo_id, {embedding_file: embedding_file,
-                                         metadata_file: metadata_file})
+        # Upload files to the repository
+        self._upload_files(repo_id, {
+            embedding_file: embedding_file,  # Directly reference the file names
+            metadata_file: metadata_file
+        })
 
     def _transform_metadata_to_venomx(self, metadata):
         """
