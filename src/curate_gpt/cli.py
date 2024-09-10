@@ -2423,18 +2423,15 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
     Example:
         curategpt embeddings upload --repo-id biomedical-translator/my_repo --collection my_collection --adapter huggingface
     """
-    # Initialize the database adapter to access the collection
     db = get_store(database_type, path)
 
-    # Fetch the objects and metadata from the specified collection
     try:
-        objects = list(db.peek(collection=collection))
+        objects = db.find(collection=collection)
         metadata = db.collection_metadata(collection)
     except Exception as e:
         print(f"Error accessing collection '{collection}' from database: {e}")
         return
 
-    # Initialize the appropriate adapter
     if adapter == "huggingface":
         db_adapter = HuggingFaceAdapter(path="")  # Initialize with relevant path or parameters if needed
     else:

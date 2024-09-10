@@ -69,7 +69,7 @@ class HuggingFaceAdapter(DBAdapter):
         :param metadata: The metadata associated with the collection.
         :param repo_id: The repository ID on Hugging Face.
         :param private: Whether the repository should be private.
-        :param kwargs: Additional arguments such as batch size or metadata options.
+        :param kwargs: Additional arguments
         """
         # Transform metadata into VenomX format using the private method
         venomx_metadata = self._transform_metadata_to_venomx(metadata)
