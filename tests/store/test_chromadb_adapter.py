@@ -88,6 +88,16 @@ def test_store(simple_schema_manager, example_texts):
     assert len(results2) > limit
 
 
+def test_fetch_all_memory_safe(example_texts):
+    db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
+    collection = "test"
+    db.client.reset()
+    objs = terms_to_objects(example_texts)
+    db.insert(objs, collection=collection)
+    results = list(db.fetch_all_objects_memory_safe(collection=collection))
+    assert len(results) == len(objs)
+
+
 def test_autoschema(example_texts):
     db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
     db.client.reset()

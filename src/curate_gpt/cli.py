@@ -30,6 +30,7 @@ from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, Concep
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.evidence_agent import EvidenceAgent
+from curate_gpt.agents.huggingface_agent import HuggingFaceAgent
 from curate_gpt.agents.summarization_agent import SummarizationAgent
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
 from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
@@ -2400,6 +2401,41 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
     # Insert embeddings into the collection
     db.insert(embeddings, model=model, collection=collection)
     print(f"Successfully indexed embeddings into collection '{collection}'.")
+
+@embeddings.command(name="upload")
+@path_option
+@collection_option
+@click.option("--repo-id", required=True, help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.")
+@click.option("--private/--public", default=False, help="Whether the repository should be private.")
+@click.option("--adapter", default="huggingface", help="Adapter to use for uploading embeddings.")
+@database_type_option
+def upload_embeddings(path, collection, repo_id, private, adapter, database_type):
+    """
+    Upload embeddings and their metadata from a specified collection to a repository,
+    e.g. huggingface.
+
+    Example:
+        curategpt embeddings upload --repo-id biomedical-translator/my_repo --collection my_collection
+    """
+    db = get_store(database_type, path)
+
+    try:
+        objects = list(db.fetch_all_objects_memory_safe(collection=collection))
+        metadata = db.collection_metadata(collection)
+    except Exception as e:
+        print(f"Error accessing collection '{collection}' from database: {e}")
+        return
+
+    if adapter == "huggingface":
+        agent = HuggingFaceAgent()
+    else:
+        raise ValueError(f"Unsupported adapter: {adapter} "
+                         f"currently only huggingface adapter is supported")
+    try:
+        agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+    except Exception as e:
+        print(f"Error uploading collection to {repo_id}: {e}")
+
 
 
 @main.group()
