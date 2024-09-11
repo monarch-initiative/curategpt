@@ -107,6 +107,8 @@ def test_store_variations(simple_schema_manager, example_texts, model, requires_
     else:
         db.insert(objs, collection=collection)
     results2 = list(db.search("fox", collection=collection, include=["metadatas"]))
+    peek = list(db.fetch_all_objects_memory_safe(collection=collection, batch_size=2))
+    assert len(peek) == 7
 
     def _id(obj, dist, meta):
         return obj["id"]
@@ -114,6 +116,17 @@ def test_store_variations(simple_schema_manager, example_texts, model, requires_
     assert _id(*results[0]) == _id(*results2[0])
     results2 = list(db.find({}, limit=2, collection=collection))
     assert len(results2) == 1
+
+
+def test_fetch_all_memory_safe(example_texts):
+    db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
+    collection = "test"
+    for i in db.list_collection_names():
+        db.remove_collection(i)
+    objs = terms_to_objects(example_texts)
+    db.insert(objs, collection=collection)
+    results = list(db.fetch_all_objects_memory_safe(collection=collection, batch_size=5))
+    assert len(results) == len(objs)
 
 
 @pytest.mark.parametrize(

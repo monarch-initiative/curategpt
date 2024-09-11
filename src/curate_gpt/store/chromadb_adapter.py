@@ -526,15 +526,49 @@ class ChromaDBAdapter(DBAdapter):
         if collection.metadata.get("model", "").startswith("openai:"):
             return True
 
-    def peek(self, collection: str = None, limit=5, **kwargs) -> Iterator[OBJECT]:
+    def peek(self, collection: str = None, limit=5, offset: int = 0,  **kwargs) -> Iterator[OBJECT]:
         c = self.client.get_collection(name=self._get_collection(collection))
-        logger.debug(f"Peeking at {collection} limit={limit}")
+        logger.debug(f"Peeking at {collection} with limit={limit}, offset={offset}")
         results = c.peek(limit=limit)
         logger.debug(f"Got {len(results)} results")
         # TODO: DRY
         metadatas = results["metadatas"]
         for i in range(0, len(metadatas)):
             yield self._unjson(metadatas[i])
+
+    def fetch_all_objects_memory_safe(self, collection: str = None, batch_size: int = 100, **kwargs) -> Iterator[
+        OBJECT]:
+        """
+        Fetch all objects from a collection, in batches to avoid memory overload.
+        """
+        offset = 0
+        client = self.client
+        collection_obj = client.get_collection(name=self._get_collection(collection))
+        while True:
+            results = collection_obj.get(offset=offset, limit=batch_size, include=["metadatas", "embeddings", "documents"], **kwargs)
+            logger.info(f"Fetching batch from {offset}...")
+            metadatas = results["metadatas"]
+            documents = results["documents"]
+            embeddings = results["embeddings"]
+            if not documents and not metadatas and not embeddings:
+                break
+            for i in range(0, len(documents)):
+                if not metadatas[i]:
+                    logger.error(
+                        f"Empty metadata for item {i} [num: {len(metadatas)}] doc: {documents[i]}"
+                    )
+                    continue
+                obj = (
+                    self._unjson(metadatas[i]),
+                    0.0,
+                    {
+                        "document": documents[i],
+                    },
+                )
+                if embeddings:
+                    obj[2]["_embeddings"] = embeddings[i]
+                yield obj
+            offset += batch_size
 
     def dump_then_load(self, collection: str = None, target: DBAdapter = None):
         """

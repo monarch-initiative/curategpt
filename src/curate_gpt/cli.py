@@ -30,6 +30,7 @@ from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, Concep
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.evidence_agent import EvidenceAgent
+from curate_gpt.agents.huggingface_agent import HuggingFaceAgent
 from curate_gpt.agents.summarization_agent import SummarizationAgent
 from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
 from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
@@ -38,7 +39,6 @@ from curate_gpt.evaluation.splitter import stratify_collection
 from curate_gpt.extract import AnnotatedObject
 from curate_gpt.extract.basic_extractor import BasicExtractor
 from curate_gpt.store import get_store
-from curate_gpt.store.huggingface_adapter import HuggingFaceAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.utils.vectordb_operations import match_collections
 from curate_gpt.wrappers import BaseWrapper, get_wrapper
@@ -2407,15 +2407,8 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
 @collection_option
 @click.option("--repo-id", required=True, help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.")
 @click.option("--private/--public", default=False, help="Whether the repository should be private.")
-@click.option(
-    "--adapter",
-    default="huggingface",
-    show_default=True,
-    type=click.Choice(["huggingface"]),  # Add other adapters here as needed
-    help="The adapter to use for uploading the collection.",
-)
 @database_type_option
-def upload_embeddings(path, collection, repo_id, private, adapter, database_type):
+def upload_embeddings_to_huggingface(path, collection, repo_id, private, adapter, database_type):
     """
     Upload embeddings and their metadata from a specified collection to a repository,
     e.g. huggingface.
@@ -2426,20 +2419,15 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
     db = get_store(database_type, path)
 
     try:
-        objects = db.find(collection=collection)
+        objects = list(db.fetch_all_objects_memory_safe(collection=collection))
         metadata = db.collection_metadata(collection)
     except Exception as e:
         print(f"Error accessing collection '{collection}' from database: {e}")
         return
 
-    if adapter == "huggingface":
-        db_adapter = HuggingFaceAdapter(path="")  # Initialize with relevant path or parameters if needed
-    else:
-        raise NotImplementedError(f"The adapter '{adapter}' is not implemented. Currently, only 'huggingface' is supported.")
-
-    # Upload the fetched objects and metadata to the specified repository
+    huggingface_agent = HuggingFaceAgent()
     try:
-        db_adapter.upload_collection(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+        huggingface_agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
     except Exception as e:
         print(f"Error uploading collection to {repo_id}: {e}")
 
