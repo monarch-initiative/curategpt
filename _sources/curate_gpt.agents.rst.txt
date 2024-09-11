@@ -68,6 +68,14 @@ curate\_gpt.agents.evidence\_agent module
    :undoc-members:
    :show-inheritance:
 
+curate\_gpt.agents.huggingface\_agent module
+--------------------------------------------
+
+.. automodule:: curate_gpt.agents.huggingface_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 curate\_gpt.agents.mapping\_agent module
 ----------------------------------------
 

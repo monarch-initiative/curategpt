@@ -235,6 +235,13 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.agents.huggingface_agent">curate_gpt.agents.huggingface_agent module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.huggingface_agent.HuggingFaceAgent"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.huggingface_agent.HuggingFaceAgent.upload"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent.upload()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.agents.mapping_agent">curate_gpt.agents.mapping_agent module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.agents.mapping_agent.Mapping"><code class="docutils literal notranslate"><span class="pre">Mapping</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curate_gpt.agents.mapping_agent.Mapping.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Mapping.model_computed_fields</span></code></a></li>
@@ -1358,6 +1365,32 @@ the following:</p>
 <dt class="sig sig-object py" id="curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.skip">
 <span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'skip'</span></em><a class="headerlink" href="#curate_gpt.agents.evidence_agent.EvidenceUpdatePolicyEnum.skip" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-curate_gpt.agents.huggingface_agent">
+<span id="curate-gpt-agents-huggingface-agent-module"></span><h2>curate_gpt.agents.huggingface_agent module<a class="headerlink" href="#module-curate_gpt.agents.huggingface_agent" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="curate_gpt.agents.huggingface_agent.HuggingFaceAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curate_gpt.agents.huggingface_agent.</span></span><span class="sig-name descname"><span class="pre">HuggingFaceAgent</span></span><a class="headerlink" href="#curate_gpt.agents.huggingface_agent.HuggingFaceAgent" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curate_gpt.agents.huggingface_agent.HuggingFaceAgent.upload">
+<span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">private</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.agents.huggingface_agent.HuggingFaceAgent.upload" title="Link to this definition"></a></dt>
+<dd><p>Upload an entire collection to a Hugging Face repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objects</strong> – The objects to upload.</p></li>
+<li><p><strong>metadata</strong> – The metadata associated with the collection.</p></li>
+<li><p><strong>repo_id</strong> – The repository ID on Hugging Face.</p></li>
+<li><p><strong>private</strong> – Whether the repository should be private.</p></li>
+<li><p><strong>kwargs</strong> – Additional arguments such as batch size or metadata options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
