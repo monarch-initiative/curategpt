@@ -723,9 +723,9 @@ class DuckDBAdapter(DBAdapter):
                     SELECT id, metadata, embeddings, documents, NULL as distance
                     FROM {safe_collection_name}
                     {where_clause}
-                    LIMIT ?
+                    LIMIT {limit}
                 """
-        results = self.conn.execute(query, [limit]).fetchall()
+        results = self.conn.execute(query).fetchall()
         yield from self.parse_duckdb_result(results, include)
 
     def matches(self, obj: OBJECT, include=None, **kwargs) -> Iterator[SEARCH_RESULT]:
@@ -780,13 +780,14 @@ class DuckDBAdapter(DBAdapter):
             return search_result.to_dict().get(METADATAS)
 
     def peek(
-        self, collection: str = None, limit=5, include=None, **kwargs
+        self, collection: str = None, limit=5, include=None, offset: int = 0, **kwargs
     ) -> Iterator[SEARCH_RESULT]:
         """
         Peek at the first N objects in the collection
         :param collection:
         :param limit:
         :param include:
+        :param offset:
         :param kwargs:
         :return:
         """
@@ -805,6 +806,31 @@ class DuckDBAdapter(DBAdapter):
         ).fetchall()
 
         yield from self.parse_duckdb_result(results, include)
+
+    def fetch_all_objects_memory_safe(self, collection: str = None, batch_size: int = 100, include=None, **kwargs) -> Iterator[
+        OBJECT]:
+        """
+        Fetch all objects from a collection, in batches to avoid memory overload.
+        """
+        collection = self._get_collection(collection)
+        offset = 0
+        while True:
+            if include is None:
+                include = [IDS, METADATAS, DOCUMENTS, EMBEDDINGS]
+            safe_collection_name = f'"{collection}"'
+            query = f"""
+                                SELECT id, metadata, embeddings, documents, NULL as distance
+                                FROM {safe_collection_name}
+                                LIMIT ? OFFSET ?
+                            """
+            results = self.conn.execute(query, [batch_size, offset]).fetchall()
+            if results:
+                yield from self.parse_duckdb_result(results, include)
+                offset += batch_size
+            else:
+                break
+
+
 
     def get_raw_objects(self, collection) -> Iterator[Dict]:
         """
