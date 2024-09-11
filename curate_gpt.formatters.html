@@ -57,6 +57,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.formatters.format_utils">curate_gpt.formatters.format_utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.formatters.format_utils.camelify"><code class="docutils literal notranslate"><span class="pre">camelify()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#curate_gpt.formatters.format_utils.object_as_yaml"><code class="docutils literal notranslate"><span class="pre">object_as_yaml()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#curate_gpt.formatters.format_utils.remove_formatting"><code class="docutils literal notranslate"><span class="pre">remove_formatting()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-curate_gpt.formatters">Module contents</a></li>
@@ -124,6 +125,26 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="curate_gpt.formatters.format_utils.remove_formatting">
+<span class="sig-prename descclassname"><span class="pre">curate_gpt.formatters.format_utils.</span></span><span class="sig-name descname"><span class="pre">remove_formatting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expect_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curate_gpt.formatters.format_utils.remove_formatting" title="Link to this definition"></a></dt>
+<dd><p>Remove markdown formatting from text if present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>expect_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The expected format of the text, e.g., “json” (optional)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
