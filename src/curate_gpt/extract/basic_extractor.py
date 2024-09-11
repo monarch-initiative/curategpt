@@ -10,6 +10,8 @@ from typing import List
 import yaml
 from pydantic import ConfigDict
 
+from curate_gpt.formatters.format_utils import remove_formatting
+
 from ..utils.tokens import estimate_num_tokens, max_tokens_by_model
 from .extractor import AnnotatedObject, Extractor
 
@@ -87,6 +89,7 @@ class BasicExtractor(Extractor):
         if format == "yaml":
             return self.deserialize_yaml(text, **kwargs)
         logger.debug(f"Parsing {text}")
+        text = remove_formatting(text=text, expect_format="json")
         try:
             obj = json.loads(text)
             if isinstance(obj, str):
@@ -108,12 +111,7 @@ class BasicExtractor(Extractor):
 
     def deserialize_yaml(self, text: str, multiple=False) -> AnnotatedObject:
         logger.debug(f"Parsing YAML: {text}")
-        if "```" in text:
-            logger.debug("Removing code block")
-            text = text.split("```")[1]
-            text = text.strip()
-        if text.startswith("yaml"):
-            text = text[4:]
+        text = remove_formatting(text=text, expect_format="yaml")
         try:
             if multiple:
                 obj = yaml.safe_load_all(text)
