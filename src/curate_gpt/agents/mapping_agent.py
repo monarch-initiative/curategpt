@@ -142,7 +142,7 @@ class MappingAgent(BaseAgent):
         response = model.prompt(prompt)
 
         # Need to remove Markdown formatting here or it won't parse as JSON
-        response_text = remove_formatting(response.text())
+        response_text = remove_formatting(text=response.text(), expect_format="json")
 
         mappings = []
         try:
