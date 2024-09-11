@@ -2407,14 +2407,15 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
 @collection_option
 @click.option("--repo-id", required=True, help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.")
 @click.option("--private/--public", default=False, help="Whether the repository should be private.")
+@click.option("--adapter", default="huggingface", help="Adapter to use for uploading embeddings.")
 @database_type_option
-def upload_embeddings_to_huggingface(path, collection, repo_id, private, adapter, database_type):
+def upload_embeddings(path, collection, repo_id, private, adapter, database_type):
     """
     Upload embeddings and their metadata from a specified collection to a repository,
     e.g. huggingface.
 
     Example:
-        curategpt embeddings upload --repo-id biomedical-translator/my_repo --collection my_collection --adapter huggingface
+        curategpt embeddings upload --repo-id biomedical-translator/my_repo --collection my_collection
     """
     db = get_store(database_type, path)
 
@@ -2425,9 +2426,13 @@ def upload_embeddings_to_huggingface(path, collection, repo_id, private, adapter
         print(f"Error accessing collection '{collection}' from database: {e}")
         return
 
-    huggingface_agent = HuggingFaceAgent()
+    if adapter == "huggingface":
+        agent = HuggingFaceAgent()
+    else:
+        raise ValueError(f"Unsupported adapter: {adapter} "
+                         f"currently only huggingface adapter is supported")
     try:
-        huggingface_agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+        agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
     except Exception as e:
         print(f"Error uploading collection to {repo_id}: {e}")
 
