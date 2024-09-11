@@ -1,5 +1,6 @@
 import logging
-import shutil
+import os
+import tempfile
 import time
 
 import pytest
@@ -30,11 +31,13 @@ def test_clinvar_transform():
 
 @pytest.fixture
 def wrapper() -> ClinVarWrapper:
-    shutil.rmtree(TEMP_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_DB))
-    extractor = BasicExtractor()
-    db.reset()
-    return ClinVarWrapper(local_store=db, extractor=extractor)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        db_path = os.path.join(temp_dir, TEMP_DB)
+        # shutil.rmtree(TEMP_DB, ignore_errors=True)
+        db = ChromaDBAdapter(db_path)
+        extractor = BasicExtractor()
+        db.reset()
+        return ClinVarWrapper(local_store=db, extractor=extractor)
 
 
 @requires_openai_api_key

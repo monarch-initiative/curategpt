@@ -1,5 +1,6 @@
 import logging
-import shutil
+import os
+import tempfile
 import time
 
 from curate_gpt import ChromaDBAdapter
@@ -43,27 +44,31 @@ def test_full_text():
 
 @requires_openai_api_key
 def test_pubmed_search():
-    shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_PUBMED_DB))
-    extractor = BasicExtractor()
-    db.reset()
-    pubmed = PubmedWrapper(local_store=db, extractor=extractor)
-    results = list(pubmed.search("acinar cells of the salivary gland"))
-    assert len(results) > 0
-    top_result = results[0][0]
-    print(top_result)
-    time.sleep(0.5)
-    results2 = list(pubmed.search(top_result["title"]))
-    assert len(results2) > 0
+    with tempfile.TemporaryDirectory() as temp_dir:
+        db_path = os.path.join(temp_dir, TEMP_PUBMED_DB)
+        # shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
+        db = ChromaDBAdapter(db_path)
+        extractor = BasicExtractor()
+        db.reset()
+        pubmed = PubmedWrapper(local_store=db, extractor=extractor)
+        results = list(pubmed.search("acinar cells of the salivary gland"))
+        assert len(results) > 0
+        top_result = results[0][0]
+        print(top_result)
+        time.sleep(0.5)
+        results2 = list(pubmed.search(top_result["title"]))
+        assert len(results2) > 0
 
 
 @requires_openai_api_key
 def test_pubmed_chat():
-    shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_PUBMED_DB))
-    extractor = BasicExtractor()
-    db.reset()
-    pubmed = PubmedWrapper(local_store=db, extractor=extractor)
-    chat = ChatAgent(knowledge_source=pubmed, extractor=extractor)
-    response = chat.chat("what diseases are associated with acinar cells of the salivary gland")
-    print(response)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        db_path = os.path.join(temp_dir, TEMP_PUBMED_DB)
+        # shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
+        db = ChromaDBAdapter(db_path)
+        extractor = BasicExtractor()
+        db.reset()
+        pubmed = PubmedWrapper(local_store=db, extractor=extractor)
+        chat = ChatAgent(knowledge_source=pubmed, extractor=extractor)
+        response = chat.chat("what diseases are associated with acinar cells of the salivary gland")
+        print(response)

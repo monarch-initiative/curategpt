@@ -1,5 +1,7 @@
 import logging
+import os
 import shutil
+import tempfile
 import time
 
 import yaml
@@ -34,13 +36,15 @@ def test_biosample_search():
 
 @requires_openai_api_key
 def test_biosample_chat():
-    shutil.rmtree(TEMP_BIOSAMPLE_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_BIOSAMPLE_DB))
-    extractor = BasicExtractor()
-    db.reset()
-    wrapper = NCBIBiosampleWrapper(local_store=db, extractor=extractor)
-    chat = ChatAgent(knowledge_source=wrapper, extractor=extractor)
-    response = chat.chat("what are some characteristics of the gut microbiome in Crohn's disease?")
-    print(response.formatted_body)
-    for ref in response.references:
-        print(ref)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        db_path = os.path.join(temp_dir, TEMP_BIOSAMPLE_DB)
+        # shutil.rmtree(TEMP_BIOSAMPLE_DB, ignore_errors=True)
+        db = ChromaDBAdapter(db_path)
+        extractor = BasicExtractor()
+        db.reset()
+        wrapper = NCBIBiosampleWrapper(local_store=db, extractor=extractor)
+        chat = ChatAgent(knowledge_source=wrapper, extractor=extractor)
+        response = chat.chat("what are some characteristics of the gut microbiome in Crohn's disease?")
+        print(response.formatted_body)
+        for ref in response.references:
+            print(ref)

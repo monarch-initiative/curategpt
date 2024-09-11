@@ -160,6 +160,7 @@ def test_the_embedding_function_variations(
         expected_name = "test_collection"
     else:
         # Specific case: Collection specified, model may or may not be specified
+        print("\n\n",model,"\n\n")
         db.insert(objs, collection=collection, model=model)
         expected_model = model if model else "all-MiniLM-L6-v2"
         expected_name = collection

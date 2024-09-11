@@ -1064,8 +1064,10 @@ class DuckDBAdapter(DBAdapter):
         if isinstance(model_name, str):
             if model_name.startswith("openai:"):
                 model_key = model_name.split("openai:", 1)[1]
+                if model_key == "" or model_key not in MODEL_MAP.keys():
+                    model_key = DEFAULT_OPENAI_MODEL
                 model_info = MODEL_MAP.get(model_key, DEFAULT_OPENAI_MODEL)
-                return MODEL_MAP[model_info][1]
+                return model_info[1]
             else:
                 return MODEL_MAP[DEFAULT_OPENAI_MODEL][1]
 

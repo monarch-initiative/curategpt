@@ -1,5 +1,6 @@
 import logging
-import shutil
+import os
+import tempfile
 from typing import Type
 
 import pytest
@@ -31,17 +32,19 @@ logger.setLevel(logging.DEBUG)
     ],
 )
 def test_evidence_inference(source: Type[BaseWrapper]):
-    shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_PUBMED_DB))
-    extractor = BasicExtractor()
-    db.reset()
-    pubmed = source(local_store=db, extractor=extractor)
-    ea = EvidenceAgent(chat_agent=pubmed)
-    obj = {
-        "label": "acinar cells of the salivary gland",
-        "relationships": [
-            {"predicate": "HasFunction", "object": "ManufactureSaliva"},
-        ],
-    }
-    resp = ea.find_evidence(obj)
-    print(yaml.dump(resp))
+    with tempfile.TemporaryDirectory() as temp_dir:
+        db_path = os.path.join(temp_dir, TEMP_PUBMED_DB)
+        # shutil.rmtree(TEMP_PUBMED_DB, ignore_errors=True)
+        db = ChromaDBAdapter(db_path)
+        extractor = BasicExtractor()
+        db.reset()
+        pubmed = source(local_store=db, extractor=extractor)
+        ea = EvidenceAgent(chat_agent=pubmed)
+        obj = {
+            "label": "acinar cells of the salivary gland",
+            "relationships": [
+                {"predicate": "HasFunction", "object": "ManufactureSaliva"},
+            ],
+        }
+        resp = ea.find_evidence(obj)
+        print(yaml.dump(resp))

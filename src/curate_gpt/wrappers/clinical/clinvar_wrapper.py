@@ -33,8 +33,8 @@ class ClinVarWrapper(EUtilsWrapper):
         for r in results["eSummaryResult"]["DocumentSummarySet"]["DocumentSummary"]:
             obj = {}
             obj["id"] = "clinvar:" + r["accession"]
-            obj["clinical_significance"] = r["clinical_significance"]["description"]
-            obj["clinical_significance_status"] = r["clinical_significance"]["review_status"]
+            obj["clinical_significance"] = r["germline_classification"]["description"]
+            obj["clinical_significance_status"] = r["germline_classification"]["review_status"]
             obj["gene_sort"] = r["gene_sort"]
             if "genes" in r and r["genes"]:
                 if "gene" in r["genes"]:
@@ -46,7 +46,7 @@ class ClinVarWrapper(EUtilsWrapper):
             obj["protein_change"] = r["protein_change"]
             obj["title"] = r["title"]
             obj["traits"] = [
-                self._trait_from_dict(t) for t in r["trait_set"]["trait"] if isinstance(t, dict)
+                self._trait_from_dict(t) for t in r.get("trait_set", {}).get("trait", []) if isinstance(t, dict)
             ]
             objs.append(obj)
         return objs
