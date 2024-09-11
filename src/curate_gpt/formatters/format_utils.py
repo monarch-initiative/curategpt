@@ -27,3 +27,16 @@ def object_as_yaml(obj: Dict) -> str:
     :return:
     """
     return yaml.dump({k: v for k, v in obj.items() if v}, sort_keys=False)
+
+
+def remove_formatting(text: str, expect_format: str = "") -> str:
+    """
+    Remove markdown formatting from text if present.
+
+    :param text:
+    :param expect_format: The expected format of the text, e.g., "json" (optional)
+    :return:
+    """
+    if text.startswith("```" + expect_format):
+        return text[3 + len(expect_format) : -3]
+    return text
