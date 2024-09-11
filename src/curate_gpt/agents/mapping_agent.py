@@ -13,6 +13,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict
 
 from curate_gpt.agents.base_agent import BaseAgent
+from curate_gpt.formatters.format_utils import remove_formatting
 from curate_gpt.store.db_adapter import SEARCH_RESULT
 from curate_gpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
 
@@ -139,10 +140,10 @@ class MappingAgent(BaseAgent):
                     raise ValueError(f"Prompt too long: {prompt}.")
                 kb_results.pop()
         response = model.prompt(prompt)
+
         # Need to remove Markdown formatting here or it won't parse as JSON
-        response_text = response.text()
-        if response_text.startswith("```json"):
-            response_text = response_text[7:-3]
+        response_text = remove_formatting(response.text())
+
         mappings = []
         try:
             for m in json.loads(response_text):
@@ -160,6 +161,7 @@ class MappingAgent(BaseAgent):
                     )
                 )
         except json.decoder.JSONDecodeError:
+            # This will happen if the response is still not valid JSON
             # This returns an empty set of mappings, but the prompt and response text are retained
             return MappingSet(mappings=mappings, prompt=prompt, response_text=response_text)
 
