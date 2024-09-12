@@ -118,4 +118,8 @@ load-github-maxo:
 list:
 	$(CURATE) collections list -p $(DB_PATH)
 
+load-github-mixs:
+	$(CURATE) -v view index -p $(DB_PATH) -c gh_mixs -m openai:  --view github --init-with "{repo: GenomicsStandardsConsortium/mixs}"
 
+load-github-nmdc-schema-issues-prs:
+	$(CURATE) -v view index -p $(DB_PATH) -c gh_nmdc -m openai:  --view github --init-with "{repo: microbiomedata/nmdc-schema}"
