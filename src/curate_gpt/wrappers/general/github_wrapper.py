@@ -22,6 +22,20 @@ class Comment(BaseModel):
     body: str = None
 
 
+class PullRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    id: str
+    number: int = None
+    title: str = None
+    user: str = None
+    labels: List[str] = None
+    state: str = None
+    assignees: List[str] = None
+    created_at: str = None
+    body: str = None
+    comments: List[Comment] = None
+
+
 class Issue(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
     id: str
@@ -36,6 +50,18 @@ class Issue(BaseModel):
     body: str = None
     # pull_request: str = None
     comments: List[Comment] = None
+
+
+def pr_comments(self, pr_number: str) -> Iterator[Dict]:
+    session = self.session
+    url = f"https://api.github.com/repos/{self.owner}/{self.repo}/pulls/{pr_number}/comments"
+    params = {"per_page": 100}
+
+    while url:
+        response = session.get(url, headers=self.headers, params=params)
+        response.raise_for_status()
+        yield from response.json()
+        url = response.links.get("next", {}).get("url")
 
 
 def get_token(token: str = None) -> Optional[str]:
@@ -101,7 +127,7 @@ class GitHubWrapper(BaseWrapper):
         return self._repo_description
 
     def external_search(
-        self, text: str, expand: bool = True, limit=None, token: str = None, **kwargs
+            self, text: str, expand: bool = True, limit=None, token: str = None, **kwargs
     ) -> List[Dict]:
         token = get_token(token)
         if limit is None:
@@ -146,11 +172,11 @@ class GitHubWrapper(BaseWrapper):
         return all_issues
 
     def objects(
-        self,
-        collection: str = None,
-        object_ids: Optional[Iterable[str]] = None,
-        token: str = None,
-        **kwargs,
+            self,
+            collection: str = None,
+            object_ids: Optional[Iterable[str]] = None,
+            token: str = None,
+            **kwargs,
     ) -> Iterator[Dict]:
         session = self.session
         token = get_token(token)
@@ -161,7 +187,7 @@ class GitHubWrapper(BaseWrapper):
             sleep(5)
         logger.debug(f"Header: {headers}")
         params = {
-            "state": "all",  # To fetch both open and closed issues
+            "state": "all",  # To fetch both open and closed issues and PRs
             "per_page": 100,  # Fetch 100 results per page (max allowed)
         }
 
@@ -171,10 +197,14 @@ class GitHubWrapper(BaseWrapper):
             issues = response.json()
             for issue in issues:
                 issue_number = issue.get("number")
-                issue["comments"] = list(self.issue_comments(issue_number))
+                # Fetch both issue comments and PR comments
+                if "pull_request" in issue:
+                    issue["comments"] = list(self.pr_comments(issue_number))
+                else:
+                    issue["comments"] = list(self.issue_comments(issue_number))
                 issue_obj = self.transform_issue(issue)
                 yield issue_obj.dict()
-            # Check if there are more pages to process
+                # Check if there are more pages to process
             url = response.links.get("next", {}).get("url")
             if not response.from_cache:
                 sleep(0.2)
@@ -219,3 +249,14 @@ class GitHubWrapper(BaseWrapper):
             ],
         )
         return issue
+
+    def pr_comments(self, pr_number: str) -> Iterator[Dict]:
+        session = self.session
+        url = f"https://api.github.com/repos/{self.owner}/{self.repo}/pulls/{pr_number}/comments"
+        params = {"per_page": 100}
+
+        while url:
+            response = session.get(url, headers=self.headers, params=params)
+            response.raise_for_status()
+            yield from response.json()
+            url = response.links.get("next", {}).get("url")
