@@ -1,8 +1,7 @@
 RUN = poetry run
 CURATE = $(RUN) curategpt
 
-#DB_PATH = stagedb
-DB_PATH = db
+DB_PATH = stagedb
 
 ONTS = cl uberon obi go envo hp mp mondo po to oba agro fbbt nbo chebi vo peco maxo
 TRACKERS = cl uberon obi  envo hp mondo go
