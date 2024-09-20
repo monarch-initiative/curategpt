@@ -17,7 +17,6 @@ from curate_gpt.evaluation.evaluation_datamodel import ClassificationMetrics, Cl
 logger = logging.getLogger(__name__)
 
 
-# TODO: missing abstract class evaluate_object, causes src/tests/evaluation/test_runner to fail
 @dataclass
 class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
     """
@@ -50,8 +49,7 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
         """
         agent = self.agent
         db = agent.knowledge_source
-        # TODO: use get()
-        test_objs = list(db.peek(collection=test_collection, limit=num_tests))
+        test_objs = list(db.find(collection=test_collection))
         if any(obj for obj in test_objs if any(f not in obj for f in self.fields_to_predict)):
             logger.info("Alternate strategy to get test objs; query whole collection")
             test_objs = db.peek(collection=test_collection, limit=1000000)
@@ -133,3 +131,6 @@ class DatabaseAugmentedCompletionEvaluator(BaseEvaluator):
                 report_tsv_file.flush()
         aggregated = aggregate_metrics(all_metrics)
         return aggregated
+
+    def evaluate_object(self, obj, **kwargs) -> ClassificationMetrics:
+        pass

@@ -1,15 +1,14 @@
 import logging
-import shutil
 import time
 
 import yaml
 
-from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.investigation.ncbi_biosample_wrapper import NCBIBiosampleWrapper
 from tests import OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
+from tests.utils.helper import create_db_dir, setup_db
 
 TEMP_BIOSAMPLE_DB = OUTPUT_DIR / "biosample_tmp"
 
@@ -17,9 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 @requires_openai_api_key
-def test_biosample_search():
-    shutil.rmtree(TEMP_BIOSAMPLE_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_BIOSAMPLE_DB))
+def test_biosample_search(tmp_path):
+    temp_dir = create_db_dir(tmp_path, TEMP_BIOSAMPLE_DB)
+    db = setup_db(temp_dir)
     extractor = BasicExtractor()
     db.reset()
     wrapper = NCBIBiosampleWrapper(local_store=db, extractor=extractor)
@@ -33,9 +32,9 @@ def test_biosample_search():
 
 
 @requires_openai_api_key
-def test_biosample_chat():
-    shutil.rmtree(TEMP_BIOSAMPLE_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_BIOSAMPLE_DB))
+def test_biosample_chat(tmp_path):
+    temp_dir = create_db_dir(tmp_path, TEMP_BIOSAMPLE_DB)
+    db = setup_db(temp_dir)
     extractor = BasicExtractor()
     db.reset()
     wrapper = NCBIBiosampleWrapper(local_store=db, extractor=extractor)

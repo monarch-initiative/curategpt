@@ -1,17 +1,17 @@
 import logging
-import shutil
 import time
 
 import pytest
+import requests
 import yaml
 
-from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.clinical.clinvar_wrapper import ClinVarWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
+from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db
 
 TEMP_DB = OUTPUT_DIR / "obj_tmp"
 
@@ -29,12 +29,18 @@ def test_clinvar_transform():
 
 
 @pytest.fixture
-def wrapper() -> ClinVarWrapper:
-    shutil.rmtree(TEMP_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_DB))
+def wrapper(tmp_path) -> ClinVarWrapper:
+    temp_dir = create_db_dir(tmp_path, TEMP_DB)
+    db = setup_db(temp_dir)
     extractor = BasicExtractor()
-    db.reset()
-    return ClinVarWrapper(local_store=db, extractor=extractor)
+    try:
+        yield ClinVarWrapper(local_store=db, extractor=extractor)
+    except requests.exceptions.ConnectionError as e:
+        logger.error(f"Connection error occurred: {e}")
+        raise e
+    finally:
+        if not DEBUG_MODE:
+            db.reset()
 
 
 @requires_openai_api_key

@@ -2,11 +2,11 @@ import logging
 
 import pytest
 
-from curate_gpt import ChromaDBAdapter
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.ontology.bioportal_wrapper import BioportalWrapper
 from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
 from tests import OUTPUT_DIR
+from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db
 
 TEMP_OAKVIEW_DB = OUTPUT_DIR / "bioportal_tmp"
 
@@ -18,15 +18,23 @@ logger.setLevel(logging.DEBUG)
 
 
 @pytest.fixture
-def vstore() -> OntologyWrapper:
-    db = ChromaDBAdapter(str(TEMP_OAKVIEW_DB))
+def vstore(tmp_path) -> OntologyWrapper:
+    tmp_dir = create_db_dir(tmp_path=tmp_path, out_dir=TEMP_OAKVIEW_DB)
+    db = setup_db(tmp_dir)
     db.reset()
-    view = BioportalWrapper(local_store=db, extractor=BasicExtractor())
-    assert view.fetch_definitions is False
+    try:
+        view = BioportalWrapper(local_store=db, extractor=BasicExtractor())
+        assert view.fetch_definitions is False
+        yield view
+    except Exception as e:
+        raise e
+    finally:
+        if not DEBUG_MODE:
+            db.reset()
+
     # view = BioportalView(oak_adapter=adapter, local_store=db, extractor=BasicExtractor())
     # view.fetch_definitions = False
     # view.fetch_relationships = False
-    return view
 
 
 @pytest.mark.skip(reason="OAK bp wrapper doesn't support definitions yets")

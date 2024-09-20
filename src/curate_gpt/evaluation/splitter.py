@@ -122,7 +122,7 @@ def stratify_collection_to_store(
         size = len(objs)
         cn = f"{collection}_{sn}_{size}"
         collections[sn] = cn
-        logging.info(f"Writing {size} objects to {cn}")
+        logger.info(f"Writing {size} objects to {cn}")
         if cn in existing_collections:
             logger.info(f"Collection {cn} already exists")
             if not force:

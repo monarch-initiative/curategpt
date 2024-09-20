@@ -113,7 +113,7 @@ class OpenAIExtractor(Extractor):
         logger.debug(f"RESPONSE = {response}")
         # print(response)
         choice = response.choices[0]
-        message = choice["message"]
+        message = choice.message
         if "function_call" not in message:
             if self.raise_error_if_unparsable:
                 raise ValueError("No function call in response")
