@@ -17,7 +17,7 @@ class DuckDBSearchResult(BaseModel):
     include: Optional[Set[str]] = None
 
     def to_json(self, indent: int = 2):
-        return self.json(include=self.include, indent=indent)
+        return self.model_dump_json(include=self.include, indent=indent)
 
     def to_dict(self):
         if self.include:
@@ -25,7 +25,7 @@ class DuckDBSearchResult(BaseModel):
         return self.model_dump()
 
     def __repr__(self, indent: int = 2):
-        return self.json(include=self.include, indent=indent)
+        return self.model_dump_json(include=self.include, indent=indent)
 
     def __iter__(self) -> Iterator[SEARCH_RESULT]:
         # TODO vocab.py for 'VARIABLES', but circular import
