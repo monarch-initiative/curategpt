@@ -11,9 +11,10 @@ from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature.pmc_wrapper import PMCWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
+from tests.utils.helper import create_db_dir, DEBUG_MODE
 
-TEMP_DB = OUTPUT_DIR / "obj_tmp"
-
+TEMP_PMC_SEARCH = OUTPUT_DIR / "pmc_search"
+TEMP_PMC_CHAT = OUTPUT_DIR / "pmc_chat"
 
 logger = logging.getLogger(__name__)
 
@@ -27,15 +28,24 @@ def test_pmc_transform():
 
 
 @pytest.fixture
-def wrapper() -> PMCWrapper:
-    shutil.rmtree(TEMP_DB, ignore_errors=True)
-    db = ChromaDBAdapter(str(TEMP_DB))
+def wrapper(request, tmp_path) -> PMCWrapper:
+    temp_base = request.param
+    temp_db = create_db_dir(tmp_path, temp_base)
+    db = ChromaDBAdapter(temp_db)
     extractor = BasicExtractor()
-    db.reset()
-    return PMCWrapper(local_store=db, extractor=extractor)
+    try:
+        PMCWrapper(local_store=db, extractor=extractor)
+    except Exception as e:
+        raise e
+    finally:
+        if not DEBUG_MODE:
+            db.reset()
+
+
 
 
 @pytest.mark.skip("TODO")
+@pytest.mark.parametrize("wrapper", [TEMP_PMC_SEARCH], indirect=True)
 def test_pmc_search(wrapper):
     results = list(wrapper.search("IBD Crohn's disease and related diseases"))
     assert len(results) > 0
@@ -47,10 +57,10 @@ def test_pmc_search(wrapper):
 
 
 @pytest.mark.skip("TODO")
+@pytest.mark.parametrize("wrapper", [TEMP_PMC_CHAT], indirect=True)
 def test_pmc_chat(wrapper):
-    extractor = DragonAgent()
-    extractor = BasicExtractor()
-    chat = ChatAgent(knowledge_source=wrapper, extractor=extractor)
+    # extractor = DragonAgent()
+    chat = ChatAgent(knowledge_source=wrapper, extractor=wrapper.extractor)
     response = chat.chat("what are the major variants and genes underpinning Crohn's disease?")
     print(response.formatted_body)
     for ref in response.references:
