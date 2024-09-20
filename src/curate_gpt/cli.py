@@ -2402,10 +2402,15 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
     db.insert(embeddings, model=model, collection=collection)
     print(f"Successfully indexed embeddings into collection '{collection}'.")
 
+
 @embeddings.command(name="upload")
 @path_option
 @collection_option
-@click.option("--repo-id", required=True, help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.")
+@click.option(
+    "--repo-id",
+    required=True,
+    help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.",
+)
 @click.option("--private/--public", default=False, help="Whether the repository should be private.")
 @click.option("--adapter", default="huggingface", help="Adapter to use for uploading embeddings.")
 @database_type_option
@@ -2429,13 +2434,13 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
     if adapter == "huggingface":
         agent = HuggingFaceAgent()
     else:
-        raise ValueError(f"Unsupported adapter: {adapter} "
-                         f"currently only huggingface adapter is supported")
+        raise ValueError(
+            f"Unsupported adapter: {adapter} " f"currently only huggingface adapter is supported"
+        )
     try:
         agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
     except Exception as e:
         print(f"Error uploading collection to {repo_id}: {e}")
-
 
 
 @main.group()
