@@ -9,7 +9,7 @@ from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
-from tests.utils.helper import create_db_dir, setup_db, DEBUG_MODE
+from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db
 
 TEMP_OAK_OBJ = OUTPUT_DIR / "oak_tmp_obj"
 TEMP_OAK_IND = OUTPUT_DIR / "oak_tmp_ind"

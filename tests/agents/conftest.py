@@ -5,6 +5,7 @@ from curate_gpt.store import SchemaProxy
 from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH
 from tests import INPUT_DBS
 
+
 # TODO: this has to be reviewed, isolate more, dont use one db for multiple tests
 # - the current setup does not allow reset
 # - set collection is v vulnerable, easier setting/creating new col for each test

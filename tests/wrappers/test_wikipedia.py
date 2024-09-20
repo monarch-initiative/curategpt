@@ -1,16 +1,14 @@
 import logging
-import shutil
 import time
 
 import pytest
 import yaml
 
-from curate_gpt import ChromaDBAdapter
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature import WikipediaWrapper
 from tests import OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
-from tests.utils.helper import create_db_dir, setup_db, DEBUG_MODE
+from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db
 
 TEMP_Wikipedia_DB = OUTPUT_DIR / "wp_tmp"
 

@@ -1,21 +1,17 @@
 import logging
-import os
-import shutil
-import tempfile
 import time
 
 import pytest
 import requests
 import yaml
 
-from curate_gpt import ChromaDBAdapter
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.clinical.clinvar_wrapper import ClinVarWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
-from tests.utils.helper import create_db_dir, setup_db, DEBUG_MODE
+from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db
 
 TEMP_DB = OUTPUT_DIR / "obj_tmp"
 

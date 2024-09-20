@@ -1,17 +1,14 @@
 import logging
-import os
-import shutil
-import tempfile
 import time
 
 import pytest
-from curate_gpt import ChromaDBAdapter
+
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
 from curate_gpt.wrappers.literature import PubmedWrapper
 from tests import OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
-from tests.utils.helper import create_db_dir, setup_db, DEBUG_MODE
+from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db
 
 TEMP_PUBMED_SEARCH = OUTPUT_DIR / "pmid_tmp"
 TEMP_PUBMED_CHAT = OUTPUT_DIR / "pmid_tmp"
