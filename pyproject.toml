@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "curate-gpt"
-version = "0.0.0.post2.dev0+335f59e"
+version = "0.2.0"
 description = "curate-gpt"
 authors = ["Author 1 <cjmungall@lbl.gov>"]
 license = "BSD-3"
