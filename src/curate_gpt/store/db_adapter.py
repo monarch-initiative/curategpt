@@ -332,8 +332,9 @@ class DBAdapter(ABC):
     # Schema operations
 
     @abstractmethod
-    def fetch_all_objects_memory_safe(self, collection: str = None, batch_size: int = 100, **kwargs) -> Iterator[
-        OBJECT]:
+    def fetch_all_objects_memory_safe(
+        self, collection: str = None, batch_size: int = 100, **kwargs
+    ) -> Iterator[OBJECT]:
         """
         Fetch all objects from a collection, in batches to avoid memory overload.
         """

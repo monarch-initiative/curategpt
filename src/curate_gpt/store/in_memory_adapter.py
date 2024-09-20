@@ -236,6 +236,7 @@ class InMemoryAdapter(DBAdapter):
         collection_obj = self._get_collection_object(collection)
         yield from collection_obj.objects[:limit]
 
-    def fetch_all_objects_memory_safe(self, collection: str = None, batch_size: int = 100, **kwargs) -> Iterator[
-        OBJECT]:
+    def fetch_all_objects_memory_safe(
+        self, collection: str = None, batch_size: int = 100, **kwargs
+    ) -> Iterator[OBJECT]:
         pass

@@ -807,8 +807,9 @@ class DuckDBAdapter(DBAdapter):
 
         yield from self.parse_duckdb_result(results, include)
 
-    def fetch_all_objects_memory_safe(self, collection: str = None, batch_size: int = 100, include=None, **kwargs) -> Iterator[
-        OBJECT]:
+    def fetch_all_objects_memory_safe(
+        self, collection: str = None, batch_size: int = 100, include=None, **kwargs
+    ) -> Iterator[OBJECT]:
         """
         Fetch all objects from a collection, in batches to avoid memory overload.
         """
@@ -829,8 +830,6 @@ class DuckDBAdapter(DBAdapter):
                 offset += batch_size
             else:
                 break
-
-
 
     def get_raw_objects(self, collection) -> Iterator[Dict]:
         """

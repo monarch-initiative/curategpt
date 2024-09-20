@@ -526,7 +526,7 @@ class ChromaDBAdapter(DBAdapter):
         if collection.metadata.get("model", "").startswith("openai:"):
             return True
 
-    def peek(self, collection: str = None, limit=5, offset: int = 0,  **kwargs) -> Iterator[OBJECT]:
+    def peek(self, collection: str = None, limit=5, offset: int = 0, **kwargs) -> Iterator[OBJECT]:
         c = self.client.get_collection(name=self._get_collection(collection))
         logger.debug(f"Peeking at {collection} with limit={limit}, offset={offset}")
         results = c.peek(limit=limit)
@@ -536,8 +536,9 @@ class ChromaDBAdapter(DBAdapter):
         for i in range(0, len(metadatas)):
             yield self._unjson(metadatas[i])
 
-    def fetch_all_objects_memory_safe(self, collection: str = None, batch_size: int = 100, **kwargs) -> Iterator[
-        OBJECT]:
+    def fetch_all_objects_memory_safe(
+        self, collection: str = None, batch_size: int = 100, **kwargs
+    ) -> Iterator[OBJECT]:
         """
         Fetch all objects from a collection, in batches to avoid memory overload.
         """
@@ -545,7 +546,12 @@ class ChromaDBAdapter(DBAdapter):
         client = self.client
         collection_obj = client.get_collection(name=self._get_collection(collection))
         while True:
-            results = collection_obj.get(offset=offset, limit=batch_size, include=["metadatas", "embeddings", "documents"], **kwargs)
+            results = collection_obj.get(
+                offset=offset,
+                limit=batch_size,
+                include=["metadatas", "embeddings", "documents"],
+                **kwargs,
+            )
             logger.info(f"Fetching batch from {offset}...")
             metadatas = results["metadatas"]
             documents = results["documents"]
