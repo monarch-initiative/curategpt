@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "curate-gpt"
+name = "curategpt"
 version = "0.2.0"
-description = "curate-gpt"
+description = "CurateGPT"
 authors = ["Author 1 <cjmungall@lbl.gov>"]
 license = "BSD-3"
 readme = "README.md"

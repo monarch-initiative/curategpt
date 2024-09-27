@@ -15,11 +15,11 @@ subset of the functionality of the local app)
 
 You will first need to [install Poetry](https://python-poetry.org/docs/#installation).
 
-Then clone this repo 
+Then clone this repo.
 
 ```
-git clone https://github.com/monarch-initiative/curate-gpt.git
-cd curate-gpt
+git clone https://github.com/monarch-initiative/curategpt.git
+cd curategpt
 ```
 
 and install the dependencies:
@@ -131,7 +131,7 @@ The following are also supported:
 
 Currently this tool works best with the OpenAI gpt-4 model (for instruction tasks) and OpenAI `ada-text-embedding-002` for embedding.
 
-Curate-GPT is layered on top of [simonw/llm](https://github.com/simonw/llm) which has a plugin
+CurateGPT is layered on top of [simonw/llm](https://github.com/simonw/llm) which has a plugin
 architecture for using alternative models. In theory you can use any of these plugins.
 
 Additionally, you can set up an openai-emulating proxy using [litellm](https://github.com/BerriAI/litellm/).

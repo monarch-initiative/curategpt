@@ -1,4 +1,4 @@
-"""Command line interface for curate-gpt."""
+"""Command line interface for curategpt."""
 
 import csv
 import gzip
@@ -208,7 +208,7 @@ def show_chat_response(response: ChatResponse, show_references: bool = True):
 @click.version_option(__version__)
 def main(verbose: int, quiet: bool):
     """
-    CLI for curate-gpt.
+    CLI for curategpt.
 
     :param verbose: Verbosity while running.
     :param quiet: Boolean to be quiet or verbose.

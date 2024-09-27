@@ -4,9 +4,9 @@
   "checkout": null,
   "context": {
     "cookiecutter": {
-      "project_name": "curate-gpt",
+      "project_name": "curategpt",
       "github_org_name": "monarch-initiative",
-      "__project_slug": "curate_gpt",
+      "__project_slug": "curategpt",
       "project_description": "GPT-powered knowledge acquisition UI",
       "min_python_version": "3.8",
       "file_name": "main",
