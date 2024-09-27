@@ -1,4 +1,4 @@
-"""Tests for curate-gpt."""
+"""Tests for curategpt."""
 
 import os
 from pathlib import Path

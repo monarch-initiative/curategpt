@@ -1,4 +1,4 @@
-name: curate-gpt QC
+name: curategpt QC
 
 on:
   push:

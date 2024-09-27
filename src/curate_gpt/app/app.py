@@ -707,7 +707,7 @@ elif option == HELP:
     st.subheader("Issues")
     st.write(
         "If you have any issues, please raise them on the"
-        "[GitHub issue tracker](https://github.com/monarch-initiative/curate-gpt)."
+        "[GitHub issue tracker](https://github.com/monarch-initiative/curategpt)."
     )
     st.subheader("Warning!")
     st.caption("CurateGPT is pre-alpha, documentation is incomplete!")
