@@ -4,8 +4,8 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Union
 
-from curate_gpt import DBAdapter, Extractor
-from curate_gpt.wrappers import BaseWrapper
+from curategpt import DBAdapter, Extractor
+from curategpt.wrappers import BaseWrapper
 
 
 @dataclass

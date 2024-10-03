@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import TextIO
 
-from curate_gpt.agents.base_agent import BaseAgent
-from curate_gpt.evaluation.evaluation_datamodel import ClassificationMetrics
+from curategpt.agents.base_agent import BaseAgent
+from curategpt.evaluation.evaluation_datamodel import ClassificationMetrics
 
 
 @dataclass

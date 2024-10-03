@@ -1,7 +1,7 @@
 from typing import Any, Iterator, List, Tuple, Union
 
 import yaml
-from curate_gpt.evaluation.evaluation_datamodel import (AggregationMethod,
+from curategpt.evaluation.evaluation_datamodel import (AggregationMethod,
                                                         ClassificationMetrics,
                                                         ClassificationOutcome)
 

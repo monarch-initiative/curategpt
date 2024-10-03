@@ -17,14 +17,14 @@ import numpy as np
 import openai
 import psutil
 import yaml
-from curate_gpt.store.db_adapter import DBAdapter
-from curate_gpt.store.duckdb_result import DuckDBSearchResult
-from curate_gpt.store.metadata import CollectionMetadata
-from curate_gpt.store.vocab import (DEFAULT_MODEL, DEFAULT_OPENAI_MODEL,
+from curategpt.store.db_adapter import DBAdapter
+from curategpt.store.duckdb_result import DuckDBSearchResult
+from curategpt.store.metadata import CollectionMetadata
+from curategpt.store.vocab import (DEFAULT_MODEL, DEFAULT_OPENAI_MODEL,
                                     DISTANCES, DOCUMENTS, EMBEDDINGS, IDS,
                                     METADATAS, MODEL_MAP, OBJECT, PROJECTION,
                                     QUERY, SEARCH_RESULT)
-from curate_gpt.utils.vector_algorithms import mmr_diversified_search
+from curategpt.utils.vector_algorithms import mmr_diversified_search
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk

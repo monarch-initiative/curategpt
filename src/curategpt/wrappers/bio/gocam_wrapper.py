@@ -7,9 +7,9 @@ from typing import ClassVar, Dict, Iterable, Iterator, Optional
 import requests
 import requests_cache
 import yaml
-from curate_gpt.formatters.format_utils import camelify
-from curate_gpt.wrappers import BaseWrapper
-from curate_gpt.wrappers.literature import PubmedWrapper
+from curategpt.formatters.format_utils import camelify
+from curategpt.wrappers import BaseWrapper
+from curategpt.wrappers.literature import PubmedWrapper
 from oaklib import BasicOntologyInterface, get_adapter
 from oaklib.interfaces.association_provider_interface import \
     AssociationProviderInterface

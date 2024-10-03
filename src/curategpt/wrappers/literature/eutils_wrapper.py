@@ -9,7 +9,7 @@ from typing import ClassVar, Dict, List
 import requests
 import requests_cache
 import xmltodict
-from curate_gpt.wrappers import BaseWrapper
+from curategpt.wrappers import BaseWrapper
 from eutils import Client
 
 logger = logging.getLogger(__name__)

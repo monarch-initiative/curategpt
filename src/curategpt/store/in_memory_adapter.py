@@ -5,10 +5,10 @@ from dataclasses import dataclass, field
 from typing import (ClassVar, Dict, Iterable, Iterator, List, Optional, Union,
                     get_origin)
 
-from curate_gpt import DBAdapter
-from curate_gpt.store.db_adapter import (OBJECT, PROJECTION, QUERY,
+from curategpt import DBAdapter
+from curategpt.store.db_adapter import (OBJECT, PROJECTION, QUERY,
                                          SEARCH_RESULT)
-from curate_gpt.store.metadata import CollectionMetadata
+from curategpt.store.metadata import CollectionMetadata
 from pydantic import BaseModel, ConfigDict
 
 logger = logging.getLogger(__name__)

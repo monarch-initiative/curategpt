@@ -7,10 +7,10 @@ from pathlib import Path
 from typing import (Any, ClassVar, Dict, Iterable, Iterator, List, Optional,
                     Union)
 
-from curate_gpt import ChromaDBAdapter
-from curate_gpt.extract import Extractor
-from curate_gpt.store import DBAdapter
-from curate_gpt.store.db_adapter import SEARCH_RESULT
+from curategpt import ChromaDBAdapter
+from curategpt.extract import Extractor
+from curategpt.store import DBAdapter
+from curategpt.store.db_adapter import SEARCH_RESULT
 from deprecation import deprecated
 
 logger = logging.getLogger(__name__)
@@ -141,7 +141,7 @@ class BaseWrapper(ABC):  # noqa: B024
         :param kwargs:
         :return:
         """
-        from curate_gpt.agents.chat_agent import ChatAgent
+        from curategpt.agents.chat_agent import ChatAgent
 
         # prime the pubmed cache
         if collection is None:

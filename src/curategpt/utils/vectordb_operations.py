@@ -1,8 +1,8 @@
 import logging
 from typing import Iterator, Tuple
 
-from curate_gpt import DBAdapter
-from curate_gpt.utils.vector_algorithms import (compute_cosine_similarity,
+from curategpt import DBAdapter
+from curategpt.utils.vector_algorithms import (compute_cosine_similarity,
                                                 top_matches)
 
 logger = logging.getLogger(__name__)

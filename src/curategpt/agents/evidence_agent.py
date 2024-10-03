@@ -4,12 +4,12 @@ from enum import Enum
 from typing import Dict, List, Optional, Union
 
 import yaml
-from curate_gpt import BasicExtractor
-from curate_gpt.agents.base_agent import BaseAgent
-from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
-from curate_gpt.formatters.format_utils import object_as_yaml
-from curate_gpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
-from curate_gpt.wrappers import BaseWrapper
+from curategpt import BasicExtractor
+from curategpt.agents.base_agent import BaseAgent
+from curategpt.agents.chat_agent import ChatAgent, ChatResponse
+from curategpt.formatters.format_utils import object_as_yaml
+from curategpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
+from curategpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

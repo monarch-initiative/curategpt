@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
-from curate_gpt.wrappers.base_wrapper import BaseWrapper
+from curategpt.wrappers.base_wrapper import BaseWrapper
 from linkml_runtime import SchemaView
 from linkml_runtime.dumpers import json_dumper
 

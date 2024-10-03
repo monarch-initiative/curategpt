@@ -8,8 +8,8 @@ from functools import lru_cache
 from typing import ClassVar, Dict, Iterable, Iterator, Optional, TextIO
 
 import requests
-from curate_gpt.wrappers import BaseWrapper
-from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+from curategpt.wrappers import BaseWrapper
+from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from oaklib import BasicOntologyInterface, get_adapter
 
 logger = logging.getLogger(__name__)
@@ -79,7 +79,7 @@ class MAXOAWrapper(BaseWrapper):
     group_by_publication: bool = True
 
     def __post_init__(self):
-        from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+        from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 
         self.pubmed_wrapper = PubmedWrapper()
         # reuse hpoa cache

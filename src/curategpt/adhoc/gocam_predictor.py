@@ -9,11 +9,11 @@ from typing import Any, Dict
 
 import click
 import yaml
-from curate_gpt import BasicExtractor, DBAdapter
-from curate_gpt.store import get_store
-from curate_gpt.utils.eval_utils import Outcome, score_prediction
-from curate_gpt.utils.llm_utils import query_model
-from curate_gpt.wrappers.bio.gocam_wrapper import GOCAMWrapper
+from curategpt import BasicExtractor, DBAdapter
+from curategpt.store import get_store
+from curategpt.utils.eval_utils import Outcome, score_prediction
+from curategpt.utils.llm_utils import query_model
+from curategpt.wrappers.bio.gocam_wrapper import GOCAMWrapper
 
 logger = logging.getLogger(__name__)
 

@@ -1,11 +1,11 @@
 from typing import List
 
 import pytest
-from curate_gpt.extract.basic_extractor import BasicExtractor
-from curate_gpt.extract.extractor import AnnotatedObject
-from curate_gpt.extract.openai_extractor import OpenAIExtractor
-from curate_gpt.extract.recursive_extractor import RecursiveExtractor
-from curate_gpt.store.schema_proxy import SchemaProxy
+from curategpt.extract.basic_extractor import BasicExtractor
+from curategpt.extract.extractor import AnnotatedObject
+from curategpt.extract.openai_extractor import OpenAIExtractor
+from curategpt.extract.recursive_extractor import RecursiveExtractor
+from curategpt.store.schema_proxy import SchemaProxy
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 from pydantic import BaseModel, ConfigDict
 

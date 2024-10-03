@@ -2,8 +2,8 @@ import logging
 from pprint import pprint
 
 import pytest
-from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
+from curategpt.extract import BasicExtractor
+from curategpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
 from oaklib import get_adapter
 from oaklib.datamodels.obograph import GraphDocument
 

@@ -4,12 +4,12 @@ from dataclasses import dataclass, field
 from typing import List, TextIO
 
 import yaml
-from curate_gpt.agents.dragon_agent import DragonAgent
-from curate_gpt.evaluation.base_evaluator import BaseEvaluator
-from curate_gpt.evaluation.calc_statistics import (aggregate_metrics,
+from curategpt.agents.dragon_agent import DragonAgent
+from curategpt.evaluation.base_evaluator import BaseEvaluator
+from curategpt.evaluation.calc_statistics import (aggregate_metrics,
                                                    calculate_metrics,
                                                    evaluate_predictions)
-from curate_gpt.evaluation.evaluation_datamodel import (ClassificationMetrics,
+from curategpt.evaluation.evaluation_datamodel import (ClassificationMetrics,
                                                         ClassificationOutcome)
 
 logger = logging.getLogger(__name__)

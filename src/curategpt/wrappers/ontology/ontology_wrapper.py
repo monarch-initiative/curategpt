@@ -7,10 +7,10 @@ from typing import (Any, Callable, ClassVar, Dict, Iterable, Iterator, List,
                     Mapping, Optional)
 
 import oaklib.datamodels.obograph as og
-from curate_gpt import DBAdapter
-from curate_gpt.formatters.format_utils import camelify
-from curate_gpt.wrappers.base_wrapper import BaseWrapper
-from curate_gpt.wrappers.ontology.ontology import OntologyClass, Relationship
+from curategpt import DBAdapter
+from curategpt.formatters.format_utils import camelify
+from curategpt.wrappers.base_wrapper import BaseWrapper
+from curategpt.wrappers.ontology.ontology import OntologyClass, Relationship
 from oaklib import BasicOntologyInterface
 from oaklib.datamodels.obograph import GraphDocument
 from oaklib.datamodels.search import SearchConfiguration

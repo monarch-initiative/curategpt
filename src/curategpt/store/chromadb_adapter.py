@@ -15,10 +15,10 @@ from chromadb import Settings
 from chromadb.api import EmbeddingFunction
 from chromadb.types import Collection
 from chromadb.utils import embedding_functions
-from curate_gpt.store.db_adapter import DBAdapter
-from curate_gpt.store.metadata import CollectionMetadata
-from curate_gpt.store.vocab import OBJECT, PROJECTION, QUERY, SEARCH_RESULT
-from curate_gpt.utils.vector_algorithms import mmr_diversified_search
+from curategpt.store.db_adapter import DBAdapter
+from curategpt.store.metadata import CollectionMetadata
+from curategpt.store.vocab import OBJECT, PROJECTION, QUERY, SEARCH_RESULT
+from curategpt.utils.vector_algorithms import mmr_diversified_search
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk

@@ -4,9 +4,9 @@ from typing import Dict
 
 import pytest
 import yaml
-from curate_gpt.store.duckdb_adapter import DuckDBAdapter
-from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.wrappers.ontology import OntologyWrapper
+from curategpt.store.duckdb_adapter import DuckDBAdapter
+from curategpt.store.schema_proxy import SchemaProxy
+from curategpt.wrappers.ontology import OntologyWrapper
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 from oaklib import get_adapter
 

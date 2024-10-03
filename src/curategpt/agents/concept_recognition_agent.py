@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
-from curate_gpt.agents.base_agent import BaseAgent
+from curategpt.agents.base_agent import BaseAgent
 from pydantic import BaseModel, ConfigDict
 
 logger = logging.getLogger(__name__)

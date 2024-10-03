@@ -7,7 +7,7 @@ from typing import ClassVar, Dict, Iterable, Iterator, Optional
 import requests
 import requests_cache
 from bs4 import BeautifulSoup
-from curate_gpt.wrappers import BaseWrapper
+from curategpt.wrappers import BaseWrapper
 from oaklib import BasicOntologyInterface
 
 logger = logging.getLogger(__name__)

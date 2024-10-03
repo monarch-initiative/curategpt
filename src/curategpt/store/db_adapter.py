@@ -11,9 +11,9 @@ from typing import (ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO,
 import pandas as pd
 import yaml
 from click.utils import LazyFile
-from curate_gpt.store.metadata import CollectionMetadata
-from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.store.vocab import (DEFAULT_COLLECTION, DOCUMENTS, EMBEDDINGS,
+from curategpt.store.metadata import CollectionMetadata
+from curategpt.store.schema_proxy import SchemaProxy
+from curategpt.store.vocab import (DEFAULT_COLLECTION, DOCUMENTS, EMBEDDINGS,
                                     FILE_LIKE, METADATAS, OBJECT, PROJECTION,
                                     QUERY, SEARCH_RESULT)
 from jsonlines import jsonlines
@@ -52,7 +52,7 @@ class DBAdapter(ABC):
     Objects are partitioned into *collections*, which maps to the equivalent concept in
     MongoDB and ChromaDB.
 
-    >>> from curate_gpt.store import get_store
+    >>> from curategpt.store import get_store
     >>> store = get_store("in_memory")
     >>> store.insert({"name": "John", "age": 42}, collection="people")
 
@@ -61,7 +61,7 @@ class DBAdapter(ABC):
     store object. You can optionally bind a store object to a collection, which effectively
     gives you a collection object:
 
-    >>> from curate_gpt.store import get_store
+    >>> from curategpt.store import get_store
     >>> store = get_store("in_memory")
     >>> store.set_collection("people")
     >>> store.insert({"name": "John", "age": 42})
@@ -90,7 +90,7 @@ class DBAdapter(ABC):
         """
         Insert an object or list of objects into the store.
 
-        >>> from curate_gpt.store import get_store
+        >>> from curategpt.store import get_store
         >>> store = get_store("in_memory")
         >>> store.insert([{"name": "John", "age": 42}], collection="people")
 
@@ -153,14 +153,14 @@ class DBAdapter(ABC):
 
         This allows the following
 
-        >>> from curate_gpt.store import get_store
+        >>> from curategpt.store import get_store
         >>> store = get_store("in_memory")
         >>> store.set_collection("people")
         >>> store.insert([{"name": "John", "age": 42}])
 
         to be written in place of
 
-        >>> from curate_gpt.store import get_store
+        >>> from curategpt.store import get_store
         >>> store = get_store("in_memory")
         >>> store.insert([{"name": "John", "age": 42}], collection="people")
 
@@ -212,8 +212,8 @@ class DBAdapter(ABC):
         """
         Set the metadata for a collection.
 
-        >>> from curate_gpt.store import get_store
-        >>> from curate_gpt.store import CollectionMetadata
+        >>> from curategpt.store import get_store
+        >>> from curategpt.store import CollectionMetadata
         >>> store = get_store("in_memory")
         >>> cm = CollectionMetadata(name="People", description="People in the database")
         >>> store.set_collection_metadata("people", cm)
@@ -240,7 +240,7 @@ class DBAdapter(ABC):
         """
         Query the database for a text string.
 
-        >>> from curate_gpt.store import get_store
+        >>> from curategpt.store import get_store
         >>> store = get_store("chromadb", "db")
         >>> for obj, distance, info in store.search("forebrain neurons", collection="ont_cl"):
         ...     obj_id = obj["id"]
@@ -268,7 +268,7 @@ class DBAdapter(ABC):
         """
         Query the database.
 
-        >>> from curate_gpt.store import get_store
+        >>> from curategpt.store import get_store
         >>> store = get_store("chromadb", "db")
         >>> objs = list(store.find({"name": "NeuronOfTheForebrain"}, collection="ont_cl"))
 

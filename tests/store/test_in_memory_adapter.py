@@ -1,9 +1,9 @@
 from typing import Dict
 
 import pytest
-from curate_gpt import DBAdapter
-from curate_gpt.store import get_store
-from curate_gpt.store.schema_proxy import SchemaProxy
+from curategpt import DBAdapter
+from curategpt.store import get_store
+from curategpt.store.schema_proxy import SchemaProxy
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 
 from tests import OUTPUT_DIR

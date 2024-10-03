@@ -3,10 +3,10 @@ from typing import Type
 
 import pytest
 import yaml
-from curate_gpt.agents.evidence_agent import EvidenceAgent
-from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers import BaseWrapper
-from curate_gpt.wrappers.literature import PubmedWrapper, WikipediaWrapper
+from curategpt.agents.evidence_agent import EvidenceAgent
+from curategpt.extract import BasicExtractor
+from curategpt.wrappers import BaseWrapper
+from curategpt.wrappers.literature import PubmedWrapper, WikipediaWrapper
 
 from tests import OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key

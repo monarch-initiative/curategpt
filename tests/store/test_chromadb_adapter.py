@@ -3,9 +3,9 @@ from typing import Dict
 
 import pytest
 import yaml
-from curate_gpt.store.chromadb_adapter import ChromaDBAdapter
-from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
+from curategpt.store.chromadb_adapter import ChromaDBAdapter
+from curategpt.store.schema_proxy import SchemaProxy
+from curategpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 from oaklib import get_adapter
 

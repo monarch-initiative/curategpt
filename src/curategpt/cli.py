@@ -16,31 +16,31 @@ import pandas as pd
 import requests
 import yaml
 from click_default_group import DefaultGroup
-from curate_gpt import ChromaDBAdapter, __version__
-from curate_gpt.agents.bootstrap_agent import (BootstrapAgent,
+from curategpt import ChromaDBAdapter, __version__
+from curategpt.agents.bootstrap_agent import (BootstrapAgent,
                                                KnowledgeBaseSpecification)
-from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
-from curate_gpt.agents.concept_recognition_agent import (
+from curategpt.agents.chat_agent import ChatAgent, ChatResponse
+from curategpt.agents.concept_recognition_agent import (
     AnnotationMethod, ConceptRecognitionAgent)
-from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
-from curate_gpt.agents.dragon_agent import DragonAgent
-from curate_gpt.agents.evidence_agent import EvidenceAgent
-from curate_gpt.agents.huggingface_agent import HuggingFaceAgent
-from curate_gpt.agents.summarization_agent import SummarizationAgent
-from curate_gpt.evaluation.dae_evaluator import \
+from curategpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
+from curategpt.agents.dragon_agent import DragonAgent
+from curategpt.agents.evidence_agent import EvidenceAgent
+from curategpt.agents.huggingface_agent import HuggingFaceAgent
+from curategpt.agents.summarization_agent import SummarizationAgent
+from curategpt.evaluation.dae_evaluator import \
     DatabaseAugmentedCompletionEvaluator
-from curate_gpt.evaluation.evaluation_datamodel import (StratifiedCollection,
+from curategpt.evaluation.evaluation_datamodel import (StratifiedCollection,
                                                         Task)
-from curate_gpt.evaluation.runner import run_task
-from curate_gpt.evaluation.splitter import stratify_collection
-from curate_gpt.extract import AnnotatedObject
-from curate_gpt.extract.basic_extractor import BasicExtractor
-from curate_gpt.store import get_store
-from curate_gpt.store.schema_proxy import SchemaProxy
-from curate_gpt.utils.vectordb_operations import match_collections
-from curate_gpt.wrappers import BaseWrapper, get_wrapper
-from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
-from curate_gpt.wrappers.ontology import OntologyWrapper
+from curategpt.evaluation.runner import run_task
+from curategpt.evaluation.splitter import stratify_collection
+from curategpt.extract import AnnotatedObject
+from curategpt.extract.basic_extractor import BasicExtractor
+from curategpt.store import get_store
+from curategpt.store.schema_proxy import SchemaProxy
+from curategpt.utils.vectordb_operations import match_collections
+from curategpt.wrappers import BaseWrapper, get_wrapper
+from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+from curategpt.wrappers.ontology import OntologyWrapper
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from llm import UnknownModelError, get_model, get_plugins
@@ -1639,7 +1639,7 @@ def evaluate(
 
     Example:
     -------
-        curategpt evaluate src/curate_gpt/conf/tasks/bio-ont.tasks.yaml
+        curategpt evaluate src/curategpt/conf/tasks/bio-ont.tasks.yaml
     """
     normalized_tasks = []
     for task in tasks:
