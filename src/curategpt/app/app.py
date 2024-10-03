@@ -7,19 +7,14 @@ from typing import List, Union
 import numpy as np
 import streamlit as st
 import yaml
-from scipy.spatial import distance_matrix
-
 from curate_gpt import BasicExtractor
 from curate_gpt.agents import MappingAgent
 from curate_gpt.agents.chat_agent import ChatAgent, ChatResponse
 from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curate_gpt.agents.dragon_agent import DragonAgent
 from curate_gpt.agents.evidence_agent import EvidenceAgent
-from curate_gpt.app.components import (
-    DimensionalityReductionOptions,
-    limit_slider_component,
-    vectors_to_fig,
-)
+from curate_gpt.app.components import (DimensionalityReductionOptions,
+                                       limit_slider_component, vectors_to_fig)
 from curate_gpt.app.helper import get_applicable_examples, get_case_collection
 from curate_gpt.app.state import get_state
 from curate_gpt.extract import OpenAIExtractor, RecursiveExtractor
@@ -27,6 +22,7 @@ from curate_gpt.wrappers import BaseWrapper
 from curate_gpt.wrappers.investigation.jgi_wrapper import JGIWrapper
 from curate_gpt.wrappers.literature import WikipediaWrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+from scipy.spatial import distance_matrix
 
 PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"

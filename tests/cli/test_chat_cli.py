@@ -1,4 +1,5 @@
 from curate_gpt.cli import main
+
 from tests import INPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 

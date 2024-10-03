@@ -1,8 +1,7 @@
 from dataclasses import dataclass, field
 
-from oaklib import get_adapter
-
 from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
+from oaklib import get_adapter
 
 
 @dataclass

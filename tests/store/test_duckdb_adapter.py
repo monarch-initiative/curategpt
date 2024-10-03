@@ -4,12 +4,12 @@ from typing import Dict
 
 import pytest
 import yaml
-from linkml_runtime.utils.schema_builder import SchemaBuilder
-from oaklib import get_adapter
-
 from curate_gpt.store.duckdb_adapter import DuckDBAdapter
 from curate_gpt.store.schema_proxy import SchemaProxy
 from curate_gpt.wrappers.ontology import OntologyWrapper
+from linkml_runtime.utils.schema_builder import SchemaBuilder
+from oaklib import get_adapter
+
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_DIR, OUTPUT_DUCKDB_PATH
 from tests.store.conftest import requires_openai_api_key
 

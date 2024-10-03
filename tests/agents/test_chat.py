@@ -1,9 +1,9 @@
 import re
 
 import pytest
-
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
+
 from tests.store.conftest import requires_openai_api_key
 
 

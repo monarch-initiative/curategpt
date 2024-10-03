@@ -6,7 +6,6 @@ from time import sleep
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests_cache
-
 from curate_gpt.wrappers import BaseWrapper
 
 URL = "https://fusion.ess-dive.lbl.gov/deepdive?rowStart={cursor}&pageSize={limit}"

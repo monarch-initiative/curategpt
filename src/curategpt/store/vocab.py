@@ -1,10 +1,9 @@
 from pathlib import Path
 from typing import Dict, List, Optional, TextIO, Tuple, Union
 
+from curate_gpt.store.duckdb_result import DuckDBSearchResult
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from pydantic import BaseModel
-
-from curate_gpt.store.duckdb_result import DuckDBSearchResult
 
 OBJECT = Union[YAMLRoot, BaseModel, Dict, DuckDBSearchResult]
 QUERY = Union[str, YAMLRoot, BaseModel, Dict, DuckDBSearchResult]

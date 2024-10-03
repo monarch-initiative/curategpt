@@ -8,10 +8,9 @@ from functools import lru_cache
 from typing import ClassVar, Dict, Iterable, Iterator, Optional, TextIO
 
 import requests
-from oaklib import BasicOntologyInterface, get_adapter
-
 from curate_gpt.wrappers import BaseWrapper
 from curate_gpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+from oaklib import BasicOntologyInterface, get_adapter
 
 logger = logging.getLogger(__name__)
 

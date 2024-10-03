@@ -3,9 +3,14 @@
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional
+from typing import (Any, Callable, ClassVar, Dict, Iterable, Iterator, List,
+                    Mapping, Optional)
 
 import oaklib.datamodels.obograph as og
+from curate_gpt import DBAdapter
+from curate_gpt.formatters.format_utils import camelify
+from curate_gpt.wrappers.base_wrapper import BaseWrapper
+from curate_gpt.wrappers.ontology.ontology import OntologyClass, Relationship
 from oaklib import BasicOntologyInterface
 from oaklib.datamodels.obograph import GraphDocument
 from oaklib.datamodels.search import SearchConfiguration
@@ -13,11 +18,6 @@ from oaklib.datamodels.vocabulary import IS_A
 from oaklib.interfaces import OboGraphInterface, SearchInterface
 from oaklib.types import CURIE
 from oaklib.utilities.iterator_utils import chunk
-
-from curate_gpt import DBAdapter
-from curate_gpt.formatters.format_utils import camelify
-from curate_gpt.wrappers.base_wrapper import BaseWrapper
-from curate_gpt.wrappers.ontology.ontology import OntologyClass, Relationship
 
 logger = logging.getLogger(__name__)
 

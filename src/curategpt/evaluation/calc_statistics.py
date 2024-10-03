@@ -1,12 +1,9 @@
 from typing import Any, Iterator, List, Tuple, Union
 
 import yaml
-
-from curate_gpt.evaluation.evaluation_datamodel import (
-    AggregationMethod,
-    ClassificationMetrics,
-    ClassificationOutcome,
-)
+from curate_gpt.evaluation.evaluation_datamodel import (AggregationMethod,
+                                                        ClassificationMetrics,
+                                                        ClassificationOutcome)
 
 
 def calculate_metrics(

@@ -6,9 +6,8 @@ from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import yaml
-from jsonpath_ng import parse
-
 from curate_gpt.wrappers.base_wrapper import BaseWrapper
+from jsonpath_ng import parse
 
 logger = logging.getLogger(__name__)
 

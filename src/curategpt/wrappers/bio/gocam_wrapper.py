@@ -7,12 +7,12 @@ from typing import ClassVar, Dict, Iterable, Iterator, Optional
 import requests
 import requests_cache
 import yaml
-from oaklib import BasicOntologyInterface, get_adapter
-from oaklib.interfaces.association_provider_interface import AssociationProviderInterface
-
 from curate_gpt.formatters.format_utils import camelify
 from curate_gpt.wrappers import BaseWrapper
 from curate_gpt.wrappers.literature import PubmedWrapper
+from oaklib import BasicOntologyInterface, get_adapter
+from oaklib.interfaces.association_provider_interface import \
+    AssociationProviderInterface
 
 BASE_URL = "https://go-public.s3.amazonaws.com/files/"
 INDEX_URL = "https://go-public.s3.amazonaws.com/files/gocam-models.json"

@@ -4,10 +4,9 @@ import logging
 from typing import Dict, List, Optional, Tuple
 
 import yaml
-from llm import Model
-
 from curate_gpt.store.db_adapter import SEARCH_RESULT
 from curate_gpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
+from llm import Model
 
 logger = logging.getLogger(__name__)
 

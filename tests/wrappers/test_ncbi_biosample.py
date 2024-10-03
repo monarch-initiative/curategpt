@@ -2,10 +2,11 @@ import logging
 import time
 
 import yaml
-
 from curate_gpt.agents.chat_agent import ChatAgent
 from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers.investigation.ncbi_biosample_wrapper import NCBIBiosampleWrapper
+from curate_gpt.wrappers.investigation.ncbi_biosample_wrapper import \
+    NCBIBiosampleWrapper
+
 from tests import OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 from tests.utils.helper import create_db_dir, setup_db

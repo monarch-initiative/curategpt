@@ -6,10 +6,10 @@ from pathlib import Path
 from typing import TextIO
 
 import yaml
-
 from curate_gpt import BasicExtractor, ChromaDBAdapter
 from curate_gpt.agents.dragon_agent import DragonAgent
-from curate_gpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
+from curate_gpt.evaluation.dae_evaluator import \
+    DatabaseAugmentedCompletionEvaluator
 from curate_gpt.evaluation.evaluation_datamodel import Task
 from curate_gpt.evaluation.splitter import stratify_collection_to_store
 

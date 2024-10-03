@@ -1,4 +1,5 @@
 from curate_gpt.cli import main
+
 from tests import INPUT_DIR
 
 ONT_DB = str(INPUT_DIR / "go-nucleus.db")

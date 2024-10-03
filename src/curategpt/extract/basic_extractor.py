@@ -8,9 +8,8 @@ from dataclasses import dataclass
 from typing import List
 
 import yaml
-from pydantic import ConfigDict
-
 from curate_gpt.formatters.format_utils import remove_formatting
+from pydantic import ConfigDict
 
 from ..utils.tokens import estimate_num_tokens, max_tokens_by_model
 from .extractor import AnnotatedObject, Extractor

@@ -4,14 +4,14 @@ import logging
 from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional, Union
-
-from deprecation import deprecated
+from typing import (Any, ClassVar, Dict, Iterable, Iterator, List, Optional,
+                    Union)
 
 from curate_gpt import ChromaDBAdapter
 from curate_gpt.extract import Extractor
 from curate_gpt.store import DBAdapter
 from curate_gpt.store.db_adapter import SEARCH_RESULT
+from deprecation import deprecated
 
 logger = logging.getLogger(__name__)
 

@@ -4,12 +4,11 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, ClassVar, Dict, List, Optional, Union
 
-from pydantic import BaseModel, ConfigDict
-
 from curate_gpt.agents.base_agent import BaseAgent
 from curate_gpt.agents.chat_agent import ChatResponse
 from curate_gpt.extract import AnnotatedObject
 from curate_gpt.store import DBAdapter
+from pydantic import BaseModel, ConfigDict
 
 logger = logging.getLogger(__name__)
 

@@ -9,7 +9,6 @@ from typing import Any, Dict
 
 import click
 import yaml
-
 from curate_gpt import BasicExtractor, DBAdapter
 from curate_gpt.store import get_store
 from curate_gpt.utils.eval_utils import Outcome, score_prediction
