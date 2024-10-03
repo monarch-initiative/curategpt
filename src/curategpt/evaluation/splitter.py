@@ -2,8 +2,8 @@ import logging
 import random
 from typing import Any, Dict, List, Optional, Union
 
-from curate_gpt import ChromaDBAdapter, DBAdapter
-from curate_gpt.evaluation.evaluation_datamodel import StratifiedCollection
+from curategpt import ChromaDBAdapter, DBAdapter
+from curategpt.evaluation.evaluation_datamodel import StratifiedCollection
 
 logger = logging.getLogger(__name__)
 

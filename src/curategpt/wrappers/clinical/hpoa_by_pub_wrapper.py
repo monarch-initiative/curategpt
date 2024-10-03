@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from curate_gpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
+from curategpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
 
 
 @dataclass

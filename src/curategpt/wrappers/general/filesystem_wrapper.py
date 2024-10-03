@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
-from curate_gpt.wrappers.base_wrapper import BaseWrapper
+from curategpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

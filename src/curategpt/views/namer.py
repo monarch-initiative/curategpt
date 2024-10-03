@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Iterable, Iterator, List, Tuple
 
-from curate_gpt import DBAdapter
+from curategpt import DBAdapter
 
 
 @dataclass

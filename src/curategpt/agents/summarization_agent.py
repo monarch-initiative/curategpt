@@ -2,8 +2,8 @@ import logging
 from dataclasses import dataclass
 from typing import List
 
-from curate_gpt.agents.base_agent import BaseAgent
-from curate_gpt.wrappers import BaseWrapper
+from curategpt.agents.base_agent import BaseAgent
+from curategpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

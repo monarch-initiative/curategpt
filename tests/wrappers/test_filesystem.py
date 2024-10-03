@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from curate_gpt.wrappers import get_wrapper
+from curategpt.wrappers import get_wrapper
 
 THIS = Path(__file__).name
 

@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from curate_gpt import BasicExtractor, ChromaDBAdapter, DBAdapter, Extractor
-from curate_gpt.agents.chat_agent import ChatResponse
-from curate_gpt.app.cart import Cart
-from curate_gpt.extract import AnnotatedObject
+from curategpt import BasicExtractor, ChromaDBAdapter, DBAdapter, Extractor
+from curategpt.agents.chat_agent import ChatResponse
+from curategpt.app.cart import Cart
+from curategpt.extract import AnnotatedObject
 
 
 @dataclass

@@ -6,7 +6,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from curate_gpt.extract.extractor import AnnotatedObject, Extractor
+from curategpt.extract.extractor import AnnotatedObject, Extractor
 
 logger = logging.getLogger(__name__)
 

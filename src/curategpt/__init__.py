@@ -22,7 +22,7 @@ except importlib_metadata.PackageNotFoundError:
     # package is not installed
     __version__ = "0.0.0"  # pragma: no cover
 
-from curate_gpt.extract import BasicExtractor, Extractor
-from curate_gpt.store import ChromaDBAdapter, DBAdapter
+from curategpt.extract import BasicExtractor, Extractor
+from curategpt.store import ChromaDBAdapter, DBAdapter
 
 __all__ = ["DBAdapter", "ChromaDBAdapter", "Extractor", "BasicExtractor"]
