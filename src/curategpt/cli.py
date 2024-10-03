@@ -16,9 +16,16 @@ import pandas as pd
 import requests
 import yaml
 from click_default_group import DefaultGroup
+from linkml_runtime.dumpers import json_dumper
+from linkml_runtime.utils.yamlutils import YAMLRoot
+from llm import UnknownModelError, get_model, get_plugins
+from llm.cli import load_conversation
+from oaklib import get_adapter
+from pydantic import BaseModel
+
 from curategpt import ChromaDBAdapter, __version__
 from curategpt.agents.bootstrap_agent import (BootstrapAgent,
-                                               KnowledgeBaseSpecification)
+                                              KnowledgeBaseSpecification)
 from curategpt.agents.chat_agent import ChatAgent, ChatResponse
 from curategpt.agents.concept_recognition_agent import (
     AnnotationMethod, ConceptRecognitionAgent)
@@ -30,7 +37,7 @@ from curategpt.agents.summarization_agent import SummarizationAgent
 from curategpt.evaluation.dae_evaluator import \
     DatabaseAugmentedCompletionEvaluator
 from curategpt.evaluation.evaluation_datamodel import (StratifiedCollection,
-                                                        Task)
+                                                       Task)
 from curategpt.evaluation.runner import run_task
 from curategpt.evaluation.splitter import stratify_collection
 from curategpt.extract import AnnotatedObject
@@ -41,12 +48,6 @@ from curategpt.utils.vectordb_operations import match_collections
 from curategpt.wrappers import BaseWrapper, get_wrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from curategpt.wrappers.ontology import OntologyWrapper
-from linkml_runtime.dumpers import json_dumper
-from linkml_runtime.utils.yamlutils import YAMLRoot
-from llm import UnknownModelError, get_model, get_plugins
-from llm.cli import load_conversation
-from oaklib import get_adapter
-from pydantic import BaseModel
 
 __all__ = [
     "main",

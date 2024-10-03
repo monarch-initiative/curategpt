@@ -7,6 +7,8 @@ from typing import List, Union
 import numpy as np
 import streamlit as st
 import yaml
+from scipy.spatial import distance_matrix
+
 from curategpt import BasicExtractor
 from curategpt.agents import MappingAgent
 from curategpt.agents.chat_agent import ChatAgent, ChatResponse
@@ -14,7 +16,7 @@ from curategpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curategpt.agents.dragon_agent import DragonAgent
 from curategpt.agents.evidence_agent import EvidenceAgent
 from curategpt.app.components import (DimensionalityReductionOptions,
-                                       limit_slider_component, vectors_to_fig)
+                                      limit_slider_component, vectors_to_fig)
 from curategpt.app.helper import get_applicable_examples, get_case_collection
 from curategpt.app.state import get_state
 from curategpt.extract import OpenAIExtractor, RecursiveExtractor
@@ -22,7 +24,6 @@ from curategpt.wrappers import BaseWrapper
 from curategpt.wrappers.investigation.jgi_wrapper import JGIWrapper
 from curategpt.wrappers.literature import WikipediaWrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
-from scipy.spatial import distance_matrix
 
 PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"

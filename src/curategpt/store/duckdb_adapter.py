@@ -17,20 +17,21 @@ import numpy as np
 import openai
 import psutil
 import yaml
-from curategpt.store.db_adapter import DBAdapter
-from curategpt.store.duckdb_result import DuckDBSearchResult
-from curategpt.store.metadata import CollectionMetadata
-from curategpt.store.vocab import (DEFAULT_MODEL, DEFAULT_OPENAI_MODEL,
-                                    DISTANCES, DOCUMENTS, EMBEDDINGS, IDS,
-                                    METADATAS, MODEL_MAP, OBJECT, PROJECTION,
-                                    QUERY, SEARCH_RESULT)
-from curategpt.utils.vector_algorithms import mmr_diversified_search
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk
 from openai import OpenAI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
+
+from curategpt.store.db_adapter import DBAdapter
+from curategpt.store.duckdb_result import DuckDBSearchResult
+from curategpt.store.metadata import CollectionMetadata
+from curategpt.store.vocab import (DEFAULT_MODEL, DEFAULT_OPENAI_MODEL,
+                                   DISTANCES, DOCUMENTS, EMBEDDINGS, IDS,
+                                   METADATAS, MODEL_MAP, OBJECT, PROJECTION,
+                                   QUERY, SEARCH_RESULT)
+from curategpt.utils.vector_algorithms import mmr_diversified_search
 
 logger = logging.getLogger(__name__)
 

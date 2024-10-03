@@ -11,12 +11,13 @@ from typing import (ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO,
 import pandas as pd
 import yaml
 from click.utils import LazyFile
+from jsonlines import jsonlines
+
 from curategpt.store.metadata import CollectionMetadata
 from curategpt.store.schema_proxy import SchemaProxy
 from curategpt.store.vocab import (DEFAULT_COLLECTION, DOCUMENTS, EMBEDDINGS,
-                                    FILE_LIKE, METADATAS, OBJECT, PROJECTION,
-                                    QUERY, SEARCH_RESULT)
-from jsonlines import jsonlines
+                                   FILE_LIKE, METADATAS, OBJECT, PROJECTION,
+                                   QUERY, SEARCH_RESULT)
 
 logger = logging.getLogger(__name__)
 

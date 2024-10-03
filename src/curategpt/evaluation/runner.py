@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import TextIO
 
 import yaml
+
 from curategpt import BasicExtractor, ChromaDBAdapter
 from curategpt.agents.dragon_agent import DragonAgent
 from curategpt.evaluation.dae_evaluator import \

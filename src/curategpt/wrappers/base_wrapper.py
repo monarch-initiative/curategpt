@@ -7,11 +7,12 @@ from pathlib import Path
 from typing import (Any, ClassVar, Dict, Iterable, Iterator, List, Optional,
                     Union)
 
+from deprecation import deprecated
+
 from curategpt import ChromaDBAdapter
 from curategpt.extract import Extractor
 from curategpt.store import DBAdapter
 from curategpt.store.db_adapter import SEARCH_RESULT
-from deprecation import deprecated
 
 logger = logging.getLogger(__name__)
 

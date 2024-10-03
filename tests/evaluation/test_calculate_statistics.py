@@ -1,7 +1,8 @@
 import pytest
+
 from curategpt.evaluation.calc_statistics import (aggregate_metrics,
-                                                   calculate_metrics,
-                                                   evaluate_predictions)
+                                                  calculate_metrics,
+                                                  evaluate_predictions)
 from curategpt.evaluation.evaluation_datamodel import ClassificationOutcome
 
 all_metrics = []

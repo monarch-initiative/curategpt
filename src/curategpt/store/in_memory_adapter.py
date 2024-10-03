@@ -5,11 +5,11 @@ from dataclasses import dataclass, field
 from typing import (ClassVar, Dict, Iterable, Iterator, List, Optional, Union,
                     get_origin)
 
-from curategpt import DBAdapter
-from curategpt.store.db_adapter import (OBJECT, PROJECTION, QUERY,
-                                         SEARCH_RESULT)
-from curategpt.store.metadata import CollectionMetadata
 from pydantic import BaseModel, ConfigDict
+
+from curategpt import DBAdapter
+from curategpt.store.db_adapter import OBJECT, PROJECTION, QUERY, SEARCH_RESULT
+from curategpt.store.metadata import CollectionMetadata
 
 logger = logging.getLogger(__name__)
 

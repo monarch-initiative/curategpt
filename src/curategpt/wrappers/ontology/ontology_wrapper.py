@@ -7,10 +7,6 @@ from typing import (Any, Callable, ClassVar, Dict, Iterable, Iterator, List,
                     Mapping, Optional)
 
 import oaklib.datamodels.obograph as og
-from curategpt import DBAdapter
-from curategpt.formatters.format_utils import camelify
-from curategpt.wrappers.base_wrapper import BaseWrapper
-from curategpt.wrappers.ontology.ontology import OntologyClass, Relationship
 from oaklib import BasicOntologyInterface
 from oaklib.datamodels.obograph import GraphDocument
 from oaklib.datamodels.search import SearchConfiguration
@@ -18,6 +14,11 @@ from oaklib.datamodels.vocabulary import IS_A
 from oaklib.interfaces import OboGraphInterface, SearchInterface
 from oaklib.types import CURIE
 from oaklib.utilities.iterator_utils import chunk
+
+from curategpt import DBAdapter
+from curategpt.formatters.format_utils import camelify
+from curategpt.wrappers.base_wrapper import BaseWrapper
+from curategpt.wrappers.ontology.ontology import OntologyClass, Relationship
 
 logger = logging.getLogger(__name__)
 
