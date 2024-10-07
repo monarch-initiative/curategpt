@@ -1,8 +1,8 @@
 import pytest
 import yaml
 
-from curate_gpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
-from curate_gpt.extract.basic_extractor import BasicExtractor
+from curategpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
+from curategpt.extract.basic_extractor import BasicExtractor
 from tests.store.conftest import requires_openai_api_key
 
 

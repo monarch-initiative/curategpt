@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.curate_gpt.store import ChromaDBAdapter
+from src.curategpt.store import ChromaDBAdapter
 
 DEBUG_MODE = False
 

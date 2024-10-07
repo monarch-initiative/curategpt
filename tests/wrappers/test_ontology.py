@@ -5,8 +5,8 @@ import pytest
 from oaklib import get_adapter
 from oaklib.datamodels.obograph import GraphDocument
 
-from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
+from curategpt.extract import BasicExtractor
+from curategpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db

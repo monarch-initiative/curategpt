@@ -2,9 +2,9 @@ import logging
 
 import pytest
 
-from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers.ontology.bioportal_wrapper import BioportalWrapper
-from curate_gpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
+from curategpt.extract import BasicExtractor
+from curategpt.wrappers.ontology.bioportal_wrapper import BioportalWrapper
+from curategpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
 from tests import OUTPUT_DIR
 from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db
 

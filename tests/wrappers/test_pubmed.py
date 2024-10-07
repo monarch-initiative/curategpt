@@ -3,9 +3,9 @@ import time
 
 import pytest
 
-from curate_gpt.agents.chat_agent import ChatAgent
-from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers.literature import PubmedWrapper
+from curategpt.agents.chat_agent import ChatAgent
+from curategpt.extract import BasicExtractor
+from curategpt.wrappers.literature import PubmedWrapper
 from tests import OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db

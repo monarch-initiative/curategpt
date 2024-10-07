@@ -4,10 +4,10 @@ import time
 import pytest
 import yaml
 
-from curate_gpt import ChromaDBAdapter
-from curate_gpt.agents.chat_agent import ChatAgent
-from curate_gpt.extract import BasicExtractor
-from curate_gpt.wrappers.literature.pmc_wrapper import PMCWrapper
+from curategpt import ChromaDBAdapter
+from curategpt.agents.chat_agent import ChatAgent
+from curategpt.extract import BasicExtractor
+from curategpt.wrappers.literature.pmc_wrapper import PMCWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
 from tests.utils.helper import DEBUG_MODE, create_db_dir
 

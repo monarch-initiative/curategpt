@@ -3,7 +3,7 @@ import json
 import pytest
 import yaml
 
-from curate_gpt.wrappers.bio.gocam_wrapper import GOCAMWrapper
+from curategpt.wrappers.bio.gocam_wrapper import GOCAMWrapper
 from tests import INPUT_DIR
 
 

@@ -1,9 +1,9 @@
 import pytest
 import yaml
 
-from curate_gpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
-from curate_gpt.agents.dragon_agent import DragonAgent
-from curate_gpt.extract.basic_extractor import BasicExtractor
+from curategpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
+from curategpt.agents.dragon_agent import DragonAgent
+from curategpt.extract.basic_extractor import BasicExtractor
 from tests.store.conftest import requires_openai_api_key
 
 

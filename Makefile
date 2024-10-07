@@ -22,13 +22,13 @@ ont-%:
 
 
 app:
-	$(RUN) streamlit run src/curate_gpt/app/app.py --logger.level=debug
+	$(RUN) streamlit run src/curategpt/app/app.py --logger.level=debug
 
 ## -- Docs --
 
 
 apidoc:
-	$(RUN) sphinx-apidoc -f -M -o docs/ src/curate_gpt/ && cd docs && $(RUN) make html
+	$(RUN) sphinx-apidoc -f -M -o docs/ src/curategpt/ && cd docs && $(RUN) make html
 
 %-doctest: %
 	$(RUN) python -m doctest --option ELLIPSIS --option NORMALIZE_WHITESPACE $<

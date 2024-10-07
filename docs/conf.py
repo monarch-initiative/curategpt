@@ -5,12 +5,12 @@
 import os
 from datetime import date
 
-from curate_gpt import __version__
+from curategpt import __version__
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'curate_gpt'
+project = 'curategpt'
 copyright = f"{date.today().year}, Author 1 <cjmungall@lbl.gov>"
 author = 'Author 1 <cjmungall@lbl.gov>'
 release = __version__

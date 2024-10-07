@@ -1,11 +1,11 @@
 import pytest
 
-from curate_gpt.evaluation.calc_statistics import (
+from curategpt.evaluation.calc_statistics import (
     aggregate_metrics,
     calculate_metrics,
     evaluate_predictions,
 )
-from curate_gpt.evaluation.evaluation_datamodel import ClassificationOutcome
+from curategpt.evaluation.evaluation_datamodel import ClassificationOutcome
 
 all_metrics = []
 

@@ -1,4 +1,4 @@
-from curate_gpt.cli import main
+from curategpt.cli import main
 
 
 def test_help(runner):
