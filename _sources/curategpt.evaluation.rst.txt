@@ -1,0 +1,61 @@
+curategpt.evaluation package
+============================
+
+Submodules
+----------
+
+curategpt.evaluation.base\_evaluator module
+-------------------------------------------
+
+.. automodule:: curategpt.evaluation.base_evaluator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.evaluation.calc\_statistics module
+--------------------------------------------
+
+.. automodule:: curategpt.evaluation.calc_statistics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.evaluation.dae\_evaluator module
+------------------------------------------
+
+.. automodule:: curategpt.evaluation.dae_evaluator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.evaluation.evaluation\_datamodel module
+-------------------------------------------------
+
+.. automodule:: curategpt.evaluation.evaluation_datamodel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.evaluation.runner module
+----------------------------------
+
+.. automodule:: curategpt.evaluation.runner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.evaluation.splitter module
+------------------------------------
+
+.. automodule:: curategpt.evaluation.splitter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.evaluation
+   :members:
+   :undoc-members:
+   :show-inheritance:

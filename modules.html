@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>curate_gpt &mdash; curate_gpt 0.2.0 documentation</title>
+  <title>curategpt &mdash; curategpt 0.2.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
@@ -16,14 +16,14 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=938c9ccc"></script>
+        <script src="_static/documentation_options.js?v=37f418d5"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="curate_gpt package" href="curate_gpt.html" />
-    <link rel="prev" title="curate_gpt.formatters package" href="curate_gpt.formatters.html" /> 
+    <link rel="next" title="curategpt package" href="curategpt.html" />
+    <link rel="prev" title="curategpt.formatters package" href="curategpt.formatters.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,7 +35,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            curate_gpt
+            curategpt
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -47,14 +47,14 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="curate_gpt.store.html">curate_gpt.store package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="curate_gpt.wrappers.html">curate_gpt.wrappers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="curate_gpt.agents.html">curate_gpt.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="curate_gpt.extract.html">curate_gpt.extract package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="curate_gpt.utils.html">curate_gpt.utils package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="curate_gpt.formatters.html">curate_gpt.formatters package</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">curate_gpt</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="curate_gpt.html">curate_gpt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curategpt.store.html">curategpt.store package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curategpt.wrappers.html">curategpt.wrappers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curategpt.agents.html">curategpt.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curategpt.extract.html">curategpt.extract package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curategpt.utils.html">curategpt.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curategpt.formatters.html">curategpt.formatters package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">curategpt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="curategpt.html">curategpt package</a></li>
 </ul>
 </li>
 </ul>
@@ -65,7 +65,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">curate_gpt</a>
+          <a href="index.html">curategpt</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -73,7 +73,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">curate_gpt</li>
+      <li class="breadcrumb-item active">curategpt</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -83,198 +83,198 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="curate-gpt">
-<h1>curate_gpt<a class="headerlink" href="#curate-gpt" title="Link to this heading"></a></h1>
+  <section id="curategpt">
+<h1>curategpt<a class="headerlink" href="#curategpt" title="Link to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="curate_gpt.html">curate_gpt package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="curate_gpt.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.adhoc.html">curate_gpt.adhoc package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.adhoc.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.adhoc.html#module-curate_gpt.adhoc.gocam_predictor">curate_gpt.adhoc.gocam_predictor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.adhoc.html#module-curate_gpt.adhoc">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curategpt.html">curategpt package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="curategpt.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.adhoc.html">curategpt.adhoc package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.adhoc.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.adhoc.html#module-curategpt.adhoc.gocam_predictor">curategpt.adhoc.gocam_predictor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.adhoc.html#module-curategpt.adhoc">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.agents.html">curate_gpt.agents package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.agent_utils">curate_gpt.agents.agent_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.base_agent">curate_gpt.agents.base_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.bootstrap_agent">curate_gpt.agents.bootstrap_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.chat_agent">curate_gpt.agents.chat_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.concept_recognition_agent">curate_gpt.agents.concept_recognition_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.dase_agent">curate_gpt.agents.dase_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.dragon_agent">curate_gpt.agents.dragon_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.evidence_agent">curate_gpt.agents.evidence_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.huggingface_agent">curate_gpt.agents.huggingface_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.mapping_agent">curate_gpt.agents.mapping_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents.summarization_agent">curate_gpt.agents.summarization_agent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.agents.html#module-curate_gpt.agents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.agents.html">curategpt.agents package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.agent_utils">curategpt.agents.agent_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.base_agent">curategpt.agents.base_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.bootstrap_agent">curategpt.agents.bootstrap_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.chat_agent">curategpt.agents.chat_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.concept_recognition_agent">curategpt.agents.concept_recognition_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.dase_agent">curategpt.agents.dase_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.dragon_agent">curategpt.agents.dragon_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.evidence_agent">curategpt.agents.evidence_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.huggingface_agent">curategpt.agents.huggingface_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.mapping_agent">curategpt.agents.mapping_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents.summarization_agent">curategpt.agents.summarization_agent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.agents.html#module-curategpt.agents">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.app.html">curate_gpt.app package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.app.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.app.html#module-curate_gpt.app.app">curate_gpt.app.app module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.app.html#module-curate_gpt.app.cart">curate_gpt.app.cart module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.app.html#module-curate_gpt.app.components">curate_gpt.app.components module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.app.html#module-curate_gpt.app.helper">curate_gpt.app.helper module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.app.html#module-curate_gpt.app.state">curate_gpt.app.state module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.app.html#module-curate_gpt.app">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.app.html">curategpt.app package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.app.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.app.html#module-curategpt.app.app">curategpt.app.app module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.app.html#module-curategpt.app.cart">curategpt.app.cart module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.app.html#module-curategpt.app.components">curategpt.app.components module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.app.html#module-curategpt.app.helper">curategpt.app.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.app.html#module-curategpt.app.state">curategpt.app.state module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.app.html#module-curategpt.app">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.conf.html">curate_gpt.conf package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.conf.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.conf.html#module-curate_gpt.conf">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.conf.html">curategpt.conf package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.conf.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.conf.html#module-curategpt.conf">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.evaluation.html">curate_gpt.evaluation package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.evaluation.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.base_evaluator">curate_gpt.evaluation.base_evaluator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.calc_statistics">curate_gpt.evaluation.calc_statistics module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.dae_evaluator">curate_gpt.evaluation.dae_evaluator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.evaluation_datamodel">curate_gpt.evaluation.evaluation_datamodel module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.runner">curate_gpt.evaluation.runner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.evaluation.html#module-curate_gpt.evaluation.splitter">curate_gpt.evaluation.splitter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.evaluation.html#module-curate_gpt.evaluation">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.evaluation.html">curategpt.evaluation package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.evaluation.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.evaluation.html#module-curategpt.evaluation.base_evaluator">curategpt.evaluation.base_evaluator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.evaluation.html#module-curategpt.evaluation.calc_statistics">curategpt.evaluation.calc_statistics module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.evaluation.html#module-curategpt.evaluation.dae_evaluator">curategpt.evaluation.dae_evaluator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.evaluation.html#module-curategpt.evaluation.evaluation_datamodel">curategpt.evaluation.evaluation_datamodel module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.evaluation.html#module-curategpt.evaluation.runner">curategpt.evaluation.runner module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.evaluation.html#module-curategpt.evaluation.splitter">curategpt.evaluation.splitter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.evaluation.html#module-curategpt.evaluation">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.extract.html">curate_gpt.extract package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.extract.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.extract.html#module-curate_gpt.extract.basic_extractor">curate_gpt.extract.basic_extractor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.extract.html#module-curate_gpt.extract.extractor">curate_gpt.extract.extractor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.extract.html#module-curate_gpt.extract.openai_extractor">curate_gpt.extract.openai_extractor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.extract.html#module-curate_gpt.extract.recursive_extractor">curate_gpt.extract.recursive_extractor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.extract.html#module-curate_gpt.extract">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.extract.html">curategpt.extract package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.extract.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.extract.html#module-curategpt.extract.basic_extractor">curategpt.extract.basic_extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.extract.html#module-curategpt.extract.extractor">curategpt.extract.extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.extract.html#module-curategpt.extract.openai_extractor">curategpt.extract.openai_extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.extract.html#module-curategpt.extract.recursive_extractor">curategpt.extract.recursive_extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.extract.html#module-curategpt.extract">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.formatters.html">curate_gpt.formatters package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.formatters.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.formatters.html#module-curate_gpt.formatters.format_utils">curate_gpt.formatters.format_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.formatters.html#module-curate_gpt.formatters">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.formatters.html">curategpt.formatters package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.formatters.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.formatters.html#module-curategpt.formatters.format_utils">curategpt.formatters.format_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.formatters.html#module-curategpt.formatters">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.store.html">curate_gpt.store package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.chromadb_adapter">curate_gpt.store.chromadb_adapter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.db_adapter">curate_gpt.store.db_adapter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.db_metadata">curate_gpt.store.db_metadata module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.duckdb_adapter">curate_gpt.store.duckdb_adapter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.duckdb_result">curate_gpt.store.duckdb_result module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.in_memory_adapter">curate_gpt.store.in_memory_adapter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.metadata">curate_gpt.store.metadata module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.schema_proxy">curate_gpt.store.schema_proxy module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store.vocab">curate_gpt.store.vocab module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.store.html#module-curate_gpt.store">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.store.html">curategpt.store package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.chromadb_adapter">curategpt.store.chromadb_adapter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.db_adapter">curategpt.store.db_adapter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.db_metadata">curategpt.store.db_metadata module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.duckdb_adapter">curategpt.store.duckdb_adapter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.duckdb_result">curategpt.store.duckdb_result module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.in_memory_adapter">curategpt.store.in_memory_adapter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.metadata">curategpt.store.metadata module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.schema_proxy">curategpt.store.schema_proxy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store.vocab">curategpt.store.vocab module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.store.html#module-curategpt.store">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.utils.html">curate_gpt.utils package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#module-curate_gpt.utils.eval_utils">curate_gpt.utils.eval_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#module-curate_gpt.utils.llm_utils">curate_gpt.utils.llm_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#module-curate_gpt.utils.patch_utils">curate_gpt.utils.patch_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#module-curate_gpt.utils.search">curate_gpt.utils.search module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#module-curate_gpt.utils.tokens">curate_gpt.utils.tokens module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#module-curate_gpt.utils.vector_algorithms">curate_gpt.utils.vector_algorithms module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#module-curate_gpt.utils.vectordb_operations">curate_gpt.utils.vectordb_operations module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.utils.html#module-curate_gpt.utils">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.utils.html">curategpt.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#module-curategpt.utils.eval_utils">curategpt.utils.eval_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#module-curategpt.utils.llm_utils">curategpt.utils.llm_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#module-curategpt.utils.patch_utils">curategpt.utils.patch_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#module-curategpt.utils.search">curategpt.utils.search module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#module-curategpt.utils.tokens">curategpt.utils.tokens module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#module-curategpt.utils.vector_algorithms">curategpt.utils.vector_algorithms module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#module-curategpt.utils.vectordb_operations">curategpt.utils.vectordb_operations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.utils.html#module-curategpt.utils">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.views.html">curate_gpt.views package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.views.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.views.html#module-curate_gpt.views.namer">curate_gpt.views.namer module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.views.html#module-curate_gpt.views">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.views.html">curategpt.views package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.views.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.views.html#module-curategpt.views.namer">curategpt.views.namer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.views.html#module-curategpt.views">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.wrappers.html">curate_gpt.wrappers package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.html#module-curate_gpt.wrappers.base_wrapper">curate_gpt.wrappers.base_wrapper module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.wrappers.html#module-curate_gpt.wrappers">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.wrappers.html">curategpt.wrappers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.wrappers.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.wrappers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.wrappers.html#module-curategpt.wrappers.base_wrapper">curategpt.wrappers.base_wrapper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.wrappers.html#module-curategpt.wrappers">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="curate_gpt.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="curate_gpt.html#module-curate_gpt.cli">curate_gpt.cli module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="curate_gpt.html#module-curate_gpt">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.html#architecture">Architecture</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.html#curate_gpt.BasicExtractor"><code class="docutils literal notranslate"><span class="pre">BasicExtractor</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.BasicExtractor.deserialize"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.deserialize()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.BasicExtractor.deserialize_yaml"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.deserialize_yaml()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.BasicExtractor.extract"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.extract()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.BasicExtractor.model_config"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.model_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.BasicExtractor.model_name"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.model_name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.BasicExtractor.serialization_format"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.serialization_format</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.BasicExtractor.serialize"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.serialize()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="curategpt.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="curategpt.html#module-curategpt.cli">curategpt.cli module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="curategpt.html#module-curategpt">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.html#architecture">Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.html#curategpt.BasicExtractor"><code class="docutils literal notranslate"><span class="pre">BasicExtractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.BasicExtractor.deserialize"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.deserialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.BasicExtractor.deserialize_yaml"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.deserialize_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.BasicExtractor.extract"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.BasicExtractor.model_config"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.BasicExtractor.model_name"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.BasicExtractor.serialization_format"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.serialization_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.BasicExtractor.serialize"><code class="docutils literal notranslate"><span class="pre">BasicExtractor.serialize()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.client"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.client</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.collection_metadata"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.collection_metadata()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.collections"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.collections()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.default_max_document_length"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.default_max_document_length</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.default_model"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.default_model</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.diversified_search"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.diversified_search()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.dump_then_load"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.dump_then_load()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.fetch_all_objects_memory_safe"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.fetch_all_objects_memory_safe()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.find"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.find()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.id_field"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.id_field</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.id_to_object"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.id_to_object</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.insert"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.insert()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.list_collection_names"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.list_collection_names()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.lookup"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.lookup()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.matches"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.matches()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.name"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.peek"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.peek()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.remove_collection()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.reset"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.reset()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.search"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.search()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.set_collection_metadata"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.set_collection_metadata()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.text_lookup"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.text_lookup</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.update"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.update()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.update_collection_metadata"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.update_collection_metadata()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.ChromaDBAdapter.upsert"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.upsert()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.client"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.client</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.collection_metadata"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.collection_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.collections"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.collections()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.default_max_document_length"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.default_max_document_length</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.default_model"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.default_model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.diversified_search"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.diversified_search()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.dump_then_load"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.dump_then_load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.fetch_all_objects_memory_safe"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.fetch_all_objects_memory_safe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.find"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.id_field"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.id_field</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.id_to_object"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.id_to_object</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.insert"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.insert()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.list_collection_names"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.list_collection_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.lookup"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.lookup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.matches"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.matches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.name"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.peek"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.peek()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.remove_collection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.reset"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.search"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.search()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.set_collection_metadata"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.set_collection_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.text_lookup"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.text_lookup</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.update"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.update_collection_metadata"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.update_collection_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.ChromaDBAdapter.upsert"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.upsert()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter"><code class="docutils literal notranslate"><span class="pre">DBAdapter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.collection"><code class="docutils literal notranslate"><span class="pre">DBAdapter.collection</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.collection_metadata"><code class="docutils literal notranslate"><span class="pre">DBAdapter.collection_metadata()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.create_view"><code class="docutils literal notranslate"><span class="pre">DBAdapter.create_view()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.delete"><code class="docutils literal notranslate"><span class="pre">DBAdapter.delete()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.dump"><code class="docutils literal notranslate"><span class="pre">DBAdapter.dump()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.dump_then_load"><code class="docutils literal notranslate"><span class="pre">DBAdapter.dump_then_load()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.fetch_all_objects_memory_safe"><code class="docutils literal notranslate"><span class="pre">DBAdapter.fetch_all_objects_memory_safe()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.field_names"><code class="docutils literal notranslate"><span class="pre">DBAdapter.field_names()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.find"><code class="docutils literal notranslate"><span class="pre">DBAdapter.find()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.identifier_field"><code class="docutils literal notranslate"><span class="pre">DBAdapter.identifier_field()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.insert"><code class="docutils literal notranslate"><span class="pre">DBAdapter.insert()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.label_field"><code class="docutils literal notranslate"><span class="pre">DBAdapter.label_field()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.list_collection_names"><code class="docutils literal notranslate"><span class="pre">DBAdapter.list_collection_names()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.lookup"><code class="docutils literal notranslate"><span class="pre">DBAdapter.lookup()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.lookup_multiple"><code class="docutils literal notranslate"><span class="pre">DBAdapter.lookup_multiple()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.matches"><code class="docutils literal notranslate"><span class="pre">DBAdapter.matches()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.name"><code class="docutils literal notranslate"><span class="pre">DBAdapter.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.path"><code class="docutils literal notranslate"><span class="pre">DBAdapter.path</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.peek"><code class="docutils literal notranslate"><span class="pre">DBAdapter.peek()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">DBAdapter.remove_collection()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.schema_proxy"><code class="docutils literal notranslate"><span class="pre">DBAdapter.schema_proxy</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.search"><code class="docutils literal notranslate"><span class="pre">DBAdapter.search()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.set_collection"><code class="docutils literal notranslate"><span class="pre">DBAdapter.set_collection()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.set_collection_metadata"><code class="docutils literal notranslate"><span class="pre">DBAdapter.set_collection_metadata()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.update"><code class="docutils literal notranslate"><span class="pre">DBAdapter.update()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.update_collection_metadata"><code class="docutils literal notranslate"><span class="pre">DBAdapter.update_collection_metadata()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.DBAdapter.upsert"><code class="docutils literal notranslate"><span class="pre">DBAdapter.upsert()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter"><code class="docutils literal notranslate"><span class="pre">DBAdapter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.collection"><code class="docutils literal notranslate"><span class="pre">DBAdapter.collection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.collection_metadata"><code class="docutils literal notranslate"><span class="pre">DBAdapter.collection_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.create_view"><code class="docutils literal notranslate"><span class="pre">DBAdapter.create_view()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.delete"><code class="docutils literal notranslate"><span class="pre">DBAdapter.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.dump"><code class="docutils literal notranslate"><span class="pre">DBAdapter.dump()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.dump_then_load"><code class="docutils literal notranslate"><span class="pre">DBAdapter.dump_then_load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.fetch_all_objects_memory_safe"><code class="docutils literal notranslate"><span class="pre">DBAdapter.fetch_all_objects_memory_safe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.field_names"><code class="docutils literal notranslate"><span class="pre">DBAdapter.field_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.find"><code class="docutils literal notranslate"><span class="pre">DBAdapter.find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.identifier_field"><code class="docutils literal notranslate"><span class="pre">DBAdapter.identifier_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.insert"><code class="docutils literal notranslate"><span class="pre">DBAdapter.insert()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.label_field"><code class="docutils literal notranslate"><span class="pre">DBAdapter.label_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.list_collection_names"><code class="docutils literal notranslate"><span class="pre">DBAdapter.list_collection_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.lookup"><code class="docutils literal notranslate"><span class="pre">DBAdapter.lookup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.lookup_multiple"><code class="docutils literal notranslate"><span class="pre">DBAdapter.lookup_multiple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.matches"><code class="docutils literal notranslate"><span class="pre">DBAdapter.matches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.name"><code class="docutils literal notranslate"><span class="pre">DBAdapter.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.path"><code class="docutils literal notranslate"><span class="pre">DBAdapter.path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.peek"><code class="docutils literal notranslate"><span class="pre">DBAdapter.peek()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">DBAdapter.remove_collection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.schema_proxy"><code class="docutils literal notranslate"><span class="pre">DBAdapter.schema_proxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.search"><code class="docutils literal notranslate"><span class="pre">DBAdapter.search()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.set_collection"><code class="docutils literal notranslate"><span class="pre">DBAdapter.set_collection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.set_collection_metadata"><code class="docutils literal notranslate"><span class="pre">DBAdapter.set_collection_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.update"><code class="docutils literal notranslate"><span class="pre">DBAdapter.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.update_collection_metadata"><code class="docutils literal notranslate"><span class="pre">DBAdapter.update_collection_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.DBAdapter.upsert"><code class="docutils literal notranslate"><span class="pre">DBAdapter.upsert()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor"><code class="docutils literal notranslate"><span class="pre">Extractor</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.api_key"><code class="docutils literal notranslate"><span class="pre">Extractor.api_key</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.deserialize"><code class="docutils literal notranslate"><span class="pre">Extractor.deserialize()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.extract"><code class="docutils literal notranslate"><span class="pre">Extractor.extract()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.model"><code class="docutils literal notranslate"><span class="pre">Extractor.model</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.model_name"><code class="docutils literal notranslate"><span class="pre">Extractor.model_name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.pydantic_root_model"><code class="docutils literal notranslate"><span class="pre">Extractor.pydantic_root_model</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.raise_error_if_unparsable"><code class="docutils literal notranslate"><span class="pre">Extractor.raise_error_if_unparsable</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.schema_proxy"><code class="docutils literal notranslate"><span class="pre">Extractor.schema_proxy</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="curate_gpt.html#curate_gpt.Extractor.schemaview"><code class="docutils literal notranslate"><span class="pre">Extractor.schemaview</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.html#curategpt.Extractor"><code class="docutils literal notranslate"><span class="pre">Extractor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.api_key"><code class="docutils literal notranslate"><span class="pre">Extractor.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.deserialize"><code class="docutils literal notranslate"><span class="pre">Extractor.deserialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.extract"><code class="docutils literal notranslate"><span class="pre">Extractor.extract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.model"><code class="docutils literal notranslate"><span class="pre">Extractor.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.model_name"><code class="docutils literal notranslate"><span class="pre">Extractor.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.pydantic_root_model"><code class="docutils literal notranslate"><span class="pre">Extractor.pydantic_root_model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.raise_error_if_unparsable"><code class="docutils literal notranslate"><span class="pre">Extractor.raise_error_if_unparsable</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.schema_proxy"><code class="docutils literal notranslate"><span class="pre">Extractor.schema_proxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="curategpt.html#curategpt.Extractor.schemaview"><code class="docutils literal notranslate"><span class="pre">Extractor.schemaview</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -289,8 +289,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="curate_gpt.formatters.html" class="btn btn-neutral float-left" title="curate_gpt.formatters package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="curate_gpt.html" class="btn btn-neutral float-right" title="curate_gpt package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="curategpt.formatters.html" class="btn btn-neutral float-left" title="curategpt.formatters package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="curategpt.html" class="btn btn-neutral float-right" title="curategpt package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,0 +1,61 @@
+curategpt.wrappers.general package
+==================================
+
+Submodules
+----------
+
+curategpt.wrappers.general.filesystem\_wrapper module
+-----------------------------------------------------
+
+.. automodule:: curategpt.wrappers.general.filesystem_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.general.github\_wrapper module
+-------------------------------------------------
+
+.. automodule:: curategpt.wrappers.general.github_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.general.google\_drive\_wrapper module
+--------------------------------------------------------
+
+.. automodule:: curategpt.wrappers.general.google_drive_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.general.gspread\_wrapper module
+--------------------------------------------------
+
+.. automodule:: curategpt.wrappers.general.gspread_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.general.json\_wrapper module
+-----------------------------------------------
+
+.. automodule:: curategpt.wrappers.general.json_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.general.linkml\_schema\_wrapper module
+---------------------------------------------------------
+
+.. automodule:: curategpt.wrappers.general.linkml_schema_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.wrappers.general
+   :members:
+   :undoc-members:
+   :show-inheritance:

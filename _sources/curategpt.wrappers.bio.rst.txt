@@ -1,0 +1,69 @@
+curategpt.wrappers.bio package
+==============================
+
+Submodules
+----------
+
+curategpt.wrappers.bio.alliance\_gene\_wrapper module
+-----------------------------------------------------
+
+.. automodule:: curategpt.wrappers.bio.alliance_gene_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.bio.bacdive\_wrapper module
+----------------------------------------------
+
+.. automodule:: curategpt.wrappers.bio.bacdive_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.bio.gocam\_wrapper module
+--------------------------------------------
+
+.. automodule:: curategpt.wrappers.bio.gocam_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.bio.mediadive\_wrapper module
+------------------------------------------------
+
+.. automodule:: curategpt.wrappers.bio.mediadive_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.bio.omicsdi\_wrapper module
+----------------------------------------------
+
+.. automodule:: curategpt.wrappers.bio.omicsdi_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.bio.reactome\_wrapper module
+-----------------------------------------------
+
+.. automodule:: curategpt.wrappers.bio.reactome_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.wrappers.bio.uniprot\_wrapper module
+----------------------------------------------
+
+.. automodule:: curategpt.wrappers.bio.uniprot_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.wrappers.bio
+   :members:
+   :undoc-members:
+   :show-inheritance:

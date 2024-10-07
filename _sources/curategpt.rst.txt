@@ -1,0 +1,39 @@
+curategpt package
+=================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   curategpt.adhoc
+   curategpt.agents
+   curategpt.app
+   curategpt.conf
+   curategpt.evaluation
+   curategpt.extract
+   curategpt.formatters
+   curategpt.store
+   curategpt.utils
+   curategpt.views
+   curategpt.wrappers
+
+Submodules
+----------
+
+curategpt.cli module
+--------------------
+
+.. automodule:: curategpt.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt
+   :members:
+   :undoc-members:
+   :show-inheritance:

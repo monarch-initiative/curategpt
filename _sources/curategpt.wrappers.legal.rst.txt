@@ -1,0 +1,21 @@
+curategpt.wrappers.legal package
+================================
+
+Submodules
+----------
+
+curategpt.wrappers.legal.reusabledata\_wrapper module
+-----------------------------------------------------
+
+.. automodule:: curategpt.wrappers.legal.reusabledata_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.wrappers.legal
+   :members:
+   :undoc-members:
+   :show-inheritance:

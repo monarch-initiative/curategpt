@@ -1,0 +1,21 @@
+curategpt.views package
+=======================
+
+Submodules
+----------
+
+curategpt.views.namer module
+----------------------------
+
+.. automodule:: curategpt.views.namer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.views
+   :members:
+   :undoc-members:
+   :show-inheritance:

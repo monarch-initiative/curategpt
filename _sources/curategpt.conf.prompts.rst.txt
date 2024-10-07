@@ -1,0 +1,10 @@
+curategpt.conf.prompts package
+==============================
+
+Module contents
+---------------
+
+.. automodule:: curategpt.conf.prompts
+   :members:
+   :undoc-members:
+   :show-inheritance:

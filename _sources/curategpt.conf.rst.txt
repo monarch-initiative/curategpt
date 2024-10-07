@@ -1,0 +1,18 @@
+curategpt.conf package
+======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   curategpt.conf.prompts
+
+Module contents
+---------------
+
+.. automodule:: curategpt.conf
+   :members:
+   :undoc-members:
+   :show-inheritance:

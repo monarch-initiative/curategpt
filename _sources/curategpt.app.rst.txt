@@ -1,0 +1,53 @@
+curategpt.app package
+=====================
+
+Submodules
+----------
+
+curategpt.app.app module
+------------------------
+
+.. automodule:: curategpt.app.app
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.app.cart module
+-------------------------
+
+.. automodule:: curategpt.app.cart
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.app.components module
+-------------------------------
+
+.. automodule:: curategpt.app.components
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.app.helper module
+---------------------------
+
+.. automodule:: curategpt.app.helper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.app.state module
+--------------------------
+
+.. automodule:: curategpt.app.state
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.app
+   :members:
+   :undoc-members:
+   :show-inheritance:

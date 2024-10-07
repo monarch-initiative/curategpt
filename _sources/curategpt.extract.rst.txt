@@ -1,0 +1,45 @@
+curategpt.extract package
+=========================
+
+Submodules
+----------
+
+curategpt.extract.basic\_extractor module
+-----------------------------------------
+
+.. automodule:: curategpt.extract.basic_extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.extract.extractor module
+----------------------------------
+
+.. automodule:: curategpt.extract.extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.extract.openai\_extractor module
+------------------------------------------
+
+.. automodule:: curategpt.extract.openai_extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.extract.recursive\_extractor module
+---------------------------------------------
+
+.. automodule:: curategpt.extract.recursive_extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.extract
+   :members:
+   :undoc-members:
+   :show-inheritance:

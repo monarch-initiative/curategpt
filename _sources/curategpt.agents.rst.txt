@@ -1,0 +1,101 @@
+curategpt.agents package
+========================
+
+Submodules
+----------
+
+curategpt.agents.agent\_utils module
+------------------------------------
+
+.. automodule:: curategpt.agents.agent_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.base\_agent module
+-----------------------------------
+
+.. automodule:: curategpt.agents.base_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.bootstrap\_agent module
+----------------------------------------
+
+.. automodule:: curategpt.agents.bootstrap_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.chat\_agent module
+-----------------------------------
+
+.. automodule:: curategpt.agents.chat_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.concept\_recognition\_agent module
+---------------------------------------------------
+
+.. automodule:: curategpt.agents.concept_recognition_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.dase\_agent module
+-----------------------------------
+
+.. automodule:: curategpt.agents.dase_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.dragon\_agent module
+-------------------------------------
+
+.. automodule:: curategpt.agents.dragon_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.evidence\_agent module
+---------------------------------------
+
+.. automodule:: curategpt.agents.evidence_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.huggingface\_agent module
+------------------------------------------
+
+.. automodule:: curategpt.agents.huggingface_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.mapping\_agent module
+--------------------------------------
+
+.. automodule:: curategpt.agents.mapping_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+curategpt.agents.summarization\_agent module
+--------------------------------------------
+
+.. automodule:: curategpt.agents.summarization_agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.agents
+   :members:
+   :undoc-members:
+   :show-inheritance:
