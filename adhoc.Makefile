@@ -2,7 +2,7 @@ RUN = poetry run
 DB_PATH = db
 
 data/nmdc.json:
-	$(RUN) python -m curate_gpt.adhoc.nmdc_sample_downloader --no-stream  --format json > $@
+	$(RUN) python -m curategpt.adhoc.nmdc_sample_downloader --no-stream  --format json > $@
 
 
 data/clingen.json:

@@ -25,11 +25,11 @@ jobs:
 
     - name: Build documentation.
       run: |
-        echo ${{ secrets.GH_TOKEN }} >> src/curate_gpt/token.txt
+        echo ${{ secrets.GH_TOKEN }} >> src/curategpt/token.txt
         mkdir gh-pages
         touch gh-pages/.nojekyll
         cd docs/
-        poetry run sphinx-apidoc -o . ../src/curate_gpt/ --ext-autodoc -f
+        poetry run sphinx-apidoc -o . ../src/curategpt/ --ext-autodoc -f
         poetry run sphinx-build -b html . _build
         cp -r _build/* ../gh-pages/
 

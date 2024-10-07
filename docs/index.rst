@@ -10,12 +10,12 @@ Welcome to curategpt's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   curate_gpt.store
-   curate_gpt.wrappers
-   curate_gpt.agents
-   curate_gpt.extract
-   curate_gpt.utils
-   curate_gpt.formatters
+   curategpt.store
+   curategpt.wrappers
+   curategpt.agents
+   curategpt.extract
+   curategpt.utils
+   curategpt.formatters
 
    modules
    
