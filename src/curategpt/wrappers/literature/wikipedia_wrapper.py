@@ -7,6 +7,7 @@ from typing import ClassVar, List
 
 import inflection
 import requests
+
 from curategpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)

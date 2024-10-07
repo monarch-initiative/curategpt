@@ -6,8 +6,9 @@ from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import yaml
-from curategpt.wrappers.base_wrapper import BaseWrapper
 from jsonpath_ng import parse
+
+from curategpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

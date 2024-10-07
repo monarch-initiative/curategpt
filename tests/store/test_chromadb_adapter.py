@@ -3,12 +3,12 @@ from typing import Dict
 
 import pytest
 import yaml
-from curategpt.store.chromadb_adapter import ChromaDBAdapter
-from curategpt.store.schema_proxy import SchemaProxy
-from curategpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
 from linkml_runtime.utils.schema_builder import SchemaBuilder
 from oaklib import get_adapter
 
+from curategpt.store.chromadb_adapter import ChromaDBAdapter
+from curategpt.store.schema_proxy import SchemaProxy
+from curategpt.wrappers.ontology import ONTOLOGY_MODEL_PATH, OntologyWrapper
 from tests import INPUT_DBS, INPUT_DIR, OUTPUT_CHROMA_DB_PATH, OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 

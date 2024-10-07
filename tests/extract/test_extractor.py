@@ -1,14 +1,14 @@
 from typing import List
 
 import pytest
+from linkml_runtime.utils.schema_builder import SchemaBuilder
+from pydantic import BaseModel, ConfigDict
+
 from curategpt.extract.basic_extractor import BasicExtractor
 from curategpt.extract.extractor import AnnotatedObject
 from curategpt.extract.openai_extractor import OpenAIExtractor
 from curategpt.extract.recursive_extractor import RecursiveExtractor
 from curategpt.store.schema_proxy import SchemaProxy
-from linkml_runtime.utils.schema_builder import SchemaBuilder
-from pydantic import BaseModel, ConfigDict
-
 from tests.store.conftest import requires_openai_api_key
 
 

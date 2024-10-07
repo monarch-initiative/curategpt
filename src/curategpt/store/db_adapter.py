@@ -5,8 +5,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import (ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO,
-                    Union)
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Union
 
 import pandas as pd
 import yaml
@@ -15,9 +14,17 @@ from jsonlines import jsonlines
 
 from curategpt.store.metadata import CollectionMetadata
 from curategpt.store.schema_proxy import SchemaProxy
-from curategpt.store.vocab import (DEFAULT_COLLECTION, DOCUMENTS, EMBEDDINGS,
-                                   FILE_LIKE, METADATAS, OBJECT, PROJECTION,
-                                   QUERY, SEARCH_RESULT)
+from curategpt.store.vocab import (
+    DEFAULT_COLLECTION,
+    DOCUMENTS,
+    EMBEDDINGS,
+    FILE_LIKE,
+    METADATAS,
+    OBJECT,
+    PROJECTION,
+    QUERY,
+    SEARCH_RESULT,
+)
 
 logger = logging.getLogger(__name__)
 

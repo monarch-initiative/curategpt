@@ -8,8 +8,9 @@ from typing import ClassVar, Dict, Iterable, Iterator, List, Optional
 
 import requests
 import requests_cache
-from curategpt.wrappers.base_wrapper import BaseWrapper
 from pydantic import BaseModel, ConfigDict
+
+from curategpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

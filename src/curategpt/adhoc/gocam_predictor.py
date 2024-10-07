@@ -9,6 +9,7 @@ from typing import Any, Dict
 
 import click
 import yaml
+
 from curategpt import BasicExtractor, DBAdapter
 from curategpt.store import get_store
 from curategpt.utils.eval_utils import Outcome, score_prediction

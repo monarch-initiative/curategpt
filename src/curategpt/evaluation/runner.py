@@ -9,8 +9,7 @@ import yaml
 
 from curategpt import BasicExtractor, ChromaDBAdapter
 from curategpt.agents.dragon_agent import DragonAgent
-from curategpt.evaluation.dae_evaluator import \
-    DatabaseAugmentedCompletionEvaluator
+from curategpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
 from curategpt.evaluation.evaluation_datamodel import Task
 from curategpt.evaluation.splitter import stratify_collection_to_store
 

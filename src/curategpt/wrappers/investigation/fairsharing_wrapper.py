@@ -8,6 +8,7 @@ from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests
 import requests_cache
+
 from curategpt.wrappers import BaseWrapper
 
 URL = "https://api.fairsharing.org"

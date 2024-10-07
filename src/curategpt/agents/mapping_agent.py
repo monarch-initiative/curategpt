@@ -10,11 +10,12 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import inflection
 import yaml
+from pydantic import BaseModel, ConfigDict
+
 from curategpt.agents.base_agent import BaseAgent
 from curategpt.formatters.format_utils import remove_formatting
 from curategpt.store.db_adapter import SEARCH_RESULT
 from curategpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
-from pydantic import BaseModel, ConfigDict
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,8 @@
 import pytest
 import yaml
+
 from curategpt.evaluation.evaluation_datamodel import Task
 from curategpt.evaluation.runner import run_task
-
 from tests import OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 

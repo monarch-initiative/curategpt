@@ -5,8 +5,9 @@ from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests_cache
-from curategpt.wrappers import BaseWrapper
 from oaklib import BasicOntologyInterface
+
+from curategpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

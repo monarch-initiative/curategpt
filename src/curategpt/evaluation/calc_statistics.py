@@ -2,9 +2,11 @@ from typing import Any, Iterator, List, Tuple, Union
 
 import yaml
 
-from curategpt.evaluation.evaluation_datamodel import (AggregationMethod,
-                                                       ClassificationMetrics,
-                                                       ClassificationOutcome)
+from curategpt.evaluation.evaluation_datamodel import (
+    AggregationMethod,
+    ClassificationMetrics,
+    ClassificationOutcome,
+)
 
 
 def calculate_metrics(

@@ -9,8 +9,9 @@ from typing import ClassVar, Dict, List
 import requests
 import requests_cache
 import xmltodict
-from curategpt.wrappers import BaseWrapper
 from eutils import Client
+
+from curategpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

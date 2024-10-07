@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import ClassVar, Dict, List
 
 import yaml
+
 from curategpt.wrappers.literature.eutils_wrapper import EUtilsWrapper
 
 logger = logging.getLogger(__name__)

@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
 import requests
-from curategpt.wrappers import BaseWrapper
 from oaklib import BasicOntologyInterface, get_adapter
+
+from curategpt.wrappers import BaseWrapper
 
 URL = "https://api.microbiomedata.org/biosamples?per_page={limit}&page={cursor}"
 

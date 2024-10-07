@@ -3,8 +3,7 @@
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import (Any, Callable, ClassVar, Dict, Iterable, Iterator, List,
-                    Mapping, Optional)
+from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional
 
 import oaklib.datamodels.obograph as og
 from oaklib import BasicOntologyInterface

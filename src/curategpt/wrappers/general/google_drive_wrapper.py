@@ -5,11 +5,12 @@ import os
 from dataclasses import dataclass
 from typing import Any, ClassVar, Dict, List
 
-from curategpt.wrappers.base_wrapper import BaseWrapper
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+
+from curategpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

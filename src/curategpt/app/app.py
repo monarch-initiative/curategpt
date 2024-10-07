@@ -15,8 +15,11 @@ from curategpt.agents.chat_agent import ChatAgent, ChatResponse
 from curategpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curategpt.agents.dragon_agent import DragonAgent
 from curategpt.agents.evidence_agent import EvidenceAgent
-from curategpt.app.components import (DimensionalityReductionOptions,
-                                      limit_slider_component, vectors_to_fig)
+from curategpt.app.components import (
+    DimensionalityReductionOptions,
+    limit_slider_component,
+    vectors_to_fig,
+)
 from curategpt.app.helper import get_applicable_examples, get_case_collection
 from curategpt.app.state import get_state
 from curategpt.extract import OpenAIExtractor, RecursiveExtractor

@@ -4,8 +4,7 @@ import logging
 from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
-from typing import (Any, ClassVar, Dict, Iterable, Iterator, List, Optional,
-                    Union)
+from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Optional, Union
 
 from deprecation import deprecated
 

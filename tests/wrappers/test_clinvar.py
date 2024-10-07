@@ -4,11 +4,11 @@ import time
 import pytest
 import requests
 import yaml
+
 from curategpt.agents.chat_agent import ChatAgent
 from curategpt.agents.dragon_agent import DragonAgent
 from curategpt.extract import BasicExtractor
 from curategpt.wrappers.clinical.clinvar_wrapper import ClinVarWrapper
-
 from tests import INPUT_DIR, OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db

@@ -8,8 +8,7 @@ import logging
 import os
 import re
 from dataclasses import dataclass, field
-from typing import (Any, Callable, ClassVar, Dict, Iterable, Iterator, List,
-                    Mapping, Optional, Union)
+from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Union
 
 import duckdb
 import llm
@@ -27,10 +26,20 @@ from sentence_transformers import SentenceTransformer
 from curategpt.store.db_adapter import DBAdapter
 from curategpt.store.duckdb_result import DuckDBSearchResult
 from curategpt.store.metadata import CollectionMetadata
-from curategpt.store.vocab import (DEFAULT_MODEL, DEFAULT_OPENAI_MODEL,
-                                   DISTANCES, DOCUMENTS, EMBEDDINGS, IDS,
-                                   METADATAS, MODEL_MAP, OBJECT, PROJECTION,
-                                   QUERY, SEARCH_RESULT)
+from curategpt.store.vocab import (
+    DEFAULT_MODEL,
+    DEFAULT_OPENAI_MODEL,
+    DISTANCES,
+    DOCUMENTS,
+    EMBEDDINGS,
+    IDS,
+    METADATAS,
+    MODEL_MAP,
+    OBJECT,
+    PROJECTION,
+    QUERY,
+    SEARCH_RESULT,
+)
 from curategpt.utils.vector_algorithms import mmr_diversified_search
 
 logger = logging.getLogger(__name__)

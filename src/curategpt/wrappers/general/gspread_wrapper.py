@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any, ClassVar, Dict, Iterable, Iterator, Optional
 
 import gspread
+
 from curategpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)

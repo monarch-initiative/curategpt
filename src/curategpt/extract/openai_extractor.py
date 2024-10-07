@@ -6,8 +6,9 @@ import os
 from dataclasses import dataclass
 from typing import List
 
-from curategpt.extract.extractor import AnnotatedObject, Extractor
 from openai import OpenAI, OpenAIError
+
+from curategpt.extract.extractor import AnnotatedObject, Extractor
 
 FUNC_NAME = "extract_data"
 

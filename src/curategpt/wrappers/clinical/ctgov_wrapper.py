@@ -7,8 +7,9 @@ from typing import ClassVar, Dict, List, Optional
 
 import requests
 import requests_cache
-from curategpt.wrappers import BaseWrapper
 from oaklib import BasicOntologyInterface
+
+from curategpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

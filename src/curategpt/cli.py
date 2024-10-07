@@ -24,20 +24,16 @@ from oaklib import get_adapter
 from pydantic import BaseModel
 
 from curategpt import ChromaDBAdapter, __version__
-from curategpt.agents.bootstrap_agent import (BootstrapAgent,
-                                              KnowledgeBaseSpecification)
+from curategpt.agents.bootstrap_agent import BootstrapAgent, KnowledgeBaseSpecification
 from curategpt.agents.chat_agent import ChatAgent, ChatResponse
-from curategpt.agents.concept_recognition_agent import (
-    AnnotationMethod, ConceptRecognitionAgent)
+from curategpt.agents.concept_recognition_agent import AnnotationMethod, ConceptRecognitionAgent
 from curategpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curategpt.agents.dragon_agent import DragonAgent
 from curategpt.agents.evidence_agent import EvidenceAgent
 from curategpt.agents.huggingface_agent import HuggingFaceAgent
 from curategpt.agents.summarization_agent import SummarizationAgent
-from curategpt.evaluation.dae_evaluator import \
-    DatabaseAugmentedCompletionEvaluator
-from curategpt.evaluation.evaluation_datamodel import (StratifiedCollection,
-                                                       Task)
+from curategpt.evaluation.dae_evaluator import DatabaseAugmentedCompletionEvaluator
+from curategpt.evaluation.evaluation_datamodel import StratifiedCollection, Task
 from curategpt.evaluation.runner import run_task
 from curategpt.evaluation.splitter import stratify_collection
 from curategpt.extract import AnnotatedObject

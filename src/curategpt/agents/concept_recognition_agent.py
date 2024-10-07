@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
-from curategpt.agents.base_agent import BaseAgent
 from pydantic import BaseModel, ConfigDict
+
+from curategpt.agents.base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
 

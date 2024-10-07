@@ -1,8 +1,8 @@
 import pytest
+
 from curategpt.agents import MappingAgent
 from curategpt.agents.mapping_agent import MappingPredicate
 from curategpt.extract import BasicExtractor
-
 from tests.store.conftest import requires_openai_api_key
 
 

@@ -5,8 +5,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass, field
-from typing import (Callable, ClassVar, Iterable, Iterator, List, Mapping,
-                    Optional, Union)
+from typing import Callable, ClassVar, Iterable, Iterator, List, Mapping, Optional, Union
 
 import chromadb
 import yaml

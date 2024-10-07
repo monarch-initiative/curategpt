@@ -7,10 +7,11 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
 import llm
-from curategpt.store.schema_proxy import SchemaProxy
 from linkml_runtime import SchemaView
 from pydantic import BaseModel as BaseModel
 from pydantic import ConfigDict
+
+from curategpt.store.schema_proxy import SchemaProxy
 
 logger = logging.getLogger(__name__)
 

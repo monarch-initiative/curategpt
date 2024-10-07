@@ -5,9 +5,10 @@ import logging
 from dataclasses import dataclass
 from typing import ClassVar, Dict, Iterable, Iterator, Optional
 
+from oaklib import BasicOntologyInterface, get_adapter
+
 from curategpt.formatters.format_utils import camelify
 from curategpt.wrappers import BaseWrapper
-from oaklib import BasicOntologyInterface, get_adapter
 
 logger = logging.getLogger(__name__)
 

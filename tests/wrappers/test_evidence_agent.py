@@ -3,11 +3,11 @@ from typing import Type
 
 import pytest
 import yaml
+
 from curategpt.agents.evidence_agent import EvidenceAgent
 from curategpt.extract import BasicExtractor
 from curategpt.wrappers import BaseWrapper
 from curategpt.wrappers.literature import PubmedWrapper, WikipediaWrapper
-
 from tests import OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db

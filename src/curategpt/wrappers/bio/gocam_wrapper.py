@@ -8,8 +8,7 @@ import requests
 import requests_cache
 import yaml
 from oaklib import BasicOntologyInterface, get_adapter
-from oaklib.interfaces.association_provider_interface import \
-    AssociationProviderInterface
+from oaklib.interfaces.association_provider_interface import AssociationProviderInterface
 
 from curategpt.formatters.format_utils import camelify
 from curategpt.wrappers import BaseWrapper

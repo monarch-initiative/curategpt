@@ -2,8 +2,8 @@ import logging
 
 import pytest
 import yaml
-from curategpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
 
+from curategpt.wrappers.clinical.hpoa_wrapper import HPOAWrapper
 from tests import INPUT_DIR, OUTPUT_DIR
 
 TEMP_DB = OUTPUT_DIR / "obj_tmp"

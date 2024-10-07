@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Dict, List, Optional, Union
 
 import yaml
+
 from curategpt import BasicExtractor
 from curategpt.agents.base_agent import BaseAgent
 from curategpt.agents.chat_agent import ChatAgent, ChatResponse

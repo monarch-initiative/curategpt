@@ -5,10 +5,11 @@ from dataclasses import dataclass, field
 from typing import Any, ClassVar, Dict, Iterable, List, Optional, Tuple, Union
 
 import yaml
+from pydantic import BaseModel, ConfigDict
+
 from curategpt.agents.base_agent import BaseAgent
 from curategpt.extract import AnnotatedObject
 from curategpt.store import DBAdapter
-from pydantic import BaseModel, ConfigDict
 
 logger = logging.getLogger(__name__)
 

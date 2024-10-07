@@ -2,8 +2,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import (ClassVar, Dict, Iterable, Iterator, List, Optional, Union,
-                    get_origin)
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Union, get_origin
 
 from pydantic import BaseModel, ConfigDict
 

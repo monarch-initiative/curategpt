@@ -12,9 +12,10 @@ from urllib.request import urlretrieve
 import requests
 import requests_cache
 from bs4 import BeautifulSoup
-from curategpt.wrappers import BaseWrapper
 from defusedxml.ElementTree import fromstring
 from eutils import Client
+
+from curategpt.wrappers import BaseWrapper
 
 logger = logging.getLogger(__name__)
 

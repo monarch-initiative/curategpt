@@ -3,11 +3,11 @@ import time
 
 import pytest
 import yaml
+
 from curategpt import ChromaDBAdapter
 from curategpt.agents.chat_agent import ChatAgent
 from curategpt.extract import BasicExtractor
 from curategpt.wrappers.literature.pmc_wrapper import PMCWrapper
-
 from tests import INPUT_DIR, OUTPUT_DIR
 from tests.utils.helper import DEBUG_MODE, create_db_dir
 

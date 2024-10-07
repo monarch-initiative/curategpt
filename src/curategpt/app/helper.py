@@ -3,6 +3,7 @@
 from typing import Dict, List, Optional
 
 import yaml
+
 from curategpt.conf import EXAMPLES_DIR
 
 HELP_CASES = EXAMPLES_DIR / "bio.yaml"

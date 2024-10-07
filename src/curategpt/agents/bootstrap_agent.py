@@ -2,11 +2,12 @@ from dataclasses import dataclass
 from typing import Dict
 
 import yaml
+from jinja2 import Template
+from pydantic import BaseModel, ConfigDict
+
 from curategpt.agents.base_agent import BaseAgent
 from curategpt.conf.prompts import PROMPTS_DIR
 from curategpt.extract import AnnotatedObject
-from jinja2 import Template
-from pydantic import BaseModel, ConfigDict
 
 
 class KnowledgeBaseSpecification(BaseModel):

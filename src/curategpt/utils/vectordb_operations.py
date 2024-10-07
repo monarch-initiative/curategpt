@@ -2,8 +2,7 @@ import logging
 from typing import Iterator, Tuple
 
 from curategpt import DBAdapter
-from curategpt.utils.vector_algorithms import (compute_cosine_similarity,
-                                               top_matches)
+from curategpt.utils.vector_algorithms import compute_cosine_similarity, top_matches
 
 logger = logging.getLogger(__name__)
 
