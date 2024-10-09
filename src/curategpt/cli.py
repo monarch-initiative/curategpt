@@ -846,11 +846,11 @@ def bootstrap():
     attributes: source_tree
     main_class: Lumber_Type
 
-    Examples: 
-    
+    Examples:
+
     curategpt bootstrap schema -C config.yaml
     (This will generate a LinkML schema, based on the provided config.)
-    
+
     curategpt bootstrap data -s schema.yaml
     (This will generate data based on the provided schema.
     The output of the previous command can be used as input for this command.)

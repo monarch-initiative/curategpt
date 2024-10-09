@@ -669,7 +669,7 @@ elif option == CITESEEK:
 
 elif option == BOOTSTRAP:
     page_state = state.get_page_state(BOOTSTRAP)
-    st.subheader(f"Generate a schema and data for a new knowledge base.")
+    st.subheader("Generate a schema and data for a new knowledge base.")
 
     extractor = BasicExtractor()
     extractor.model_name = model_name
