@@ -829,7 +829,32 @@ def extract_from_pubmed(
 
 @main.group()
 def bootstrap():
-    "Bootstrap schema or data."
+    """Bootstrap schema or data.
+
+    Starting with a general description or a LinkML schema,
+    generate an initial version of a knowledge base.
+
+    The config should be a yaml file with the following fields:
+    kb_name: str
+    description: str
+    attributes: str
+    main_class: str
+
+    For example, this is a valid config:
+    kb_name: lumber_kb
+    description: A knowledge base for lumber
+    attributes: source_tree
+    main_class: Lumber_Type
+
+    Examples:
+
+    curategpt bootstrap schema -C config.yaml
+    (This will generate a LinkML schema, based on the provided config.)
+
+    curategpt bootstrap data -s schema.yaml
+    (This will generate data based on the provided schema.
+    The output of the previous command can be used as input for this command.)
+    """
 
 
 @bootstrap.command(name="schema")
@@ -841,7 +866,7 @@ def bootstrap():
     help="path to yaml config",
 )
 def bootstrap_schema(config, model):
-    """Bootstrap a knowledge base."""
+    """Bootstrap a knowledge base with LinkML schema."""
     extractor = BasicExtractor()
     if model:
         extractor.model_name = model
@@ -865,7 +890,7 @@ def bootstrap_schema(config, model):
     help="path to yaml linkml schema",
 )
 def bootstrap_data(config, schema, model):
-    """Bootstrap a knowledge base."""
+    """Bootstrap a knowledge base with initial data."""
     extractor = BasicExtractor()
     if model:
         extractor.model_name = model

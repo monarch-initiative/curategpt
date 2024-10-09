@@ -11,6 +11,7 @@ from scipy.spatial import distance_matrix
 
 from curategpt import BasicExtractor
 from curategpt.agents import MappingAgent
+from curategpt.agents.bootstrap_agent import BootstrapAgent, KnowledgeBaseSpecification
 from curategpt.agents.chat_agent import ChatAgent, ChatResponse
 from curategpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curategpt.agents.dragon_agent import DragonAgent
@@ -37,6 +38,7 @@ EXTRACT = "Extract"
 SEARCH = "Search"
 CLUSTER_SEARCH = "Cluster Search"
 MATCH = "Match"
+BOOTSTRAP = "Bootstrap"
 CURATE = "Curate"
 ADD_TO_CART = "Add to Cart"
 # EXTRACT = "Extract"
@@ -77,6 +79,7 @@ PAGES = [
     EXTRACT,
     CITESEEK,
     MATCH,
+    BOOTSTRAP,
     CART,
     ABOUT,
     HELP,
@@ -663,6 +666,51 @@ elif option == CITESEEK:
                 for ref, text in response.uncited_references.items():
                     st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
                     st.code(text, language="yaml")
+
+elif option == BOOTSTRAP:
+    page_state = state.get_page_state(BOOTSTRAP)
+    st.subheader("Generate a schema and data for a new knowledge base.")
+
+    extractor = BasicExtractor()
+    extractor.model_name = model_name
+    bootstrap_agent = BootstrapAgent(extractor=extractor)
+
+    kb_name = st.text_input("KB Name", help="Name of the knowledge base, without spaces (e.g. 'ice_cream_kb')")
+    description = st.text_input(
+        "Description",
+        help="Description of the knowledge base (e.g. 'A knowledge base for ice cream')",
+    )
+    attributes = st.text_input(
+        "Attributes",
+        help="Attributes of the knowledge base (e.g. 'flavor, viscosity, color')",
+    )
+    main_class = st.text_input(
+        "Main Class",
+        help="Main class of the knowledge base, without spaces (e.g. 'IceCreamType')",
+    )
+    generate_data = st.checkbox(
+        "Generate data",
+        help="""
+        If checked, after generating the schema, generate example data.
+        """,
+    )
+    if st.button("Make Schema"):
+        st.write(f"Generating schema for *{kb_name}*")
+        config_dict = {
+            "kb_name": kb_name,
+            "description": description,
+            "attributes": attributes,
+            "main_class": main_class,
+        }
+        config = KnowledgeBaseSpecification(**config_dict)
+        ao = bootstrap_agent.bootstrap_schema(config)
+        schema_dict = ao.model_dump()
+        st.write(schema_dict)
+
+        if generate_data:
+            st.write(f"Generating data for *{kb_name}*")
+            data = bootstrap_agent.bootstrap_data(schema=schema_dict)
+            st.code(data, language="yaml")
 
 elif option == CART:
     page_state = state.get_page_state(CART)

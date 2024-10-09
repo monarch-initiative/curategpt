@@ -75,8 +75,8 @@ sphinx-click = {version = ">=4.3.0"}
 myst-parser = {version = ">=0.18.1"}
 
 [tool.poetry.scripts]
-curategpt = "curate_gpt.cli:main"
-gocampr = "curate_gpt.adhoc.gocam_predictor:main"
+curategpt = "curategpt.cli:main"
+gocampr = "curategpt.adhoc.gocam_predictor:main"
 
 [tool.poetry.extras]
 docs = [
