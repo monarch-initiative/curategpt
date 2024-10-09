@@ -688,6 +688,12 @@ elif option == BOOTSTRAP:
         "Main Class",
         help="Main class of the knowledge base (e.g. 'Ice Cream')",
     )
+    generate_data = st.checkbox(
+        "Generate data",
+        help="""
+        If checked, after generating the schema, generate example data.
+        """,
+    )
     if st.button("Make Schema"):
         st.write(f"Generating schema for *{kb_name}*")
         config_dict = {
@@ -698,7 +704,13 @@ elif option == BOOTSTRAP:
         }
         config = KnowledgeBaseSpecification(**config_dict)
         ao = bootstrap_agent.bootstrap_schema(config)
-        st.write(ao.model_dump())
+        schema_dict = ao.model_dump()
+        st.write(schema_dict)
+
+        if generate_data:
+            st.write(f"Generating data for *{kb_name}*")
+            data = bootstrap_agent.bootstrap_data(schema=schema_dict)
+            st.code(data, language="yaml")
 
 elif option == CART:
     page_state = state.get_page_state(CART)
