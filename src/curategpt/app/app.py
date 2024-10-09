@@ -675,10 +675,10 @@ elif option == BOOTSTRAP:
     extractor.model_name = model_name
     bootstrap_agent = BootstrapAgent(extractor=extractor)
 
-    kb_name = st.text_input("KB Name", help="Name of the knowledge base (e.g. 'My Knowledge Base')")
+    kb_name = st.text_input("KB Name", help="Name of the knowledge base, without spaces (e.g. 'ice_cream_kb')")
     description = st.text_input(
         "Description",
-        help="Description of the knowledge base (e.g. 'A knowledge base for my research')",
+        help="Description of the knowledge base (e.g. 'A knowledge base for ice cream')",
     )
     attributes = st.text_input(
         "Attributes",
@@ -686,7 +686,7 @@ elif option == BOOTSTRAP:
     )
     main_class = st.text_input(
         "Main Class",
-        help="Main class of the knowledge base (e.g. 'Ice Cream')",
+        help="Main class of the knowledge base, without spaces (e.g. 'IceCreamType')",
     )
     generate_data = st.checkbox(
         "Generate data",
