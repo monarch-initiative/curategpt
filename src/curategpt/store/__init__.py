@@ -40,7 +40,7 @@ def get_all_subclasses(cls):
     ]
 
 
-def get_store(name: str, *args, **kwargs) -> DBAdapter:  # duckdb_vss or chromadb
+def get_store(name: str, *args, **kwargs) -> DBAdapter:  # duckdb or chromadb
     from .in_memory_adapter import InMemoryAdapter  # noqa F401
 
     # noqa I005
