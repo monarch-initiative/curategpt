@@ -1,18 +1,14 @@
 import json
 from typing import Dict, Optional
 
-from pydantic import ConfigDict, BaseModel
+from pydantic import ConfigDict
 from venomx.model.venomx import Index
-
 
 """
 ChromaDB Constraints:
-
     Metadata Must Be Scalar: ChromaDB only accepts metadata values that are scalar types (str, int, float, bool).
     No None Values: Metadata fields cannot have None as a value.
-    
 DuckDB Capabilities:
-
     Nested Objects Supported: DuckDB can handle nested objects directly within metadata.
 """
 

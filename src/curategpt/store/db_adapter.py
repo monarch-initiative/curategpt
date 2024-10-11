@@ -5,7 +5,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Union, Tuple
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Tuple, Union
 
 import pandas as pd
 import yaml

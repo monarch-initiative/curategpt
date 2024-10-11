@@ -49,7 +49,7 @@ __all__ = [
     "main",
 ]
 
-from venomx.model.venomx import Index, Dataset, Model, ModelInputMethod
+from venomx.model.venomx import Dataset, Index, Model, ModelInputMethod
 
 from src.curategpt.store.metadata import Metadata
 

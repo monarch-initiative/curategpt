@@ -5,7 +5,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass, field
-from typing import Callable, ClassVar, Iterable, Iterator, List, Mapping, Optional, Union, Dict
+from typing import Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Union
 
 import chromadb
 import yaml
@@ -18,7 +18,7 @@ from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk
 from pydantic import BaseModel, ValidationError
-from venomx.model.venomx import ModelInputMethod, Model, Index, Dataset
+from venomx.model.venomx import Index, Model, ModelInputMethod
 
 from curategpt.store.db_adapter import DBAdapter
 from curategpt.store.metadata import Metadata
