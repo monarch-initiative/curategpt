@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from pprint import pprint
 
 import pytest
@@ -6,7 +7,10 @@ from oaklib import get_adapter
 from oaklib.datamodels.obograph import GraphDocument
 
 from curategpt.extract import BasicExtractor
+from curategpt.store.metadata import Metadata
 from curategpt.wrappers.ontology.ontology_wrapper import OntologyWrapper
+from venomx.model.venomx import ModelInputMethod, Model, Dataset, Index
+
 from tests import INPUT_DIR, OUTPUT_DIR
 from tests.store.conftest import requires_openai_api_key
 from tests.utils.helper import DEBUG_MODE, create_db_dir, setup_db
@@ -21,6 +25,80 @@ logging.basicConfig()
 logger = logging.root
 logger.setLevel(logging.DEBUG)
 
+# for debugging meanwhile implementing
+@pytest.mark.skip
+def test_object():
+    db = setup_db(Path("../db"))
+    collection_name = "test_collection_without_venomx_set_upfront"
+
+    extractor = BasicExtractor()
+    adapter = get_adapter(INPUT_DIR / "go-nucleus.db")
+    wrapper = OntologyWrapper(oak_adapter=adapter, local_store=db, extractor=extractor)
+
+    # venomx = Index(
+    #     id=f"{collection_name}",
+    #     dataset=Dataset(
+    #         name="test_ont_hp"
+    #     ),
+    #     embedding_model=Model(
+    #         name=db.default_model
+    #     ),
+    #     embedding_input_method=ModelInputMethod(
+    #         fields=['label']
+    #     )
+    # )
+    #
+    # print(venomx)
+
+
+    db.insert(
+        wrapper.objects(),
+        collection=collection_name,
+        # venomx=venomx
+    )
+    names = db.list_collection_names()
+    print(names)
+
+    col = db.client.get_collection(f"{collection_name}")
+    metadata = col.metadata
+    print(metadata)
+
+# for debugging meanwhile implementing
+@pytest.mark.skip
+def test_object():
+    db = setup_db(Path("../db"))
+    collection_name = "test_collection_with_venomx_set_upfront"
+
+    extractor = BasicExtractor()
+    adapter = get_adapter(INPUT_DIR / "go-nucleus.db")
+    wrapper = OntologyWrapper(oak_adapter=adapter, local_store=db, extractor=extractor)
+
+    venomx = Index(
+        id=f"{collection_name}",
+        dataset=Dataset(
+            name="test_ont_hp"
+        ),
+        embedding_model=Model(
+            name=db.default_model
+        ),
+        embedding_input_method=ModelInputMethod(
+            fields=['label']
+        )
+    )
+
+    print(venomx)
+
+
+    db.insert(
+        wrapper.objects(),
+        collection=collection_name,
+        venomx=venomx
+    )
+    names = db.list_collection_names()
+    print(names)
+    col = db.client.get_collection(f"{collection_name}")
+    metadata = col.metadata
+    print(metadata)
 
 @pytest.fixture
 def vstore(request, tmp_path):
