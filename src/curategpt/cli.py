@@ -49,6 +49,10 @@ __all__ = [
     "main",
 ]
 
+from venomx.model.venomx import Index, Dataset, Model, ModelInputMethod
+
+from src.curategpt.store.metadata import Metadata
+
 
 def dump(
     obj: Union[str, AnnotatedObject, Dict],
@@ -2307,18 +2311,36 @@ def index_ontology_command(
     db.text_lookup = view.text_field
     if index_fields:
         fields = index_fields.split(",")
-
+        db.index_fields = index_fields
         # print(f"Indexing fields: {fields}")
-
-        def _text_lookup(obj: Dict):
-            vals = [str(obj.get(f)) for f in fields if f in obj]
-            return " ".join(vals)
-
-        db.text_lookup = _text_lookup
+        db.text_lookup = lambda obj: db.text_to_embed_or_lookup(obj, fields)
     if not append:
         db.remove_collection(collection, exists_ok=True)
     click.echo(f"Indexing {len(list(view.objects()))} objects")
-    db.insert(view.objects(), collection=collection, model=model)
+
+    venomx = Metadata(
+        venomx=Index(
+            id=collection,
+            dataset=Dataset(
+                name=ont
+            ),
+            model=Model(
+                name=model
+            ),
+            model_input_method=ModelInputMethod(
+                fields=db.text_lookup # index_fields
+            )
+        )
+    )
+
+    db.insert(
+        view.objects(),
+        collection=collection,
+        model=model,
+        venomx=venomx,
+
+    )
+
     db.update_collection_metadata(collection, object_type="OntologyClass")
     e = time.time()
     click.echo(f"Indexed {len(list(view.objects()))} in {e - s} seconds")
