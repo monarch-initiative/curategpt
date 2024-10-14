@@ -1,8 +1,9 @@
 import json
 from typing import Dict, Optional
 
-from pydantic import ConfigDict, BaseModel
+from pydantic import BaseModel, ConfigDict
 from venomx.model.venomx import Index
+
 
 class CollectionMetadata(BaseModel):
     """
