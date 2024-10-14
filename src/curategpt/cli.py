@@ -51,7 +51,7 @@ __all__ = [
 
 from venomx.model.venomx import Dataset, Index, Model, ModelInputMethod
 
-from src.curategpt.store.metadata import Metadata
+from curategpt.store.metadata import Metadata
 
 
 def dump(
@@ -2319,19 +2319,17 @@ def index_ontology_command(
     click.echo(f"Indexing {len(list(view.objects()))} objects")
 
     venomx = Metadata(
-        venomx=Index(
             id=collection,
             dataset=Dataset(
                 name=ont
             ),
-            model=Model(
-                name=model
-            ),
-            model_input_method=ModelInputMethod(
-                fields=db.text_lookup # index_fields
+            embedding_model=Model(
+                name=model if model else None# "openai:"
             )
+            # model_input_method=ModelInputMethod(
+            #     fields=db.text_lookup # index_fields
+
         )
-    )
 
     db.insert(
         view.objects(),
