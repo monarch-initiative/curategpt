@@ -23,7 +23,7 @@ logger.setLevel(logging.DEBUG)
 @pytest.fixture
 def wrapper(request, tmp_path):
     db = None
-    if hasattr(request, 'param'):
+    if hasattr(request, "param"):
         tmp_base = request.param
         temp_dir = create_db_dir(tmp_path, tmp_base)
         db = setup_db(temp_dir)
