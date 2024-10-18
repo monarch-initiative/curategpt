@@ -23,7 +23,7 @@ logger.setLevel(logging.DEBUG)
 @pytest.fixture
 def wrapper(request, tmp_path):
     db = None
-    if hasattr(request, 'param'):
+    if hasattr(request, "param"):
         tmp_base = request.param
         temp_dir = create_db_dir(tmp_path, tmp_base)
         db = setup_db(temp_dir)
@@ -49,7 +49,7 @@ def test_pubmed_to_pmc(wrapper):
 
 
 def test_full_text(wrapper):
-    txt = wrapper.fetch_full_text("PMID:35663206")
+    txt = wrapper.fetch_full_text("PMC:PMC9159873")
     print(len(txt))
     print(txt[0:100])
     print(txt)

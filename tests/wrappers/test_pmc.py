@@ -40,8 +40,6 @@ def wrapper(request, tmp_path) -> PMCWrapper:
             db.reset()
 
 
-
-
 @pytest.mark.skip("TODO")
 @pytest.mark.parametrize("wrapper", [TEMP_PMC_SEARCH], indirect=True)
 def test_pmc_search(wrapper):
