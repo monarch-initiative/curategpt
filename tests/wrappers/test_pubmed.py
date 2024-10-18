@@ -49,7 +49,7 @@ def test_pubmed_to_pmc(wrapper):
 
 
 def test_full_text(wrapper):
-    txt = wrapper.fetch_full_text("PMID:35663206")
+    txt = wrapper.fetch_full_text("PMC:PMC9159873")
     print(len(txt))
     print(txt[0:100])
     print(txt)
