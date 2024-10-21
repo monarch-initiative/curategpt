@@ -11,7 +11,15 @@ See also the app on [curategpt.io](https://curategpt.io) (note: this is sometime
 subset of the functionality of the local app)
 
 
-## Installation
+## Getting started
+
+### User installation
+
+CurateGPT is available on Pypi and may be installed with `pip`:
+
+`pip install curategpt`
+
+### Developer installation
 
 You will first need to [install Poetry](https://python-poetry.org/docs/#installation).
 
@@ -29,6 +37,8 @@ and install the dependencies:
 poetry install
 ```
 
+### API keys
+
 In order to get the best performance from CurateGPT, we recommend getting an OpenAI API key, and setting it:
 
 ```
@@ -36,6 +46,8 @@ export OPENAI_API_KEY=<your key>
 ```
 
 (for members of Monarch: ask on Slack if you would like to use the group key)
+
+CurateGPT will also work with other large language models - see "Selecting models" below.
 
 ## Loading example data and running the app
 
