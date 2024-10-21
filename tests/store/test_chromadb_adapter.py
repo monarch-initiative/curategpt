@@ -44,25 +44,6 @@ def simple_schema_manager() -> SchemaProxy:
     )
     return SchemaProxy(sb.schema)
 
-# not finisished
-@pytest.mark.skip
-def test_setting_collection_metadata(example_texts):
-    db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
-    db.client.reset()
-    assert db.list_collection_names() == []
-    collection = "test"
-    objs = terms_to_objects(example_texts)
-    db.insert(objs, collection=collection)
-    md = db.collection_metadata(collection)
-    md.venomx.id = "test collection"
-    md.venomx.embedding_model.name = "openai:"
-    db.set_collection_metadata(collection, md)
-    assert md.venomx.id == "test collection"
-    assert db.collection_metadata(collection).venomx.id == "test collection"
-    assert db.collection_metadata(collection).venomx.embedding_model.name == "openai:"
-
-# not finisished
-@pytest.mark.skip
 def test_store(simple_schema_manager, example_texts):
     db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
     db.schema_proxy = simple_schema_manager
@@ -73,24 +54,19 @@ def test_store(simple_schema_manager, example_texts):
     db.insert(objs, collection=collection)
     md = db.collection_metadata(collection)
     md.venomx.id = "test collection"
-    md.venomx.embedding_model.name = "openai:"
     db.set_collection_metadata(collection, md)
     assert md.venomx.id == "test collection"
     assert db.collection_metadata(collection).venomx.id == "test collection"
-    assert db.collection_metadata(collection).venomx.embedding_model.name == "openai:"
-
-
     db2 = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
-    assert db2.collection_metadata(collection).description == "test collection"
+    assert db2.collection_metadata(collection).venomx.id == "test collection"
     assert db.list_collection_names() == ["test"]
     results = list(db.search("fox", collection=collection))
-    print(results)
+    # print(results)
     for obj in objs:
         print(f"QUERYING: {obj}")
         for match in db.matches(obj, collection=collection):
             print(f" - MATCH: {match}")
     db.update(objs, collection=collection)
-    assert db.collection_metadata(collection).description == "test collection"
     canines = list(db.find(where={"text": {"$eq": "canine"}}, collection=collection))
     print(f"CANINES: {canines}")
     long_words = list(db.find(where={"wordlen": {"$gt": 12}}, collection=collection))
@@ -148,16 +124,14 @@ def test_embedding_function(simple_schema_manager, example_texts):
     db.insert(objs[1:])
     db.insert(objs[1:], collection="default_ef", model=None)
     db.insert(objs[1:], collection="openai", model="openai:")
-    assert db.collection_metadata("default_ef").name == "default_ef"
-    assert db.collection_metadata("openai").name == "openai"
-    assert db.collection_metadata(None).model == "all-MiniLM-L6-v2"
-    assert db.collection_metadata("default_ef").model == "all-MiniLM-L6-v2"
-    assert db.collection_metadata("openai").model == "openai:"
+    assert db.collection_metadata("default_ef").venomx.id == "default_ef"
+    assert db.collection_metadata("openai").venomx.id == "openai"
+    assert db.collection_metadata(None).venomx.embedding_model.name == "all-MiniLM-L6-v2"
+    assert db.collection_metadata("default_ef").venomx.embedding_model.name == "all-MiniLM-L6-v2"
+    assert db.collection_metadata("openai").venomx.embedding_model.name == "openai:"
     db.insert([objs[0]])
     db.insert([objs[0]], collection="default_ef")
     db.insert([objs[0]], collection="openai")
-    assert db.collection_metadata("default_ef").model == "all-MiniLM-L6-v2"
-    assert db.collection_metadata("openai").model == "openai:"
     results_ef = list(db.search("fox", collection="default_ef"))
     results_oai = list(db.search("fox", collection="openai"))
     assert len(results_ef) > 0

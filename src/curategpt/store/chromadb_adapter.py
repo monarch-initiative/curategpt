@@ -325,6 +325,7 @@ class ChromaDBAdapter(DBAdapter):
         :param metadata:
         :return:
         """
+        # TODO: (for carlo) just call update
         chromadb_metadata = metadata.serialize_venomx_metadata_for_adapter(self.name)
         self.client.get_or_create_collection(
             name=collection_name,
@@ -345,24 +346,27 @@ class ChromaDBAdapter(DBAdapter):
         metadata = self.collection_metadata(collection_name=collection_name)
 
         if metadata is not None:
-            scalar_updates = {k: v for k, v in kwargs.items() if k != "venomx"}
+            scalar_updates = {k: v for k, v in kwargs.items() if k != "venomx"} # any additional model param or object type
             metadata = metadata.model_copy(update=scalar_updates)
+            prev_model = metadata.venomx.embedding_model.name
+            if prev_model and metadata.model != prev_model:
+                if self.client.get_or_create_collection(name=collection_name).count() > 0:
+                    raise ValueError(f"Cannot change model from {prev_model} to {metadata.model}")
 
+            # assign venomx to metadata object
             if "venomx" in kwargs and kwargs.get("venomx") is not None:
-                # assign venomx to metadata object
-                metadata.venomx = kwargs.get("venomx")
+                metadata = Metadata(venomx=kwargs.get("venomx"))
         else:
             metadata = Metadata(
                 venomx=kwargs.get("venomx"),
-                # hnsw_space=kwargs.get("hnsw_space", "cosine"),
-                # object_type=kwargs.get("object_type"),
+                hnsw_space=kwargs.get("hnsw_space", "cosine"),
+                object_type=kwargs.get("object_type"),
             )
 
         # Ensure 'venomx.id' matches 'collection_name' if venomx is provided
-        if metadata.venomx:
+        if metadata:
             if metadata.venomx.id != collection_name:
-                print(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name}")
-                metadata.venomx.id = collection_name
+                raise ValueError(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name}")
 
         # metadata.hnsw_space = "cosine"
         chromadb_metadata = metadata.serialize_venomx_metadata_for_adapter(self.name)
@@ -426,8 +430,11 @@ class ChromaDBAdapter(DBAdapter):
         # want to accidentally set it
         collection = client.get_collection(name=self._get_collection(collection))
         metadata = collection.metadata
+        # deserialize _venomx str to venomx dict and put in Metadata model
+        metadata = json.loads(metadata["_venomx"])
+        metadata = Metadata(venomx=Index(**metadata))
         collection = client.get_collection(
-            name=collection.name, embedding_function=self._embedding_function(metadata["model"])
+            name=collection.name, embedding_function=self._embedding_function(metadata.venomx.embedding_model.name)
         )
         logger.debug(f"Collection metadata: {metadata}")
         if text:
@@ -522,7 +529,9 @@ class ChromaDBAdapter(DBAdapter):
         )
         collection_obj = self._get_collection_object(collection)
         metadata = collection_obj.metadata
-        ef = self._embedding_function(metadata["model"])
+        metadata = json.loads(metadata["_venomx"])
+        metadata = Metadata(venomx=Index(**metadata))
+        ef = self._embedding_function(metadata.venomx.embedding_model.name)
         if len(text) > self.default_max_document_length:
             logger.warning(
                 f"Text too long ({len(text)}), truncating to {self.default_max_document_length}"

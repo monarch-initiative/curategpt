@@ -24,7 +24,6 @@ logger = logging.root
 logger.setLevel(logging.DEBUG)
 
 # for debugging meanwhile implementing
-@pytest.mark.skip
 def test_insert_without_venomx():
     db = setup_db(Path("../db"))
     collection_name = "test_collection_without_venomx_set_upfront"
@@ -62,7 +61,6 @@ def test_insert_without_venomx():
     print(metadata)
 
 # for debugging meanwhile implementing
-@pytest.mark.skip
 def test_insert_with_venomx():
     db = setup_db(Path("../db"))
     collection_name = "test_collection_with_venomx_set_upfront"
@@ -84,8 +82,8 @@ def test_insert_with_venomx():
         )
     )
 
-    print(venomx)
-
+    # print(venomx)
+    # print("\n\n", venomx.id ,"\n\n")
 
     db.insert(
         wrapper.objects(),
