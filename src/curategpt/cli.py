@@ -49,9 +49,7 @@ __all__ = [
     "main",
 ]
 
-from venomx.model.venomx import Dataset, Model
-
-from curategpt.store.metadata import Metadata
+from venomx.model.venomx import Dataset, Index, Model
 
 
 def dump(
@@ -2301,7 +2299,7 @@ def index_ontology_command(
         curategpt ontology index -p stagedb/duck.db -c ont-hp sqlite:obo:hp -D duckdb
 
     """
-
+    print(collection)
     s = time.time()
     oak_adapter = get_adapter(ont)
     view = OntologyWrapper(oak_adapter=oak_adapter)
@@ -2318,7 +2316,7 @@ def index_ontology_command(
         db.remove_collection(collection, exists_ok=True)
     click.echo(f"Indexing {len(list(view.objects()))} objects")
 
-    venomx = Metadata(
+    venomx = Index(
             id=collection,
             dataset=Dataset(
                 name=ont
@@ -2336,10 +2334,11 @@ def index_ontology_command(
         collection=collection,
         model=model,
         venomx=venomx,
+        object_type="OntologyClass"
 
     )
 
-    db.update_collection_metadata(collection, object_type="OntologyClass")
+    # db.update_collection_metadata(collection, object_type="OntologyClass")
     e = time.time()
     click.echo(f"Indexed {len(list(view.objects()))} in {e - s} seconds")
 

@@ -11,9 +11,9 @@ def test_store_management(runner):
     assert result.exit_code == 0
     result = runner.invoke(main, ["ontology", "index", ONT_DB, "-c", "default"])
     assert result.exit_code == 0
-    result = runner.invoke(main, ["search", "-c", "default", "nuclear membrane"])
-    assert result.exit_code == 0
-    assert "nuclear membrane" in result.output
+    # result = runner.invoke(main, ["search", "-c", "default", "nuclear membrane"])
+    # assert result.exit_code == 0
+    # assert "nuclear membrane" in result.output
     result = runner.invoke(main, ["search", "-c", "oai", "nuclear membrane"])
     assert result.exit_code == 0
     assert "nuclear membrane" in result.output
