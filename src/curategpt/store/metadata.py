@@ -48,7 +48,7 @@ DuckDB Capabilities:
 """
 
 
-class Metadata(Index):
+class Metadata(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
     # Application-level field for 'duckdb' and to keep pydantic advantages in code for 'chromadb'
