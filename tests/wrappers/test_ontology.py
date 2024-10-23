@@ -107,7 +107,7 @@ def vstore(request, tmp_path):
     try:
         wrapper = OntologyWrapper(oak_adapter=adapter, local_store=db, extractor=extractor)
         db.insert(wrapper.objects())
-        yield wrapper
+        yield wrapper, db
     except Exception as e:
         raise e
     finally:
@@ -118,11 +118,12 @@ def vstore(request, tmp_path):
 @pytest.mark.parametrize('vstore', [TEMP_OAK_OBJ], indirect=True)
 def test_oak_objects(vstore):
     """Test that the objects are extracted from the oak adapter."""
-    objs = list(vstore.objects())
+    wrapper, _ = vstore
+    objs = list(wrapper.objects())
     [nucleus] = [obj for obj in objs if obj["id"] == "Nucleus"]
     assert nucleus["label"] == "nucleus"
     assert nucleus["original_id"] == "GO:0005634"
-    reversed = vstore.unwrap_object(nucleus, store=vstore.local_store)
+    reversed = wrapper.unwrap_object(nucleus, store=wrapper.local_store)
     nucleus = reversed.graphs[0].nodes[0]
     assert nucleus["lbl"] == "nucleus"
     assert nucleus["id"] == "GO:0005634"
@@ -132,14 +133,15 @@ def test_oak_objects(vstore):
 @pytest.mark.parametrize('vstore', [TEMP_OAK_IND], indirect=True)
 def test_oak_index(vstore):
     """Test that the objects are indexed in the local store."""
-    g = vstore.unwrap_object(
+    wrapper, _ = vstore
+    g = wrapper.unwrap_object(
         {
             "id": "Nucleus",
             "label": "nucleus",
             "relationships": [{"predicate": "rdfs:subClassOf", "target": "Organelle"}],
             "original_id": "GO:0005634",
         },
-        store=vstore.local_store,
+        store=wrapper.local_store,
     )
     if isinstance(g, GraphDocument):
         pprint(g.__dict__, width=100, indent=2)
@@ -158,6 +160,7 @@ def test_oak_index(vstore):
 @requires_openai_api_key
 def test_oak_search(vstore):
     """Test that the objects are indexed and searchable in the local store."""
-    results = list(vstore.search("nucl"))
+    _, db = vstore
+    results = list(db.search("nucl"))
     assert len(results) > 0
     assert any("nucleus" in result[0]["label"] for result in results)
