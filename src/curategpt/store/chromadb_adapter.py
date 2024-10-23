@@ -51,6 +51,7 @@ class ChromaDBAdapter(DBAdapter):
             path=str(self.path), settings=Settings(allow_reset=True, anonymized_telemetry=False)
         )
         logger.info(f"ChromaDB client: {self.client}")
+        self.model = self.default_model
 
     def _get_collection_object(self, collection: str = None):
         return self.client.get_collection(name=self._get_collection(collection))
@@ -119,8 +120,8 @@ class ChromaDBAdapter(DBAdapter):
         """
         self.client.reset()
 
-    @staticmethod
-    def _embedding_function(model: str = None) -> EmbeddingFunction:
+    # @staticmethod
+    def _embedding_function(self, model: str = None) -> EmbeddingFunction:
         """
         Get the embedding function for a given model.
 
@@ -128,7 +129,7 @@ class ChromaDBAdapter(DBAdapter):
         :return:
         """
         if model is None:
-            raise ValueError("Model must be specified")
+            model = self.model
         if model.startswith("openai:"):
             return embedding_functions.OpenAIEmbeddingFunction(
                 api_key=os.environ.get("OPENAI_API_KEY"),
