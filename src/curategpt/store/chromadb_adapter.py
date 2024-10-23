@@ -324,6 +324,20 @@ class ChromaDBAdapter(DBAdapter):
         :param metadata:
         :return:
         """
+        current_metadata = self.collection_metadata(collection_name=collection_name)
+
+        if metadata:
+            if metadata.venomx.id != collection_name:
+                raise ValueError(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name}")
+
+            # metadata = metadata.model_copy(update=scalar_updates)
+            new_model = metadata.venomx.embedding_model.name
+
+            prev_model = current_metadata.venomx.embedding_model.name
+            if prev_model and new_model != prev_model:
+                if self.client.get_or_create_collection(name=collection_name).count() > 0:
+                    raise ValueError(f"Cannot change model from {prev_model} to {new_model}")
+
         chromadb_metadata = metadata.serialize_venomx_metadata_for_adapter(self.name)
         self.client.get_or_create_collection(
             name=collection_name,
@@ -344,7 +358,7 @@ class ChromaDBAdapter(DBAdapter):
 
         # if metadata available from cm
         if metadata is not None:
-            scalar_updates = {k: v for k, v in kwargs.items() if k != "venomx"} # any additional model param or object type
+            scalar_updates = {k: v for k, v in kwargs.items() if k != "venomx"} # any additional param, e.g model or object type
             metadata = metadata.model_copy(update=scalar_updates)
 
             prev_model = metadata.venomx.embedding_model.name

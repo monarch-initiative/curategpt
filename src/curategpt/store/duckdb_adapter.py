@@ -8,7 +8,19 @@ import logging
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Mapping, Optional, Union, Tuple
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import duckdb
 import llm
@@ -16,7 +28,6 @@ import numpy as np
 import openai
 import psutil
 import yaml
-
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk
@@ -27,7 +38,7 @@ from venomx.model.venomx import Index, Model, ModelInputMethod
 
 from curategpt.store.db_adapter import DBAdapter
 from curategpt.store.duckdb_result import DuckDBSearchResult
-from curategpt.store.metadata import CollectionMetadata, Metadata
+from curategpt.store.metadata import Metadata
 from curategpt.store.vocab import (
     DEFAULT_MODEL,
     DEFAULT_OPENAI_MODEL,
@@ -118,22 +129,13 @@ class DuckDBAdapter(DBAdapter):
         return self._get_collection(collection)
 
     def _create_table_if_not_exists(
-        self, collection: str, vec_dimension: int, distance: str, model: str = None, venomx: Metadata = None
+        self, collection: str, vec_dimension: int, venomx: Metadata = None
     ):
         """
         Create a table for the given collection if it does not exist
         :param collection:
         :return:
         """
-        logger.info(
-            f"Table {collection} does not exist, creating ...: PARAMS: model: {model}, distance: {distance},\
-        vec_dimension: {vec_dimension}"
-        )
-        if model is None:
-            model = self.default_model
-            logger.info(f"Model in create_table_if_not_exists: {model}")
-        if distance is None:
-            distance = self.distance_metric
         safe_collection_name = f'"{collection}"'
         create_table_sql = f"""
             CREATE TABLE IF NOT EXISTS {safe_collection_name} (
@@ -145,22 +147,9 @@ class DuckDBAdapter(DBAdapter):
         """
         self.conn.execute(create_table_sql)
 
-        metadata = CollectionMetadata(name=collection, model=model, hnsw_space=distance)
-
-
-        metadata_json = json.dumps(metadata.model_dump(exclude_none=True))
-        safe_collection_name = f'"{collection}"'
-        self.conn.execute(
-            f"""
-                    INSERT INTO {safe_collection_name} (id, metadata) VALUES ('__metadata__', ?)
-                    ON CONFLICT (id) DO NOTHING
-                    """,
-            [metadata_json],
-        )
-
         if venomx:
             venomx = venomx.model_dump(exclude_none=True)
-            # venomx insertion
+            # venomx metadata insertion
             self.conn.execute(
                 f"""
                 INSERT INTO {safe_collection_name} (id, metadata) VALUES ('__venomx__', ?)
@@ -320,14 +309,10 @@ class DuckDBAdapter(DBAdapter):
         :return:
         """
         collection = self._get_collection_name(collection)
-        logger.info(f"Processing objects for collection {collection}")
+        if model is None:
+            model = self.default_model
         self.vec_dimension = self._get_embedding_dimension(model)
-        logger.info(f"(process_objects: Model: {model}, vec_dimension: {self.vec_dimension}")
-        # TODO: delete after debug
-        # print("\n")
-        # print(f"venomx: {venomx}, collection: {collection}, model: {model}, distance: {distance}, "
-        #       f"object_type: {object_type}, vec_dimension: {self.vec_dimension}, index_fields: {self.index_fields}")
-        # print("\n")
+
         updated_venomx = self.update_or_create_venomx(
             venomx,
             collection,
@@ -341,7 +326,7 @@ class DuckDBAdapter(DBAdapter):
         if collection not in self.list_collection_names():
             logger.info(f"(process)Creating table for collection {collection}")
             self._create_table_if_not_exists(
-                collection, self.vec_dimension, model=model, distance=distance, venomx=updated_venomx,
+                collection, self.vec_dimension, venomx=updated_venomx,
             )
 
         # if collection already exists, update metadata here
@@ -533,12 +518,6 @@ class DuckDBAdapter(DBAdapter):
             hnsw_space=distance,
             object_type=object_type
         )
-        # TODO delete after debug
-        # print("Populated Venomx")
-        # print(venomx)
-        # print("\nTest\n")
-        # print(distance)
-        # print(object_type)
         return venomx
 
     def remove_collection(self, collection: str = None, exists_ok=False, **kwargs):
@@ -619,7 +598,7 @@ class DuckDBAdapter(DBAdapter):
         logger.info(f"Collection metadata={cm}")
         if model is None:
             if cm:
-                model = cm.model
+                model = cm.venomx.embedding_model.name
             if model is None:
                 model = self.default_model
         logger.info(f"Model={model}")
@@ -681,9 +660,9 @@ class DuckDBAdapter(DBAdapter):
         where_clause = " AND ".join(where_conditions)
         if where_clause:
             where_clause = f"WHERE {where_clause}"
-        query_embedding = self._embedding_function(text, model=cm.model)
+        query_embedding = self._embedding_function(text, model=cm.venomx.embedding_model.name)
         safe_collection_name = f'"{collection}"'
-        vec_dimension = self._get_embedding_dimension(cm.model)
+        vec_dimension = self._get_embedding_dimension(cm.venomx.embedding_model.name)
         results = self.conn.execute(
             f"""
                     SELECT *, array_distance(embeddings::FLOAT[{vec_dimension}],
@@ -805,6 +784,18 @@ class DuckDBAdapter(DBAdapter):
         if collection_name is None:
             raise ValueError("Collection name must be provided.")
 
+        current_metadata = self.collection_metadata(collection_name)
+
+        if metadata:
+            if metadata.venomx.id != collection_name:
+                raise ValueError(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name}")
+
+            new_model = metadata.venomx.embedding_model.name
+
+            prev_model = current_metadata.venomx.embedding_model.name
+            if prev_model and new_model != prev_model:
+                raise ValueError(f"Cannot change model from {prev_model} to {new_model}")
+
         # metadata_json = json.dumps(metadata.dict(exclude_none=True))
         metadata = metadata.model_dump(exclude_none=True)
         safe_collection_name = f'"{collection_name}"'
@@ -812,7 +803,7 @@ class DuckDBAdapter(DBAdapter):
             f"""
             UPDATE {safe_collection_name}
             SET metadata = ?
-            WHERE id = '__metadata__'
+            WHERE id = '__venomx__'
             """,
             [metadata],
         )
@@ -1118,7 +1109,7 @@ class DuckDBAdapter(DBAdapter):
         ----------
         """
         for res in results:
-            if res[0] != "__metadata__":
+            if res[0] != "__metadata__" and res[0] != "__venomx__":
                 D = DuckDBSearchResult(
                     ids=res[0],
                     metadatas=json.loads(res[1]),
