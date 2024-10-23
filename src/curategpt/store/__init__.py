@@ -19,7 +19,7 @@ in the future.
 from .chromadb_adapter import ChromaDBAdapter
 from .db_adapter import DBAdapter
 from .duckdb_adapter import DuckDBAdapter
-from .metadata import CollectionMetadata
+from .metadata import Metadata
 from .schema_proxy import SchemaProxy
 
 __all__ = [
@@ -27,7 +27,7 @@ __all__ = [
     "ChromaDBAdapter",
     "DuckDBAdapter",
     "SchemaProxy",
-    "CollectionMetadata",
+    "Metadata",
     "get_store",
 ]
 
