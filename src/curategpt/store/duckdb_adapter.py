@@ -91,7 +91,7 @@ class DuckDBAdapter(DBAdapter):
         # handling concurrency
         try:
             self.conn = duckdb.connect(self.path, read_only=False)
-        except duckdb.IOException or duckdb.Error as e:
+        except duckdb.Error as e:
             match = re.search(r"PID (\d+)", str(e))
             if match:
                 pid = int(match.group(1))
