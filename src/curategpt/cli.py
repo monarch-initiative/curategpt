@@ -2322,11 +2322,8 @@ def index_ontology_command(
                 name=ont
             ),
             embedding_model=Model(
-                name=model if model else None# "openai:"
+                name=model if model else None
             )
-            # model_input_method=ModelInputMethod(
-            #     fields=db.text_lookup # index_fields
-
         )
 
     db.insert(
