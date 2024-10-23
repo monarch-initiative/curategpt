@@ -409,13 +409,13 @@ elif option == SEARCH:
                 autoadd_page_state.selected = obj
                 st.success("Curating!")
                 state.page = CURATE
-                st.experimental_rerun()
+                st.rerun()
             if st.button(f"Find evidence {i+1}"):
                 autoadd_page_state = state.get_page_state(CITESEEK)
                 autoadd_page_state.selected = obj
                 st.success("OK!")
                 state.page = CITESEEK
-                st.experimental_rerun()
+                st.rerun()
 
 
 elif option == CLUSTER_SEARCH:
