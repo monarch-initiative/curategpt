@@ -1,9 +1,10 @@
 import logging
-import duckdb
 import os
 import re
 from pathlib import Path
 from typing import Optional
+
+import duckdb
 
 logger = logging.getLogger(__name__)
 

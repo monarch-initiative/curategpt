@@ -6,7 +6,6 @@ using the experimental persistence feature
 import json
 import logging
 import os
-import re
 from dataclasses import dataclass, field
 from typing import (
     Any,
