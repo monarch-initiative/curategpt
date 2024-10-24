@@ -37,6 +37,7 @@ from sentence_transformers import SentenceTransformer
 from venomx.model.venomx import Index, Model, ModelInputMethod
 
 from curategpt.store.db_adapter import DBAdapter
+from curategpt.store.duckdb_connection_handler import DuckDBConnectionAndRecoveryHandler
 from curategpt.store.duckdb_result import DuckDBSearchResult
 from curategpt.store.metadata import Metadata
 from curategpt.store.vocab import (
@@ -75,35 +76,11 @@ class DuckDBAdapter(DBAdapter):
     openai_client: OpenAI = field(default=None)
 
     def __post_init__(self):
-        if not self.path:
-            self.path = "./db/db_file.duckdb"
-        if os.path.isdir(self.path):
-            self.path = os.path.join("./db", self.path, "db_file.duckdb")
-            os.makedirs(os.path.dirname(self.path), exist_ok=True)
-            logger.info(
-                f"Path {self.path} is a directory. Using {self.path} as the database path\n\
-            as duckdb needs a file path"
-            )
+        self.connection_handler = DuckDBConnectionAndRecoveryHandler(self.path)
         self.ef_construction = self._validate_ef_construction(self.ef_construction)
         self.ef_search = self._validate_ef_search(self.ef_search)
         self.M = self._validate_m(self.M)
-        logger.info(f"Using DuckDB at {self.path}")
-        # handling concurrency
-        try:
-            self.conn = duckdb.connect(self.path, read_only=False)
-        except duckdb.Error as e:
-            match = re.search(r"PID (\d+)", str(e))
-            if match:
-                pid = int(match.group(1))
-                logger.info(f"Got {e}.Attempting to kill process with PID: {pid}")
-                self.kill_process(pid)
-                self.conn = duckdb.connect(self.path, read_only=False)
-            else:
-                logger.error(f"{e} without PID information.")
-                raise
-        self.conn.execute("INSTALL vss;")
-        self.conn.execute("LOAD vss;")
-        self.conn.execute("SET hnsw_enable_experimental_persistence=true;")
+        self.conn = self.connection_handler.connect()
         self.model = self.default_model
         self.vec_dimension = self._get_embedding_dimension(self.default_model)
 
