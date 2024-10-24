@@ -2,13 +2,14 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Union, get_origin
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, Tuple, Union, get_origin
 
 from pydantic import BaseModel, ConfigDict
+from venomx.model.venomx import Index, Model, ModelInputMethod
 
 from curategpt import DBAdapter
 from curategpt.store.db_adapter import OBJECT, PROJECTION, QUERY, SEARCH_RESULT
-from curategpt.store.metadata import CollectionMetadata
+from curategpt.store.metadata import Metadata
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,9 @@ class Collection(BaseModel):
 
     def add(self, object: Dict) -> None:
         self.objects.append(object)
+
+    def add_metadata(self, venomx: Metadata) -> None:
+        self.metadata.update(venomx)
 
     def delete(self, key_value: str, key: str) -> None:
         self.objects = [obj for obj in self.objects if obj[key] != key_value]
@@ -61,19 +65,6 @@ class InMemoryAdapter(DBAdapter):
         collection_obj = self.collection_index.get_collection(self._get_collection(collection_name))
         return collection_obj
 
-    def insert(self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, **kwargs):
-        """
-        Insert an object or list of objects into the store.
-
-        :param objs:
-        :param collection:
-        :return:
-        """
-        collection_obj = self._get_collection_object(collection)
-        if get_origin(type(objs)) is not Dict:
-            objs = [objs]
-        collection_obj.add(objs)
-
     def update(self, objs: Union[OBJECT, List[OBJECT]], collection: str = None, **kwargs):
         """
         Update an object or list of objects in the store.
@@ -99,6 +90,66 @@ class InMemoryAdapter(DBAdapter):
         if isinstance(objs, OBJECT):
             objs = [objs]
         collection_obj.add(objs)
+
+    def insert(self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, **kwargs):
+        """
+        Insert an object or list of objects into the store.
+
+        :param objs:
+        :param collection:
+        :return:
+        """
+        self._insert(objs, collection, **kwargs)
+
+
+    def _insert(
+            self,
+            objs: Union[OBJECT, Iterable[OBJECT]],
+            collection: str = None,
+            venomx: Metadata = None
+    ):
+        collection_obj = self._get_collection_object(collection)
+        if venomx is None:
+            venomx = self.populate_venomx(
+                collection=collection,
+            )
+        if get_origin(type(objs)) is not Dict:
+            objs = [objs]
+
+        collection_obj.add(objs)
+        collection_obj.add_metadata(venomx)
+
+    @staticmethod
+    def populate_venomx(
+            collection: Optional[str],
+            model: Optional[str] = None,
+            distance: str = None,
+            object_type: str = None,
+            embeddings_dimension: int = None,
+            index_fields: Optional[Union[List[str], Tuple[str]]] = None,
+    ) -> Metadata:
+        """
+    Populate venomx with data currently given when inserting
+
+    :param collection:
+    :param model:
+    :param distance:
+    :param object_type:
+    :param embeddings_dimension:
+    :param index_fields:
+    :return:
+    """
+        venomx = Metadata(
+            venomx=Index(
+                id=collection,
+                embedding_model=Model(name=model),
+                embeddings_dimensions=embeddings_dimension,
+                embedding_input_method=ModelInputMethod(fields=index_fields) if index_fields else None
+            ),
+            hnsw_space=distance,
+            object_type=object_type
+        )
+        return venomx
 
     def delete(self, id: str, collection: str = None, **kwargs):
         """
@@ -134,7 +185,7 @@ class InMemoryAdapter(DBAdapter):
 
     def collection_metadata(
         self, collection_name: Optional[str] = None, include_derived=False, **kwargs
-    ) -> Optional[CollectionMetadata]:
+    ) -> Optional[Metadata]:
         """
         Get the metadata for a collection.
 
@@ -144,13 +195,13 @@ class InMemoryAdapter(DBAdapter):
         """
         collection_obj = self._get_collection_object(collection_name)
         md_dict = collection_obj.metadata
-        cm = CollectionMetadata(**md_dict)
+        cm = Metadata(**md_dict)
         if include_derived:
             cm.object_count = len(collection_obj.objects)
         return cm
 
     def set_collection_metadata(
-        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+        self, collection_name: Optional[str], metadata: Metadata, **kwargs
     ):
         """
         Set the metadata for a collection.
@@ -159,9 +210,13 @@ class InMemoryAdapter(DBAdapter):
         :return:
         """
         collection_obj = self._get_collection_object(collection_name)
-        collection_obj.metadata = metadata.dict()
+        # TODO: allow for now, as now embed functionality
+        # if metadata.venomx.id != collection_name:
+        #     raise ValueError(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name} and should not be changed")
+        collection_obj.metadata = metadata.model_dump(exclude_none=True)
 
-    def update_collection_metadata(self, collection_name: str, **kwargs) -> CollectionMetadata:
+
+    def update_collection_metadata(self, collection_name: str, **kwargs) -> Metadata:
         """
         Update the metadata for a collection.
 

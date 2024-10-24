@@ -49,6 +49,8 @@ __all__ = [
     "main",
 ]
 
+from venomx.model.venomx import Dataset, Index, Model
+
 
 def dump(
     obj: Union[str, AnnotatedObject, Dict],
@@ -2322,7 +2324,7 @@ def index_ontology_command(
         curategpt ontology index -p stagedb/duck.db -c ont-hp sqlite:obo:hp -D duckdb
 
     """
-
+    print(collection)
     s = time.time()
     oak_adapter = get_adapter(ont)
     view = OntologyWrapper(oak_adapter=oak_adapter)
@@ -2332,19 +2334,36 @@ def index_ontology_command(
     db.text_lookup = view.text_field
     if index_fields:
         fields = index_fields.split(",")
-
+        db.index_fields = index_fields
         # print(f"Indexing fields: {fields}")
-
-        def _text_lookup(obj: Dict):
-            vals = [str(obj.get(f)) for f in fields if f in obj]
-            return " ".join(vals)
-
-        db.text_lookup = _text_lookup
+        db.text_lookup = lambda obj: db.text_to_embed_or_lookup(obj, fields)
     if not append:
         db.remove_collection(collection, exists_ok=True)
     click.echo(f"Indexing {len(list(view.objects()))} objects")
-    db.insert(view.objects(), collection=collection, model=model)
-    db.update_collection_metadata(collection, object_type="OntologyClass")
+
+    venomx = Index(
+            id=collection,
+            dataset=Dataset(
+                name=ont
+            ),
+            embedding_model=Model(
+                name=model if model else None# "openai:"
+            )
+            # model_input_method=ModelInputMethod(
+            #     fields=db.text_lookup # index_fields
+
+        )
+
+    db.insert(
+        view.objects(),
+        collection=collection,
+        model=model,
+        venomx=venomx,
+        object_type="OntologyClass"
+
+    )
+
+    # db.update_collection_metadata(collection, object_type="OntologyClass")
     e = time.time()
     click.echo(f"Indexed {len(list(view.objects()))} in {e - s} seconds")
 

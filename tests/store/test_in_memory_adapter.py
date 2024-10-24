@@ -48,6 +48,6 @@ def test_store(simple_schema_manager, example_texts):
     objs = terms_to_objects(example_texts)
     db.insert(objs, collection=collection)
     md = db.collection_metadata(collection)
-    md.description = "test collection"
+    md.venomx.id = "test collection"
     db.set_collection_metadata(collection, md)
-    assert db.collection_metadata(collection).description == "test collection"
+    assert db.collection_metadata(collection).venomx.id == "test collection"
