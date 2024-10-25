@@ -17,7 +17,6 @@ from typing import (
     List,
     Mapping,
     Optional,
-    Tuple,
     Union,
 )
 
@@ -33,7 +32,7 @@ from oaklib.utilities.iterator_utils import chunk
 from openai import OpenAI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
-from venomx.model.venomx import Index, Model, ModelInputMethod
+from venomx.model.venomx import Index, Model
 
 from curategpt.store.db_adapter import DBAdapter
 from curategpt.store.duckdb_connection_handler import DuckDBConnectionAndRecoveryHandler
@@ -296,7 +295,6 @@ class DuckDBAdapter(DBAdapter):
             distance,
             object_type,
             self.vec_dimension,
-            self.index_fields
         )
 
         if collection not in self.list_collection_names():
@@ -436,7 +434,6 @@ class DuckDBAdapter(DBAdapter):
             distance: str,
             object_type: str,
             embeddings_dimension: Optional[int],
-            index_fields: Optional[list]
     ) -> Metadata:
         """
         Updates an existing Index instance (venomx) with additional values or creates a new one if none is provided.
@@ -444,11 +441,9 @@ class DuckDBAdapter(DBAdapter):
         # If venomx already exists, update its nested fields (as e.g. vec_dimension would not be given)
         if venomx:
             new_embedding_model = Model(name=model)
-            new_embedding_input_method = ModelInputMethod(fields=index_fields) if index_fields else None
             updated_index = venomx.model_copy(update={  # given venomx comes as venomx=Index()
                 "embedding_model": new_embedding_model,
                 "embeddings_dimensions": embeddings_dimension,
-                "embedding_input_method": new_embedding_input_method,
             })
 
             venomx = Metadata(
@@ -460,7 +455,7 @@ class DuckDBAdapter(DBAdapter):
         else:
             if distance is None:
                 distance = self.distance_metric
-            venomx = self.populate_venomx(collection, model, distance, object_type, embeddings_dimension, index_fields)
+            venomx = self.populate_venomx(collection, model, distance, object_type, embeddings_dimension)
 
         return venomx
 
@@ -471,7 +466,6 @@ class DuckDBAdapter(DBAdapter):
             distance: str,
             object_type: str,
             embeddings_dimension: int,
-            index_fields: Optional[Union[List[str], Tuple[str]]],
     ) -> Metadata:
         """
     Populate venomx with data currently given when inserting
@@ -481,7 +475,6 @@ class DuckDBAdapter(DBAdapter):
     :param distance:
     :param object_type:
     :param embeddings_dimension:
-    :param index_fields:
     :return:
     """
         venomx = Metadata(
@@ -489,7 +482,6 @@ class DuckDBAdapter(DBAdapter):
                 id=collection,
                 embedding_model=Model(name=model),
                 embeddings_dimensions=embeddings_dimension,
-                embedding_input_method=ModelInputMethod(fields=index_fields) if index_fields else None
             ),
             hnsw_space=distance,
             object_type=object_type

@@ -12,13 +12,12 @@ import yaml
 from chromadb import ClientAPI as API
 from chromadb import Settings
 from chromadb.api import EmbeddingFunction
-from chromadb.types import Collection
 from chromadb.utils import embedding_functions
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
 from oaklib.utilities.iterator_utils import chunk
 from pydantic import BaseModel, ValidationError
-from venomx.model.venomx import Index, Model, ModelInputMethod
+from venomx.model.venomx import Index, Model
 
 from curategpt.store.db_adapter import DBAdapter
 from curategpt.store.metadata import Metadata
@@ -51,7 +50,6 @@ class ChromaDBAdapter(DBAdapter):
             path=str(self.path), settings=Settings(allow_reset=True, anonymized_telemetry=False)
         )
         logger.info(f"ChromaDB client: {self.client}")
-        self.model = self.default_model
 
     def _get_collection_object(self, collection: str = None):
         return self.client.get_collection(name=self._get_collection(collection))
@@ -120,7 +118,6 @@ class ChromaDBAdapter(DBAdapter):
         """
         self.client.reset()
 
-    # @staticmethod
     def _embedding_function(self, model: str = None) -> EmbeddingFunction:
         """
         Get the embedding function for a given model.
@@ -128,8 +125,6 @@ class ChromaDBAdapter(DBAdapter):
         :param model:
         :return:
         """
-        if model is None:
-            model = self.model
         if model.startswith("openai:"):
             return embedding_functions.OpenAIEmbeddingFunction(
                 api_key=os.environ.get("OPENAI_API_KEY"),
@@ -153,7 +148,7 @@ class ChromaDBAdapter(DBAdapter):
         object_type: str = None,
         model: str = None,
         text_field: Union[str, Callable] = None,
-        venomx: Optional[Metadata] = None,
+        venomx: Optional[Index] = None,
         **kwargs,
     ):
         """
@@ -170,12 +165,17 @@ class ChromaDBAdapter(DBAdapter):
         # otherwise it fetches Metadata from collection
         cm = self.collection_metadata(collection, **kwargs)
         if model is None:
+            # if collection does not exist cm is None
             if cm and cm.venomx and cm.venomx.embedding_model:
                 model = cm.venomx.embedding_model.name
             if model is None:
                 model = self.default_model
-        if venomx is None:
-            venomx = self.populate_venomx(collection, model)
+                logger.info(f"No Model specified. Defaulting to {self.default_model}")
+        # earlier: if venomx is None - But when venomx is None, when populating
+        # beforehand we would not have updated in case model was None from cli
+        # and when acting from CLI the model would still be None, which would have cause _is_openai to crash as trying
+        # to access a None value
+        venomx = self.populate_venomx(collection, model, venomx)
         cm = self.update_collection_metadata(
             collection,
             model=model,
@@ -183,14 +183,14 @@ class ChromaDBAdapter(DBAdapter):
             venomx=venomx
         )
         ef = self._embedding_function(model)
-        # serializing metadata for insertion into db to fit db requirements
+        # serializing metadata for insertion into db to fit chroma db requirements
         adapter_metadata = cm.serialize_venomx_metadata_for_adapter(self.name)
         collection_obj = client.get_or_create_collection(
             name=collection,
             embedding_function=ef,
             metadata=adapter_metadata,
         )
-        if self._is_openai(collection_obj) and batch_size is None:
+        if self._is_openai(venomx) and batch_size is None:
             # TODO: see https://github.com/chroma-core/chroma/issues/709
             batch_size = 100
         if batch_size is None:
@@ -208,12 +208,11 @@ class ChromaDBAdapter(DBAdapter):
             docs_len = sum([len(d) for d in docs])
             cumulative_len += docs_len
             # TODO: use tiktoken to get a better estimate
-            if self._is_openai(collection_obj) and cumulative_len > 3000000:
+            if self._is_openai(venomx) and cumulative_len > 3000000:
                 logger.warning(f"Cumulative length = {cumulative_len}, pausing ...")
                 # TODO: this is too conservative; it should be based on time of start of batch
                 time.sleep(60)
                 cumulative_len = 0
-            logger.debug(f"Example doc (tf={text_field}): {docs[0]}")
             logger.info("Preparing metadatas...")
             metadatas = [self._object_metadata(o) for o in next_objs]
             logger.info("Preparing ids...")
@@ -287,25 +286,22 @@ class ChromaDBAdapter(DBAdapter):
         """
         collection_name = self._get_collection(collection_name)
         try:
-            logger.info(f"Getting collection object {collection_name}")
             collection_obj = self.client.get_collection(name=collection_name)
+            logger.info(f"## GETTING METADATA FROM OBJ :{collection_obj.metadata}")
         except Exception as e:
             logger.error(f"Failed to get collection {collection_name}: {e}")
             return None
-
         metadata_data = {**collection_obj.metadata, **kwargs}
+        logger.debug(f"Metadata from col_obj({metadata_data})")
         try:
+            logger.info("Deserializing _venomx Metadata")
             cm = Metadata.deserialize_venomx_metadata_from_adapter(metadata_data, self.name)
+            logger.info(f"## Metadata : {cm}")
         except ValidationError as ve:
-            logger.error(f"Metadata validation error: {ve}")
-            """
-            # TODO: check twice
-            in this case: initializing venomx as empty Index object to fill
-            to ensure:
-            metadata = db.collection_metadata()
-            metadata.venomx.id = 'foo' (tests)
-            """
+            logger.error(f"Deserializing failed. Metadata validation error: {ve}")
+            logger.debug("No '_venomx' in Metadata, thus creating a new, clean Metadata(venomx=Index()) object.")
             cm = Metadata(venomx=Index())
+            logger.info(f"## New Clean Metadata: {cm}")
 
         if include_derived:
             try:
@@ -356,6 +352,12 @@ class ChromaDBAdapter(DBAdapter):
         """
         collection_name = self._get_collection(collection_name)
         metadata = self.collection_metadata(collection_name=collection_name)
+        logger.info(f"## Metadata: {metadata}")
+
+        # Ensure 'venomx.id' matches 'collection_name' if venomx is provided
+        if metadata:
+            if metadata.venomx.id != collection_name:
+                raise ValueError(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name}")
 
         # if metadata available from cm
         if metadata is not None:
@@ -363,24 +365,25 @@ class ChromaDBAdapter(DBAdapter):
             metadata = metadata.model_copy(update=scalar_updates)
 
             prev_model = metadata.venomx.embedding_model.name
+            # specifically for "set_collection_metadata" from cli where kwargs.get('model') would be None if not given
+            # and update_collection_metadata would get this
+            if kwargs.get('model') is None:
+                kwargs['model'] = self.default_model
             if prev_model and kwargs.get('model') != prev_model:
                 if self.client.get_or_create_collection(name=collection_name).count() > 0:
-                    raise ValueError(f"Cannot change model from {prev_model} to {metadata.model}")
+                    raise ValueError(f"Cannot change model from {prev_model} to {kwargs.get('model')}")
 
             # assign venomx to metadata object
             if "venomx" in kwargs and kwargs.get("venomx") is not None:
                 metadata = Metadata(venomx=kwargs.get("venomx"))
+
         else:
             metadata = Metadata(
                 venomx=kwargs.get("venomx"),
                 hnsw_space=kwargs.get("hnsw_space", "cosine"),
                 object_type=kwargs.get("object_type"),
             )
-
-        # Ensure 'venomx.id' matches 'collection_name' if venomx is provided
-        if metadata:
-            if metadata.venomx.id != collection_name:
-                raise ValueError(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name}")
+            logger.info(metadata)
 
         # metadata.hnsw_space = "cosine"
         chromadb_metadata = metadata.serialize_venomx_metadata_for_adapter(self.name)
@@ -390,23 +393,31 @@ class ChromaDBAdapter(DBAdapter):
         )
         return metadata
 
-    def populate_venomx(self, collection: Optional[str], model: Optional[str]) -> Index:
+    @staticmethod
+    def populate_venomx(collection: Optional[str], model: Optional[str], existing_venomx: Index) -> Index:
         """
         Populate venomx with data currently given when inserting
 
         :param collection:
         :param model:
+        :param existing_venomx
         :return:
         """
+        logger.info("Populating venomx")
         venomx = Index(
             id=f"{collection}",
             embedding_model=Model(
                 name=model
-            ),
-            embedding_input_method=ModelInputMethod(
-                fields=self.index_fields
             )
         )
+        logger.info(f"Retrieving venomx as: {venomx}")
+        if existing_venomx:
+            logger.info("Updating Venomx with the one created by the CLI command")
+            existing_venomx = existing_venomx.model_dump(exclude_none=True)
+            # validate
+            existing_venomx = Metadata(venomx=existing_venomx)
+            # update
+            venomx = venomx.model_copy(update=existing_venomx.model_dump())
         return venomx
 
     def search(self, text: str, **kwargs) -> Iterator[SEARCH_RESULT]:
@@ -606,9 +617,11 @@ class ChromaDBAdapter(DBAdapter):
         for c in client.list_collections():
             yield c.name
 
-    def _is_openai(self, collection: Collection):
-        if collection.metadata.get("model", "").startswith("openai:"):
+    @staticmethod
+    def _is_openai(venomx):
+        if venomx.embedding_model.name.startswith("openai:"):
             return True
+
 
     def peek(self, collection: str = None, limit=5, offset: int = 0, **kwargs) -> Iterator[OBJECT]:
         c = self.client.get_collection(name=self._get_collection(collection))

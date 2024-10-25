@@ -5,7 +5,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Tuple, Union
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional, TextIO, Union
 
 import pandas as pd
 import yaml
@@ -87,9 +87,6 @@ class DBAdapter(ABC):
 
     collection: Optional[str] = None
     """Default collection"""
-
-    index_fields: Optional[Union[List[str], Tuple[str]]] = None
-    """Fields containing text to embed"""
 
     # _field_names_by_collection: Dict[str, Optional[List[str]]] = field(default_factory=dict)
     _field_names_by_collection: Dict[str, Optional[List[str]]] = None
@@ -344,11 +341,6 @@ class DBAdapter(ABC):
         Fetch all objects from a collection, in batches to avoid memory overload.
         """
         raise NotImplementedError
-
-    def text_to_embed_or_lookup(self, obj: Dict):
-        vals = [str(obj.get(f) for f in self.index_fields if f in obj)]
-        return " ".join(vals)
-
 
     def identifier_field(self, collection: str = None) -> str:
         # TODO: use collection

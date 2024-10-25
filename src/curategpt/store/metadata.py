@@ -34,6 +34,8 @@ class Metadata(BaseModel):
     object_type: Optional[str] = None
     """Type of object in the collection"""
 
+    object_count: Optional[int] = None
+
     @classmethod
     def deserialize_venomx_metadata_from_adapter(cls, metadata_dict: dict, adapter: str) -> Dict:
         """
@@ -46,8 +48,8 @@ class Metadata(BaseModel):
         """
         if adapter == 'chromadb':
             # Deserialize '_venomx' (str) back into 'venomx' (dict)
-            venomx_json = metadata_dict.pop("_venomx")
-            if venomx_json:
+            if "_venomx" in metadata_dict:
+                venomx_json = metadata_dict.pop("_venomx")
                 metadata_dict["venomx"] = Index(**json.loads(venomx_json))
         # for 'duckdb', 'venomx' remains as is
         if adapter == 'duckdb':
