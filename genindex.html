@@ -116,6 +116,8 @@
         <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.Collection.add">(curategpt.store.in_memory_adapter.Collection method)</a>
 </li>
       </ul></li>
+      <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.Collection.add_metadata">add_metadata() (curategpt.store.in_memory_adapter.Collection method)</a>
+</li>
       <li><a href="curategpt.evaluation.html#curategpt.evaluation.evaluation_datamodel.Task.additional_collections">additional_collections (curategpt.evaluation.evaluation_datamodel.Task attribute)</a>
 </li>
       <li><a href="curategpt.wrappers.bio.html#curategpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper.additional_info">additional_info() (curategpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper method)</a>
@@ -162,10 +164,6 @@
 
       <ul>
         <li><a href="curategpt.extract.html#curategpt.extract.extractor.AnnotatedObject.annotations">(curategpt.extract.extractor.AnnotatedObject attribute)</a>
-</li>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.annotations">(curategpt.store.CollectionMetadata attribute)</a>
-</li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.annotations">(curategpt.store.metadata.CollectionMetadata attribute)</a>
 </li>
       </ul></li>
       <li><a href="curategpt.extract.html#curategpt.extract.Extractor.api_key">api_key (curategpt.extract.Extractor attribute)</a>
@@ -354,6 +352,8 @@
 </li>
       <li><a href="curategpt.wrappers.clinical.html#curategpt.wrappers.clinical.clinvar_wrapper.ClinVarWrapper">ClinVarWrapper (class in curategpt.wrappers.clinical.clinvar_wrapper)</a>
 </li>
+      <li><a href="curategpt.store.html#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler.close">close() (curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler method)</a>
+</li>
       <li><a href="curategpt.agents.html#curategpt.agents.mapping_agent.MappingPredicate.CLOSE_MATCH">CLOSE_MATCH (curategpt.agents.mapping_agent.MappingPredicate attribute)</a>
 </li>
       <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.Collection">Collection (class in curategpt.store.in_memory_adapter)</a>
@@ -392,12 +392,6 @@
 </li>
       <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.CollectionIndex">CollectionIndex (class in curategpt.store.in_memory_adapter)</a>
 </li>
-      <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata">CollectionMetadata (class in curategpt.store)</a>
-
-      <ul>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata">(class in curategpt.store.metadata)</a>
-</li>
-      </ul></li>
       <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.CollectionIndex.collections">collections (curategpt.store.in_memory_adapter.CollectionIndex attribute)</a>
 </li>
       <li><a href="curategpt.html#curategpt.ChromaDBAdapter.collections">collections() (curategpt.ChromaDBAdapter method)</a>
@@ -440,6 +434,8 @@
         <li><a href="curategpt.store.html#curategpt.store.DuckDBAdapter.conn">(curategpt.store.DuckDBAdapter attribute)</a>
 </li>
       </ul></li>
+      <li><a href="curategpt.store.html#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler.connect">connect() (curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler method)</a>
+</li>
       <li><a href="curategpt.agents.html#curategpt.agents.dase_agent.DatabaseAugmentedStructuredExtraction.conversation">conversation (curategpt.agents.dase_agent.DatabaseAugmentedStructuredExtraction attribute)</a>
 
       <ul>
@@ -789,6 +785,13 @@
 
       <ul>
         <li><a href="curategpt.store.html#module-curategpt.store.duckdb_adapter">module</a>
+</li>
+      </ul></li>
+      <li>
+    curategpt.store.duckdb_connection_handler
+
+      <ul>
+        <li><a href="curategpt.store.html#module-curategpt.store.duckdb_connection_handler">module</a>
 </li>
       </ul></li>
       <li>
@@ -1350,13 +1353,7 @@
 </li>
       </ul></li>
       <li><a href="curategpt.agents.html#curategpt.agents.bootstrap_agent.KnowledgeBaseSpecification.description">description (curategpt.agents.bootstrap_agent.KnowledgeBaseSpecification attribute)</a>
-
-      <ul>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.description">(curategpt.store.CollectionMetadata attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.description">(curategpt.store.metadata.CollectionMetadata attribute)</a>
-</li>
-      </ul></li>
       <li><a href="curategpt.html#curategpt.BasicExtractor.deserialize">deserialize() (curategpt.BasicExtractor method)</a>
 
       <ul>
@@ -1373,6 +1370,12 @@
         <li><a href="curategpt.extract.html#curategpt.extract.RecursiveExtractor.deserialize">(curategpt.extract.RecursiveExtractor method)</a>
 </li>
         <li><a href="curategpt.html#curategpt.Extractor.deserialize">(curategpt.Extractor method)</a>
+</li>
+      </ul></li>
+      <li><a href="curategpt.store.html#curategpt.store.Metadata.deserialize_venomx_metadata_from_adapter">deserialize_venomx_metadata_from_adapter() (curategpt.store.Metadata class method)</a>
+
+      <ul>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.deserialize_venomx_metadata_from_adapter">(curategpt.store.metadata.Metadata class method)</a>
 </li>
       </ul></li>
       <li><a href="curategpt.html#curategpt.BasicExtractor.deserialize_yaml">deserialize_yaml() (curategpt.BasicExtractor method)</a>
@@ -1439,6 +1442,8 @@
         <li><a href="curategpt.store.html#curategpt.store.duckdb_adapter.DuckDBAdapter">(class in curategpt.store.duckdb_adapter)</a>
 </li>
       </ul></li>
+      <li><a href="curategpt.store.html#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler">DuckDBConnectionAndRecoveryHandler (class in curategpt.store.duckdb_connection_handler)</a>
+</li>
       <li><a href="curategpt.store.html#curategpt.store.duckdb_result.DuckDBSearchResult">DuckDBSearchResult (class in curategpt.store.duckdb_result)</a>
 </li>
       <li><a href="curategpt.html#curategpt.DBAdapter.dump">dump() (curategpt.DBAdapter method)</a>
@@ -1935,12 +1940,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curategpt.wrappers.general.html#curategpt.wrappers.general.github_wrapper.GitHubWrapper.headers">headers (curategpt.wrappers.general.github_wrapper.GitHubWrapper property)</a>
 </li>
-      <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.hnsw_space">hnsw_space (curategpt.store.CollectionMetadata attribute)</a>
+      <li><a href="curategpt.store.html#curategpt.store.db_metadata.DBSettings.hnsw_space">hnsw_space (curategpt.store.db_metadata.DBSettings attribute)</a>
 
       <ul>
-        <li><a href="curategpt.store.html#curategpt.store.db_metadata.DBSettings.hnsw_space">(curategpt.store.db_metadata.DBSettings attribute)</a>
+        <li><a href="curategpt.store.html#curategpt.store.Metadata.hnsw_space">(curategpt.store.Metadata attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.hnsw_space">(curategpt.store.metadata.CollectionMetadata attribute)</a>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.hnsw_space">(curategpt.store.metadata.Metadata attribute)</a>
 </li>
       </ul></li>
       <li><a href="curategpt.wrappers.clinical.html#curategpt.wrappers.clinical.hpoa_wrapper.hpo_ont_adapter">hpo_ont_adapter() (in module curategpt.wrappers.clinical.hpoa_wrapper)</a>
@@ -2343,6 +2348,12 @@
 </li>
       <li><a href="curategpt.wrappers.bio.html#curategpt.wrappers.bio.mediadive_wrapper.MediaDiveWrapper">MediaDiveWrapper (class in curategpt.wrappers.bio.mediadive_wrapper)</a>
 </li>
+      <li><a href="curategpt.store.html#curategpt.store.Metadata">Metadata (class in curategpt.store)</a>
+
+      <ul>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata">(class in curategpt.store.metadata)</a>
+</li>
+      </ul></li>
       <li><a href="curategpt.app.html#curategpt.app.cart.CartItem.metadata">metadata (curategpt.app.cart.CartItem attribute)</a>
 
       <ul>
@@ -2368,11 +2379,7 @@
 </li>
         <li><a href="curategpt.html#curategpt.Extractor.model">(curategpt.Extractor property)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.model">(curategpt.store.CollectionMetadata attribute)</a>
-</li>
         <li><a href="curategpt.store.html#curategpt.store.db_metadata.DBSettings.model">(curategpt.store.db_metadata.DBSettings attribute)</a>
-</li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.model">(curategpt.store.metadata.CollectionMetadata attribute)</a>
 </li>
       </ul></li>
       <li><a href="curategpt.agents.html#curategpt.agents.bootstrap_agent.KnowledgeBaseSpecification.model_computed_fields">model_computed_fields (curategpt.agents.bootstrap_agent.KnowledgeBaseSpecification attribute)</a>
@@ -2408,8 +2415,6 @@
 </li>
         <li><a href="curategpt.extract.html#curategpt.extract.extractor.AnnotatedObject.model_computed_fields">(curategpt.extract.extractor.AnnotatedObject attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.model_computed_fields">(curategpt.store.CollectionMetadata attribute)</a>
-</li>
         <li><a href="curategpt.store.html#curategpt.store.db_metadata.DBSettings.model_computed_fields">(curategpt.store.db_metadata.DBSettings attribute)</a>
 </li>
         <li><a href="curategpt.store.html#curategpt.store.duckdb_result.DuckDBSearchResult.model_computed_fields">(curategpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
@@ -2418,7 +2423,9 @@
 </li>
         <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.CollectionIndex.model_computed_fields">(curategpt.store.in_memory_adapter.CollectionIndex attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.model_computed_fields">(curategpt.store.metadata.CollectionMetadata attribute)</a>
+        <li><a href="curategpt.store.html#curategpt.store.Metadata.model_computed_fields">(curategpt.store.Metadata attribute)</a>
+</li>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.model_computed_fields">(curategpt.store.metadata.Metadata attribute)</a>
 </li>
         <li><a href="curategpt.utils.html#curategpt.utils.eval_utils.Outcome.model_computed_fields">(curategpt.utils.eval_utils.Outcome attribute)</a>
 </li>
@@ -2474,8 +2481,6 @@
 </li>
         <li><a href="curategpt.extract.html#curategpt.extract.extractor.AnnotatedObject.model_config">(curategpt.extract.extractor.AnnotatedObject attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.model_config">(curategpt.store.CollectionMetadata attribute)</a>
-</li>
         <li><a href="curategpt.store.html#curategpt.store.db_metadata.DBSettings.model_config">(curategpt.store.db_metadata.DBSettings attribute)</a>
 </li>
         <li><a href="curategpt.store.html#curategpt.store.duckdb_result.DuckDBSearchResult.model_config">(curategpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
@@ -2484,7 +2489,9 @@
 </li>
         <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.CollectionIndex.model_config">(curategpt.store.in_memory_adapter.CollectionIndex attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.model_config">(curategpt.store.metadata.CollectionMetadata attribute)</a>
+        <li><a href="curategpt.store.html#curategpt.store.Metadata.model_config">(curategpt.store.Metadata attribute)</a>
+</li>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.model_config">(curategpt.store.metadata.Metadata attribute)</a>
 </li>
         <li><a href="curategpt.store.html#curategpt.store.schema_proxy.SchemaProxy.model_config">(curategpt.store.schema_proxy.SchemaProxy attribute)</a>
 </li>
@@ -2538,8 +2545,6 @@
 </li>
         <li><a href="curategpt.extract.html#curategpt.extract.extractor.AnnotatedObject.model_fields">(curategpt.extract.extractor.AnnotatedObject attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.model_fields">(curategpt.store.CollectionMetadata attribute)</a>
-</li>
         <li><a href="curategpt.store.html#curategpt.store.db_metadata.DBSettings.model_fields">(curategpt.store.db_metadata.DBSettings attribute)</a>
 </li>
         <li><a href="curategpt.store.html#curategpt.store.duckdb_result.DuckDBSearchResult.model_fields">(curategpt.store.duckdb_result.DuckDBSearchResult attribute)</a>
@@ -2548,7 +2553,9 @@
 </li>
         <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.CollectionIndex.model_fields">(curategpt.store.in_memory_adapter.CollectionIndex attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.model_fields">(curategpt.store.metadata.CollectionMetadata attribute)</a>
+        <li><a href="curategpt.store.html#curategpt.store.Metadata.model_fields">(curategpt.store.Metadata attribute)</a>
+</li>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.model_fields">(curategpt.store.metadata.Metadata attribute)</a>
 </li>
         <li><a href="curategpt.utils.html#curategpt.utils.eval_utils.Outcome.model_fields">(curategpt.utils.eval_utils.Outcome attribute)</a>
 </li>
@@ -2587,6 +2594,12 @@
         <li><a href="curategpt.extract.html#curategpt.extract.RecursiveExtractor.model_name">(curategpt.extract.RecursiveExtractor attribute)</a>
 </li>
         <li><a href="curategpt.html#curategpt.Extractor.model_name">(curategpt.Extractor attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="curategpt.store.html#curategpt.store.Metadata.model_post_init">model_post_init() (curategpt.store.Metadata method)</a>
+
+      <ul>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.model_post_init">(curategpt.store.metadata.Metadata method)</a>
 </li>
       </ul></li>
       <li>
@@ -2678,6 +2691,8 @@
         <li><a href="curategpt.store.html#module-curategpt.store.db_metadata">curategpt.store.db_metadata</a>
 </li>
         <li><a href="curategpt.store.html#module-curategpt.store.duckdb_adapter">curategpt.store.duckdb_adapter</a>
+</li>
+        <li><a href="curategpt.store.html#module-curategpt.store.duckdb_connection_handler">curategpt.store.duckdb_connection_handler</a>
 </li>
         <li><a href="curategpt.store.html#module-curategpt.store.duckdb_result">curategpt.store.duckdb_result</a>
 </li>
@@ -2811,8 +2826,6 @@
 </li>
         <li><a href="curategpt.store.html#curategpt.store.ChromaDBAdapter.name">(curategpt.store.ChromaDBAdapter attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.name">(curategpt.store.CollectionMetadata attribute)</a>
-</li>
         <li><a href="curategpt.store.html#curategpt.store.db_adapter.DBAdapter.name">(curategpt.store.db_adapter.DBAdapter attribute)</a>
 </li>
         <li><a href="curategpt.store.html#curategpt.store.db_metadata.DBSettings.name">(curategpt.store.db_metadata.DBSettings attribute)</a>
@@ -2824,8 +2837,6 @@
         <li><a href="curategpt.store.html#curategpt.store.DuckDBAdapter.name">(curategpt.store.DuckDBAdapter attribute)</a>
 </li>
         <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.InMemoryAdapter.name">(curategpt.store.in_memory_adapter.InMemoryAdapter attribute)</a>
-</li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.name">(curategpt.store.metadata.CollectionMetadata attribute)</a>
 </li>
         <li><a href="curategpt.store.html#curategpt.store.schema_proxy.SchemaProxy.name">(curategpt.store.schema_proxy.SchemaProxy property)</a>
 </li>
@@ -2968,10 +2979,10 @@
         <li><a href="curategpt.wrappers.investigation.html#curategpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper.object_by_id">(curategpt.wrappers.investigation.fairsharing_wrapper.FAIRSharingWrapper method)</a>
 </li>
       </ul></li>
-      <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.object_count">object_count (curategpt.store.CollectionMetadata attribute)</a>
+      <li><a href="curategpt.store.html#curategpt.store.Metadata.object_count">object_count (curategpt.store.Metadata attribute)</a>
 
       <ul>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.object_count">(curategpt.store.metadata.CollectionMetadata attribute)</a>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.object_count">(curategpt.store.metadata.Metadata attribute)</a>
 </li>
       </ul></li>
       <li><a href="curategpt.wrappers.bio.html#curategpt.wrappers.bio.gocam_wrapper.GOCAMWrapper.object_from_dict">object_from_dict() (curategpt.wrappers.bio.gocam_wrapper.GOCAMWrapper method)</a>
@@ -2991,9 +3002,9 @@
       <li><a href="curategpt.app.html#curategpt.app.cart.CartItem.object_type">object_type (curategpt.app.cart.CartItem attribute)</a>
 
       <ul>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.object_type">(curategpt.store.CollectionMetadata attribute)</a>
+        <li><a href="curategpt.store.html#curategpt.store.Metadata.object_type">(curategpt.store.Metadata attribute)</a>
 </li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.object_type">(curategpt.store.metadata.CollectionMetadata attribute)</a>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.object_type">(curategpt.store.metadata.Metadata attribute)</a>
 </li>
       </ul></li>
       <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.Collection.objects">objects (curategpt.store.in_memory_adapter.Collection attribute)</a>
@@ -3218,6 +3229,20 @@
       </ul></li>
       <li><a href="curategpt.wrappers.literature.html#curategpt.wrappers.literature.pmc_wrapper.PMCWrapper">PMCWrapper (class in curategpt.wrappers.literature.pmc_wrapper)</a>
 </li>
+      <li><a href="curategpt.html#curategpt.ChromaDBAdapter.populate_venomx">populate_venomx() (curategpt.ChromaDBAdapter static method)</a>
+
+      <ul>
+        <li><a href="curategpt.store.html#curategpt.store.chromadb_adapter.ChromaDBAdapter.populate_venomx">(curategpt.store.chromadb_adapter.ChromaDBAdapter static method)</a>
+</li>
+        <li><a href="curategpt.store.html#curategpt.store.ChromaDBAdapter.populate_venomx">(curategpt.store.ChromaDBAdapter static method)</a>
+</li>
+        <li><a href="curategpt.store.html#curategpt.store.duckdb_adapter.DuckDBAdapter.populate_venomx">(curategpt.store.duckdb_adapter.DuckDBAdapter static method)</a>
+</li>
+        <li><a href="curategpt.store.html#curategpt.store.DuckDBAdapter.populate_venomx">(curategpt.store.DuckDBAdapter static method)</a>
+</li>
+        <li><a href="curategpt.store.html#curategpt.store.in_memory_adapter.InMemoryAdapter.populate_venomx">(curategpt.store.in_memory_adapter.InMemoryAdapter static method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curategpt.wrappers.general.html#curategpt.wrappers.general.github_wrapper.GitHubWrapper.pr_comments">pr_comments() (curategpt.wrappers.general.github_wrapper.GitHubWrapper method)</a>
@@ -3560,6 +3585,12 @@
         <li><a href="curategpt.extract.html#curategpt.extract.BasicExtractor.serialize">(curategpt.extract.BasicExtractor method)</a>
 </li>
       </ul></li>
+      <li><a href="curategpt.store.html#curategpt.store.Metadata.serialize_venomx_metadata_for_adapter">serialize_venomx_metadata_for_adapter() (curategpt.store.Metadata method)</a>
+
+      <ul>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.serialize_venomx_metadata_for_adapter">(curategpt.store.metadata.Metadata method)</a>
+</li>
+      </ul></li>
       <li><a href="curategpt.wrappers.general.html#curategpt.wrappers.general.google_drive_wrapper.GoogleDriveWrapper.service">service (curategpt.wrappers.general.google_drive_wrapper.GoogleDriveWrapper attribute)</a>
 
       <ul>
@@ -3646,10 +3677,6 @@
 
       <ul>
         <li><a href="curategpt.evaluation.html#curategpt.evaluation.evaluation_datamodel.StratifiedCollection.source">(curategpt.evaluation.evaluation_datamodel.StratifiedCollection attribute)</a>
-</li>
-        <li><a href="curategpt.store.html#curategpt.store.CollectionMetadata.source">(curategpt.store.CollectionMetadata attribute)</a>
-</li>
-        <li><a href="curategpt.store.html#curategpt.store.metadata.CollectionMetadata.source">(curategpt.store.metadata.CollectionMetadata attribute)</a>
 </li>
         <li><a href="curategpt.wrappers.bio.html#curategpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper.source">(curategpt.wrappers.bio.omicsdi_wrapper.OmicsDIWrapper attribute)</a>
 </li>
@@ -3906,6 +3933,12 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="curategpt.store.html#curategpt.store.duckdb_adapter.DuckDBAdapter.update_or_create_venomx">update_or_create_venomx() (curategpt.store.duckdb_adapter.DuckDBAdapter method)</a>
+
+      <ul>
+        <li><a href="curategpt.store.html#curategpt.store.DuckDBAdapter.update_or_create_venomx">(curategpt.store.DuckDBAdapter method)</a>
+</li>
+      </ul></li>
       <li><a href="curategpt.agents.html#curategpt.agents.huggingface_agent.HuggingFaceAgent.upload">upload() (curategpt.agents.huggingface_agent.HuggingFaceAgent method)</a>
 </li>
       <li><a href="curategpt.html#curategpt.ChromaDBAdapter.upsert">upsert() (curategpt.ChromaDBAdapter method)</a>
@@ -3948,16 +3981,22 @@
 </li>
       <li><a href="curategpt.evaluation.html#curategpt.evaluation.evaluation_datamodel.StratifiedCollection.validation_set_collection">validation_set_collection (curategpt.evaluation.evaluation_datamodel.StratifiedCollection attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curategpt.store.html#curategpt.store.duckdb_adapter.DuckDBAdapter.vec_dimension">vec_dimension (curategpt.store.duckdb_adapter.DuckDBAdapter attribute)</a>
 
       <ul>
         <li><a href="curategpt.store.html#curategpt.store.DuckDBAdapter.vec_dimension">(curategpt.store.DuckDBAdapter attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="curategpt.app.html#curategpt.app.components.vectors_to_fig">vectors_to_fig() (in module curategpt.app.components)</a>
 </li>
+      <li><a href="curategpt.store.html#curategpt.store.Metadata.venomx">venomx (curategpt.store.Metadata attribute)</a>
+
+      <ul>
+        <li><a href="curategpt.store.html#curategpt.store.metadata.Metadata.venomx">(curategpt.store.metadata.Metadata attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 

@@ -36,6 +36,14 @@ curategpt.store.duckdb\_adapter module
    :undoc-members:
    :show-inheritance:
 
+curategpt.store.duckdb\_connection\_handler module
+--------------------------------------------------
+
+.. automodule:: curategpt.store.duckdb_connection_handler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 curategpt.store.duckdb\_result module
 -------------------------------------
 

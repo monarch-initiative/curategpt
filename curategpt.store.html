@@ -68,6 +68,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.matches"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.matches()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.name"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.peek"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.peek()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.populate_venomx"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.populate_venomx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.remove_collection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.reset"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.reset()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.search"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.search()</span></code></a></li>
@@ -157,14 +158,24 @@
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.openai_client"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.openai_client</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.parse_duckdb_result"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.parse_duckdb_result()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.peek"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.peek()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.populate_venomx"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.populate_venomx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.remove_collection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.search"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.search()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.set_collection_metadata"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.set_collection_metadata()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.text_lookup"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.text_lookup</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.update"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.update()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.update_collection_metadata"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.update_collection_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.update_or_create_venomx"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.update_or_create_venomx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.upsert"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.upsert()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.vec_dimension"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.vec_dimension</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-curategpt.store.duckdb_connection_handler">curategpt.store.duckdb_connection_handler module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler"><code class="docutils literal notranslate"><span class="pre">DuckDBConnectionAndRecoveryHandler</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler.close"><code class="docutils literal notranslate"><span class="pre">DuckDBConnectionAndRecoveryHandler.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler.connect"><code class="docutils literal notranslate"><span class="pre">DuckDBConnectionAndRecoveryHandler.connect()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -189,6 +200,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-curategpt.store.in_memory_adapter">curategpt.store.in_memory_adapter module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curategpt.store.in_memory_adapter.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.Collection.add"><code class="docutils literal notranslate"><span class="pre">Collection.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.Collection.add_metadata"><code class="docutils literal notranslate"><span class="pre">Collection.add_metadata()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.Collection.delete"><code class="docutils literal notranslate"><span class="pre">Collection.delete()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.Collection.metadata"><code class="docutils literal notranslate"><span class="pre">Collection.metadata</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.Collection.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Collection.model_computed_fields</span></code></a></li>
@@ -217,6 +229,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.matches"><code class="docutils literal notranslate"><span class="pre">InMemoryAdapter.matches()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.name"><code class="docutils literal notranslate"><span class="pre">InMemoryAdapter.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.peek"><code class="docutils literal notranslate"><span class="pre">InMemoryAdapter.peek()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.populate_venomx"><code class="docutils literal notranslate"><span class="pre">InMemoryAdapter.populate_venomx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">InMemoryAdapter.remove_collection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.search"><code class="docutils literal notranslate"><span class="pre">InMemoryAdapter.search()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.set_collection_metadata"><code class="docutils literal notranslate"><span class="pre">InMemoryAdapter.set_collection_metadata()</span></code></a></li>
@@ -228,18 +241,17 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-curategpt.store.metadata">curategpt.store.metadata module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.annotations"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.annotations</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.description"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.description</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.hnsw_space"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.hnsw_space</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.model"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_computed_fields</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.model_config"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.model_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_fields</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.name"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.object_count"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.object_count</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.object_type"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.object_type</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata.source"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.source</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#curategpt.store.metadata.Metadata"><code class="docutils literal notranslate"><span class="pre">Metadata</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.deserialize_venomx_metadata_from_adapter"><code class="docutils literal notranslate"><span class="pre">Metadata.deserialize_venomx_metadata_from_adapter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.hnsw_space"><code class="docutils literal notranslate"><span class="pre">Metadata.hnsw_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Metadata.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.model_config"><code class="docutils literal notranslate"><span class="pre">Metadata.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.model_fields"><code class="docutils literal notranslate"><span class="pre">Metadata.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.model_post_init"><code class="docutils literal notranslate"><span class="pre">Metadata.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.object_count"><code class="docutils literal notranslate"><span class="pre">Metadata.object_count</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.object_type"><code class="docutils literal notranslate"><span class="pre">Metadata.object_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.serialize_venomx_metadata_for_adapter"><code class="docutils literal notranslate"><span class="pre">Metadata.serialize_venomx_metadata_for_adapter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.metadata.Metadata.venomx"><code class="docutils literal notranslate"><span class="pre">Metadata.venomx</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -277,6 +289,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.matches"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.matches()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.name"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.peek"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.peek()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.populate_venomx"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.populate_venomx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.remove_collection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.reset"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.reset()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.search"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.search()</span></code></a></li>
@@ -285,20 +298,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.update"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.update()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.update_collection_metadata"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.update_collection_metadata()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.ChromaDBAdapter.upsert"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.upsert()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#curategpt.store.CollectionMetadata"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.annotations"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.annotations</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.description"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.description</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.hnsw_space"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.hnsw_space</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.model"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_computed_fields</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.model_config"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.model_fields"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.model_fields</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.name"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.object_count"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.object_count</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.object_type"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.object_type</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.CollectionMetadata.source"><code class="docutils literal notranslate"><span class="pre">CollectionMetadata.source</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#curategpt.store.DBAdapter"><code class="docutils literal notranslate"><span class="pre">DBAdapter</span></code></a><ul>
@@ -358,14 +357,29 @@
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.openai_client"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.openai_client</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.parse_duckdb_result"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.parse_duckdb_result()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.peek"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.peek()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.populate_venomx"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.populate_venomx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.remove_collection"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.remove_collection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.search"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.search()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.set_collection_metadata"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.set_collection_metadata()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.text_lookup"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.text_lookup</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.update"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.update()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.update_collection_metadata"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.update_collection_metadata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.update_or_create_venomx"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.update_or_create_venomx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.upsert"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.upsert()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.store.DuckDBAdapter.vec_dimension"><code class="docutils literal notranslate"><span class="pre">DuckDBAdapter.vec_dimension</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#curategpt.store.Metadata"><code class="docutils literal notranslate"><span class="pre">Metadata</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.deserialize_venomx_metadata_from_adapter"><code class="docutils literal notranslate"><span class="pre">Metadata.deserialize_venomx_metadata_from_adapter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.hnsw_space"><code class="docutils literal notranslate"><span class="pre">Metadata.hnsw_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Metadata.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.model_config"><code class="docutils literal notranslate"><span class="pre">Metadata.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.model_fields"><code class="docutils literal notranslate"><span class="pre">Metadata.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.model_post_init"><code class="docutils literal notranslate"><span class="pre">Metadata.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.object_count"><code class="docutils literal notranslate"><span class="pre">Metadata.object_count</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.object_type"><code class="docutils literal notranslate"><span class="pre">Metadata.object_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.serialize_venomx_metadata_for_adapter"><code class="docutils literal notranslate"><span class="pre">Metadata.serialize_venomx_metadata_for_adapter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.store.Metadata.venomx"><code class="docutils literal notranslate"><span class="pre">Metadata.venomx</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#curategpt.store.SchemaProxy"><code class="docutils literal notranslate"><span class="pre">SchemaProxy</span></code></a><ul>
@@ -425,7 +439,7 @@
 <p>ChromaDB adapter.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="curategpt.store.chromadb_adapter.ChromaDBAdapter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.chromadb_adapter.</span></span><span class="sig-name descname"><span class="pre">ChromaDBAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_proxy=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_field_names_by_collection=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_field='id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_lookup='text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_to_object=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.chromadb_adapter.</span></span><span class="sig-name descname"><span class="pre">ChromaDBAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_proxy=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_field_names_by_collection=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_model='all-MiniLM-L6-v2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_field='id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_lookup='text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_to_object=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#curategpt.store.db_adapter.DBAdapter" title="curategpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a></p>
 <p>An Adapter that wraps a ChromaDB client</p>
 <dl class="py attribute">
@@ -442,7 +456,7 @@
 <dd class="field-odd"><p><strong>collection_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -474,7 +488,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curategpt.store.chromadb_adapter.ChromaDBAdapter.default_model">
-<span class="sig-name descname"><span class="pre">default_model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'all-MiniLM-L6-v2'</span></em><a class="headerlink" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.default_model" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">default_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'all-MiniLM-L6-v2'</span></em><a class="headerlink" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.default_model" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -654,6 +668,23 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.chromadb_adapter.ChromaDBAdapter.populate_venomx">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">populate_venomx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">existing_venomx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.populate_venomx" title="Link to this definition"></a></dt>
+<dd><p>Populate venomx with data currently given when inserting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>model</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p>:param existing_venomx
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Index</span></code></span>
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.chromadb_adapter.ChromaDBAdapter.remove_collection">
 <span class="sig-name descname"><span class="pre">remove_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists_ok</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.remove_collection" title="Link to this definition"></a></dt>
 <dd><p>Remove a collection from the database.</p>
@@ -718,11 +749,14 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>collection_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
-<li><p><strong>metadata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span>)</p></li>
+<li><p><strong>metadata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
 </dd>
 </dl>
 </dd></dl>
@@ -752,19 +786,19 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.chromadb_adapter.ChromaDBAdapter.update_collection_metadata">
 <span class="sig-name descname"><span class="pre">update_collection_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.chromadb_adapter.ChromaDBAdapter.update_collection_metadata" title="Link to this definition"></a></dt>
-<dd><p>Update the metadata for a collection.</p>
+<dd><p>Update the metadata for a collection based on the adapter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
-<li><p><strong>kwargs</strong></p></li>
+<li><p><strong>collection_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the collection.</p></li>
+<li><p><strong>kwargs</strong> – Additional metadata fields.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dd class="field-odd"><p>Updated Metadata instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -839,7 +873,7 @@ gives you a collection object:</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -1203,9 +1237,11 @@ overridden.</p>
 <span class="sig-name descname"><span class="pre">set_collection_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.db_adapter.DBAdapter.set_collection_metadata" title="Link to this definition"></a></dt>
 <dd><p>Set the metadata for a collection.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">CollectionMetadata</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">Metadata</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">CollectionMetadata</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;People&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;People in the database&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">md</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">collection_metadata</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">md</span><span class="o">.</span><span class="n">venomx</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;People&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">md</span><span class="o">.</span><span class="n">venomx</span><span class="o">.</span><span class="n">embedding_model</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;openai:&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">set_collection_metadata</span><span class="p">(</span><span class="s2">&quot;people&quot;</span><span class="p">,</span> <span class="n">cm</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1248,7 +1284,7 @@ overridden.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -1371,7 +1407,7 @@ using the experimental persistence feature</p>
 :param include_derived:
 :type kwargs: 
 :param kwargs:
-:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a>]</span>
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span>
 :return:</p>
 </dd></dl>
 
@@ -1609,6 +1645,29 @@ Returns
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.duckdb_adapter.DuckDBAdapter.populate_venomx">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">populate_venomx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeddings_dimension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.populate_venomx" title="Link to this definition"></a></dt>
+<dd><p>Populate venomx with data currently given when inserting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>model</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>distance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>object_type</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>embeddings_dimension</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.duckdb_adapter.DuckDBAdapter.remove_collection">
 <span class="sig-name descname"><span class="pre">remove_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists_ok</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.remove_collection" title="Link to this definition"></a></dt>
 <dd><p>Remove the collection from the database
@@ -1649,7 +1708,7 @@ Returns
 <dd><p>Set the metadata for the collection
 :type collection_name: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
 :param collection_name:
-:type metadata: <span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span>
+:type metadata: <span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span>
 :param metadata:
 :type kwargs: 
 :param kwargs:
@@ -1686,6 +1745,17 @@ are updated.
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.duckdb_adapter.DuckDBAdapter.update_or_create_venomx">
+<span class="sig-name descname"><span class="pre">update_or_create_venomx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">venomx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeddings_dimension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.update_or_create_venomx" title="Link to this definition"></a></dt>
+<dd><p>Updates an existing Index instance (venomx) with additional values or creates a new one if none is provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.duckdb_adapter.DuckDBAdapter.upsert">
 <span class="sig-name descname"><span class="pre">upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.upsert" title="Link to this definition"></a></dt>
 <dd><p>Upsert objects into the collection
@@ -1700,6 +1770,47 @@ are updated.
 <dt class="sig sig-object py" id="curategpt.store.duckdb_adapter.DuckDBAdapter.vec_dimension">
 <span class="sig-name descname"><span class="pre">vec_dimension</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#curategpt.store.duckdb_adapter.DuckDBAdapter.vec_dimension" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-curategpt.store.duckdb_connection_handler">
+<span id="curategpt-store-duckdb-connection-handler-module"></span><h2>curategpt.store.duckdb_connection_handler module<a class="headerlink" href="#module-curategpt.store.duckdb_connection_handler" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.duckdb_connection_handler.</span></span><span class="sig-name descname"><span class="pre">DuckDBConnectionAndRecoveryHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler.close" title="Link to this definition"></a></dt>
+<dd><p>Safely close the database connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.duckdb_connection_handler.DuckDBConnectionAndRecoveryHandler.connect" title="Link to this definition"></a></dt>
+<dd><p>Establish database connection with error handling and recovery.</p>
+<p>Workflow as described in:
+<a class="reference external" href="https://duckdb.org/docs/extensions/vss.html#persistence">https://duckdb.org/docs/extensions/vss.html#persistence</a></p>
+<p>In case of any WAL related issue:
+- Create a temporary workspace (in-memory database with VSS)
+- Temporarily bring in the broken database (ATTACH)
+- Fix it (WAL recovery happens)
+- Save changes (CHECKPOINT)
+- Put the fixed database back (DETACH)
+- Clean up our temporary workspace (close)
+- Now safely open the fixed database normally</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -1783,6 +1894,16 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] ob
 <dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.in_memory_adapter.Collection.add">
 <span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.in_memory_adapter.Collection.add" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.in_memory_adapter.Collection.add_metadata">
+<span class="sig-name descname"><span class="pre">add_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">venomx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.in_memory_adapter.Collection.add_metadata" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -1895,7 +2016,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] ob
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -2049,6 +2170,30 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] ob
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.in_memory_adapter.InMemoryAdapter.populate_venomx">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">populate_venomx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeddings_dimension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.populate_venomx" title="Link to this definition"></a></dt>
+<dd><p>Populate venomx with data currently given when inserting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>model</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>distance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>object_type</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>embeddings_dimension</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><strong>index_fields</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.in_memory_adapter.InMemoryAdapter.remove_collection">
 <span class="sig-name descname"><span class="pre">remove_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists_ok</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.in_memory_adapter.InMemoryAdapter.remove_collection" title="Link to this definition"></a></dt>
 <dd><p>Remove a collection from the database.</p>
@@ -2127,7 +2272,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] ob
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -2158,77 +2303,95 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] ob
 <section id="module-curategpt.store.metadata">
 <span id="curategpt-store-metadata-module"></span><h2>curategpt.store.metadata module<a class="headerlink" href="#module-curategpt.store.metadata" title="Link to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.metadata.</span></span><span class="sig-name descname"><span class="pre">CollectionMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.metadata.</span></span><span class="sig-name descname"><span class="pre">Metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.metadata.Metadata" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
-<p>Metadata about a collection.</p>
-<p>This is an open class, so additional metadata can be added.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.annotations">
-<span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.annotations" title="Link to this definition"></a></dt>
-<dd><p>Additional metadata</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.deserialize_venomx_metadata_from_adapter">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize_venomx_metadata_from_adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adapter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.metadata.Metadata.deserialize_venomx_metadata_from_adapter" title="Link to this definition"></a></dt>
+<dd><p>Create a Metadata instance from adapter-specific metadata dictionary.
+ChromaDB: _venomx is deserialized back into venomx. (str to dict)
+DuckDB: venomx is accessed directly as a nested object.
+:type metadata_dict: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>
+:param metadata_dict: Metadata dictionary from the adapter.
+:type adapter: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:param adapter: Adapter name (e.g., ‘chroma’, ‘duckdb’).
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>
+:return: Metadata instance.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.description">
-<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.description" title="Link to this definition"></a></dt>
-<dd><p>Description of the collection</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.hnsw_space">
-<span class="sig-name descname"><span class="pre">hnsw_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.hnsw_space" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.hnsw_space">
+<span class="sig-name descname"><span class="pre">hnsw_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.Metadata.hnsw_space" title="Link to this definition"></a></dt>
 <dd><p>Space used for hnsw index (e.g. ‘cosine’)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.model" title="Link to this definition"></a></dt>
-<dd><p>Name of any ML model</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.model_computed_fields">
-<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[Dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.model_computed_fields" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[Dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curategpt.store.metadata.Metadata.model_computed_fields" title="Link to this definition"></a></dt>
 <dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.model_config" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curategpt.store.metadata.Metadata.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[Dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotations':</span> <span class="pre">FieldInfo(annotation=Union[Dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'hnsw_space':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'model':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_type':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'source':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.model_fields" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[Dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'hnsw_space':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_type':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'venomx':</span> <span class="pre">FieldInfo(annotation=Union[Index,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curategpt.store.metadata.Metadata.model_fields" title="Link to this definition"></a></dt>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] objects.</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.name" title="Link to this definition"></a></dt>
-<dd><p>Name of the collection</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.metadata.Metadata.model_post_init" title="Link to this definition"></a></dt>
+<dd><p>This function is meant to behave like a BaseModel method to initialise private attributes.</p>
+<p>It takes context as an argument since that’s what pydantic-core passes when calling it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><p>self: The BaseModel instance.
+context: The context.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.object_count">
-<span class="sig-name descname"><span class="pre">object_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.object_count" title="Link to this definition"></a></dt>
-<dd><p>Number of objects in the collection</p>
-</dd></dl>
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.object_count">
+<span class="sig-name descname"><span class="pre">object_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.Metadata.object_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.object_type">
-<span class="sig-name descname"><span class="pre">object_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.object_type" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.Metadata.object_type" title="Link to this definition"></a></dt>
 <dd><p>Type of object in the collection</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.serialize_venomx_metadata_for_adapter">
+<span class="sig-name descname"><span class="pre">serialize_venomx_metadata_for_adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adapter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.metadata.Metadata.serialize_venomx_metadata_for_adapter" title="Link to this definition"></a></dt>
+<dd><p>Convert the Metadata instance to a dictionary suitable for the specified adapter.
+ChromaDB: venomx is serialized into _venomx before storing. (dict to str)
+DuckDB: venomx remains as an Index object without serialization.
+:type adapter: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:param adapter: Adapter name (e.g., ‘chroma’, ‘duckdb’).
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>
+:return: Metadata dictionary.</p>
+</dd></dl>
+
 <dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.metadata.CollectionMetadata.source">
-<span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.CollectionMetadata.source" title="Link to this definition"></a></dt>
-<dd><p>Source of the collection</p>
+<dt class="sig sig-object py" id="curategpt.store.metadata.Metadata.venomx">
+<span class="sig-name descname"><span class="pre">venomx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Index</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.metadata.Metadata.venomx" title="Link to this definition"></a></dt>
+<dd><p>Retains the complex venomx Index object for internal application use.
+Index is the main object of venomx
+<a class="reference external" href="https://github.com/cmungall/venomx">https://github.com/cmungall/venomx</a></p>
 </dd></dl>
 
 </dd></dl>
@@ -2329,7 +2492,7 @@ In future this will index</p>
 in the future.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="curategpt.store.ChromaDBAdapter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.</span></span><span class="sig-name descname"><span class="pre">ChromaDBAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_proxy=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_field_names_by_collection=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_field='id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_lookup='text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_to_object=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.ChromaDBAdapter" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.</span></span><span class="sig-name descname"><span class="pre">ChromaDBAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_proxy=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_field_names_by_collection=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_model='all-MiniLM-L6-v2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_field='id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_lookup='text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_to_object=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.ChromaDBAdapter" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#curategpt.store.db_adapter.DBAdapter" title="curategpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a></p>
 <p>An Adapter that wraps a ChromaDB client</p>
 <dl class="py attribute">
@@ -2346,7 +2509,7 @@ in the future.</p>
 <dd class="field-odd"><p><strong>collection_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -2378,7 +2541,7 @@ in the future.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="curategpt.store.ChromaDBAdapter.default_model">
-<span class="sig-name descname"><span class="pre">default_model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'all-MiniLM-L6-v2'</span></em><a class="headerlink" href="#curategpt.store.ChromaDBAdapter.default_model" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">default_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'all-MiniLM-L6-v2'</span></em><a class="headerlink" href="#curategpt.store.ChromaDBAdapter.default_model" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -2558,6 +2721,23 @@ in the future.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.ChromaDBAdapter.populate_venomx">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">populate_venomx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">existing_venomx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.ChromaDBAdapter.populate_venomx" title="Link to this definition"></a></dt>
+<dd><p>Populate venomx with data currently given when inserting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>model</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p>:param existing_venomx
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Index</span></code></span>
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.ChromaDBAdapter.remove_collection">
 <span class="sig-name descname"><span class="pre">remove_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists_ok</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.ChromaDBAdapter.remove_collection" title="Link to this definition"></a></dt>
 <dd><p>Remove a collection from the database.</p>
@@ -2622,11 +2802,14 @@ in the future.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>collection_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
-<li><p><strong>metadata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span>)</p></li>
+<li><p><strong>metadata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2656,19 +2839,19 @@ in the future.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.ChromaDBAdapter.update_collection_metadata">
 <span class="sig-name descname"><span class="pre">update_collection_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.ChromaDBAdapter.update_collection_metadata" title="Link to this definition"></a></dt>
-<dd><p>Update the metadata for a collection.</p>
+<dd><p>Update the metadata for a collection based on the adapter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
-<li><p><strong>kwargs</strong></p></li>
+<li><p><strong>collection_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the collection.</p></li>
+<li><p><strong>kwargs</strong> – Additional metadata fields.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dd class="field-odd"><p>Updated Metadata instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2688,82 +2871,6 @@ in the future.</p>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.</span></span><span class="sig-name descname"><span class="pre">CollectionMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.CollectionMetadata" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
-<p>Metadata about a collection.</p>
-<p>This is an open class, so additional metadata can be added.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.annotations">
-<span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.annotations" title="Link to this definition"></a></dt>
-<dd><p>Additional metadata</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.description">
-<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.description" title="Link to this definition"></a></dt>
-<dd><p>Description of the collection</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.hnsw_space">
-<span class="sig-name descname"><span class="pre">hnsw_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.hnsw_space" title="Link to this definition"></a></dt>
-<dd><p>Space used for hnsw index (e.g. ‘cosine’)</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.model" title="Link to this definition"></a></dt>
-<dd><p>Name of any ML model</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.model_computed_fields">
-<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[Dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.model_computed_fields" title="Link to this definition"></a></dt>
-<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.model_config" title="Link to this definition"></a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[Dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotations':</span> <span class="pre">FieldInfo(annotation=Union[Dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'hnsw_space':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'model':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_type':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'source':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.model_fields" title="Link to this definition"></a></dt>
-<dd><p>Metadata about the fields defined on the model,
-mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] objects.</p>
-<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.name" title="Link to this definition"></a></dt>
-<dd><p>Name of the collection</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.object_count">
-<span class="sig-name descname"><span class="pre">object_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.object_count" title="Link to this definition"></a></dt>
-<dd><p>Number of objects in the collection</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.object_type">
-<span class="sig-name descname"><span class="pre">object_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.object_type" title="Link to this definition"></a></dt>
-<dd><p>Type of object in the collection</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="curategpt.store.CollectionMetadata.source">
-<span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.CollectionMetadata.source" title="Link to this definition"></a></dt>
-<dd><p>Source of the collection</p>
 </dd></dl>
 
 </dd></dl>
@@ -2815,7 +2922,7 @@ gives you a collection object:</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -3179,9 +3286,11 @@ overridden.</p>
 <span class="sig-name descname"><span class="pre">set_collection_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.DBAdapter.set_collection_metadata" title="Link to this definition"></a></dt>
 <dd><p>Set the metadata for a collection.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">CollectionMetadata</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">Metadata</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">CollectionMetadata</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;People&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;People in the database&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">md</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">collection_metadata</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">md</span><span class="o">.</span><span class="n">venomx</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;People&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">md</span><span class="o">.</span><span class="n">venomx</span><span class="o">.</span><span class="n">embedding_model</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;openai:&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">set_collection_metadata</span><span class="p">(</span><span class="s2">&quot;people&quot;</span><span class="p">,</span> <span class="n">cm</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -3224,7 +3333,7 @@ overridden.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
@@ -3270,7 +3379,7 @@ overridden.</p>
 :param include_derived:
 :type kwargs: 
 :param kwargs:
-:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a>]</span>
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span>
 :return:</p>
 </dd></dl>
 
@@ -3508,6 +3617,29 @@ Returns
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.DuckDBAdapter.populate_venomx">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">populate_venomx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeddings_dimension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.DuckDBAdapter.populate_venomx" title="Link to this definition"></a></dt>
+<dd><p>Populate venomx with data currently given when inserting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>model</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>distance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>object_type</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><strong>embeddings_dimension</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.DuckDBAdapter.remove_collection">
 <span class="sig-name descname"><span class="pre">remove_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists_ok</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.DuckDBAdapter.remove_collection" title="Link to this definition"></a></dt>
 <dd><p>Remove the collection from the database
@@ -3548,7 +3680,7 @@ Returns
 <dd><p>Set the metadata for the collection
 :type collection_name: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
 :param collection_name:
-:type metadata: <span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.CollectionMetadata" title="curategpt.store.metadata.CollectionMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionMetadata</span></code></a></span>
+:type metadata: <span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span>
 :param metadata:
 :type kwargs: 
 :param kwargs:
@@ -3585,6 +3717,17 @@ are updated.
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.DuckDBAdapter.update_or_create_venomx">
+<span class="sig-name descname"><span class="pre">update_or_create_venomx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">venomx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeddings_dimension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.DuckDBAdapter.update_or_create_venomx" title="Link to this definition"></a></dt>
+<dd><p>Updates an existing Index instance (venomx) with additional values or creates a new one if none is provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#curategpt.store.metadata.Metadata" title="curategpt.store.metadata.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="curategpt.store.DuckDBAdapter.upsert">
 <span class="sig-name descname"><span class="pre">upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.DuckDBAdapter.upsert" title="Link to this definition"></a></dt>
 <dd><p>Upsert objects into the collection
@@ -3599,6 +3742,100 @@ are updated.
 <dt class="sig sig-object py" id="curategpt.store.DuckDBAdapter.vec_dimension">
 <span class="sig-name descname"><span class="pre">vec_dimension</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#curategpt.store.DuckDBAdapter.vec_dimension" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="curategpt.store.Metadata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.store.</span></span><span class="sig-name descname"><span class="pre">Metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.Metadata" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.deserialize_venomx_metadata_from_adapter">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize_venomx_metadata_from_adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adapter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.Metadata.deserialize_venomx_metadata_from_adapter" title="Link to this definition"></a></dt>
+<dd><p>Create a Metadata instance from adapter-specific metadata dictionary.
+ChromaDB: _venomx is deserialized back into venomx. (str to dict)
+DuckDB: venomx is accessed directly as a nested object.
+:type metadata_dict: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>
+:param metadata_dict: Metadata dictionary from the adapter.
+:type adapter: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:param adapter: Adapter name (e.g., ‘chroma’, ‘duckdb’).
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>
+:return: Metadata instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.hnsw_space">
+<span class="sig-name descname"><span class="pre">hnsw_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.Metadata.hnsw_space" title="Link to this definition"></a></dt>
+<dd><p>Space used for hnsw index (e.g. ‘cosine’)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[Dict[str,</span> <span class="pre">ComputedFieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#curategpt.store.Metadata.model_computed_fields" title="Link to this definition"></a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'protected_namespaces':</span> <span class="pre">()}</span></em><a class="headerlink" href="#curategpt.store.Metadata.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[Dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'hnsw_space':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'object_type':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None),</span> <span class="pre">'venomx':</span> <span class="pre">FieldInfo(annotation=Union[Index,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=None)}</span></em><a class="headerlink" href="#curategpt.store.Metadata.model_fields" title="Link to this definition"></a></dt>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] objects.</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.Metadata.model_post_init" title="Link to this definition"></a></dt>
+<dd><p>This function is meant to behave like a BaseModel method to initialise private attributes.</p>
+<p>It takes context as an argument since that’s what pydantic-core passes when calling it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><p>self: The BaseModel instance.
+context: The context.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.object_count">
+<span class="sig-name descname"><span class="pre">object_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.Metadata.object_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.Metadata.object_type" title="Link to this definition"></a></dt>
+<dd><p>Type of object in the collection</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.serialize_venomx_metadata_for_adapter">
+<span class="sig-name descname"><span class="pre">serialize_venomx_metadata_for_adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adapter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.store.Metadata.serialize_venomx_metadata_for_adapter" title="Link to this definition"></a></dt>
+<dd><p>Convert the Metadata instance to a dictionary suitable for the specified adapter.
+ChromaDB: venomx is serialized into _venomx before storing. (dict to str)
+DuckDB: venomx remains as an Index object without serialization.
+:type adapter: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:param adapter: Adapter name (e.g., ‘chroma’, ‘duckdb’).
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>
+:return: Metadata dictionary.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curategpt.store.Metadata.venomx">
+<span class="sig-name descname"><span class="pre">venomx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Index</span></code><span class="pre">]</span></em><a class="headerlink" href="#curategpt.store.Metadata.venomx" title="Link to this definition"></a></dt>
+<dd><p>Retains the complex venomx Index object for internal application use.
+Index is the main object of venomx
+<a class="reference external" href="https://github.com/cmungall/venomx">https://github.com/cmungall/venomx</a></p>
+</dd></dl>
 
 </dd></dl>
 
