@@ -12,7 +12,7 @@ import yaml
 from click.utils import LazyFile
 from jsonlines import jsonlines
 
-from curategpt.store.metadata import CollectionMetadata
+from curategpt.store.metadata import Metadata
 from curategpt.store.schema_proxy import SchemaProxy
 from curategpt.store.vocab import (
     DEFAULT_COLLECTION,
@@ -205,7 +205,7 @@ class DBAdapter(ABC):
     @abstractmethod
     def collection_metadata(
         self, collection_name: Optional[str] = None, include_derived=False, **kwargs
-    ) -> Optional[CollectionMetadata]:
+    ) -> Optional[Metadata]:
         """
         Get the metadata for a collection.
 
@@ -215,15 +215,17 @@ class DBAdapter(ABC):
         """
 
     def set_collection_metadata(
-        self, collection_name: Optional[str], metadata: CollectionMetadata, **kwargs
+        self, collection_name: Optional[str], metadata: Metadata, **kwargs
     ):
         """
         Set the metadata for a collection.
 
         >>> from curategpt.store import get_store
-        >>> from curategpt.store import CollectionMetadata
+        >>> from curategpt.store import Metadata
         >>> store = get_store("in_memory")
-        >>> cm = CollectionMetadata(name="People", description="People in the database")
+        >>> md = store.collection_metadata(collection)
+        >>> md.venomx.id == "People"
+        >>> md.venomx.embedding_model.name == "openai:"
         >>> store.set_collection_metadata("people", cm)
 
         :param collection_name:
@@ -231,7 +233,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    def update_collection_metadata(self, collection_name: str, **kwargs) -> CollectionMetadata:
+    def update_collection_metadata(self, collection_name: str, **kwargs) -> Metadata:
         """
         Update the metadata for a collection.
 

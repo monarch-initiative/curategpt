@@ -44,48 +44,71 @@ def simple_schema_manager() -> SchemaProxy:
     )
     return SchemaProxy(sb.schema)
 
-
-def test_store(simple_schema_manager, example_texts):
+@pytest.mark.parametrize(
+    "model, requires_key, change_field, expected_error",
+    [
+        pytest.param("openai:", True, "model", True, marks=requires_openai_api_key),
+        ("all-MiniLM-L6-v2", False, "model", True),
+        (None, False, "model", True),
+        pytest.param("openai:", True, "id", True, marks=requires_openai_api_key),
+        ("all-MiniLM-L6-v2", False, "id", True),
+        (None, False, "id", True),
+    ],
+)
+def test_store(simple_schema_manager, example_texts, model, change_field, expected_error, requires_key):
     db = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
     db.schema_proxy = simple_schema_manager
     db.client.reset()
     assert db.list_collection_names() == []
     collection = "test"
     objs = terms_to_objects(example_texts)
-    db.insert(objs, collection=collection)
+    if model:
+        db.insert(objs, collection=collection, model=model)
+    else:
+        db.insert(objs, collection=collection)
+
     md = db.collection_metadata(collection)
-    md.description = "test collection"
-    db.set_collection_metadata(collection, md)
-    assert db.collection_metadata(collection).description == "test collection"
-    db2 = ChromaDBAdapter(str(OUTPUT_CHROMA_DB_PATH))
-    assert db2.collection_metadata(collection).description == "test collection"
-    assert db.list_collection_names() == ["test"]
-    results = list(db.search("fox", collection=collection))
-    print(results)
-    for obj in objs:
-        print(f"QUERYING: {obj}")
-        for match in db.matches(obj, collection=collection):
-            print(f" - MATCH: {match}")
-    db.update(objs, collection=collection)
-    assert db.collection_metadata(collection).description == "test collection"
-    canines = list(db.find(where={"text": {"$eq": "canine"}}, collection=collection))
-    print(f"CANINES: {canines}")
-    long_words = list(db.find(where={"wordlen": {"$gt": 12}}, collection=collection))
-    print(long_words)
-    assert len(long_words) == 2
-    db.remove_collection(collection)
-    db.insert(objs, collection=collection)
-    results2 = list(db.search("fox", collection=collection))
 
-    def _id(obj, _dist, _meta):
-        return obj["id"]
+    if change_field == "model":
+        if model == "openai:":
+            new_model = "all-MiniLM-L6-v2"
+        else:
+            new_model = "openai:"
+        md.venomx.embedding_model.name = new_model
+    elif change_field == "id":
+        md.venomx.id = "different_collection_name"
 
-    assert _id(*results[0]) == _id(*results2[0])
-    limit = 5
-    results2 = list(db.find({}, limit=5, collection=collection))
-    assert len(results2) == limit
-    results2 = list(db.find({}, limit=10000000, collection=collection))
-    assert len(results2) > limit
+    if expected_error:
+        with pytest.raises(ValueError):
+            db.set_collection_metadata(collection, md)
+    else:
+        # case: no error
+        db.set_collection_metadata(collection, md)
+        assert md.venomx.id == db.collection_metadata(collection).venomx.id
+        assert md.venomx.id == collection
+        assert db.collection_metadata(collection).venomx.id == collection
+
+        results = list(db.search("fox", collection=collection))
+        results2 = list(db.search("fox", collection=collection))
+        def _id(obj, _dist, _meta):
+            return obj["id"]
+
+        assert _id(*results[0]) == _id(*results2[0])
+
+        db.remove_collection(collection)
+        db.update(objs, collection=collection)
+        canines = list(db.find(where={"text": {"$eq": "canine"}}, collection=collection))
+        print(f"CANINES: {canines}")
+        long_words = list(db.find(where={"wordlen": {"$gt": 12}}, collection=collection))
+        print(long_words)
+        assert len(long_words) == 2
+
+        limit = 5
+        results2 = list(db.find({}, limit=limit, collection=collection))
+        assert len(results2) == limit, f"Expected {limit} results, but got {len(results2)}"
+        limit = 10000
+        results2 = list(db.find({}, limit=limit, collection=collection))
+        assert len(results2) > limit, f"Expected more than {limit} results, but got {len(results2)}"
 
 
 def test_fetch_all_memory_safe(example_texts):
@@ -125,16 +148,14 @@ def test_embedding_function(simple_schema_manager, example_texts):
     db.insert(objs[1:])
     db.insert(objs[1:], collection="default_ef", model=None)
     db.insert(objs[1:], collection="openai", model="openai:")
-    assert db.collection_metadata("default_ef").name == "default_ef"
-    assert db.collection_metadata("openai").name == "openai"
-    assert db.collection_metadata(None).model == "all-MiniLM-L6-v2"
-    assert db.collection_metadata("default_ef").model == "all-MiniLM-L6-v2"
-    assert db.collection_metadata("openai").model == "openai:"
+    assert db.collection_metadata("default_ef").venomx.id == "default_ef"
+    assert db.collection_metadata("openai").venomx.id == "openai"
+    assert db.collection_metadata(None).venomx.embedding_model.name == "all-MiniLM-L6-v2"
+    assert db.collection_metadata("default_ef").venomx.embedding_model.name == "all-MiniLM-L6-v2"
+    assert db.collection_metadata("openai").venomx.embedding_model.name == "openai:"
     db.insert([objs[0]])
     db.insert([objs[0]], collection="default_ef")
     db.insert([objs[0]], collection="openai")
-    assert db.collection_metadata("default_ef").model == "all-MiniLM-L6-v2"
-    assert db.collection_metadata("openai").model == "openai:"
     results_ef = list(db.search("fox", collection="default_ef"))
     results_oai = list(db.search("fox", collection="openai"))
     assert len(results_ef) > 0

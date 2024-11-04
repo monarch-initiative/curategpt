@@ -49,6 +49,8 @@ __all__ = [
     "main",
 ]
 
+from venomx.model.venomx import Dataset, Index, Model
+
 
 def dump(
     obj: Union[str, AnnotatedObject, Dict],
@@ -2086,8 +2088,9 @@ def list_collections(database_type, path, peek: bool, minimal: bool, derived: bo
         cm = db.collection_metadata(cn, include_derived=derived)
         if database_type == "chromadb":
             # TODO: make get_or_create abstract and implement in DBAdapter?
-            c = db.client.get_or_create_collection(cn)
-            print(f"## Collection: {cn} N={c.count()} meta={c.metadata} // {cm}")
+            c = db.client.get_collection(cn)
+            print(f"## Collection: {cn} N={c.count()} meta={c.metadata} \n"
+                  f"Metadata: {cm}\n")
             if peek:
                 r = c.peek()
                 for id_ in r["ids"]:
@@ -2322,7 +2325,6 @@ def index_ontology_command(
         curategpt ontology index -p stagedb/duck.db -c ont-hp sqlite:obo:hp -D duckdb
 
     """
-
     s = time.time()
     oak_adapter = get_adapter(ont)
     view = OntologyWrapper(oak_adapter=oak_adapter)
@@ -2343,8 +2345,26 @@ def index_ontology_command(
     if not append:
         db.remove_collection(collection, exists_ok=True)
     click.echo(f"Indexing {len(list(view.objects()))} objects")
-    db.insert(view.objects(), collection=collection, model=model)
-    db.update_collection_metadata(collection, object_type="OntologyClass")
+
+    venomx = Index(
+            id=collection,
+            dataset=Dataset(
+                name=ont
+            ),
+            embedding_model=Model(
+                name=model if model else None
+            )
+        )
+
+    db.insert(
+        view.objects(),
+        collection=collection,
+        model=model,
+        venomx=venomx,
+        object_type="OntologyClass"
+
+    )
+
     e = time.time()
     click.echo(f"Indexed {len(list(view.objects()))} in {e - s} seconds")
 

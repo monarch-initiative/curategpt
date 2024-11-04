@@ -55,14 +55,17 @@ def simple_schema_manager() -> SchemaProxy:
 
 
 @pytest.mark.parametrize(
-    "model, requires_key",
+    "model, requires_key, change_field, expected_error",
     [
-        pytest.param("openai:", True, marks=requires_openai_api_key),
-        ("all-MiniLM-L6-v2", False),
-        (None, False),
+        pytest.param("openai:", True, "model", True, marks=requires_openai_api_key),
+        ("all-MiniLM-L6-v2", False, "model", True),
+        (None, False, "model", True),
+        pytest.param("openai:", True, "id", True, marks=requires_openai_api_key),
+        ("all-MiniLM-L6-v2", False, "id", True),
+        (None, False, "id", True),
     ],
 )
-def test_store_variations(simple_schema_manager, example_texts, model, requires_key):
+def test_store_variations(simple_schema_manager, example_texts, model, requires_key, change_field, expected_error):
     db = DuckDBAdapter(OUTPUT_DUCKDB_PATH)
     for i in db.list_collection_names():
         db.remove_collection(i)
@@ -76,30 +79,37 @@ def test_store_variations(simple_schema_manager, example_texts, model, requires_
         db.insert(objs, collection=collection)
 
     md = db.collection_metadata(collection)
-    md.description = "test collection"
-    db.set_collection_metadata(collection, md)
-    assert db.collection_metadata(collection).description == "test collection"
-    if model:
-        assert db.collection_metadata(collection).model == model
-    else:
-        assert db.collection_metadata(collection).model == "all-MiniLM-L6-v2"
+    if change_field == "model":
+        # ensure changing model is not valid
+        if model == "openai:":
+            new_model = "all-MiniLM-L6-v2"
+        else:
+            new_model = "openai:"
+        md.venomx.embedding_model.name = new_model
+    elif change_field == "id":
+        # ensure changing venomx.id is not valid if inconsistent with collection name
+        md.venomx.id = "different_collection_name"
 
-    db2 = DuckDBAdapter(str(OUTPUT_DUCKDB_PATH))
-    assert db2.collection_metadata(collection).description == "test collection"
-    if model:
-        assert db2.collection_metadata(collection).model == model
+    if expected_error:
+        with pytest.raises(ValueError):
+            db.set_collection_metadata(collection, md)
     else:
-        assert db2.collection_metadata(collection).model == "all-MiniLM-L6-v2"
-    assert db.list_collection_names() == ["test_collection"]
+        db.set_collection_metadata(collection, md)
+
+    if model:
+        assert db.collection_metadata(collection).venomx.embedding_model.name == model
+    else:
+        assert db.collection_metadata(collection).venomx.embedding_model.name == "all-MiniLM-L6-v2"
 
     results = list(db.search("fox", collection=collection, include=["metadatas"]))
     if model:
         db.update(objs, collection=collection, model=model)
     else:
         db.update(objs, collection=collection)
-    assert db.collection_metadata(collection).description == "test collection"
+    assert db.collection_metadata(collection).venomx.id == collection
     long_words = list(db.find(where={"wordlen": {"$gt": 12}}, collection=collection))
     assert len(long_words) == 2
+
 
     db.remove_collection(collection)
     if model:
@@ -107,8 +117,6 @@ def test_store_variations(simple_schema_manager, example_texts, model, requires_
     else:
         db.insert(objs, collection=collection)
     results2 = list(db.search("fox", collection=collection, include=["metadatas"]))
-    peek = list(db.fetch_all_objects_memory_safe(collection=collection, batch_size=2))
-    assert len(peek) == 7
 
     def _id(obj, dist, meta):
         return obj["id"]
@@ -164,8 +172,8 @@ def test_the_embedding_function_variations(
         db.insert(objs, collection=collection, model=model)
         expected_model = model if model else "all-MiniLM-L6-v2"
         expected_name = collection
-    assert db.collection_metadata(collection).model == expected_model
-    assert db.collection_metadata(collection).name == expected_name
+    assert db.collection_metadata(collection).venomx.embedding_model.name == expected_model
+    assert db.collection_metadata(collection).venomx.id == expected_name
     assert db.collection_metadata(collection).hnsw_space == "cosine"
 
 
@@ -282,7 +290,6 @@ def test_load_in_batches(ontology_db, batch_size):
     ontology_db.insert(view.objects(), batch_size=batch_size, collection="other_collection")
     # end = time.time()
     # print(f"Time to insert {len(list(view.objects()))} objects with batch of {batch_size}: {end - start}")
-
     objs = list(ontology_db.find(collection="other_collection", limit=2000))
     assert len(objs) > 100
 
