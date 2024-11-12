@@ -317,7 +317,10 @@ elif option == MATCH:
 
     if st.button("Match"):
         cm = db.collection_metadata(collection, include_derived=True)
-        st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+        try:
+            st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+        except AttributeError as e:
+            st.write(f"Searching over {collection} but encountered an error: {e}")
         mapper = MappingAgent(knowledge_source=db, extractor=extractor)
         if not relevant_fields:
             relevant_fields = "label"
@@ -381,10 +384,13 @@ elif option == SEARCH:
     if page_state.results:
         results = page_state.results
         cm = db.collection_metadata(collection, include_derived=True)
-        if cm:
-            st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
-        else:
-            st.write(f"Dynamic search over {collection}...")
+        try:
+            if cm:
+                st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+            else:
+                st.write(f"Dynamic search over {collection}...")
+        except AttributeError as e:
+            st.write(f"Searching over {collection} but encountered an error: {e}")
 
         def _flat(obj: dict, limit=40) -> dict:
             if not obj:
@@ -458,7 +464,10 @@ elif option == CLUSTER_SEARCH:
 
     if st.button("Search"):
         cm = db.collection_metadata(collection, include_derived=True)
-        st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+        try:
+            st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+        except AttributeError as e:
+            st.write(f"Searching over {collection} but encountered an error: {e}")
         include = ["*"]
         results = db.search(
             search_query,
