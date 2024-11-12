@@ -370,7 +370,9 @@ class ChromaDBAdapter(DBAdapter):
             if kwargs.get('model') is None:
                 kwargs['model'] = self.default_model
             if prev_model and kwargs.get('model') != prev_model:
-                if self.client.get_or_create_collection(name=collection_name).count() > 0:
+                if kwargs.get('model') == self.default_model: # We have a prev_model and don't need to update
+                    logger.info(f"Collection uses model {prev_model} and no new model was provided.")
+                elif self.client.get_or_create_collection(name=collection_name).count() > 0:
                     raise ValueError(f"Cannot change model from {prev_model} to {kwargs.get('model')}")
 
             # assign venomx to metadata object
