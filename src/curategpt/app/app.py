@@ -11,20 +11,20 @@ from scipy.spatial import distance_matrix
 
 from curategpt import BasicExtractor
 from curategpt.agents import MappingAgent
-from curategpt.agents.bootstrap_agent import BootstrapAgent, KnowledgeBaseSpecification
+from curategpt.agents.bootstrap_agent import (BootstrapAgent,
+                                              KnowledgeBaseSpecification)
 from curategpt.agents.chat_agent import ChatAgent, ChatResponse
 from curategpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curategpt.agents.dragon_agent import DragonAgent
 from curategpt.agents.evidence_agent import EvidenceAgent
-from curategpt.app.components import (
-    DimensionalityReductionOptions,
-    limit_slider_component,
-    vectors_to_fig,
-)
+from curategpt.app.components import (DimensionalityReductionOptions,
+                                      limit_slider_component, vectors_to_fig)
 from curategpt.app.helper import get_applicable_examples, get_case_collection
 from curategpt.app.state import get_state
 from curategpt.extract import OpenAIExtractor, RecursiveExtractor
 from curategpt.wrappers import BaseWrapper
+from curategpt.wrappers.investigation.ess_deepdive_wrapper import \
+    ESSDeepDiveWrapper
 from curategpt.wrappers.investigation.jgi_wrapper import JGIWrapper
 from curategpt.wrappers.literature import WikipediaWrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
@@ -32,6 +32,7 @@ from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"
 JGI = "JGI (via API)"
+ESSDIVE = "ESS-DeepDive (via API)"
 
 CHAT = "Chat"
 EXTRACT = "Extract"
@@ -109,7 +110,7 @@ def filtered_collection_names() -> List[str]:
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    filtered_collection_names() + [WIKIPEDIA, PUBMED, JGI],
+    filtered_collection_names() + [WIKIPEDIA, PUBMED, JGI, ESSDIVE],
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
@@ -154,7 +155,7 @@ state.extractor = extractor
 
 background_collection = st.sidebar.selectbox(
     "Background knowledge",
-    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA, JGI] + list(db.list_collection_names()),
+    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA, JGI, ESSDIVE] + list(db.list_collection_names()),
     help="""
     Background databases can be used to give additional context to the LLM.
     A standard pattern is to have a structured knowledge base as the main
@@ -178,6 +179,8 @@ def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
     elif collection == JGI:
         source = JGIWrapper(local_store=db, extractor=extractor)
+    elif collection == ESSDIVE:
+        source = ESSDeepDiveWrapper(local_store=db, extractor=extractor)
     else:
         source = db
         knowledge_source_collection = collection
