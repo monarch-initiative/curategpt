@@ -116,9 +116,11 @@ class ESSDeepDiveWrapper(BaseWrapper):
 
         for ident in ids:
             ident = ident.replace(BASE_URL + "/", "")
-            doi, file_path = ident.split(":")
+            # Yes, the doi defined here does not include the prefix
+            # But the API will want it there
+            doi, file_path = ident.split(":", 2)[1:]
             dataset_params = {
-                "doi": doi,
+                "doi": f"doi:{doi}",
                 "file_path": file_path,
             }
 
