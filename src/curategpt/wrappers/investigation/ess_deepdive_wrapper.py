@@ -3,13 +3,15 @@
 import logging
 from dataclasses import dataclass, field
 from time import sleep
-from typing import ClassVar, Dict, Iterable, Iterator, Optional
+from typing import ClassVar, Dict, Iterable, Iterator, List, Optional
 
+import requests
 import requests_cache
 
 from curategpt.wrappers import BaseWrapper
 
-URL = "https://fusion.ess-dive.lbl.gov/deepdive?rowStart={cursor}&pageSize={limit}"
+BASE_URL = "https://fusion.ess-dive.lbl.gov/api/v1/deepdive"
+URL = BASE_URL + "?rowStart={cursor}&pageSize={limit}"
 
 
 def _get_records_chunk(session: requests_cache.CachedSession, cursor=1, limit=200) -> dict:
@@ -57,6 +59,9 @@ logger = logging.getLogger(__name__)
 class ESSDeepDiveWrapper(BaseWrapper):
     """
     A wrapper over the ESSDeepDive API.
+
+    This is a dynamic wrapper: it can be used as a search facade,
+    but cannot be ingested in whole.
     """
 
     name: ClassVar[str] = "ess_deepdive"
@@ -68,6 +73,57 @@ class ESSDeepDiveWrapper(BaseWrapper):
     )
 
     limit: int = field(default=50)
+
+    def external_search(self, text: str, expand: bool = False, **kwargs) -> List:
+        search_term = text
+        logger.info(f"Constructed search term: {search_term}")
+
+        # This will store multiple datasets matching the query
+        datasets = []
+
+        # Parameters for the request
+        params = {
+            "rowStart": 1,
+            "pageSize": 25,
+            "fieldName": search_term,
+        }
+
+        response = requests.get(BASE_URL, params=params)
+        data = response.json()
+        search_results = data["results"][0]
+        snippets = {
+            result["data_file_url"]: {
+                "field_name": result["field_name"],
+                "definition": result["definition"],
+                "data_type": result["data_type"],
+            }
+            for result in search_results
+        }
+        ids = list(snippets.keys())
+
+        for ident in ids:
+            ident = ident.replace(BASE_URL + "/", "")
+            doi, file_path = ident.split(":")
+            dataset_params = {
+                "doi": doi,
+                "file_path": file_path,
+            }
+
+            dataset_response = requests.get(BASE_URL, params=dataset_params)
+            if not dataset_response.ok:
+                raise ValueError(f"Could not get dataset details for {ident}")
+            dataset = dataset_response.json()
+
+            # Extract and print this information
+            if "fields" not in dataset:
+                logger.error(f"Could not get pages from {ident}")
+                this_data = {ident: snippets[ident]}
+            else:
+                logger.info(f"Got full field list for {ident}")
+                this_data = {ident: (snippets[ident], dataset["fields"])}
+            datasets.append(this_data)
+
+        return datasets
 
     def objects(
         self, collection: str = None, object_ids: Optional[Iterable[str]] = None, **kwargs
