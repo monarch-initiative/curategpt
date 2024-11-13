@@ -74,6 +74,7 @@ class ESSDeepDiveWrapper(BaseWrapper):
 
     limit: int = field(default=50)
 
+    # TODO: add query expansion
     def external_search(self, text: str, expand: bool = False, **kwargs) -> List:
         search_term = text
         logger.info(f"Constructed search term: {search_term}")
@@ -81,15 +82,28 @@ class ESSDeepDiveWrapper(BaseWrapper):
         # This will store multiple datasets matching the query
         datasets = []
 
-        # Parameters for the request
+        # Parameters for the request.
+        # This will search field names first,
+        # then field definitions,
+        # and finally field value text.
+        have_results = False
         params = {
             "rowStart": 1,
             "pageSize": 25,
             "fieldName": search_term,
         }
-
-        response = requests.get(BASE_URL, params=params)
-        data = response.json()
+        while not have_results:
+            response = requests.get(BASE_URL, params=params)
+            data = response.json()
+            if len(data["results"]) == 0:
+                logger.warning(f"No results found for {search_term} in field names.")
+                params = {
+                    "rowStart": 1,
+                    "pageSize": 25,
+                    "fieldDefinition": search_term,
+                }
+            else:
+                have_results = True
         search_results = data["results"][0]
         snippets = {
             result["data_file_url"]: {
