@@ -84,8 +84,7 @@ class ESSDeepDiveWrapper(BaseWrapper):
 
         # Parameters for the request.
         # This will search field names first,
-        # then field definitions,
-        # and finally field value text.
+        # then field definitions.
         have_results = False
         params = {
             "rowStart": 1,
@@ -104,7 +103,7 @@ class ESSDeepDiveWrapper(BaseWrapper):
                 }
             else:
                 have_results = True
-        search_results = data["results"][0]
+        search_results = data["results"]
         snippets = {
             result["data_file_url"]: {
                 "field_name": result["field_name"],
