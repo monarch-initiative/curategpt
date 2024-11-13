@@ -262,6 +262,9 @@ if option == CURATE:
             elif background_collection == WIKIPEDIA:
                 daca.document_adapter = WikipediaWrapper(local_store=db, extractor=extractor)
                 daca.collection = None
+            elif background_collection == ESSDIVE:
+                daca.document_adapter = ESSDeepDiveWrapper(local_store=db, extractor=extractor)
+                daca.collection = None
             else:
                 daca.document_adapter = db
                 daca.document_adapter_collection = background_collection
@@ -526,6 +529,9 @@ elif option == EXTRACT:
             elif background_collection == WIKIPEDIA:
                 dase.document_adapter = WikipediaWrapper(local_store=db, extractor=extractor)
                 dase.collection = None
+            elif background_collection == ESSDIVE:
+                dase.document_adapter = ESSDeepDiveWrapper(local_store=db, extractor=extractor)
+                dase.collection = None                
             else:
                 dase.document_adapter = db
                 dase.document_adapter_collection = background_collection
