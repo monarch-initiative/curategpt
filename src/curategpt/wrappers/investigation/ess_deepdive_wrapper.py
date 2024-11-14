@@ -74,9 +74,34 @@ class ESSDeepDiveWrapper(BaseWrapper):
 
     limit: int = field(default=50)
 
-    # TODO: add query expansion
     def external_search(self, text: str, expand: bool = False, **kwargs) -> List:
-        search_term = text
+
+        if expand:
+
+            def qt(t: str):
+                t = t.strip()
+                if " " in t:
+                    return f'"{t}"'
+                return t
+
+            logger.info(f"Expanding search term: {text} to create ESS-DeepDive query")
+            model = self.extractor.model
+            response = model.prompt(
+                text,
+                system="""
+                Take the specified search text, and expand it to a list
+                of key terms used to construct a query. You will return results as
+                semi-colon separated list of the most relevant terms. Make sure to
+                include all relevant concepts in the returned terms. For example,
+                if the search term is 'I want data about soil temperature and water turbidity',
+                you may return 'soil temperature; water turbidity'.""",
+            )
+            terms = response.text().split(";")
+            logger.info(f"Expanded terms: {terms}")
+            terms = [qt(t) for t in terms]
+            search_term = "|".join(terms)
+        else:
+            search_term = text
         logger.info(f"Constructed search term: {search_term}")
 
         # This will store multiple datasets matching the query
