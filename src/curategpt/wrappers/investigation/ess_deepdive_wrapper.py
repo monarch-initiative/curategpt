@@ -104,12 +104,17 @@ class ESSDeepDiveWrapper(BaseWrapper):
             search_term = text
         logger.info(f"Constructed search term: {search_term}")
 
-        # This will store multiple datasets matching the query
+        # This will store all search results.
+        all_data = []
+
+        # This will store multiple datasets matching the query.
         datasets = []
 
         # Parameters for the request.
         # This will search field names first,
-        # then field definitions.
+        # then field definitions,
+        # then field values (just text, not numeric).
+        # It will save all results to all_data
         for search_field in ["fieldName", "fieldDefinition", "fieldValueText"]:
             params = {
                 "rowStart": 1,
@@ -118,14 +123,14 @@ class ESSDeepDiveWrapper(BaseWrapper):
             }
             response = requests.get(BASE_URL, params=params)
             data = response.json()
-            if len(data["results"]) == 0:
-                logger.warning(f"No results found for {search_term} in {search_field}.")
-        
-        if len(data["results"]) == 0:
-            logger.error(f"No results found for {search_term} in any field.")
-            return []
+            all_data.append(data)
 
-        search_results = data["results"]
+        # Get all fields named "results" from all_data and combine them
+        search_results = []
+        for results_set in all_data:
+            if "results" in results_set:
+                search_results.extend(results_set["results"])
+
         snippets = {
             result["data_file_url"]: {
                 "field_name": result["field_name"],
