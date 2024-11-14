@@ -110,24 +110,21 @@ class ESSDeepDiveWrapper(BaseWrapper):
         # Parameters for the request.
         # This will search field names first,
         # then field definitions.
-        have_results = False
-        params = {
-            "rowStart": 1,
-            "pageSize": 25,
-            "fieldName": search_term,
-        }
-        while not have_results:
+        for search_field in ["fieldName", "fieldDefinition", "fieldValueText"]:
+            params = {
+                "rowStart": 1,
+                "pageSize": 25,
+                search_field: search_term,
+            }
             response = requests.get(BASE_URL, params=params)
             data = response.json()
             if len(data["results"]) == 0:
-                logger.warning(f"No results found for {search_term} in field names.")
-                params = {
-                    "rowStart": 1,
-                    "pageSize": 25,
-                    "fieldDefinition": search_term,
-                }
-            else:
-                have_results = True
+                logger.warning(f"No results found for {search_term} in {search_field}.")
+        
+        if len(data["results"]) == 0:
+            logger.error(f"No results found for {search_term} in any field.")
+            return []
+
         search_results = data["results"]
         snippets = {
             result["data_file_url"]: {
