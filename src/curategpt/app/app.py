@@ -25,6 +25,7 @@ from curategpt.app.helper import get_applicable_examples, get_case_collection
 from curategpt.app.state import get_state
 from curategpt.extract import OpenAIExtractor, RecursiveExtractor
 from curategpt.wrappers import BaseWrapper
+from curategpt.wrappers.investigation.ess_deepdive_wrapper import ESSDeepDiveWrapper
 from curategpt.wrappers.investigation.jgi_wrapper import JGIWrapper
 from curategpt.wrappers.literature import WikipediaWrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
@@ -32,6 +33,7 @@ from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"
 JGI = "JGI (via API)"
+ESSDIVE = "ESS-DeepDive (via API)"
 
 CHAT = "Chat"
 EXTRACT = "Extract"
@@ -109,7 +111,7 @@ def filtered_collection_names() -> List[str]:
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    filtered_collection_names() + [WIKIPEDIA, PUBMED, JGI],
+    filtered_collection_names() + [WIKIPEDIA, PUBMED, JGI, ESSDIVE],
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
@@ -154,7 +156,7 @@ state.extractor = extractor
 
 background_collection = st.sidebar.selectbox(
     "Background knowledge",
-    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA, JGI] + list(db.list_collection_names()),
+    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA, JGI, ESSDIVE] + list(db.list_collection_names()),
     help="""
     Background databases can be used to give additional context to the LLM.
     A standard pattern is to have a structured knowledge base as the main
@@ -178,6 +180,8 @@ def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
     elif collection == JGI:
         source = JGIWrapper(local_store=db, extractor=extractor)
+    elif collection == ESSDIVE:
+        source = ESSDeepDiveWrapper(local_store=db, extractor=extractor)
     else:
         source = db
         knowledge_source_collection = collection
@@ -258,6 +262,9 @@ if option == CURATE:
                 daca.collection = None
             elif background_collection == WIKIPEDIA:
                 daca.document_adapter = WikipediaWrapper(local_store=db, extractor=extractor)
+                daca.collection = None
+            elif background_collection == ESSDIVE:
+                daca.document_adapter = ESSDeepDiveWrapper(local_store=db, extractor=extractor)
                 daca.collection = None
             else:
                 daca.document_adapter = db
@@ -383,7 +390,9 @@ elif option == SEARCH:
         cm = db.collection_metadata(collection, include_derived=True)
         try:
             if cm:
-                st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+                st.write(
+                    f"Searching over {cm.object_count} objects using embedding model {cm.model}"
+                )
             else:
                 st.write(f"Dynamic search over {collection}...")
         except AttributeError as e:
@@ -522,6 +531,9 @@ elif option == EXTRACT:
                 dase.collection = None
             elif background_collection == WIKIPEDIA:
                 dase.document_adapter = WikipediaWrapper(local_store=db, extractor=extractor)
+                dase.collection = None
+            elif background_collection == ESSDIVE:
+                dase.document_adapter = ESSDeepDiveWrapper(local_store=db, extractor=extractor)
                 dase.collection = None
             else:
                 dase.document_adapter = db
@@ -684,7 +696,9 @@ elif option == BOOTSTRAP:
     extractor.model_name = model_name
     bootstrap_agent = BootstrapAgent(extractor=extractor)
 
-    kb_name = st.text_input("KB Name", help="Name of the knowledge base, without spaces (e.g. 'ice_cream_kb')")
+    kb_name = st.text_input(
+        "KB Name", help="Name of the knowledge base, without spaces (e.g. 'ice_cream_kb')"
+    )
     description = st.text_input(
         "Description",
         help="Description of the knowledge base (e.g. 'A knowledge base for ice cream')",
