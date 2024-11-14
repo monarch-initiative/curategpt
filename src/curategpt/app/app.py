@@ -11,20 +11,21 @@ from scipy.spatial import distance_matrix
 
 from curategpt import BasicExtractor
 from curategpt.agents import MappingAgent
-from curategpt.agents.bootstrap_agent import (BootstrapAgent,
-                                              KnowledgeBaseSpecification)
+from curategpt.agents.bootstrap_agent import BootstrapAgent, KnowledgeBaseSpecification
 from curategpt.agents.chat_agent import ChatAgent, ChatResponse
 from curategpt.agents.dase_agent import DatabaseAugmentedStructuredExtraction
 from curategpt.agents.dragon_agent import DragonAgent
 from curategpt.agents.evidence_agent import EvidenceAgent
-from curategpt.app.components import (DimensionalityReductionOptions,
-                                      limit_slider_component, vectors_to_fig)
+from curategpt.app.components import (
+    DimensionalityReductionOptions,
+    limit_slider_component,
+    vectors_to_fig,
+)
 from curategpt.app.helper import get_applicable_examples, get_case_collection
 from curategpt.app.state import get_state
 from curategpt.extract import OpenAIExtractor, RecursiveExtractor
 from curategpt.wrappers import BaseWrapper
-from curategpt.wrappers.investigation.ess_deepdive_wrapper import \
-    ESSDeepDiveWrapper
+from curategpt.wrappers.investigation.ess_deepdive_wrapper import ESSDeepDiveWrapper
 from curategpt.wrappers.investigation.jgi_wrapper import JGIWrapper
 from curategpt.wrappers.literature import WikipediaWrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
@@ -389,7 +390,9 @@ elif option == SEARCH:
         cm = db.collection_metadata(collection, include_derived=True)
         try:
             if cm:
-                st.write(f"Searching over {cm.object_count} objects using embedding model {cm.model}")
+                st.write(
+                    f"Searching over {cm.object_count} objects using embedding model {cm.model}"
+                )
             else:
                 st.write(f"Dynamic search over {collection}...")
         except AttributeError as e:
@@ -531,7 +534,7 @@ elif option == EXTRACT:
                 dase.collection = None
             elif background_collection == ESSDIVE:
                 dase.document_adapter = ESSDeepDiveWrapper(local_store=db, extractor=extractor)
-                dase.collection = None                
+                dase.collection = None
             else:
                 dase.document_adapter = db
                 dase.document_adapter_collection = background_collection
@@ -693,7 +696,9 @@ elif option == BOOTSTRAP:
     extractor.model_name = model_name
     bootstrap_agent = BootstrapAgent(extractor=extractor)
 
-    kb_name = st.text_input("KB Name", help="Name of the knowledge base, without spaces (e.g. 'ice_cream_kb')")
+    kb_name = st.text_input(
+        "KB Name", help="Name of the knowledge base, without spaces (e.g. 'ice_cream_kb')"
+    )
     description = st.text_input(
         "Description",
         help="Description of the knowledge base (e.g. 'A knowledge base for ice cream')",
