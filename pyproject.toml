@@ -51,6 +51,10 @@ venomx = "^0.1.1"
 duckdb = "~1.0.0"
 python-dotenv = "^1.0.1"
 protobuf = "3.20.0"
+onnxruntime = [
+    {version = "<=1.19.2", python = "<3.10"},
+    {version = "^1.20.0", python = ">=3.10"}
+]
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7.1.2"
