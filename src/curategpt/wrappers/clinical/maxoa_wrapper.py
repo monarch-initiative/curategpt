@@ -1,4 +1,4 @@
-"""Chat with a KB."""
+"""Wrapper for Medical Action Ontology (MAXO) annotations"""
 
 import logging
 from copy import deepcopy

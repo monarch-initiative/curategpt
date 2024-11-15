@@ -1,4 +1,4 @@
-"""Chat with a KB."""
+"""Wrapper for ClinicalTrials.gov API."""
 
 import logging
 import time

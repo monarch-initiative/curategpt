@@ -1,3 +1,5 @@
+"""Wrapper for grouping Human Phenotype Ontology annotations by publication"""
+
 from dataclasses import dataclass
 from typing import ClassVar
 

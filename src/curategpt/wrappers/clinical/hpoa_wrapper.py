@@ -1,4 +1,4 @@
-"""Chat with a KB."""
+"""Wrapper for Human Phenotype Ontology annotations"""
 
 import logging
 from copy import deepcopy

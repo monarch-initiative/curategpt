@@ -46,7 +46,9 @@ class ClinVarWrapper(EUtilsWrapper):
             obj["protein_change"] = r["protein_change"]
             obj["title"] = r["title"]
             obj["traits"] = [
-                self._trait_from_dict(t) for t in r.get("trait_set", {}).get("trait", []) if isinstance(t, dict)
+                self._trait_from_dict(t)
+                for t in r.get("trait_set", {}).get("trait", [])
+                if isinstance(t, dict)
             ]
             objs.append(obj)
         return objs
