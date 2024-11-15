@@ -2089,8 +2089,7 @@ def list_collections(database_type, path, peek: bool, minimal: bool, derived: bo
         if database_type == "chromadb":
             # TODO: make get_or_create abstract and implement in DBAdapter?
             c = db.client.get_collection(cn)
-            print(f"## Collection: {cn} N={c.count()} meta={c.metadata} \n"
-                  f"Metadata: {cm}\n")
+            print(f"## Collection: {cn} N={c.count()} meta={c.metadata} \n" f"Metadata: {cm}\n")
             if peek:
                 r = c.peek()
                 for id_ in r["ids"]:
@@ -2347,22 +2346,17 @@ def index_ontology_command(
     click.echo(f"Indexing {len(list(view.objects()))} objects")
 
     venomx = Index(
-            id=collection,
-            dataset=Dataset(
-                name=ont
-            ),
-            embedding_model=Model(
-                name=model if model else None
-            )
-        )
+        id=collection,
+        dataset=Dataset(name=ont),
+        embedding_model=Model(name=model if model else None),
+    )
 
     db.insert(
         view.objects(),
         collection=collection,
         model=model,
         venomx=venomx,
-        object_type="OntologyClass"
-
+        object_type="OntologyClass",
     )
 
     e = time.time()
