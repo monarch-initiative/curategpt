@@ -1,4 +1,4 @@
-"""Chat with a KB."""
+"""Wrapper for NCBI Biosample."""
 
 import logging
 from dataclasses import dataclass

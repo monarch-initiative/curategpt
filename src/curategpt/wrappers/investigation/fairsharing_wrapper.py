@@ -1,4 +1,4 @@
-"""Chat with a KB."""
+"""Wrapper for the FAIRSharing API."""
 
 import json
 import logging

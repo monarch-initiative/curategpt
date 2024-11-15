@@ -1,4 +1,4 @@
-"""Chat with a KB."""
+"""Wrapper for the ESS-DeepDive API."""
 
 import logging
 from dataclasses import dataclass, field

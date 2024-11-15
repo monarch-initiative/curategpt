@@ -1,4 +1,4 @@
-"""Chat with a KB."""
+"""Wrapper for JGI Data Search."""
 
 import logging
 import time

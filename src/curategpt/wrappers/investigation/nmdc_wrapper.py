@@ -1,4 +1,4 @@
-"""Chat with a KB."""
+"""Wrapper for the National Microbiome Data Collaborative (NMDC) API."""
 
 import logging
 from dataclasses import dataclass
