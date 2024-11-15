@@ -1,3 +1,5 @@
+"""Functions to map between opaque IDs and names."""
+
 from dataclasses import dataclass
 from typing import Any, Iterable, Iterator, List, Tuple
 

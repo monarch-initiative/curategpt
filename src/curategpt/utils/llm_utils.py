@@ -1,3 +1,5 @@
+"""Utilities for interacting with LLM APIs."""
+
 import logging
 
 from llm import Model, Response
