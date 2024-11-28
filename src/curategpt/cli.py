@@ -38,7 +38,7 @@ from curategpt.evaluation.runner import run_task
 from curategpt.evaluation.splitter import stratify_collection
 from curategpt.extract import AnnotatedObject
 from curategpt.extract.basic_extractor import BasicExtractor
-from curategpt.store import get_store
+from curategpt.store import Metadata, get_store
 from curategpt.store.schema_proxy import SchemaProxy
 from curategpt.utils.vectordb_operations import match_collections
 from curategpt.wrappers import BaseWrapper, get_wrapper
@@ -2356,7 +2356,8 @@ def index_ontology_command(
         collection=collection,
         model=model,
         venomx=venomx,
-        object_type="OntologyClass",
+        object_type="OntologyClass"
+
     )
 
     e = time.time()
@@ -2416,9 +2417,7 @@ def load_embeddings(path, collection, append, embedding_format, model, file_or_u
     """
     Index embeddings from a local file or URL into a ChromaDB collection.
     """
-    # TODO: not tested (its not really the usecase of the adapters, at least you wanna have
-    # ids or belonging objects? otherwise insert will calc that on the fly
-    # consider using add (working for chroma at least) and add to objects ?
+    # TODO: not tested
     # Check if file_or_url is a URL
     if file_or_url.startswith("http://") or file_or_url.startswith("https://"):
         print(f"Downloading file from URL: {file_or_url}")
@@ -2466,6 +2465,7 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
     try:
         objects = list(db.fetch_all_objects_memory_safe(collection=collection))
         metadata = db.collection_metadata(collection)
+        print(metadata)
     except Exception as e:
         print(f"Error accessing collection '{collection}' from database: {e}")
         return
@@ -2480,6 +2480,98 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
         agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
     except Exception as e:
         print(f"Error uploading collection to {repo_id}: {e}")
+
+
+@embeddings.command(name="download")
+@path_option
+@collection_option
+@click.option(
+    "--repo-id",
+    required=True,
+    help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.",
+)
+@click.option(
+    "--embeddings-filename", "-ef",
+    type=str,
+    required=True,
+    default="embeddings.parquet"
+)
+@click.option(
+    "--metadata-filename", "-mf",
+    type=str,
+    required=False,
+    default="metadata.yaml"
+)
+@click.option("--adapter", default="huggingface", help="Adapter to use for uploading embeddings.")
+@database_type_option
+def download_embeddings(path, collection, repo_id, embeddings_filename, metadata_filename, adapter, database_type):
+    """
+    Download dataset and insert into a collection
+    e.g. huggingface.
+
+    Example:
+        curategpt embeddings download --repo-id biomedical-translator/my_repo --collection my_collection --filename embeddings.parquet
+        curategpt embeddings download --repo-id iQuxLE/hpo_label_embeddings --collection hf_d_collection --filename embeddings.parquet
+    """
+
+    db = get_store(database_type, path)
+    parquet_download = None
+    metadata_download = None
+    store_objects = None
+
+    if adapter == "huggingface":
+        agent = HuggingFaceAgent()
+    else:
+        raise ValueError(
+            f"Unsupported adapter: {adapter} " f"currently only huggingface adapter is supported"
+        )
+    try:
+        if embeddings_filename:
+            embedding_filename = repo_id + "/" + embeddings_filename
+            parquet_download = agent.cached_download(repo_id=repo_id,
+                                     repo_type="dataset",
+                                     filename=embedding_filename
+                                     )
+        if metadata_filename:
+            metadata_filename = repo_id + "/" + metadata_filename
+            metadata_download = agent.api.hf_hub_download(repo_id=repo_id,
+                                               repo_type="dataset",
+                                               filename=metadata_filename
+            )
+
+    except Exception as e:
+        click.echo(f"Error meanwhile downloading: {e}")
+
+    try:
+        if parquet_download.endswith(".parquet"):
+            df = pd.read_parquet(Path(parquet_download))
+            store_objects = [
+                {
+                    "metadata": row.iloc[0],
+                    "embeddings": row.iloc[1],
+                    "document": row.iloc[2]
+                } for _, row in df.iterrows()
+            ]
+
+        if metadata_download.endswith(".yaml"):
+            # populate venomx from file
+            with open(metadata_download, "r") as infile:
+                _meta = yaml.safe_load(infile)
+                try:
+                    venomx_data = _meta.pop("venomx", None)
+                    venomx_obj = Index(**venomx_data) if venomx_data else None
+                    metadata_obj = Metadata(
+                        **_meta,
+                        venomx=venomx_obj
+                    )
+                except Exception as e:
+                    raise ValueError(
+                        f"Error parsing metadata file: {e}. Downloaded metadata is not in the correct format.") from e
+
+        objects = [{k:v for k, v in obj.items()} for obj in store_objects]
+        db.insert_from_huggingface(collection=collection, objs=objects, venomx=metadata_obj)
+    except Exception as e:
+        raise e
 
 
 @main.group()

@@ -487,3 +487,7 @@ class DBAdapter(ABC):
         :return:
         """
         raise NotImplementedError
+
+    def insert_from_huggingface(self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, **kwargs):
+        raise NotImplementedError
+
