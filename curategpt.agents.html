@@ -235,6 +235,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-curategpt.agents.huggingface_agent">curategpt.agents.huggingface_agent module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.api"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent.api</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.cached_download"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent.cached_download()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.upload"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent.upload()</span></code></a></li>
 </ul>
 </li>
@@ -1371,8 +1373,18 @@ the following:</p>
 <span id="curategpt-agents-huggingface-agent-module"></span><h2>curategpt.agents.huggingface_agent module<a class="headerlink" href="#module-curategpt.agents.huggingface_agent" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="curategpt.agents.huggingface_agent.HuggingFaceAgent">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.agents.huggingface_agent.</span></span><span class="sig-name descname"><span class="pre">HuggingFaceAgent</span></span><a class="headerlink" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.agents.huggingface_agent.</span></span><span class="sig-name descname"><span class="pre">HuggingFaceAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="curategpt.agents.huggingface_agent.HuggingFaceAgent.api">
+<span class="sig-name descname"><span class="pre">api</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">HfApi</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.api" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.agents.huggingface_agent.HuggingFaceAgent.cached_download">
+<span class="sig-name descname"><span class="pre">cached_download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.cached_download" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="curategpt.agents.huggingface_agent.HuggingFaceAgent.upload">
 <span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">private</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.upload" title="Link to this definition"></a></dt>
