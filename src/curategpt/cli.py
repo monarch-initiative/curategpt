@@ -2465,7 +2465,6 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
     try:
         objects = list(db.fetch_all_objects_memory_safe(collection=collection))
         metadata = db.collection_metadata(collection)
-        print(metadata)
     except Exception as e:
         print(f"Error accessing collection '{collection}' from database: {e}")
         return
@@ -2477,7 +2476,10 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
             f"Unsupported adapter: {adapter} " f"currently only huggingface adapter is supported"
         )
     try:
-        agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+        if database_type == "chromadb":
+            agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+        elif database_type == "duckdb":
+            agent.upload_duckdb(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
     except Exception as e:
         print(f"Error uploading collection to {repo_id}: {e}")
 

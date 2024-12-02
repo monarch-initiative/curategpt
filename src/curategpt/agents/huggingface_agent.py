@@ -36,10 +36,48 @@ class HuggingFaceAgent:
 
         embedding_file = "embeddings.parquet"
         metadata_file = "metadata.yaml"
+
         try:
             df = pd.DataFrame(data=[(obj[0], obj[2]['_embeddings'], obj[2]['document']) for obj in objects])
         except Exception as e:
             raise ValueError(f"Creation of Dataframe not successful: {e}") from e
+
+        with ExitStack() as stack:
+            tmp_parquet = stack.enter_context(tempfile.NamedTemporaryFile(suffix=".parquet", delete=True))
+            tmp_yaml = stack.enter_context(tempfile.NamedTemporaryFile(suffix=".yaml", delete=True))
+
+            embedding_path = tmp_parquet.name
+            metadata_path = tmp_yaml.name
+
+            df.to_parquet(path=embedding_path, index=False)
+            with open(metadata_path, "w") as f:
+                yaml.dump(metadata.model_dump(), f)
+
+            self._create_repo(repo_id, private=private)
+
+            self._upload_files(repo_id, {
+                embedding_path : repo_id + "/" + embedding_file,
+                metadata_path : repo_id + "/" + metadata_file
+            })
+
+    def upload_duckdb(self, objects, metadata, repo_id, private=False, **kwargs):
+        """
+        Upload an entire collection to a Hugging Face repository.
+
+        :param objects: The objects to upload.
+        :param metadata: The metadata associated with the collection.
+        :param repo_id: The repository ID on Hugging Face.
+        :param private: Whether the repository should be private.
+        :param kwargs: Additional arguments such as batch size or metadata options.
+        """
+
+        embedding_file = "embeddings.parquet"
+        metadata_file = "metadata.yaml"
+        try:
+            df = pd.DataFrame(data=[(obj[0], obj[2]['_embeddings'], obj[2]['documents']) for obj in objects])
+        except Exception as e:
+            raise ValueError(f"Creation of Dataframe not successful: {e}") from e
+
         with ExitStack() as stack:
             tmp_parquet = stack.enter_context(tempfile.NamedTemporaryFile(suffix=".parquet", delete=True))
             tmp_yaml = stack.enter_context(tempfile.NamedTemporaryFile(suffix=".yaml", delete=True))
