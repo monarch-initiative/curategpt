@@ -238,6 +238,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.api"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent.api</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.cached_download"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent.cached_download()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.upload"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent.upload()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.upload_duckdb"><code class="docutils literal notranslate"><span class="pre">HuggingFaceAgent.upload_duckdb()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1388,6 +1389,23 @@ the following:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="curategpt.agents.huggingface_agent.HuggingFaceAgent.upload">
 <span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">private</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.upload" title="Link to this definition"></a></dt>
+<dd><p>Upload an entire collection to a Hugging Face repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objects</strong> – The objects to upload.</p></li>
+<li><p><strong>metadata</strong> – The metadata associated with the collection.</p></li>
+<li><p><strong>repo_id</strong> – The repository ID on Hugging Face.</p></li>
+<li><p><strong>private</strong> – Whether the repository should be private.</p></li>
+<li><p><strong>kwargs</strong> – Additional arguments such as batch size or metadata options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="curategpt.agents.huggingface_agent.HuggingFaceAgent.upload_duckdb">
+<span class="sig-name descname"><span class="pre">upload_duckdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">private</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.agents.huggingface_agent.HuggingFaceAgent.upload_duckdb" title="Link to this definition"></a></dt>
 <dd><p>Upload an entire collection to a Hugging Face repository.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
