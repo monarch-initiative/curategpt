@@ -378,11 +378,7 @@ class DuckDBAdapter(DBAdapter):
                             logger.warning(
                                 f"Document with ID {ids[i]} exceeds the token limit alone and will be skipped."
                             )
-                            # try:
-                            #     embeddings = OpenAIEmbeddings(model=model, tiktoken_model_name=model).embed_query(texts,
-                            #     embeddings.average                                                                                model)
-                            #     batch_embeddings.extend(embeddings)
-                            # skipping
+                            # should not be happening as batched above
                             i += 1
                             continue
                         else:
@@ -396,9 +392,6 @@ class DuckDBAdapter(DBAdapter):
                     embedding_model = llm.get_embedding_model(short_name)
                     embeddings = list(embedding_model.embed_multi(texts))
                     batch_embeddings.extend(embeddings)
-                logger.info(
-                    f"Trying to insert: {len(ids)} IDS, {len(metadatas)} METADATAS, {len(batch_embeddings)} EMBEDDINGS"
-                )
                 try:
                     self.conn.execute("BEGIN TRANSACTION;")
                     self.conn.executemany(
