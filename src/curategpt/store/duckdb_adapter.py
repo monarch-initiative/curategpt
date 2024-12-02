@@ -204,7 +204,6 @@ class DuckDBAdapter(DBAdapter):
         :param kwargs:
         :return:
         """
-        logger.info(f"\n\nIn insert duckdb, {kwargs.get('model')}\n\n")
         self._process_objects(objs, method="insert", **kwargs)
 
     # DELETE first to ensure primary key  constraint https://duckdb.org/docs/sql/indexes
@@ -219,9 +218,7 @@ class DuckDBAdapter(DBAdapter):
         ids = [self._id(o, self.id_field) for o in objs]
         safe_collection_name = f'"{collection}"'
         delete_sql = f"DELETE FROM {safe_collection_name} WHERE id = ?"
-        logger.info("DELETED collection: {collection}")
         self.conn.executemany(delete_sql, [(id_,) for id_ in ids])
-        logger.info(f"INSERTING collection: {collection}")
         self.insert(objs, **kwargs)
 
     def upsert(self, objs: Union[OBJECT, Iterable[OBJECT]], **kwargs):
@@ -232,8 +229,6 @@ class DuckDBAdapter(DBAdapter):
         :return:
         """
         collection = kwargs.get("collection")
-        logger.info(f"\n\nUpserting objects into collection {collection}\n\n")
-        logger.info(f"model in upsert: {kwargs.get('model')}, distance: {self.distance_metric}")
         if collection not in self.list_collection_names():
             vec_dimension = self._get_embedding_dimension(kwargs.get("model"))
             self._create_table_if_not_exists(
@@ -251,11 +246,9 @@ class DuckDBAdapter(DBAdapter):
         objs_to_update = [o for o in objs if self._id(o, self.id_field) in existing_ids]
         objs_to_insert = [o for o in objs if self._id(o, self.id_field) not in existing_ids]
         if objs_to_update:
-            logger.info(f"in Upsert and updating now in collection: {collection}")
             self.update(objs_to_update, **kwargs)
 
         if objs_to_insert:
-            logger.info(f"in Upsert and inserting now in collection: {collection}")
             self.insert(objs_to_insert, **kwargs)
 
     def _process_objects(
@@ -298,22 +291,18 @@ class DuckDBAdapter(DBAdapter):
         )
 
         if collection not in self.list_collection_names():
-            logger.info(f"(process)Creating table for collection {collection}")
             self._create_table_if_not_exists(
                 collection, self.vec_dimension, venomx=updated_venomx,
             )
 
         # if collection already exists, update metadata here
         cm = self.update_collection_metadata(collection=collection, updated_venomx=updated_venomx)
-        # TODO continue here, and use this cm instead cm = self.collection_md down below
         if isinstance(objs, Iterable) and not isinstance(objs, str):
             objs = list(objs)
         else:
             objs = [objs]
         obj_count = len(objs)
         kwargs.update({"object_count": obj_count})
-        # no need for update_metadata cause in table creation we build it
-        # cm = self.collection_metadata(collection)
         if batch_size is None:
             batch_size = 100000
         if text_field is None:
@@ -356,7 +345,7 @@ class DuckDBAdapter(DBAdapter):
             from transformers import GPT2Tokenizer
 
             tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-            for next_objs in chunk(objs, batch_size):  # Existing chunking
+            for next_objs in chunk(objs, batch_size):
                 next_objs = list(next_objs)
                 docs = [self._text(o, text_field) for o in next_objs]
                 metadatas = [self._dict(o) for o in next_objs]
@@ -381,7 +370,6 @@ class DuckDBAdapter(DBAdapter):
                             texts = [tokenizer.decode(tokens) for tokens in current_batch]
                             short_name, _ = MODEL_MAP[openai_model]
                             embedding_model = llm.get_embedding_model(short_name)
-                            logger.info(f"Number of texts/docs to embed in batch: {len(texts)}")
                             embeddings = list(embedding_model.embed_multi(texts, len(texts)))
                             logger.info(f"Number of Documents in batch: {len(embeddings)}")
                             batch_embeddings.extend(embeddings)
@@ -424,7 +412,86 @@ class DuckDBAdapter(DBAdapter):
                     )
                     raise
                 finally:
+                    # TODO: move outside - check memory/time profile
                     self.create_index(collection)
+
+    def insert_from_huggingface(
+            self,
+            objs: Union[OBJECT, Iterable[OBJECT]],
+            collection: str = None,
+            batch_size: int = None,
+            text_field: Union[str, Callable] = None,
+            venomx: Optional[Metadata] = None,
+            object_type: Optional[str] = None,
+            distance: Optional[str] = None,
+            vec_dimension: Optional[int] = None,
+            method: str = "insert",
+            **kwargs,
+    ):
+        collection = self._get_collection(collection)
+        model = None
+        try:
+            if venomx:
+                hf_metadata_model = venomx.venomx.embedding_model.name
+                # object_type = venomx.object_type
+                distance = venomx.hnsw_space
+                # vec_dimension = venomx.venomx.embedding_dimension
+                if hf_metadata_model:
+                    model = hf_metadata_model
+                vec_dimension = self._get_embedding_dimension(model)
+
+        except Exception as e:
+            raise KeyError(f"Metadata from {collection} is not compatible with the current version of CurateGPT") from e
+
+        updated_venomx = self.update_or_create_venomx(
+            venomx.venomx,
+            collection,
+            model,
+            distance,
+            object_type,
+            vec_dimension,
+        )
+        if collection not in self.list_collection_names():
+            self._create_table_if_not_exists(
+                collection, vec_dimension, venomx=updated_venomx,
+            )
+        updated_venomx.venomx.id = collection # prevent name error
+        self.set_collection_metadata(collection_name=collection, metadata=updated_venomx)
+        if batch_size is None:
+            batch_size = 100000
+
+        if not isinstance(objs, list):
+            objs = list(objs)
+
+        obj_count = len(objs)
+        kwargs.update({"object_count": obj_count})
+
+        sql_command = self._generate_sql_command(collection, method)
+        sql_command = sql_command.format(collection=collection)
+
+        for next_objs in chunk(objs, batch_size):
+            next_objs = list(next_objs)
+            ids = [item['metadata']['id'] for item in next_objs]
+            metadatas = [self._dict(o) for o in next_objs]
+            documents = [item['document'] for item in next_objs]
+            embeddings = [item['embeddings'].tolist() if isinstance(item['embeddings'], np.ndarray)
+                          else item['embeddings'] for item in next_objs]
+            try:
+                self.conn.execute("BEGIN TRANSACTION;")
+                self.conn.executemany(
+                    sql_command, list(zip(ids, metadatas, embeddings, documents, strict=False))
+                )
+                self.conn.execute("COMMIT;")
+            except Exception as e:
+                self.conn.execute("ROLLBACK;")
+                logger.error(
+                    f"Transaction failed: {e}, default model: {self.default_model}, model used: {model}, len(embeddings): {len(embeddings[0])}"
+                )
+                raise
+            finally:
+                self.create_index(collection)
+
+
 
     def update_or_create_venomx(
             self,

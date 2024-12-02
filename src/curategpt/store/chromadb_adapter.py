@@ -263,10 +263,13 @@ class ChromaDBAdapter(DBAdapter):
         collection = self._get_collection(collection)
         model = None
 
-        if venomx:
-            hf_metadata_model = venomx.venomx.embedding_model.name
-            if hf_metadata_model:
-                model = hf_metadata_model
+        try:
+            if venomx:
+                hf_metadata_model = venomx.venomx.embedding_model.name
+                if hf_metadata_model:
+                    model = hf_metadata_model
+        except Exception as e:
+            raise KeyError(f"Metadata from {collection} is not compatible with the current version of CurateGPT") from e
 
         venomx = self.populate_venomx(collection, model, venomx.venomx)
         cm = self.update_collection_metadata(
@@ -502,9 +505,11 @@ class ChromaDBAdapter(DBAdapter):
         # want to accidentally set it
         collection = client.get_collection(name=self._get_collection(collection))
         metadata = collection.metadata
-        # deserialize _venomx str to venomx dict and put in Metadata model
-        metadata = json.loads(metadata["_venomx"])
-        metadata = Metadata(venomx=Index(**metadata))
+        try:
+            metadata = json.loads(metadata["_venomx"])
+            metadata = Metadata(venomx=Index(**metadata))
+        except KeyError as e:
+            raise KeyError(f"Metadata from {collection} is not compatible with the current version of CurateGPT") from e
         collection = client.get_collection(
             name=collection.name, embedding_function=self._embedding_function(metadata.venomx.embedding_model.name)
         )
@@ -601,8 +606,11 @@ class ChromaDBAdapter(DBAdapter):
         )
         collection_obj = self._get_collection_object(collection)
         metadata = collection_obj.metadata
-        metadata = json.loads(metadata["_venomx"])
-        metadata = Metadata(venomx=Index(**metadata))
+        try:
+            metadata = json.loads(metadata["_venomx"])
+            metadata = Metadata(venomx=Index(**metadata))
+        except KeyError as e:
+            raise KeyError(f"Metadata from {collection} is not compatible with the current version of CurateGPT") from e
         ef = self._embedding_function(metadata.venomx.embedding_model.name)
         if len(text) > self.default_max_document_length:
             logger.warning(

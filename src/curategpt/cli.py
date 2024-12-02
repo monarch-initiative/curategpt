@@ -2465,7 +2465,6 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
     try:
         objects = list(db.fetch_all_objects_memory_safe(collection=collection))
         metadata = db.collection_metadata(collection)
-        print(metadata)
     except Exception as e:
         print(f"Error accessing collection '{collection}' from database: {e}")
         return
