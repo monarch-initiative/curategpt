@@ -1833,7 +1833,7 @@ grpc = ["grpcio (>=1.44.0,<2.0.0.dev0)"]
 name = "gpt4all"
 version = "1.0.12"
 description = "Python bindings for GPT4All"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "gpt4all-1.0.12-py3-none-macosx_10_9_universal2.whl", hash = "sha256:935a6d16f582e91821ee80ce8e39644f9d41f3467c341ea44bda6b346f0bdb2c"},
@@ -3419,7 +3419,7 @@ test = ["black (>=24.1.0)", "cogapp", "mypy (>=1.10.0)", "numpy", "pytest", "pyt
 name = "llm-gpt4all"
 version = "0.1.1"
 description = "Plugin for LLM adding support for GPT4ALL models"
-optional = false
+optional = true
 python-versions = ">=3.9"
 files = [
     {file = "llm-gpt4all-0.1.1.tar.gz", hash = "sha256:9cc1f03c03c28430ff160eb80587c7aed0cc814ed2fb0abd21d0308925b6a55f"},
@@ -9147,9 +9147,9 @@ type = ["pytest-mypy"]
 [extras]
 bioc = ["bioc"]
 docs = []
-gpt4all = ["gpt4all"]
+gpt4all = ["gpt4all", "llm-gpt4all"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9, !=3.9.7"
-content-hash = "21661e647b528fbb27018c68ddcf2febcb17f35b1c8a6369eb0cef65394c71b7"
+content-hash = "1649b5a9c3c851886ebef2c242dce901d431164c3dc47a42467c5a86d375136f"
