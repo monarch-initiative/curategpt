@@ -36,18 +36,11 @@ class HuggingFaceAgent:
 
         embedding_file = "embeddings.parquet"
         metadata_file = "metadata.yaml"
-        print("\n\n")
-        print(objects[0][0])
-        print(objects[0][2]['_embeddings'])
-        print(objects[0][2]['documents'])
-        print("\n\n")
+
         try:
             df = pd.DataFrame(data=[(obj[0], obj[2]['_embeddings'], obj[2]['document']) for obj in objects])
         except Exception as e:
-            # df = pd.DataFrame(data=[(obj[0], obj[2]['_embeddings'], obj[2]['documents']) for obj in objects])
-            # logger.info(f"df changed")
             raise ValueError(f"Creation of Dataframe not successful: {e}") from e
-
 
         with ExitStack() as stack:
             tmp_parquet = stack.enter_context(tempfile.NamedTemporaryFile(suffix=".parquet", delete=True))
