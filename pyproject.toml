@@ -24,7 +24,7 @@ pymongo = ">=4.4.1"
 linkml-runtime = "^1.6.3"
 python-ulid = "^1.1.0"
 sqlite-utils = "^3.34"
-gpt4all = "^1.0.8"
+gpt4all = {version = "^1.0.8", optional = true}
 httpx = "^0.24.1"
 eutils = "^0.6.0"
 matplotlib = "^3.7.2"
@@ -91,6 +91,9 @@ docs = [
     ]
 bioc = [
     "bioc"
+]
+gpt4all = [
+    "gpt4all"
 ]
 
 [tool.poetry-dynamic-versioning]
