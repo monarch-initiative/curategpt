@@ -6,15 +6,15 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>curategpt package &mdash; curategpt 0.2.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+  <title>curategpt package &mdash; curategpt 0.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=000c92bf"></script>
+      <script src="_static/documentation_options.js?v=a47416a6"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -1456,7 +1456,7 @@
 <dt class="sig sig-object py" id="curategpt.ChromaDBAdapter.find">
 <span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.ChromaDBAdapter.find" title="Link to this definition"></a></dt>
 <dd><p>Query the database.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;chromadb&quot;</span><span class="p">,</span> <span class="s2">&quot;db&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">objs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;NeuronOfTheForebrain&quot;</span><span class="p">},</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;ont_cl&quot;</span><span class="p">))</span>
 </pre></div>
@@ -1493,7 +1493,7 @@
 <dt class="sig sig-object py" id="curategpt.ChromaDBAdapter.insert">
 <span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.ChromaDBAdapter.insert" title="Link to this definition"></a></dt>
 <dd><p>Insert an object or list of objects into the store.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">insert</span><span class="p">([{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}],</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;people&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1649,7 +1649,7 @@ lists to be turned into array type so we flatten those again.</p>
 <dt class="sig sig-object py" id="curategpt.ChromaDBAdapter.search">
 <span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.ChromaDBAdapter.search" title="Link to this definition"></a></dt>
 <dd><p>Query the database for a text string.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;chromadb&quot;</span><span class="p">,</span> <span class="s2">&quot;db&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;forebrain neurons&quot;</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;ont_cl&quot;</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">obj_id</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
@@ -1773,7 +1773,7 @@ used for SQL databases, SPARQL endpoints, or even file systems.</p>
 objects, equivalient to a JSON object.</p>
 <p>Objects are partitioned into <em>collections</em>, which maps to the equivalent concept in
 MongoDB and ChromaDB.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">insert</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">},</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;people&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1782,7 +1782,7 @@ MongoDB and ChromaDB.</p>
 here we do not provide a separate Collection object, everything is handled through the
 store object. You can optionally bind a store object to a collection, which effectively
 gives you a collection object:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">set_collection</span><span class="p">(</span><span class="s2">&quot;people&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">insert</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">})</span>
@@ -1913,7 +1913,7 @@ gives you a collection object:</p>
 <dt class="sig sig-object py" id="curategpt.DBAdapter.find">
 <span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.DBAdapter.find" title="Link to this definition"></a></dt>
 <dd><p>Query the database.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;chromadb&quot;</span><span class="p">,</span> <span class="s2">&quot;db&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">objs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;NeuronOfTheForebrain&quot;</span><span class="p">},</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;ont_cl&quot;</span><span class="p">))</span>
 </pre></div>
@@ -1950,7 +1950,7 @@ gives you a collection object:</p>
 <dt class="sig sig-object py" id="curategpt.DBAdapter.insert">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.DBAdapter.insert" title="Link to this definition"></a></dt>
 <dd><p>Insert an object or list of objects into the store.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">insert</span><span class="p">([{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}],</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;people&quot;</span><span class="p">)</span>
 </pre></div>
@@ -2112,7 +2112,7 @@ gives you a collection object:</p>
 <dt class="sig sig-object py" id="curategpt.DBAdapter.search">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.DBAdapter.search" title="Link to this definition"></a></dt>
 <dd><p>Query the database for a text string.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;chromadb&quot;</span><span class="p">,</span> <span class="s2">&quot;db&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;forebrain neurons&quot;</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;ont_cl&quot;</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">obj_id</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
@@ -2149,14 +2149,14 @@ gives you a collection object:</p>
 <p>If this is set, then all subsequent operations will be performed on this collection, unless
 overridden.</p>
 <p>This allows the following</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">set_collection</span><span class="p">(</span><span class="s2">&quot;people&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">insert</span><span class="p">([{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}])</span>
 </pre></div>
 </div>
 <p>to be written in place of</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">insert</span><span class="p">([{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}],</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;people&quot;</span><span class="p">)</span>
 </pre></div>
@@ -2175,8 +2175,8 @@ overridden.</p>
 <dt class="sig sig-object py" id="curategpt.DBAdapter.set_collection_metadata">
 <span class="sig-name descname"><span class="pre">set_collection_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.DBAdapter.set_collection_metadata" title="Link to this definition"></a></dt>
 <dd><p>Set the metadata for a collection.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">get_store</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">curategpt.store</span> <span class="kn">import</span> <span class="n">Metadata</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_store</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">curategpt.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metadata</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">(</span><span class="s2">&quot;in_memory&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">md</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">collection_metadata</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">md</span><span class="o">.</span><span class="n">venomx</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;People&quot;</span>
@@ -2351,7 +2351,7 @@ overridden.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Author 1 &lt;cjmungall@lbl.gov&gt;.</p>
+    <p>&#169; Copyright 2025, Author 1 &lt;cjmungall@lbl.gov&gt;.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
