@@ -101,12 +101,8 @@ class InMemoryAdapter(DBAdapter):
         """
         self._insert(objs, collection, **kwargs)
 
-
     def _insert(
-            self,
-            objs: Union[OBJECT, Iterable[OBJECT]],
-            collection: str = None,
-            venomx: Metadata = None
+        self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, venomx: Metadata = None
     ):
         collection_obj = self._get_collection_object(collection)
         if venomx is None:
@@ -121,33 +117,35 @@ class InMemoryAdapter(DBAdapter):
 
     @staticmethod
     def populate_venomx(
-            collection: Optional[str],
-            model: Optional[str] = None,
-            distance: str = None,
-            object_type: str = None,
-            embeddings_dimension: int = None,
-            index_fields: Optional[Union[List[str], Tuple[str]]] = None,
+        collection: Optional[str],
+        model: Optional[str] = None,
+        distance: str = None,
+        object_type: str = None,
+        embeddings_dimension: int = None,
+        index_fields: Optional[Union[List[str], Tuple[str]]] = None,
     ) -> Metadata:
         """
-    Populate venomx with data currently given when inserting
+        Populate venomx with data currently given when inserting
 
-    :param collection:
-    :param model:
-    :param distance:
-    :param object_type:
-    :param embeddings_dimension:
-    :param index_fields:
-    :return:
-    """
+        :param collection:
+        :param model:
+        :param distance:
+        :param object_type:
+        :param embeddings_dimension:
+        :param index_fields:
+        :return:
+        """
         venomx = Metadata(
             venomx=Index(
                 id=collection,
                 embedding_model=Model(name=model),
                 embeddings_dimensions=embeddings_dimension,
-                embedding_input_method=ModelInputMethod(fields=index_fields) if index_fields else None
+                embedding_input_method=(
+                    ModelInputMethod(fields=index_fields) if index_fields else None
+                ),
             ),
             hnsw_space=distance,
-            object_type=object_type
+            object_type=object_type,
         )
         return venomx
 
@@ -200,9 +198,7 @@ class InMemoryAdapter(DBAdapter):
             cm.object_count = len(collection_obj.objects)
         return cm
 
-    def set_collection_metadata(
-        self, collection_name: Optional[str], metadata: Metadata, **kwargs
-    ):
+    def set_collection_metadata(self, collection_name: Optional[str], metadata: Metadata, **kwargs):
         """
         Set the metadata for a collection.
 
@@ -214,7 +210,6 @@ class InMemoryAdapter(DBAdapter):
         # if metadata.venomx.id != collection_name:
         #     raise ValueError(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name} and should not be changed")
         collection_obj.metadata = metadata.model_dump(exclude_none=True)
-
 
     def update_collection_metadata(self, collection_name: str, **kwargs) -> Metadata:
         """

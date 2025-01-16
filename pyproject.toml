@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "curategpt"
-version = "0.2.2"
+version = "0.2.3"
 description = "CurateGPT"
 authors = ["Chris Mungall <cjmungall@lbl.gov>", "Carlo Kroll <ckroll95@gmail.com>", "Harshad Hegde <hhegde@lbl.gov>", "J. Harry Caufield <jhc@lbl.gov>"]
 license = "BSD-3"

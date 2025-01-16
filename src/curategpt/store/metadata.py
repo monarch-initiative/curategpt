@@ -46,13 +46,13 @@ class Metadata(BaseModel):
         :param adapter: Adapter name (e.g., 'chroma', 'duckdb').
         :return: Metadata instance.
         """
-        if adapter == 'chromadb':
+        if adapter == "chromadb":
             # Deserialize '_venomx' (str) back into 'venomx' (dict)
             if "_venomx" in metadata_dict:
                 venomx_json = metadata_dict.pop("_venomx")
                 metadata_dict["venomx"] = Index(**json.loads(venomx_json))
         # for 'duckdb', 'venomx' remains as is
-        if adapter == 'duckdb':
+        if adapter == "duckdb":
             metadata_dict = metadata_dict
         return cls(**metadata_dict)
 
@@ -64,25 +64,18 @@ class Metadata(BaseModel):
         :param adapter: Adapter name (e.g., 'chroma', 'duckdb').
         :return: Metadata dictionary.
         """
-        if adapter == 'chromadb':
+        if adapter == "chromadb":
             # Serialize 'venomx' (dict) into '_venomx' (str)
             metadata_dict = self.model_dump(
-                exclude={"venomx"},
-                exclude_unset=True,
-                exclude_none=True
+                exclude={"venomx"}, exclude_unset=True, exclude_none=True
             )
             if self.venomx:
                 metadata_dict["_venomx"] = json.dumps(self.venomx.model_dump())
             return metadata_dict
-        elif adapter == 'duckdb':
+        elif adapter == "duckdb":
             metadata_dict = self.model_dump(
-                exclude={"_venomx"},
-                exclude_unset=True,
-                exclude_none=True
+                exclude={"_venomx"}, exclude_unset=True, exclude_none=True
             )
             return metadata_dict
         else:
             raise ValueError(f"Unsupported adapter: {adapter}")
-
-
-

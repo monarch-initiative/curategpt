@@ -33,6 +33,7 @@ class DuckDBConnectionAndRecoveryHandler:
         """Kill a process if it's holding the database lock."""
         try:
             import psutil
+
             if psutil.pid_exists(pid):
                 process = psutil.Process(pid)
                 process.terminate()
@@ -65,11 +66,11 @@ class DuckDBConnectionAndRecoveryHandler:
         - Now safely open the fixed database normally
 
         """
-        wal_path = Path(self.path + '.wal')
+        wal_path = Path(self.path + ".wal")
         if wal_path.exists():
             logger.info("Found WAL file, attempting recovery...")
             try:
-                temp_conn = duckdb.connect(':memory:')
+                temp_conn = duckdb.connect(":memory:")
                 self._load_vss_extensions(temp_conn)
                 temp_conn.execute(f"ATTACH '{self.path}' AS main_db")
                 temp_conn.execute("CHECKPOINT;")
