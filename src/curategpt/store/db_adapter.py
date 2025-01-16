@@ -214,9 +214,7 @@ class DBAdapter(ABC):
         :return:
         """
 
-    def set_collection_metadata(
-        self, collection_name: Optional[str], metadata: Metadata, **kwargs
-    ):
+    def set_collection_metadata(self, collection_name: Optional[str], metadata: Metadata, **kwargs):
         """
         Set the metadata for a collection.
 
@@ -488,6 +486,7 @@ class DBAdapter(ABC):
         """
         raise NotImplementedError
 
-    def insert_from_huggingface(self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, **kwargs):
+    def insert_from_huggingface(
+        self, objs: Union[OBJECT, Iterable[OBJECT]], collection: str = None, **kwargs
+    ):
         raise NotImplementedError
-

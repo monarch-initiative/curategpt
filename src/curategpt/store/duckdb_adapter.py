@@ -292,7 +292,9 @@ class DuckDBAdapter(DBAdapter):
 
         if collection not in self.list_collection_names():
             self._create_table_if_not_exists(
-                collection, self.vec_dimension, venomx=updated_venomx,
+                collection,
+                self.vec_dimension,
+                venomx=updated_venomx,
             )
 
         # if collection already exists, update metadata here
@@ -409,17 +411,17 @@ class DuckDBAdapter(DBAdapter):
                     self.create_index(collection)
 
     def insert_from_huggingface(
-            self,
-            objs: Union[OBJECT, Iterable[OBJECT]],
-            collection: str = None,
-            batch_size: int = None,
-            text_field: Union[str, Callable] = None,
-            venomx: Optional[Metadata] = None,
-            object_type: Optional[str] = None,
-            distance: Optional[str] = None,
-            vec_dimension: Optional[int] = None,
-            method: str = "insert",
-            **kwargs,
+        self,
+        objs: Union[OBJECT, Iterable[OBJECT]],
+        collection: str = None,
+        batch_size: int = None,
+        text_field: Union[str, Callable] = None,
+        venomx: Optional[Metadata] = None,
+        object_type: Optional[str] = None,
+        distance: Optional[str] = None,
+        vec_dimension: Optional[int] = None,
+        method: str = "insert",
+        **kwargs,
     ):
         collection = self._get_collection(collection)
         model = None
@@ -434,7 +436,9 @@ class DuckDBAdapter(DBAdapter):
                 vec_dimension = self._get_embedding_dimension(model)
 
         except Exception as e:
-            raise KeyError(f"Metadata from {collection} is not compatible with the current version of CurateGPT") from e
+            raise KeyError(
+                f"Metadata from {collection} is not compatible with the current version of CurateGPT"
+            ) from e
 
         updated_venomx = self.update_or_create_venomx(
             venomx.venomx,
@@ -446,9 +450,11 @@ class DuckDBAdapter(DBAdapter):
         )
         if collection not in self.list_collection_names():
             self._create_table_if_not_exists(
-                collection, vec_dimension, venomx=updated_venomx,
+                collection,
+                vec_dimension,
+                venomx=updated_venomx,
             )
-        updated_venomx.venomx.id = collection # prevent name error
+        updated_venomx.venomx.id = collection  # prevent name error
         self.set_collection_metadata(collection_name=collection, metadata=updated_venomx)
         if batch_size is None:
             batch_size = 100000
@@ -464,11 +470,17 @@ class DuckDBAdapter(DBAdapter):
 
         for next_objs in chunk(objs, batch_size):
             next_objs = list(next_objs)
-            ids = [item['metadata']['id'] for item in next_objs]
+            ids = [item["metadata"]["id"] for item in next_objs]
             metadatas = [self._dict(o) for o in next_objs]
-            documents = [item['document'] for item in next_objs]
-            embeddings = [item['embeddings'].tolist() if isinstance(item['embeddings'], np.ndarray)
-                          else item['embeddings'] for item in next_objs]
+            documents = [item["document"] for item in next_objs]
+            embeddings = [
+                (
+                    item["embeddings"].tolist()
+                    if isinstance(item["embeddings"], np.ndarray)
+                    else item["embeddings"]
+                )
+                for item in next_objs
+            ]
             try:
                 self.conn.execute("BEGIN TRANSACTION;")
                 self.conn.executemany(
@@ -484,16 +496,14 @@ class DuckDBAdapter(DBAdapter):
             finally:
                 self.create_index(collection)
 
-
-
     def update_or_create_venomx(
-            self,
-            venomx: Optional[Index],
-            collection: str,
-            model: str,
-            distance: str,
-            object_type: str,
-            embeddings_dimension: Optional[int],
+        self,
+        venomx: Optional[Index],
+        collection: str,
+        model: str,
+        distance: str,
+        object_type: str,
+        embeddings_dimension: Optional[int],
     ) -> Metadata:
         """
         Updates an existing Index instance (venomx) with additional values or creates a new one if none is provided.
@@ -501,42 +511,42 @@ class DuckDBAdapter(DBAdapter):
         # If venomx already exists, update its nested fields (as e.g. vec_dimension would not be given)
         if venomx:
             new_embedding_model = Model(name=model)
-            updated_index = venomx.model_copy(update={  # given venomx comes as venomx=Index()
-                "embedding_model": new_embedding_model,
-                "embeddings_dimensions": embeddings_dimension,
-            })
-
-            venomx = Metadata(
-                venomx=updated_index,
-                hnsw_space=distance,
-                object_type=object_type
+            updated_index = venomx.model_copy(
+                update={  # given venomx comes as venomx=Index()
+                    "embedding_model": new_embedding_model,
+                    "embeddings_dimensions": embeddings_dimension,
+                }
             )
+
+            venomx = Metadata(venomx=updated_index, hnsw_space=distance, object_type=object_type)
 
         else:
             if distance is None:
                 distance = self.distance_metric
-            venomx = self.populate_venomx(collection, model, distance, object_type, embeddings_dimension)
+            venomx = self.populate_venomx(
+                collection, model, distance, object_type, embeddings_dimension
+            )
 
         return venomx
 
     @staticmethod
     def populate_venomx(
-            collection: Optional[str],
-            model: Optional[str],
-            distance: str,
-            object_type: str,
-            embeddings_dimension: int,
+        collection: Optional[str],
+        model: Optional[str],
+        distance: str,
+        object_type: str,
+        embeddings_dimension: int,
     ) -> Metadata:
         """
-    Populate venomx with data currently given when inserting
+        Populate venomx with data currently given when inserting
 
-    :param collection:
-    :param model:
-    :param distance:
-    :param object_type:
-    :param embeddings_dimension:
-    :return:
-    """
+        :param collection:
+        :param model:
+        :param distance:
+        :param object_type:
+        :param embeddings_dimension:
+        :return:
+        """
         venomx = Metadata(
             venomx=Index(
                 id=collection,
@@ -544,7 +554,7 @@ class DuckDBAdapter(DBAdapter):
                 embeddings_dimensions=embeddings_dimension,
             ),
             hnsw_space=distance,
-            object_type=object_type
+            object_type=object_type,
         )
         return venomx
 
@@ -764,15 +774,17 @@ class DuckDBAdapter(DBAdapter):
             raise ValueError("Collection name must be provided.")
         metadata = self.collection_metadata(collection)
         current_venomx = {**kwargs}
-        if metadata is None: # should not be possible
-            logger.warning(f"No existing metadata found for collection {collection}. Initializing new metadata.")
+        if metadata is None:  # should not be possible
+            logger.warning(
+                f"No existing metadata found for collection {collection}. Initializing new metadata."
+            )
             metadata = Metadata(venomx=Index(**current_venomx))
         else:
             metadata_dict = metadata.model_dump(exclude_none=True)
             # Check if the existing venomx has an embedding model and if it matches the one in kwargs
-            if 'venomx' in metadata_dict and metadata_dict['venomx'].get('embedding_model'):
-                existing_model_name = metadata_dict['venomx']['embedding_model'].get('name')
-                new_model_name = current_venomx.get('embedding_model', {}).get('name')
+            if "venomx" in metadata_dict and metadata_dict["venomx"].get("embedding_model"):
+                existing_model_name = metadata_dict["venomx"]["embedding_model"].get("name")
+                new_model_name = current_venomx.get("embedding_model", {}).get("name")
 
                 if new_model_name and existing_model_name and new_model_name != existing_model_name:
                     raise ValueError(
@@ -781,10 +793,10 @@ class DuckDBAdapter(DBAdapter):
                     )
 
         # Merge current_venomx (from kwargs) into the nested venomx dictionary
-        if 'venomx' in metadata_dict and isinstance(metadata_dict['venomx'], dict):
-            metadata_dict['venomx'].update(current_venomx)
+        if "venomx" in metadata_dict and isinstance(metadata_dict["venomx"], dict):
+            metadata_dict["venomx"].update(current_venomx)
         else:
-            metadata_dict['venomx'] = current_venomx
+            metadata_dict["venomx"] = current_venomx
             # Reconstruct the Metadata object from the updated dictionary
             metadata = Metadata(**metadata_dict)
         updated_metadata_dict = metadata.model_dump(exclude_none=True)
@@ -799,9 +811,7 @@ class DuckDBAdapter(DBAdapter):
         )
         return metadata
 
-    def set_collection_metadata(
-        self, collection_name: Optional[str], metadata: Metadata, **kwargs
-    ):
+    def set_collection_metadata(self, collection_name: Optional[str], metadata: Metadata, **kwargs):
         """
         Set the metadata for the collection
         :param collection_name:
@@ -816,7 +826,9 @@ class DuckDBAdapter(DBAdapter):
 
         if metadata:
             if metadata.venomx.id != collection_name:
-                raise ValueError(f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name}")
+                raise ValueError(
+                    f"venomx.id: {metadata.venomx.id} must match collection_name {collection_name}"
+                )
 
             new_model = metadata.venomx.embedding_model.name
 
