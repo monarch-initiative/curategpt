@@ -206,19 +206,28 @@ class PubmedWrapper(BaseWrapper):
         return parsed_data
 
     def fetch_pmcid(self, pmid: str) -> Optional[str]:
-        pmid = pmid.replace("PMID:", "")
+        pmid = pmid.replace("PMID:", "").strip()
         session = self.session
         params = {"db": "pmc", "linkname": "pubmed_pmc", "id": pmid}
         url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi"
-        response = session.get(url, params=params)
+
+        try:
+            response = session.get(url, params=params)
+        except requests.RequestException as exc:
+            logger.error(f"HTTP request failed for URL {url} with params {params}: {exc}")
+            return None
+
         root = fromstring(response.content)
+        if root is None:
+            logger.error(f"Failed to parse XML for PMID: {pmid}")
 
         pmcid = None
         for link_set in root.findall(".//LinkSet"):
             for link in link_set.findall(".//Link"):
-                pmcid = link.find("./Id").text
+                pmcid = link.find("./Id").text.strip()
                 if pmcid:
                     return f"PMC:PMC{pmcid}"
+        logger.error("PMC ID not found in XML for PMID: %s", pmid)
         return None
 
     def fetch_full_text(self, object_id: str) -> Optional[str]:
