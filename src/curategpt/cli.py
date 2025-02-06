@@ -2302,6 +2302,7 @@ def ontology():
 @model_option
 @append_option
 @database_type_option
+@batch_size_option
 @click.option(
     "--branches",
     "-b",
@@ -2313,7 +2314,7 @@ def ontology():
 )
 @click.argument("ont")
 def index_ontology_command(
-    ont, path, collection, append, model, index_fields, branches, database_type, **kwargs
+    ont, path, collection, append, model, index_fields, branches, database_type, batch_size
 ):
     """
     Index an ontology.
@@ -2356,6 +2357,7 @@ def index_ontology_command(
         collection=collection,
         model=model,
         venomx=venomx,
+        batch_size=batch_size,
         object_type="OntologyClass"
 
     )

@@ -218,7 +218,7 @@ class ChromaDBAdapter(DBAdapter):
             # TODO: see https://github.com/chroma-core/chroma/issues/709
             batch_size = 100
         if batch_size is None:
-            batch_size = 100000
+            batch_size = 1000
         if text_field is None:
             text_field = self.text_lookup
         id_field = self.identifier_field(collection)
