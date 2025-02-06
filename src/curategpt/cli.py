@@ -2549,7 +2549,7 @@ def download_embeddings(path, collection, repo_id, embeddings_filename, metadata
             df = pd.read_parquet(Path(parquet_download))
             store_objects = [
                 {
-                    "metadata": row.iloc[0]['metadata'],
+                    "metadata": row.iloc[0],
                     "embeddings": row.iloc[1],
                     "document": row.iloc[2]
                 } for _, row in df.iterrows()
