@@ -20,6 +20,17 @@ logger = logging.root
 logger.setLevel(logging.DEBUG)
 
 
+class MockResponse:
+    def __init__(self, content: bytes, status_code: int = 200):
+        self.content = content
+        self.status_code = status_code
+
+
+def mock_get(url, params=None, timeout=None):
+    xml_content = b"<root><LinkSet><Link><Id>9159873</Id></Link></LinkSet></root>"
+    return MockResponse(xml_content)
+
+
 @pytest.fixture
 def wrapper(request, tmp_path):
     db = None
@@ -43,7 +54,8 @@ def test_pubmed_by_id(wrapper):
     assert len(objs) == 1
 
 
-def test_pubmed_to_pmc(wrapper):
+def test_pubmed_to_pmc(monkeypatch, wrapper):
+    monkeypatch.setattr(wrapper.session, "get", mock_get)
     pmcid = wrapper.fetch_pmcid("PMID:35663206")
     assert pmcid == "PMC:PMC9159873"
 
