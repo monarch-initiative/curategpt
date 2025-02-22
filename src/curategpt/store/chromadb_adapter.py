@@ -362,8 +362,8 @@ class ChromaDBAdapter(DBAdapter):
         collection_name = self._get_collection(collection_name)
         try:
             collection_obj = self.client.get_collection(name=collection_name)
-        except Exception as e:
-            logger.error(f"Failed to get collection {collection_name}: {e}")
+        except ValueError as e:
+            logger.warning(f"Did not find an existing collection named {collection_name}: {e}\nAssuming this is a new collection.")
             return None
         metadata_data = {**collection_obj.metadata, **kwargs}
         try:
