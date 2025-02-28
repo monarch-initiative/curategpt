@@ -45,6 +45,7 @@ class OntologyWrapper(BaseWrapper):
     default_max_search_results: int = 500
     fetch_definitions: bool = field(default=True)
     fetch_relationships: bool = field(default=True)
+    fetch_aliases: bool = field(default=True)
     relationships_as_fields: bool = field(default=False)
 
     branches: List[str] = None
@@ -97,6 +98,12 @@ class OntologyWrapper(BaseWrapper):
             for chunked_entities in chunk(selected_ids, 100):
                 for id, defn, _ in adapter.definitions(chunked_entities):
                     definitions[id] = defn
+        aliases_by_entity = {}
+        if self.fetch_aliases:
+            for sub in entities:
+                entity_aliases = list(adapter.entity_aliases(sub))
+                cleaned = [alias if alias is not None else "" for alias in entity_aliases]
+                aliases_by_entity[sub] = cleaned
         relationships = defaultdict(list)
         if self.fetch_relationships:
             for sub, pred, obj in adapter.relationships():
@@ -121,6 +128,7 @@ class OntologyWrapper(BaseWrapper):
                 id=shorthand,
                 label=labels[id],
                 original_id=id,
+                aliases=aliases_by_entity.get(id, []),
             )
             for pred, tgt in relationships.get(id, []):
                 k = self._as_shorthand(pred)
