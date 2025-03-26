@@ -55,7 +55,7 @@ onnxruntime = [
     {version = "^1.20.0", python = ">=3.10"}
 ]
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"
 tox = ">=3.25.1"
 linkml = "^1.5.6"
