@@ -117,12 +117,12 @@ state.extractor = extractor
 
 # Add background_collection for CiteSeek functionality
 background_collection = st.sidebar.selectbox(
-    "Background knowledge (for Search and Citeseek)",
+    "Background knowledge for CiteSeek",
     [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA],
     index=1,  # Set PubMed as default
     help="""
-    Background databases can be used to give additional context to the LLM.
-    Select PubMed to search medical literature.
+    Background databases provide evidence sources for CiteSeek.
+    PubMed is recommended for verifying medical claims.
     """,
 )
 
