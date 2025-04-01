@@ -64,8 +64,8 @@ if not db.list_collection_names():
 # Include Chat, Search, and CiteSeek in PAGES
 PAGES = [
     CHAT,
-    SEARCH,
     CITESEEK,
+    SEARCH
 ]
 
 
@@ -117,7 +117,7 @@ state.extractor = extractor
 
 # Add background_collection for CiteSeek functionality
 background_collection = st.sidebar.selectbox(
-    "Background knowledge for Search and Citeseek",
+    "Background knowledge (for Search and Citeseek)",
     [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA],
     index=1,  # Set PubMed as default
     help="""
