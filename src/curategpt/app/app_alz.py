@@ -9,6 +9,7 @@ import yaml
 
 from curategpt import BasicExtractor
 from curategpt.agents.chat_agent import ChatAgent, ChatResponse
+from curategpt.agents.evidence_agent import EvidenceAgent
 from curategpt.app.helper import get_applicable_examples
 from curategpt.app.state import get_state
 from curategpt.wrappers import BaseWrapper
@@ -31,7 +32,7 @@ SEARCH = "Search"
 # BOOTSTRAP = "Bootstrap"
 # CURATE = "Curate"
 # ADD_TO_CART = "Add to Cart"
-# CITESEEK = "CiteSeek"
+CITESEEK = "CiteSeek"
 # CART = "Cart"
 # HELP = "Help"
 # EXAMPLES = "Examples"
@@ -60,10 +61,11 @@ st.title("Alzheimers AI assistant")
 if not db.list_collection_names():
     st.warning("No collections found. Please use command line to load one.")
 
-# Only include Chat and Search in PAGES
+# Include Chat, Search, and CiteSeek in PAGES
 PAGES = [
     CHAT,
     SEARCH,
+    CITESEEK,
 ]
 
 
@@ -99,24 +101,26 @@ collection = st.sidebar.selectbox(
     """,
 )
 
-model_name = st.sidebar.selectbox(
-    "Choose model",
-    MODELS,
-    help="""
-    If this instance allows GPT-4 this likely works the best.
-    (be considerate if someone else is paying).
-    Open models may not do as well at extraction tasks
-    (and they may be very slow).
-    Note: if your instance is on EC2 it's likely open models
-    that are not API backed will be unavailable or broken.
-    """,
-)
+# Set default model and show which model is being used
+model_name = "gpt-4o"
+st.sidebar.markdown(f"**Using model:** {model_name}")
 
 # Removed extraction_strategy and background_collection sections
 
 # Default to BasicExtractor
 extractor = BasicExtractor()
 state.extractor = extractor
+
+# Add background_collection for CiteSeek functionality
+background_collection = st.sidebar.selectbox(
+    "Background knowledge for Search and Citeseek",
+    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA],
+    index=0,
+    help="""
+    Background databases can be used to give additional context to the LLM.
+    Select PubMed to search medical literature.
+    """,
+)
 
 # st.sidebar.markdown(f"Cart: {cart.size} items")
 
@@ -288,3 +292,62 @@ elif option == CHAT:
             for ref, text in response.uncited_references.items():
                 st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
                 st.code(text, language="yaml")
+
+elif option == CITESEEK:
+    page_state = state.get_page_state(CITESEEK)
+    st.subheader("Find citations for a claim")
+    v = None
+    if page_state.selected is not None:
+        v = yaml.dump(page_state.selected, sort_keys=False)
+    query = st.text_area(
+        f"Enter YAML object to be verified by {collection}",
+        value=v,
+        help="Copy the YAML from some of the other outputs of this tool.",
+    )
+
+    limit = st.slider(
+        "Detail",
+        min_value=0,
+        max_value=30,
+        value=10,
+        step=1,
+        help="""
+                                   Behind the scenes, N entries are fetched from the knowledge base,
+                                   and these are fed to the LLM. Selecting more examples may give more
+                                   complete results, but may also exceed context windows for the model.
+                                   """,
+    )
+    extractor.model_name = model_name
+
+    if page_state.selected is not None:
+        if st.button("Clear"):
+            page_state.selected = None
+            st.success("Current Selection Cleared!")
+
+    if st.button(CITESEEK):
+        chat_agent = get_chat_agent()
+        ea = EvidenceAgent(chat_agent=chat_agent)
+        try:
+            query_obj = yaml.safe_load(query)
+        except yaml.YAMLError:
+            try:
+                query_obj = json.loads(query)
+            except json.JSONDecodeError as exc:
+                st.warning(f"Invalid YAML or JSON: {exc}")
+                query_obj = None
+        if query_obj:
+            response = ea.find_evidence(query_obj)
+            # TODO: reuse code for this
+            st.markdown(response.formatted_body)
+            st.markdown("## References")
+            for ref, text in response.references.items():
+                st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
+                st.code(text, language="yaml")
+            if response.uncited_references:
+                st.markdown("## Uncited references")
+                st.caption(
+                    "These references were flagged as potentially relevant, but a citation was not detected."
+                )
+                for ref, text in response.uncited_references.items():
+                    st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
+                    st.code(text, language="yaml")
