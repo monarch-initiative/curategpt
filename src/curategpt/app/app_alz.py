@@ -101,9 +101,13 @@ collection = st.sidebar.selectbox(
     """,
 )
 
-# Set default model and show which model is being used
-model_name = "gpt-4o"
-st.sidebar.markdown(f"**Using model:** {model_name}")
+# Simplified model selection with only gpt-4o
+model_name = st.sidebar.selectbox(
+    "Choose model",
+    ["gpt-4o"],
+    index=0,
+    help="Using GPT-4o for optimal results."
+)
 
 # Removed extraction_strategy and background_collection sections
 
@@ -115,7 +119,7 @@ state.extractor = extractor
 background_collection = st.sidebar.selectbox(
     "Background knowledge for Search and Citeseek",
     [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA],
-    index=0,
+    index=1,  # Set PubMed as default
     help="""
     Background databases can be used to give additional context to the LLM.
     Select PubMed to search medical literature.
