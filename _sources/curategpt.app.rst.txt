@@ -12,6 +12,14 @@ curategpt.app.app module
    :undoc-members:
    :show-inheritance:
 
+curategpt.app.app\_alz module
+-----------------------------
+
+.. automodule:: curategpt.app.app_alz
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 curategpt.app.cart module
 -------------------------
 
