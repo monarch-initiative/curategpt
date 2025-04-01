@@ -92,7 +92,7 @@ def filtered_collection_names() -> List[str]:
 collection = st.sidebar.selectbox(
     "Choose collection",
     [PUBMED, WIKIPEDIA] + filtered_collection_names() + ["No collection"],  # Added "No collection" option
-    index=1,  # Set PUBMED as default
+    index=0,  # Set PUBMED as default (index 0 since it's first in the list)
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
