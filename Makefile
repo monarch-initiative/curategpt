@@ -24,6 +24,10 @@ ont-%:
 app:
 	$(RUN) streamlit run src/curategpt/app/app.py --logger.level=debug
 
+# New pattern-based app command for variants
+app-%:
+	$(RUN) streamlit run src/curategpt/app/app_$*.py --logger.level=debug
+
 ## -- Docs --
 
 
@@ -65,7 +69,7 @@ load-json-data-%: data/%.json
 	$(CURATE) index -c $* -c $* $<
 
 load-db-%:
-	$(CURATE) -v view index -p $(DB_PATH) --view $* -c $* -m openai: 
+	$(CURATE) -v view index -p $(DB_PATH) --view $* -c $* -m openai:
 
 load-linkml-w3id-%:
 	$(CURATE) view index --view linkml_schema -c schema_$* -m openai: --source-locator https://w3id.org/$*/$*.yaml
