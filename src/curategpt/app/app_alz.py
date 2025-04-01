@@ -64,8 +64,7 @@ if not db.list_collection_names():
 # Include Chat, Search, and CiteSeek in PAGES
 PAGES = [
     CHAT,
-    CITESEEK,
-    SEARCH
+    CITESEEK
 ]
 
 
@@ -92,12 +91,12 @@ def filtered_collection_names() -> List[str]:
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    [PUBMED, WIKIPEDIA] + filtered_collection_names(),  # Removed JGI and ESSDIVE, put PubMed first
-    index=0,  # Set PubMed as default
+    ["No collection", PUBMED, WIKIPEDIA] + filtered_collection_names(),  # Added "No collection" option
+    index=1,  # Set PUBMED as default
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
-    Select 'About' to see details of each collection
+    Select 'No collection' to interact with the model directly without a knowledge base.
     """,
 )
 
@@ -133,7 +132,10 @@ st.sidebar.markdown("Developed by the Monarch Initiative")
 
 def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
     knowledge_source_collection = None
-    if collection == PUBMED:
+    if collection == "No collection":
+        # Create a ChatAgent without a knowledge source for direct LLM interaction
+        return ChatAgent(extractor=extractor)
+    elif collection == PUBMED:
         source = PubmedWrapper(local_store=db, extractor=extractor)
     elif collection == WIKIPEDIA:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
@@ -141,15 +143,36 @@ def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
     else:
         source = db
         knowledge_source_collection = collection
-    return ChatAgent(
+    
+    agent = ChatAgent(
         knowledge_source=source,
         knowledge_source_collection=knowledge_source_collection,
         extractor=extractor,
     )
+    
+    # Check if source is None before returning
+    if agent.knowledge_source is None:
+        raise ValueError(f"Knowledge source is None for collection {collection}")
+    
+    return agent
 
 
 def ask_chatbot(query, expand=False) -> ChatResponse:
-    return get_chat_agent().chat(query, expand=expand)
+    agent = get_chat_agent()
+    # If using direct LLM without knowledge source and collection is "No collection"
+    if collection == "No collection":
+        # For direct LLM interaction, create a simple response without search
+        response = agent.extractor.model.prompt(query, system="You are a helpful Alzheimer's disease expert.")
+        return ChatResponse(
+            body=response.text(),
+            formatted_body=response.text(),
+            prompt=query,
+            references={},
+            uncited_references={}
+        )
+    else:
+        # Normal RAG flow with knowledge source
+        return agent.chat(query, expand=expand)
 
 
 def html_table(rows: List[dict]) -> str:
@@ -238,34 +261,48 @@ if option == SEARCH:
 
 elif option == CHAT:
     page_state = state.get_page_state(CHAT)
-    st.subheader("Chat with a knowledge base")
-    query = st.text_area(
-        f"Ask me anything (within the scope of {collection})!",
-        help="You can query the current knowledge base using natural language.",
-    )
+    if collection == "No collection":
+        st.subheader("Chat with the Alzheimer's AI assistant")
+        query = st.text_area(
+            "Ask me anything about Alzheimer's disease!",
+            help="Ask questions directly to the AI without using a knowledge base.",
+        )
+    else:
+        st.subheader("Chat with a knowledge base")
+        query = st.text_area(
+            f"Ask me anything about Alzheimer's disease (within the scope of {collection})!",
+            help="You can query the current knowledge base using natural language.",
+        )
 
-    limit = st.slider(
-        "Detail",
-        min_value=0,
-        max_value=30,
-        value=10,
-        step=1,
-        help="""
-                                   Behind the scenes, N entries are fetched from the knowledge base,
-                                   and these are fed to the LLM. Selecting more examples may give more
-                                   complete results, but may also exceed context windows for the model.
-                                   """,
-    )
-    expand = st.checkbox(
-        "Expand query",
-        help="""
-                                                If checked, perform query expansion (pubmed only).
-                                                """,
-    )
+    # Only show these controls if using a knowledge base
+    if collection != "No collection":
+        limit = st.slider(
+            "Detail",
+            min_value=0,
+            max_value=30,
+            value=10,
+            step=1,
+            help="""
+                                       Behind the scenes, N entries are fetched from the knowledge base,
+                                       and these are fed to the LLM. Selecting more examples may give more
+                                       complete results, but may also exceed context windows for the model.
+                                       """,
+        )
+        expand = st.checkbox(
+            "Expand query",
+            help="""
+                                                    If checked, perform query expansion (pubmed only).
+                                                    """,
+        )
+        examples = get_applicable_examples(collection, CHAT)
+        st.write("Examples:")
+        st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
+    else:
+        # Set default values when not using a knowledge base
+        limit = 0
+        expand = False
+    
     extractor.model_name = model_name
-    examples = get_applicable_examples(collection, CHAT)
-    st.write("Examples:")
-    st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
 
     if st.button(CHAT):
         response = ask_chatbot(query, expand=expand)
