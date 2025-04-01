@@ -91,7 +91,7 @@ def filtered_collection_names() -> List[str]:
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    ["No collection", PUBMED, WIKIPEDIA] + filtered_collection_names(),  # Added "No collection" option
+    [PUBMED, WIKIPEDIA] + filtered_collection_names() + ["No collection"],  # Added "No collection" option
     index=1,  # Set PUBMED as default
     help="""
     A collection is a knowledge base. It could be anything, but
@@ -143,17 +143,17 @@ def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
     else:
         source = db
         knowledge_source_collection = collection
-    
+
     agent = ChatAgent(
         knowledge_source=source,
         knowledge_source_collection=knowledge_source_collection,
         extractor=extractor,
     )
-    
+
     # Check if source is None before returning
     if agent.knowledge_source is None:
         raise ValueError(f"Knowledge source is None for collection {collection}")
-    
+
     return agent
 
 
@@ -301,7 +301,7 @@ elif option == CHAT:
         # Set default values when not using a knowledge base
         limit = 0
         expand = False
-    
+
     extractor.model_name = model_name
 
     if st.button(CHAT):
