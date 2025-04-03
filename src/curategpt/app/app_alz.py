@@ -8,7 +8,7 @@ import streamlit as st
 import yaml
 
 from curategpt import BasicExtractor
-from curategpt.agents.chat_agent import ChatAgent, ChatResponse
+from curategpt.agents.chat_agent import ChatResponse, ChatAgentAlz
 from curategpt.agents.evidence_agent import EvidenceAgent
 from curategpt.app.helper import get_applicable_examples
 from curategpt.app.state import get_state
@@ -130,11 +130,11 @@ background_collection = st.sidebar.selectbox(
 st.sidebar.markdown("Developed by the Monarch Initiative")
 
 
-def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
+def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
     knowledge_source_collection = None
     if collection == "No collection":
         # Create a ChatAgent without a knowledge source for direct LLM interaction
-        return ChatAgent(extractor=extractor)
+        return ChatAgentAlz(extractor=extractor)
     elif collection == PUBMED:
         source = PubmedWrapper(local_store=db, extractor=extractor)
     elif collection == WIKIPEDIA:
@@ -144,7 +144,7 @@ def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
         source = db
         knowledge_source_collection = collection
 
-    agent = ChatAgent(
+    agent = ChatAgentAlz(
         knowledge_source=source,
         knowledge_source_collection=knowledge_source_collection,
         extractor=extractor,
@@ -264,13 +264,12 @@ elif option == CHAT:
     if collection == "No collection":
         st.subheader("Chat with the Alzheimer's AI assistant")
         query = st.text_area(
-            "Ask me anything about Alzheimer's disease!",
+            "Ask me anything about Alzheimer's disease",
             help="Ask questions directly to the AI without using a knowledge base.",
         )
     else:
-        st.subheader("Chat with a knowledge base")
         query = st.text_area(
-            f"Ask me anything about Alzheimer's disease (within the scope of {collection})!",
+            f"Ask me anything about Alzheimer's disease (within the scope of {collection})",
             help="You can query the current knowledge base using natural language.",
         )
 
