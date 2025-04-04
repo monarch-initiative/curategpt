@@ -293,9 +293,6 @@ elif option == CHAT:
                                                     If checked, perform query expansion (pubmed only).
                                                     """,
         )
-        examples = get_applicable_examples(collection, CHAT)
-        st.write("Examples:")
-        st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
     else:
         # Set default values when not using a knowledge base
         limit = 0
