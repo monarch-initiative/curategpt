@@ -8,7 +8,7 @@ import streamlit as st
 import yaml
 
 from curategpt import BasicExtractor
-from curategpt.agents.chat_agent import ChatResponse, ChatAgentAlz
+from curategpt.agents.chat_agent import ChatResponse, ChatAgentAlz, ChatAgent
 from curategpt.agents.evidence_agent import EvidenceAgent
 from curategpt.app.helper import get_applicable_examples
 from curategpt.app.state import get_state
@@ -92,6 +92,46 @@ logger.error(f"Selected {option_selected}; sp={state.page}; opt={option}")
 def filtered_collection_names() -> List[str]:
     return [c for c in db.list_collection_names() if not c.endswith("_cached")]
 
+
+def get_paperqa_collections() -> List[str]:
+    """Find all available PaperQA collections by scanning for .pkl files."""
+    collections = []
+    
+    # List of directories to search for PaperQA collections
+    search_dirs = [
+        Path("./paperqa_db"),
+        Path("./my_paperqa_db"),
+        Path("/Users/ck/Monarch/forks/curate-gpt/my_paperqa_db"),
+        Path("/Users/ck/Monarch/forks/curate-gpt/paperqa_db"),
+        Path("./test_papers"),
+    ]
+    
+    for directory in search_dirs:
+        if directory.exists() and directory.is_dir():
+            for file in directory.glob("*.pkl"):
+                collection_name = file.stem
+                collections.append(f"{PAPERQA_PREFIX}{collection_name}")
+    
+    return collections
+
+
+paperqa_collections = get_paperqa_collections()
+
+# Group collections by type
+st.sidebar.header("Collections")
+
+# Select from standard API sources
+collection_type = st.sidebar.radio(
+    "Knowledge source type",
+    ["Standard APIs", "Database Collections", "Trusted Papers (PaperQA)"],
+    index=0,
+    help="""
+    Choose the type of knowledge source:
+    - Standard APIs: External services like PubMed and Wikipedia
+    - Database Collections: Local database collections
+    - Trusted Papers: PDFs indexed with PaperQA
+    """
+)
 
 if collection_type == "Standard APIs":
     collection_options = [PUBMED, WIKIPEDIA]
@@ -195,6 +235,8 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
     else:
         source = db
         knowledge_source_collection = collection
+
+    agent = ChatAgentAlz(
         knowledge_source=source,
         knowledge_source_collection=knowledge_source_collection,
         extractor=extractor,
