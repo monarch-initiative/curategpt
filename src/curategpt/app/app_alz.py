@@ -117,49 +117,40 @@ def get_paperqa_collections() -> List[str]:
 
 paperqa_collections = get_paperqa_collections()
 
-# Group collections by type
-st.sidebar.header("Collections")
+# Combine all collections into a single dropdown
+st.sidebar.header("Knowledge Source")
 
-# Select from standard API sources
-collection_type = st.sidebar.radio(
-    "Knowledge source type",
-    ["Standard APIs", "Database Collections", "Trusted Papers (PaperQA)"],
-    index=0,
+# Combine all collection types in a single dropdown
+all_collections = [
+    # Standard APIs
+    PUBMED, 
+    WIKIPEDIA,
+    # Add a "No collection" option for direct LLM interaction
+    "No collection"
+]
+
+# Add any database collections if available
+db_collections = filtered_collection_names()
+if db_collections:
+    all_collections.extend(db_collections)
+
+# Add any PaperQA collections if available
+if paperqa_collections:
+    all_collections.extend(paperqa_collections)
+
+# Show the single selectbox for all collections
+collection = st.sidebar.selectbox(
+    "Choose collection",
+    all_collections,
+    index=0,  # Default to PubMed
     help="""
-    Choose the type of knowledge source:
-    - Standard APIs: External services like PubMed and Wikipedia
-    - Database Collections: Local database collections
-    - Trusted Papers: PDFs indexed with PaperQA
-    """
+    Choose a knowledge source to query:
+    - PubMed/Wikipedia: Connect to external APIs
+    - PaperQA collections: Query your indexed PDFs
+    - Database collections: Query locally stored data
+    - No collection: Direct interaction with the AI
+    """,
 )
-
-if collection_type == "Standard APIs":
-    collection_options = [PUBMED, WIKIPEDIA]
-    default_index = 0  # PubMed
-elif collection_type == "Database Collections":
-    collection_options = filtered_collection_names()
-    default_index = 0 if collection_options else 0
-else:  # Trusted Papers
-    collection_options = paperqa_collections
-    default_index = 0 if collection_options else 0
-
-# Only show the selectbox if there are options available
-if collection_options:
-    collection = st.sidebar.selectbox(
-        "Choose collection",
-        collection_options,
-        index=default_index,
-        help="""
-        A collection is a knowledge base to query.
-        - APIs connect to external services
-        - Database collections are locally stored
-        - Trusted Papers are indexed PDFs
-        """,
-    )
-else:
-    st.sidebar.warning(f"No collections available for {collection_type}")
-    # Set a default collection if none available
-    collection = PUBMED
 
 # Simplified model selection with only gpt-4o
 model_name = st.sidebar.selectbox(
@@ -176,7 +167,8 @@ extractor = BasicExtractor()
 state.extractor = extractor
 
 # Add background_collection for CiteSeek functionality
-background_options = [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA] + paperqa_collections
+# Use the same collection options, but with a "No background" option first
+background_options = [NO_BACKGROUND_SELECTED] + all_collections
 
 background_collection = st.sidebar.selectbox(
     "Background knowledge for CiteSeek",
@@ -185,7 +177,6 @@ background_collection = st.sidebar.selectbox(
     help="""
     Background databases provide evidence sources for CiteSeek.
     PubMed is recommended for verifying medical claims.
-    Trusted Papers can provide domain-specific evidence.
     """,
 )
 
