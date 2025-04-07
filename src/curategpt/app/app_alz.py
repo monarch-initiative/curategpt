@@ -15,9 +15,13 @@ from curategpt.app.state import get_state
 from curategpt.wrappers import BaseWrapper
 from curategpt.wrappers.literature import WikipediaWrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
+from pathlib import Path
+import os
 
 PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"
+PAPERQA_PREFIX = "PaperQA: "  # Prefix for PaperQA collections
 # Removed JGI and ESS-Dive
 # JGI = "JGI (via API)"
 # ESSDIVE = "ESS-DeepDive (via API)"
@@ -89,17 +93,73 @@ logger.error(f"Selected {option_selected}; sp={state.page}; opt={option}")
 def filtered_collection_names() -> List[str]:
     return [c for c in db.list_collection_names() if not c.endswith("_cached")]
 
+def get_paperqa_collections() -> List[str]:
+    """Find all available PaperQA collections by scanning for .pkl files."""
+    collections = []
+    
+    # List of directories to search for PaperQA collections
+    search_dirs = [
+        Path("./paperqa_db"),
+        Path("./my_paperqa_db"),
+        Path("/Users/ck/Monarch/forks/curate-gpt/my_paperqa_db"),
+        Path("/Users/ck/Monarch/forks/curate-gpt/paperqa_db"),
+        Path("./test_papers"),
+    ]
+    
+    for directory in search_dirs:
+        if directory.exists() and directory.is_dir():
+            for file in directory.glob("*.pkl"):
+                collection_name = file.stem
+                collections.append(f"{PAPERQA_PREFIX}{collection_name}")
+    
+    return collections
 
-collection = st.sidebar.selectbox(
-    "Choose collection",
-    [PUBMED, WIKIPEDIA] + filtered_collection_names(),  # Removed JGI and ESSDIVE, put PubMed first
-    index=0,  # Set PubMed as default
+
+paperqa_collections = get_paperqa_collections()
+
+# Group collections by type
+st.sidebar.header("Collections")
+
+# Select from standard API sources
+collection_type = st.sidebar.radio(
+    "Knowledge source type",
+    ["Standard APIs", "Database Collections", "Trusted Papers (PaperQA)"],
+    index=0,
     help="""
-    A collection is a knowledge base. It could be anything, but
-    it's likely your instance has some bio-ontologies pre-loaded.
-    Select 'About' to see details of each collection
-    """,
+    Choose the type of knowledge source:
+    - Standard APIs: External services like PubMed and Wikipedia
+    - Database Collections: Local database collections
+    - Trusted Papers: PDFs indexed with PaperQA
+    """
 )
+
+if collection_type == "Standard APIs":
+    collection_options = [PUBMED, WIKIPEDIA]
+    default_index = 0  # PubMed
+elif collection_type == "Database Collections":
+    collection_options = filtered_collection_names()
+    default_index = 0 if collection_options else 0
+else:  # Trusted Papers
+    collection_options = paperqa_collections
+    default_index = 0 if collection_options else 0
+
+# Only show the selectbox if there are options available
+if collection_options:
+    collection = st.sidebar.selectbox(
+        "Choose collection",
+        collection_options,
+        index=default_index,
+        help="""
+        A collection is a knowledge base to query.
+        - APIs connect to external services
+        - Database collections are locally stored
+        - Trusted Papers are indexed PDFs
+        """,
+    )
+else:
+    st.sidebar.warning(f"No collections available for {collection_type}")
+    # Set a default collection if none available
+    collection = PUBMED
 
 # Simplified model selection with only gpt-4o
 model_name = st.sidebar.selectbox(
@@ -116,13 +176,16 @@ extractor = BasicExtractor()
 state.extractor = extractor
 
 # Add background_collection for CiteSeek functionality
+background_options = [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA] + paperqa_collections
+
 background_collection = st.sidebar.selectbox(
     "Background knowledge for CiteSeek",
-    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA],
+    background_options,
     index=1,  # Set PubMed as default
     help="""
     Background databases provide evidence sources for CiteSeek.
     PubMed is recommended for verifying medical claims.
+    Trusted Papers can provide domain-specific evidence.
     """,
 )
 
@@ -137,10 +200,39 @@ def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
         source = PubmedWrapper(local_store=db, extractor=extractor)
     elif collection == WIKIPEDIA:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
+    # Handle PaperQA collections
+    elif collection.startswith(PAPERQA_PREFIX):
+        collection_name = collection[len(PAPERQA_PREFIX):]  # Remove prefix
+        # Try to find the collection in multiple possible locations
+        search_dirs = [
+            Path("./paperqa_db"),
+            Path("./my_paperqa_db"),
+            Path("/Users/ck/Monarch/forks/curate-gpt/my_paperqa_db"),
+            Path("/Users/ck/Monarch/forks/curate-gpt/paperqa_db"),
+            Path("./test_papers"),
+        ]
+        
+        # Find the collection file
+        collection_file = None
+        for directory in search_dirs:
+            potential_path = directory / f"{collection_name}.pkl"
+            if potential_path.exists():
+                collection_file = potential_path
+                break
+        
+        if collection_file:
+            source = PaperQAWrapper(
+                collection_name=collection_name,
+                db_path=str(collection_file.parent)
+            )
+        else:
+            st.error(f"PaperQA collection '{collection_name}' not found!")
+            source = db  # Fallback to database
     # Removed JGI and ESSDIVE cases
     else:
         source = db
         knowledge_source_collection = collection
+    
     return ChatAgent(
         knowledge_source=source,
         knowledge_source_collection=knowledge_source_collection,

@@ -1,9 +1,10 @@
 """Command line interface for curategpt."""
-
+import asyncio
 import csv
 import gzip
 import json
 import logging
+import os
 import sys
 import tempfile
 import time
@@ -50,6 +51,8 @@ __all__ = [
 ]
 
 from venomx.model.venomx import Dataset, Index, Model
+
+from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
 
 
 def dump(
@@ -2781,6 +2784,119 @@ def pubmed_ask(query, path, model, show_references, database_type, **kwargs):
             print(f"## {ref}")
             print(ref_text)
 
+
+  # Add to curategpt/cli.py
+
+@main.group()
+def paperqa():
+  """Commands for PaperQA integration."""
+  pass
+
+@paperqa.command()
+@click.argument('directory', type=click.Path(exists=True, file_okay=False, dir_okay=True))
+@click.option('--collection', '-c', default="paperqa_docs", help="Collection name")
+@click.option('--db-path', default=None, help="Database storage path")
+def index(directory, collection, db_path):
+  """Index PDF documents in a directory."""
+  import os
+  import asyncio
+  import time
+  from pathlib import Path
+
+  paper_wrapper = PaperQAWrapper(
+    collection_name=collection,
+    db_path=db_path
+  )
+
+  # Get list of PDF files
+  pdf_files = [f for f in os.listdir(directory) if f.lower().endswith('.pdf')]
+
+  if not pdf_files:
+      click.echo("No PDF files found in the directory.")
+      return
+
+  click.echo(f"Found {len(pdf_files)} PDF files to process.")
+
+  # Process each file
+  success_count = 0
+  error_count = 0
+
+  for file in pdf_files:
+      file_path = os.path.join(directory, file)
+      click.echo(f"Processing {file}...")
+
+      try:
+          # Validate file exists and is readable
+          if not os.path.exists(file_path) or not os.path.isfile(file_path):
+              click.echo(f"  Error: File not found or not accessible: {file_path}")
+              error_count += 1
+              continue
+
+          # Try to add the document
+          result = asyncio.run(paper_wrapper.aadd(file_path))
+          if result:
+              click.echo(f"  Successfully indexed: {file} as {result}")
+              success_count += 1
+          else:
+              click.echo(f"  Failed to index: {file}")
+              error_count += 1
+
+          # Small delay to avoid resource contention
+          time.sleep(0.5)
+
+      except Exception as e:
+          click.echo(f"  Error processing {file}: {e}")
+          error_count += 1
+
+  # Summary
+  click.echo(f"\nIndexing complete: {success_count} successful, {error_count} failed")
+
+
+@paperqa.command()
+@click.argument('query')
+@click.option('--collection', '-c', default="paperqa_docs", help="Collection name")
+@click.option('--db-path', default=None, help="Database storage path")
+@click.option('--limit', '-n', default=5, help="Number of results to return")
+def ask(query, collection, db_path, limit):
+  """Ask a question using indexed papers."""
+  import asyncio
+  
+  paper_wrapper = PaperQAWrapper(
+    collection_name=collection,
+    db_path=db_path
+  )
+  
+  click.echo(f"Searching for: {query}")
+  
+  try:
+    # Run the async query in a synchronous context
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+      answer = loop.run_until_complete(paper_wrapper.docs.aquery(query))
+    finally:
+      loop.close()
+    
+    click.echo("\n" + "="*50)
+    click.echo(f"ANSWER: {answer.answer}")
+    click.echo("="*50 + "\n")
+    
+    if answer.contexts:
+      click.echo("SOURCES:")
+      for i, context in enumerate(answer.contexts[:limit], 1):
+        click.echo(f"\n{i}. From: {context.text.doc.docname}")
+        click.echo(f"   Score: {context.score:.3f}")
+        click.echo(f"   {context.context}")
+    else:
+      click.echo("No relevant contexts found.")
+      
+  except Exception as e:
+    click.echo(f"Error: {e}")
+
+
+# use:
+# curategpt paperqa index ./my_papers --collection research_papers
+# curategpt paperqa ask "What did Smith say about neural networks?" --collection research_papers
 
 if __name__ == "__main__":
     main()

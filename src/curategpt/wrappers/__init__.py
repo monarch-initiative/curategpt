@@ -31,6 +31,7 @@ __all__ = [
     "GoogleDriveWrapper",
     "FAIRSharingWrapper",
     "FilesystemWrapper",
+    "PaperQAWrapper",
     "get_wrapper",
 ]
 
@@ -100,6 +101,7 @@ def get_wrapper(name: str, **kwargs) -> BaseWrapper:
         OBOFormatWrapper  # noqa
     from curategpt.wrappers.ontology.ontology_wrapper import \
         OntologyWrapper  # noqa
+    from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper  # noqa
 
     for c in get_all_subclasses(BaseWrapper):
         if c.name == name:
