@@ -99,10 +99,7 @@ def get_paperqa_collections() -> List[str]:
     
     # List of directories to search for PaperQA collections
     search_dirs = [
-        Path("./paperqa_db"),
         Path("./my_paperqa_db"),
-        Path("/Users/ck/Monarch/forks/curate-gpt/my_paperqa_db"),
-        Path("/Users/ck/Monarch/forks/curate-gpt/paperqa_db"),
         Path("./test_papers"),
     ]
     
@@ -196,13 +193,9 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
     # Handle PaperQA collections
     elif collection.startswith(PAPERQA_PREFIX):
-        collection_name = collection[len(PAPERQA_PREFIX):]  # Remove prefix
-        # Try to find the collection in multiple possible locations
+        collection_name = collection[len(PAPERQA_PREFIX):]
         search_dirs = [
-            Path("./paperqa_db"),
             Path("./my_paperqa_db"),
-            Path("/Users/ck/Monarch/forks/curate-gpt/my_paperqa_db"),
-            Path("/Users/ck/Monarch/forks/curate-gpt/paperqa_db"),
             Path("./test_papers"),
         ]
         
@@ -221,8 +214,7 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
             )
         else:
             st.error(f"PaperQA collection '{collection_name}' not found!")
-            source = db  # Fallback to database
-    # Removed JGI and ESSDIVE cases
+            source = db
     else:
         source = db
         knowledge_source_collection = collection
@@ -233,7 +225,6 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
         extractor=extractor,
     )
 
-    # Check if source is None before returning
     if agent.knowledge_source is None:
         raise ValueError(f"Knowledge source is None for collection {collection}")
 
