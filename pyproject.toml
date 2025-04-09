@@ -50,10 +50,8 @@ click-default-group = "^1.2.4"
 venomx = "^0.1.1"
 duckdb = "~1.0.0"
 python-dotenv = "^1.0.1"
-onnxruntime = [
-    {version = "<=1.19.2", python = "<3.10"},
-    {version = "^1.20.0", python = ">=3.10"}
-]
+paper-qa = {version = "^2.1.1", optional = true}
+onnxruntime = "*"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"
@@ -95,6 +93,9 @@ bioc = [
 gpt4all = [
     "gpt4all",
     "llm-gpt4all"
+]
+paperqa = [
+    "paper-qa"
 ]
 
 [tool.poetry-dynamic-versioning]
