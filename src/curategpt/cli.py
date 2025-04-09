@@ -2794,7 +2794,7 @@ def paperqa():
 @click.argument('directory', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 def index(directory):
     """Index a directory of PDF papers using PaperQA.
-    
+
     DIRECTORY is the path to a directory containing PDF papers to index.
     This command will set PQA_HOME environment variable to this directory,
     then run the default PaperQA indexing process.
@@ -2805,40 +2805,40 @@ def index(directory):
     from pathlib import Path
     from paperqa import Settings
     from paperqa.agents.search import get_directory_index
-    
+
     directory_path = Path(directory).absolute()
-    
+
     # Count PDF files
     pdf_files = [f for f in os.listdir(directory_path) if f.lower().endswith('.pdf')]
-    
+
     if not pdf_files:
         click.echo("No PDF files found in the directory.")
         return
-    
+
     click.echo(f"Found {len(pdf_files)} PDF files to index.")
-    
+
     # Set up environment variable for PaperQA
     os.environ["PQA_HOME"] = str(directory_path)
     click.echo(f"Set PQA_HOME={directory_path}")
-    
+
     # Create and run the index
-    click.echo("Creating index for Alzheimer's papers...")
-    
+    click.echo(f"Creating index for directory {directory_path}...")
+
     settings = Settings(paper_directory=str(directory_path))
-    
+
     # Run the async function in a synchronous context
     try:
         loop = asyncio.get_event_loop()
     except RuntimeError:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-    
+
     try:
         # Build the index
         index = loop.run_until_complete(get_directory_index(settings=settings))
         index_name = settings.get_index_name()
         index_files = loop.run_until_complete(index.index_files)
-        
+
         click.echo(f"Successfully created PaperQA index: {index_name}")
         click.echo(f"Indexed {len(index_files)} files")
         click.echo("")
