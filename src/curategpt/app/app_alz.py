@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 from typing import List, Union
 
 import streamlit as st
@@ -10,14 +11,15 @@ import yaml
 from curategpt import BasicExtractor
 from curategpt.agents.chat_agent import ChatResponse, ChatAgentAlz
 from curategpt.agents.evidence_agent import EvidenceAgent
-from curategpt.app.helper import get_applicable_examples
 from curategpt.app.state import get_state
 from curategpt.wrappers import BaseWrapper
 from curategpt.wrappers.literature import WikipediaWrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
 
 PUBMED = "PubMed (via API)"
 WIKIPEDIA = "Wikipedia (via API)"
+PAPERQA = "Alzheimer's Papers (via PaperQA)"
 # Removed JGI and ESS-Dive
 # JGI = "JGI (via API)"
 # ESSDIVE = "ESS-DeepDive (via API)"
@@ -57,7 +59,15 @@ db = state.db
 cart = state.cart
 
 
-st.title("Alzheimers AI assistant")
+st.title("Alzheimer's AI Assistant")
+
+# Check if PQA_HOME environment variable is set for PaperQA
+if PAPERQA in [PUBMED, PAPERQA, WIKIPEDIA] and os.environ.get("PQA_HOME") is None:
+    st.warning(
+        "PQA_HOME environment variable is not set. To use the Alzheimer's Papers collection, "
+        "you need to set PQA_HOME to the directory containing your indexed papers. "
+        "Use 'curategpt paperqa index /path/to/papers' to create an index."
+    )
 if not db.list_collection_names():
     st.warning("No collections found. Please use command line to load one.")
 
@@ -91,11 +101,12 @@ def filtered_collection_names() -> List[str]:
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    [PUBMED, WIKIPEDIA] + filtered_collection_names() + ["No collection"],  # Added "No collection" option
+    [PUBMED, PAPERQA, WIKIPEDIA] + filtered_collection_names() + ["No collection"],
     index=0,  # Set PUBMED as default (index 0 since it's first in the list)
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
+    Select 'Alzheimer's Papers (via PaperQA)' for direct access to a trusted corpus of Alzheimer's research papers.
     Select 'No collection' to interact with the model directly without a knowledge base.
     """,
 )
@@ -117,11 +128,12 @@ state.extractor = extractor
 # Add background_collection for CiteSeek functionality
 background_collection = st.sidebar.selectbox(
     "Background knowledge for CiteSeek",
-    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA],
+    [NO_BACKGROUND_SELECTED, PUBMED, PAPERQA, WIKIPEDIA],
     index=1,  # Set PubMed as default
     help="""
     Background databases provide evidence sources for CiteSeek.
     PubMed is recommended for verifying medical claims.
+    Alzheimer's Papers provides specialized knowledge from trusted Alzheimer's research papers.
     """,
 )
 
@@ -139,6 +151,9 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
         source = PubmedWrapper(local_store=db, extractor=extractor)
     elif collection == WIKIPEDIA:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
+    elif collection == PAPERQA:
+        # Use the PaperQA wrapper for Alzheimer's papers
+        source = PaperQAWrapper(local_store=db, extractor=extractor)
     # Removed JGI and ESSDIVE cases
     else:
         source = db
