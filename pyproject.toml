@@ -57,8 +57,6 @@ onnxruntime = [
     {version = "^1.20.0", python = ">=3.10"}
 ]
 
-[tool.poetry.extras]
-paperqa = ["paper-qa", "langchain-community"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"
@@ -102,7 +100,8 @@ gpt4all = [
     "llm-gpt4all"
 ]
 paperqa = [
-    "paper-qa"
+    "paper-qa",
+    "langchain-community"
 ]
 
 [tool.poetry-dynamic-versioning]
