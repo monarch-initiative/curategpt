@@ -1,98 +1,115 @@
-"""Wrapper for the PaperQA library to search Alzheimer's papers."""
-
+import asyncio
 import logging
 import os
-import asyncio
-from typing import Any, Dict, List, Optional, Iterator
+from dataclasses import dataclass
+from pathlib import Path
 
-from paperqa import Settings
+from paperqa import Docs, Settings
+from paperqa.agents.search import get_directory_index
 from paperqa.agents.main import agent_query
 
 from curategpt.wrappers.base_wrapper import BaseWrapper
 
 logger = logging.getLogger(__name__)
 
-
+@dataclass
 class PaperQAWrapper(BaseWrapper):
-    """
-    A wrapper for PaperQA to search Alzheimer's papers.
-    
-    This wrapper uses PaperQA to search through a corpus of research papers.
-    It assumes papers have already been indexed using PaperQA's CLI tools
-    and can be found via the PQA_HOME environment variable.
-    """
+  """
+  A wrapper for PaperQA to search Alzheimer's papers.
 
-    name = "paperqa"
-    
-    def __init__(self, **kwargs):
-        """
-        Initialize the PaperQA wrapper.
-        
-        Uses the PQA_HOME environment variable to find indexed papers.
-        """
-        super().__init__(**kwargs)
-        
-        # Use default PaperQA settings 
-        # This will look for papers in PQA_HOME environment variable
-        self.settings = Settings()
-        
-        logger.info("Initialized PaperQA wrapper for Alzheimer's papers")
+  This wrapper uses PaperQA to search through a corpus of research papers.
+  It assumes papers have already been indexed using PaperQA's CLI tools.
+  """
 
-    def external_search(
-        self,
-        text: str,
-        expand: bool = False,
-        limit: Optional[int] = 10,
-        **kwargs,
-    ) -> List[Dict[str, Any]]:
-        """
-        Search Alzheimer's papers using PaperQA.
-        
-        Args:
-            text: Query string
-            expand: Whether to expand the query (not used)
-            limit: Maximum number of results to return
-            **kwargs: Additional arguments
-            
-        Returns:
-            List of dictionaries with paper information
-        """
-        try:
-            # Run the async query in a synchronous context
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                # Perform the query
-                response = loop.run_until_complete(
-                    agent_query(
-                        query=text, 
-                        settings=self.settings, 
-                        answer_with_sources=True
-                    )
-                )
-            finally:
-                loop.close()
-            
-            # Format results as list of dicts
-            results = []
-            
-            # Add the source contexts
-            for i, context in enumerate(response.contexts[:limit]):
-                result = {
-                    "id": f"paperqa_{i}",
-                    "text": context.text,
-                    "title": context.source_name if hasattr(context, 'source_name') else f"Source {i+1}",
-                    "citation": context.citation if hasattr(context, 'citation') else "",
-                    "score": context.score if hasattr(context, 'score') else 0.0,
-                }
-                results.append(result)
-                
-            return results
-        except Exception as e:
-            logger.error(f"Error searching with PaperQA: {e}")
-            return []
+  name = "paperqa"
 
-    def objects_by_ids(self, object_ids: List[str]) -> List[Dict]:
-        """Not implemented for PaperQA wrapper."""
-        logger.warning("PaperQA doesn't support direct ID lookup")
-        return []
+  def __post_init__(self) -> None:
+      pqa_home = os.environ.get("PQA_HOME")
+      if not pqa_home:
+          raise ValueError("PQA_HOME environment variable is not set!")
+      self.settings = Settings(paper_directory=pqa_home)
+      self._ensure_index_exists()
+
+  def _ensure_index_exists(self):
+      async def _check_and_build_index():
+          try:
+              # given we build with cli this should work
+              await get_directory_index(settings=self.settings, build=False)
+              print("Existing index found")
+              return True
+          except Exception as e:
+              if "was empty" in str(e):
+                  print("Index is empty, building now...")
+                  try:
+                      # Build the index
+                      await get_directory_index(settings=self.settings, build=True)
+                      print("Index built successfully")
+                      return True
+                  except Exception as build_err:
+                      print(f"Error building index: {build_err}")
+                      return False
+              else:
+                  print(f"Error accessing index: {e}")
+                  return False
+
+      asyncio.run(_check_and_build_index())
+
+  def search(self, query, limit=10, **kwargs):
+      """Search for documents matching the query using PaperQA."""
+      print(f"Searching for: {query}")
+      async def _search():
+          try:
+              response = await agent_query(
+                  query=query,
+                  settings=self.settings
+              )
+
+              print(f"Query response contains {len(response.session.contexts)} contexts")
+
+              results = []
+              for i, context in enumerate(response.session.contexts[:limit]):
+                  result = {
+                      "text": context.context,
+                      "source": (getattr(context.text.doc, "citation", None) or
+                              f"Document: {context.text.doc.docname}"),
+                      "paper_name": context.text.doc.docname,
+                  }
+                  results.append(result)
+
+              return iter(results)
+          except Exception as e:
+              print(f"Error with agent_query: {e}")
+              raise e
+
+      return asyncio.run(_search())
+
+  # TODO: only if index would not be there and for maybe a button on the streamlit app
+  def _fallback_search(self, query, limit=10):
+      """Fallback search method when agent_query fails."""
+      try:
+          async def _direct_docs_search():
+              docs = Docs()
+              pdf_path = Path(self.settings.paper_directory)
+              pdf_files = list(pdf_path.glob("*.pdf"))
+
+              for pdf_file in pdf_files:
+                  await docs.aadd(str(pdf_file))
+
+              answer = await docs.aquery(query, settings=self.settings)
+
+              results = []
+              for i, context in enumerate(answer.contexts[:limit]):
+                  result = {
+                      "text": context.context,
+                      "source": (getattr(context.text.doc, "citation", None) or
+                              f"Document: {context.text.doc.docname}"),
+                      "paper_name": context.text.doc.docname,
+                  }
+                  results.append(result)
+
+              return iter(results)
+
+          return asyncio.run(_direct_docs_search())
+      except Exception as e:
+          print(f"Error in fallback search: {e}")
+          return iter([])

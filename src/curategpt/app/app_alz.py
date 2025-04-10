@@ -143,29 +143,23 @@ st.sidebar.markdown("Developed by the Monarch Initiative")
 
 
 def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
-    knowledge_source_collection = None
     if collection == "No collection":
-        # Create a ChatAgent without a knowledge source for direct LLM interaction
         return ChatAgentAlz(extractor=extractor)
     elif collection == PUBMED:
         source = PubmedWrapper(local_store=db, extractor=extractor)
     elif collection == WIKIPEDIA:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
     elif collection == PAPERQA:
-        # Use the PaperQA wrapper for Alzheimer's papers
-        source = PaperQAWrapper(local_store=db, extractor=extractor)
-    # Removed JGI and ESSDIVE cases
+        source = PaperQAWrapper(extractor=extractor)
     else:
         source = db
-        knowledge_source_collection = collection
 
     agent = ChatAgentAlz(
         knowledge_source=source,
-        knowledge_source_collection=knowledge_source_collection,
+        knowledge_source_collection=collection,
         extractor=extractor,
     )
 
-    # Check if source is None before returning
     if agent.knowledge_source is None:
         raise ValueError(f"Knowledge source is None for collection {collection}")
 
@@ -174,9 +168,7 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
 
 def ask_chatbot(query, expand=False) -> ChatResponse:
     agent = get_chat_agent()
-    # If using direct LLM without knowledge source and collection is "No collection"
     if collection == "No collection":
-        # For direct LLM interaction, create a simple response without search
         response = agent.extractor.model.prompt(query, system="You are a helpful Alzheimer's disease expert.")
         return ChatResponse(
             body=response.text(),
@@ -186,7 +178,6 @@ def ask_chatbot(query, expand=False) -> ChatResponse:
             uncited_references={}
         )
     else:
-        # Normal RAG flow with knowledge source
         return agent.chat(query, expand=expand)
 
 
