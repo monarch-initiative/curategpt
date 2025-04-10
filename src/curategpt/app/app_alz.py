@@ -17,12 +17,9 @@ from curategpt.wrappers.literature import WikipediaWrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
 from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
 
-PUBMED = "PubMed (via API)"
-WIKIPEDIA = "Wikipedia (via API)"
-PAPERQA = "Alzheimer's Papers (via PaperQA)"
-# Removed JGI and ESS-Dive
-# JGI = "JGI (via API)"
-# ESSDIVE = "ESS-DeepDive (via API)"
+PUBMED = "PubMed"
+WIKIPEDIA = "Wikipedia"
+PAPERQA = "Alzheimers_Papers"
 
 CHAT = "Chat"
 SEARCH = "Search"
