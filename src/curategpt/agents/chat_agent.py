@@ -204,8 +204,11 @@ class ChatAgentAlz(BaseAgent):
         while True:
             references = {}
             texts = []
-            for i, result in enumerate(kb_results, start=1):
-                obj_text = yaml.dump({k: v for k, v in result.items() if v}, sort_keys=False)
+            for i, result_tuple in enumerate(kb_results, start=1):
+                # Extract the object from the standard tuple format (obj, distance, metadata)
+                obj, _, _ = result_tuple
+                
+                obj_text = yaml.dump({k: v for k, v in obj.items() if v}, sort_keys=False)
                 references[str(i)] = obj_text
                 texts.append(f"## Reference {i}\n{obj_text}")
 

@@ -67,14 +67,28 @@ class PaperQAWrapper(BaseWrapper):
               print(f"Query response contains {len(response.session.contexts)} contexts")
 
               results = []
-              for context in response.session.contexts[:limit]:
-                  result = {
-                      "text": context.context,
-                      "source": (getattr(context.text.doc, "citation", None) or
-                              f"Document: {context.text.doc.docname}"),
-                      "paper_name": context.text.doc.docname,
+              for idx, context in enumerate(response.session.contexts[:limit]):
+                  # Create a result object that matches the standard format
+                  obj = {
+                      "id": f"paper_{idx}",
+                      "title": context.text.doc.docname,
+                      "abstract": context.context,
+                      "citation": (getattr(context.text.doc, "citation", None) or
+                               f"Document: {context.text.doc.docname}"),
                   }
-                  results.append(result)
+                  
+                  # Calculate a pseudo-distance (lower is better, use rank position)
+                  # Normalize to be between 0-1 like other distance metrics
+                  distance = idx / (len(response.session.contexts) or 1)
+                  
+                  # Add metadata for consistency with other wrappers
+                  metadata = {
+                      "document": obj["abstract"],
+                      "paper_name": context.text.doc.docname
+                  }
+                  
+                  # Append as a tuple of (obj, distance, metadata)
+                  results.append((obj, distance, metadata))
 
               return iter(results)
           except Exception as e:
@@ -98,14 +112,28 @@ class PaperQAWrapper(BaseWrapper):
               answer = await docs.aquery(query, settings=self.settings)
 
               results = []
-              for context in answer.contexts[:limit]:
-                  result = {
-                      "text": context.context,
-                      "source": (getattr(context.text.doc, "citation", None) or
+              for idx, context in enumerate(answer.contexts[:limit]):
+                  # Create a result object that matches the standard format
+                  obj = {
+                      "id": f"paper_{idx}",
+                      "title": context.text.doc.docname,
+                      "abstract": context.context,
+                      "citation": (getattr(context.text.doc, "citation", None) or
                               f"Document: {context.text.doc.docname}"),
-                      "paper_name": context.text.doc.docname,
                   }
-                  results.append(result)
+                  
+                  # Calculate a pseudo-distance (lower is better, use rank position)
+                  # Normalize to be between 0-1 like other distance metrics
+                  distance = idx / (len(answer.contexts) or 1)
+                  
+                  # Add metadata for consistency with other wrappers
+                  metadata = {
+                      "document": obj["abstract"],
+                      "paper_name": context.text.doc.docname
+                  }
+                  
+                  # Append as a tuple of (obj, distance, metadata)
+                  results.append((obj, distance, metadata))
 
               return iter(results)
 
