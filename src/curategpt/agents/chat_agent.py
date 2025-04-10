@@ -12,7 +12,6 @@ from pydantic import BaseModel, ConfigDict
 from curategpt.agents.base_agent import BaseAgent
 from curategpt.utils.tokens import estimate_num_tokens, max_tokens_by_model
 from curategpt.wrappers import BaseWrapper
-from curategpt.wrappers.paperqa import PaperQAWrapper
 
 logger = logging.getLogger(__name__)
 

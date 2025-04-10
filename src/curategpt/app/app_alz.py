@@ -9,7 +9,7 @@ import streamlit as st
 import yaml
 
 from curategpt import BasicExtractor
-from curategpt.agents.chat_agent import ChatResponse, ChatAgentAlz
+from curategpt.agents.chat_agent import ChatAgentAlz, ChatResponse
 from curategpt.agents.evidence_agent import EvidenceAgent
 from curategpt.app.state import get_state
 from curategpt.wrappers import BaseWrapper

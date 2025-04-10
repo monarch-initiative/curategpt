@@ -51,8 +51,6 @@ __all__ = [
 
 from venomx.model.venomx import Dataset, Index, Model
 
-from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
-
 
 def dump(
     obj: Union[str, AnnotatedObject, Dict],
@@ -2792,7 +2790,7 @@ def paperqa():
 
 @paperqa.command()
 @click.argument('directory', type=click.Path(exists=True, file_okay=False, dir_okay=True))
-def index(directory):
+def index(directory):  # noqa: F811
     """Index a directory of PDF papers using PaperQA.
 
     DIRECTORY is the path to a directory containing PDF papers to index.
@@ -2802,6 +2800,7 @@ def index(directory):
     import asyncio
     import os
     from pathlib import Path
+
     from paperqa import Settings
     from paperqa.agents.search import get_directory_index
 

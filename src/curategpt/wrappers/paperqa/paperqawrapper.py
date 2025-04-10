@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from paperqa import Docs, Settings
-from paperqa.agents.search import get_directory_index
 from paperqa.agents.main import agent_query
+from paperqa.agents.search import get_directory_index
 
 from curategpt.wrappers.base_wrapper import BaseWrapper
 
@@ -67,13 +67,12 @@ class PaperQAWrapper(BaseWrapper):
               print(f"Query response contains {len(response.session.contexts)} contexts")
 
               results = []
-              for i, context in enumerate(response.session.contexts[:limit]):
+              for context in response.session.contexts[:limit]:
                   result = {
                       "text": context.context,
                       "source": (getattr(context.text.doc, "citation", None) or
                               f"Document: {context.text.doc.docname}"),
                       "paper_name": context.text.doc.docname,
-
                   }
                   results.append(result)
 
@@ -99,7 +98,7 @@ class PaperQAWrapper(BaseWrapper):
               answer = await docs.aquery(query, settings=self.settings)
 
               results = []
-              for i, context in enumerate(answer.contexts[:limit]):
+              for context in answer.contexts[:limit]:
                   result = {
                       "text": context.context,
                       "source": (getattr(context.text.doc, "citation", None) or
