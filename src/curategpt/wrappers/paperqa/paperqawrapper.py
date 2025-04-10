@@ -76,17 +76,17 @@ class PaperQAWrapper(BaseWrapper):
                       "citation": (getattr(context.text.doc, "citation", None) or
                                f"Document: {context.text.doc.docname}"),
                   }
-                  
+
                   # Calculate a pseudo-distance (lower is better, use rank position)
                   # Normalize to be between 0-1 like other distance metrics
                   distance = idx / (len(response.session.contexts) or 1)
-                  
+
                   # Add metadata for consistency with other wrappers
                   metadata = {
                       "document": obj["abstract"],
                       "paper_name": context.text.doc.docname
                   }
-                  
+
                   # Append as a tuple of (obj, distance, metadata)
                   results.append((obj, distance, metadata))
 
@@ -121,17 +121,17 @@ class PaperQAWrapper(BaseWrapper):
                       "citation": (getattr(context.text.doc, "citation", None) or
                               f"Document: {context.text.doc.docname}"),
                   }
-                  
+
                   # Calculate a pseudo-distance (lower is better, use rank position)
                   # Normalize to be between 0-1 like other distance metrics
                   distance = idx / (len(answer.contexts) or 1)
-                  
+
                   # Add metadata for consistency with other wrappers
                   metadata = {
                       "document": obj["abstract"],
                       "paper_name": context.text.doc.docname
                   }
-                  
+
                   # Append as a tuple of (obj, distance, metadata)
                   results.append((obj, distance, metadata))
 
