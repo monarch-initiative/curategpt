@@ -73,17 +73,18 @@ class PaperQAWrapper(BaseWrapper):
                       "source": (getattr(context.text.doc, "citation", None) or
                               f"Document: {context.text.doc.docname}"),
                       "paper_name": context.text.doc.docname,
+
                   }
                   results.append(result)
 
               return iter(results)
           except Exception as e:
+              self._fallback_search(query, limit)
               print(f"Error with agent_query: {e}")
               raise e
 
       return asyncio.run(_search())
 
-  # TODO: only if index would not be there and for maybe a button on the streamlit app
   def _fallback_search(self, query, limit=10):
       """Fallback search method when agent_query fails."""
       try:
