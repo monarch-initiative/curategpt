@@ -24,7 +24,7 @@ class BaseWrapper(ABC):  # noqa: B024
 
     source_locator: Optional[Union[str, Path]] = None
 
-    local_store: DBAdapter = None
+    local_store: Union[DBAdapter] = None
     """Adapter to local knowledge base used to cache results."""
 
     extractor: Extractor = None
@@ -82,6 +82,18 @@ class BaseWrapper(ABC):  # noqa: B024
             description=f"Special cache for {self.name} searches",
         )
         yield from db.search(text, collection=collection, limit=limit, **kwargs)
+
+    # def paper_qa_search(
+    #         self,
+    #         text: str,
+    #         collection: str = None,
+    #         cache: bool = True,
+    #         expand: bool = True,
+    #         limit: Optional[int] = None,
+    #         external_search_limit: Optional[int] = None,
+    #         **kwargs,
+    # ):
+
 
     def objects(
         self, collection: str = None, object_ids: Iterable[str] = None, **kwargs

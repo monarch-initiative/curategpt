@@ -2,25 +2,24 @@
 
 import json
 import logging
+import os
 from typing import List, Union
 
 import streamlit as st
 import yaml
 
 from curategpt import BasicExtractor
-from curategpt.agents.chat_agent import ChatAgent, ChatResponse
+from curategpt.agents.chat_agent import ChatAgentAlz, ChatResponse
 from curategpt.agents.evidence_agent import EvidenceAgent
-from curategpt.app.helper import get_applicable_examples
 from curategpt.app.state import get_state
 from curategpt.wrappers import BaseWrapper
 from curategpt.wrappers.literature import WikipediaWrapper
 from curategpt.wrappers.literature.pubmed_wrapper import PubmedWrapper
+from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
 
-PUBMED = "PubMed (via API)"
-WIKIPEDIA = "Wikipedia (via API)"
-# Removed JGI and ESS-Dive
-# JGI = "JGI (via API)"
-# ESSDIVE = "ESS-DeepDive (via API)"
+PUBMED = "PubMed"
+WIKIPEDIA = "Wikipedia"
+PAPERQA = "Alzheimers_Papers"
 
 CHAT = "Chat"
 SEARCH = "Search"
@@ -57,15 +56,22 @@ db = state.db
 cart = state.cart
 
 
-st.title("Alzheimers AI assistant")
+st.title("Alzheimer's AI Assistant")
+
+# Check if PQA_HOME environment variable is set for PaperQA
+if PAPERQA in [PUBMED, PAPERQA, WIKIPEDIA] and os.environ.get("PQA_HOME") is None:
+    st.warning(
+        "PQA_HOME environment variable is not set. To use the Alzheimer's Papers collection, "
+        "you need to set PQA_HOME to the directory containing your indexed papers. "
+        "Use 'curategpt paperqa index /path/to/papers' to create an index."
+    )
 if not db.list_collection_names():
     st.warning("No collections found. Please use command line to load one.")
 
 # Include Chat, Search, and CiteSeek in PAGES
 PAGES = [
     CHAT,
-    CITESEEK,
-    SEARCH
+    CITESEEK
 ]
 
 
@@ -92,12 +98,13 @@ def filtered_collection_names() -> List[str]:
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    [PUBMED, WIKIPEDIA] + filtered_collection_names(),  # Removed JGI and ESSDIVE, put PubMed first
-    index=0,  # Set PubMed as default
+    [PUBMED, PAPERQA, WIKIPEDIA] + filtered_collection_names() + ["No collection"],
+    index=0,  # Set PUBMED as default (index 0 since it's first in the list)
     help="""
     A collection is a knowledge base. It could be anything, but
     it's likely your instance has some bio-ontologies pre-loaded.
-    Select 'About' to see details of each collection
+    Select 'Alzheimer's Papers (via PaperQA)' for direct access to a trusted corpus of Alzheimer's research papers.
+    Select 'No collection' to interact with the model directly without a knowledge base.
     """,
 )
 
@@ -118,11 +125,12 @@ state.extractor = extractor
 # Add background_collection for CiteSeek functionality
 background_collection = st.sidebar.selectbox(
     "Background knowledge for CiteSeek",
-    [NO_BACKGROUND_SELECTED, PUBMED, WIKIPEDIA],
+    [NO_BACKGROUND_SELECTED, PUBMED, PAPERQA, WIKIPEDIA],
     index=1,  # Set PubMed as default
     help="""
     Background databases provide evidence sources for CiteSeek.
     PubMed is recommended for verifying medical claims.
+    Alzheimer's Papers provides specialized knowledge from trusted Alzheimer's research papers.
     """,
 )
 
@@ -131,25 +139,43 @@ background_collection = st.sidebar.selectbox(
 st.sidebar.markdown("Developed by the Monarch Initiative")
 
 
-def get_chat_agent() -> Union[ChatAgent, BaseWrapper]:
-    knowledge_source_collection = None
-    if collection == PUBMED:
+def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
+    if collection == "No collection":
+        return ChatAgentAlz(extractor=extractor)
+    elif collection == PUBMED:
         source = PubmedWrapper(local_store=db, extractor=extractor)
     elif collection == WIKIPEDIA:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
-    # Removed JGI and ESSDIVE cases
+    elif collection == PAPERQA:
+        source = PaperQAWrapper(extractor=extractor)
     else:
         source = db
-        knowledge_source_collection = collection
-    return ChatAgent(
+
+    agent = ChatAgentAlz(
         knowledge_source=source,
-        knowledge_source_collection=knowledge_source_collection,
+        knowledge_source_collection=collection,
         extractor=extractor,
     )
 
+    if agent.knowledge_source is None:
+        raise ValueError(f"Knowledge source is None for collection {collection}")
+
+    return agent
+
 
 def ask_chatbot(query, expand=False) -> ChatResponse:
-    return get_chat_agent().chat(query, expand=expand)
+    agent = get_chat_agent()
+    if collection == "No collection":
+        response = agent.extractor.model.prompt(query, system="You are a helpful Alzheimer's disease expert.")
+        return ChatResponse(
+            body=response.text(),
+            formatted_body=response.text(),
+            prompt=query,
+            references={},
+            uncited_references={}
+        )
+    else:
+        return agent.chat(query, expand=expand)
 
 
 def html_table(rows: List[dict]) -> str:
@@ -238,34 +264,44 @@ if option == SEARCH:
 
 elif option == CHAT:
     page_state = state.get_page_state(CHAT)
-    st.subheader("Chat with a knowledge base")
-    query = st.text_area(
-        f"Ask me anything (within the scope of {collection})!",
-        help="You can query the current knowledge base using natural language.",
-    )
+    if collection == "No collection":
+        st.subheader("Chat with the Alzheimer's AI assistant")
+        query = st.text_area(
+            "Ask me anything about Alzheimer's disease",
+            help="Ask questions directly to the AI without using a knowledge base.",
+        )
+    else:
+        query = st.text_area(
+            f"Ask me anything about Alzheimer's disease (within the scope of {collection})",
+            help="You can query the current knowledge base using natural language.",
+        )
 
-    limit = st.slider(
-        "Detail",
-        min_value=0,
-        max_value=30,
-        value=10,
-        step=1,
-        help="""
-                                   Behind the scenes, N entries are fetched from the knowledge base,
-                                   and these are fed to the LLM. Selecting more examples may give more
-                                   complete results, but may also exceed context windows for the model.
-                                   """,
-    )
-    expand = st.checkbox(
-        "Expand query",
-        help="""
-                                                If checked, perform query expansion (pubmed only).
-                                                """,
-    )
+    # Only show these controls if using a knowledge base
+    if collection != "No collection":
+        limit = st.slider(
+            "Detail",
+            min_value=0,
+            max_value=30,
+            value=10,
+            step=1,
+            help="""
+                                       Behind the scenes, N entries are fetched from the knowledge base,
+                                       and these are fed to the LLM. Selecting more examples may give more
+                                       complete results, but may also exceed context windows for the model.
+                                       """,
+        )
+        expand = st.checkbox(
+            "Expand query",
+            help="""
+                                                    If checked, perform query expansion (pubmed only).
+                                                    """,
+        )
+    else:
+        # Set default values when not using a knowledge base
+        limit = 0
+        expand = False
+
     extractor.model_name = model_name
-    examples = get_applicable_examples(collection, CHAT)
-    st.write("Examples:")
-    st.write(f"<details>{html_table(examples)}</details>", unsafe_allow_html=True)
 
     if st.button(CHAT):
         response = ask_chatbot(query, expand=expand)

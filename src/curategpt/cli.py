@@ -2782,5 +2782,43 @@ def pubmed_ask(query, path, model, show_references, database_type, **kwargs):
             print(ref_text)
 
 
+@main.group()
+def paperqa():
+    """Commands for working with PaperQA document collections."""
+    pass
+
+
+@paperqa.command()
+@click.argument('directory', type=click.Path(exists=True, file_okay=False, dir_okay=True))
+def index(directory):  # noqa: F811
+    """Index a directory of PDF papers using PaperQA.
+
+    DIRECTORY is the path to a directory containing PDF papers to index.
+    This command will set PQA_HOME environment variable to this directory,
+    then run the default PaperQA indexing process.
+    """
+    import asyncio
+    import os
+    from pathlib import Path
+
+    from paperqa import Settings
+    from paperqa.agents.search import get_directory_index
+
+    directory_path = Path(directory).absolute()
+    pdf_files = [f for f in os.listdir(directory_path) if f.lower().endswith('.pdf')]
+    click.echo(f"Found {len(pdf_files)} PDF files to index.")
+    os.environ["PQA_HOME"] = str(directory_path)
+    click.echo(f"Set PQA_HOME={directory_path}")
+    click.echo(f"Creating index for directory {directory_path}...")
+
+    settings = Settings(paper_directory=str(directory_path))
+
+    try:
+        asyncio.run(get_directory_index(settings=settings))
+        click.echo(f"1. Setting PQA_HOME={directory_path} in your environment")
+        click.echo("2. Selecting 'Alzheimer's Papers (via PaperQA)' in the app")
+    except Exception as e:
+        click.echo(f"Error creating index: {e}")
+
 if __name__ == "__main__":
     main()
