@@ -55,8 +55,7 @@ onnxruntime = [
     {version = "<=1.19.2", python = "<3.10"},
     {version = "^1.20.0", python = ">=3.10"}
 ]
-paper-qa = {version = "^5.20.0", optional = true}
-
+paper-qa = {version = "^5.20.0", optional = true, python = ">=3.11"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"
@@ -91,7 +90,7 @@ docs = [
     "sphinx-autodoc-typehints",
     "sphinx-click",
     "myst-parser"
-    ]
+]
 bioc = [
     "bioc"
 ]
@@ -155,4 +154,3 @@ quiet-level = 3
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
-
