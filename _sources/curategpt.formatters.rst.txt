@@ -9,13 +9,13 @@ curategpt.formatters.format\_utils module
 
 .. automodule:: curategpt.formatters.format_utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.formatters
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

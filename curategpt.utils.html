@@ -9,13 +9,13 @@
   <title>curategpt.utils package &mdash; curategpt 0.2.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=a47416a6"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -142,7 +142,7 @@
 <p>Evaluation utilities.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="curategpt.utils.eval_utils.Outcome">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.utils.eval_utils.</span></span><span class="sig-name descname"><span class="pre">Outcome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.utils.eval_utils.Outcome" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.utils.eval_utils.</span></span><span class="sig-name descname"><span class="pre">Outcome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.utils.eval_utils.Outcome" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="curategpt.utils.eval_utils.Outcome.append_outcomes">
@@ -242,6 +242,11 @@
 <span class="sig-prename descclassname"><span class="pre">curategpt.utils.eval_utils.</span></span><span class="sig-name descname"><span class="pre">best_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred_rels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_rels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.utils.eval_utils.best_matches" title="Link to this definition"></a></dt>
 <dd><p>Find the best matching pairs of relationships.</p>
 <p>Example:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#curategpt.utils.eval_utils.Outcome" title="curategpt.utils.eval_utils.Outcome"><code class="xref py py-class docutils literal notranslate"><span class="pre">Outcome</span></code></a>]</span></p>
+</dd>
+</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outcomes</span> <span class="o">=</span> <span class="n">best_matches</span><span class="p">([],</span> <span class="p">[])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span>
 <span class="go">1</span>
@@ -263,10 +268,7 @@
 <span class="go">[1.0, 1.0, 1.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp_rels</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">outcomes</span> <span class="o">=</span> <span class="n">best_matches</span><span class="p">(</span><span class="n">pred_rels</span><span class="p">,</span> <span class="n">exp_rels</span><span class="p">)</span>
-<span class="go">:rtype: :sphinx_autodoc_typehints_type:`\:py\:class\:\`\~typing.List\`\\ \\\[\:py\:class\:\`\~curategpt.utils.eval\_utils.Outcome\`\]`</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">([</span><span class="n">o</span><span class="o">.</span><span class="n">precision</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">outcomes</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">([</span><span class="n">o</span><span class="o">.</span><span class="n">precision</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">outcomes</span><span class="p">])</span>
 <span class="go">[0.0, 1.0, 1.0, 1.0]</span>
 </pre></div>
 </div>
@@ -466,7 +468,7 @@
 <li><p><strong>db</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curategpt.store.html#curategpt.store.db_adapter.DBAdapter" title="curategpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a></span>)</p></li>
 <li><p><strong>left_collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
 <li><p><strong>right_collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
-<li><p><strong>other_db</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="curategpt.store.html#curategpt.store.db_adapter.DBAdapter" title="curategpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a>]</span>) – optional - defaults to main</p></li>
+<li><p><strong>other_db</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="curategpt.store.html#curategpt.store.db_adapter.DBAdapter" title="curategpt.store.db_adapter.DBAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBAdapter</span></code></a></span>) – optional - defaults to main</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

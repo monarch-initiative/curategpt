@@ -27,13 +27,13 @@ curategpt.cli module
 
 .. automodule:: curategpt.cli
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

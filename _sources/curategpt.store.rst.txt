@@ -9,85 +9,85 @@ curategpt.store.chromadb\_adapter module
 
 .. automodule:: curategpt.store.chromadb_adapter
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.db\_adapter module
 ----------------------------------
 
 .. automodule:: curategpt.store.db_adapter
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.db\_metadata module
 -----------------------------------
 
 .. automodule:: curategpt.store.db_metadata
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.duckdb\_adapter module
 --------------------------------------
 
 .. automodule:: curategpt.store.duckdb_adapter
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.duckdb\_connection\_handler module
 --------------------------------------------------
 
 .. automodule:: curategpt.store.duckdb_connection_handler
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.duckdb\_result module
 -------------------------------------
 
 .. automodule:: curategpt.store.duckdb_result
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.in\_memory\_adapter module
 ------------------------------------------
 
 .. automodule:: curategpt.store.in_memory_adapter
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.metadata module
 -------------------------------
 
 .. automodule:: curategpt.store.metadata
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.schema\_proxy module
 ------------------------------------
 
 .. automodule:: curategpt.store.schema_proxy
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.store.vocab module
 ----------------------------
 
 .. automodule:: curategpt.store.vocab
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.store
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

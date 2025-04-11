@@ -9,37 +9,37 @@ curategpt.extract.basic\_extractor module
 
 .. automodule:: curategpt.extract.basic_extractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.extract.extractor module
 ----------------------------------
 
 .. automodule:: curategpt.extract.extractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.extract.openai\_extractor module
 ------------------------------------------
 
 .. automodule:: curategpt.extract.openai_extractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.extract.recursive\_extractor module
 ---------------------------------------------
 
 .. automodule:: curategpt.extract.recursive_extractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.extract
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -9,53 +9,53 @@ curategpt.wrappers.investigation.ess\_deepdive\_wrapper module
 
 .. automodule:: curategpt.wrappers.investigation.ess_deepdive_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.investigation.fairsharing\_wrapper module
 ------------------------------------------------------------
 
 .. automodule:: curategpt.wrappers.investigation.fairsharing_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.investigation.jgi\_wrapper module
 ----------------------------------------------------
 
 .. automodule:: curategpt.wrappers.investigation.jgi_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.investigation.ncbi\_bioproject\_wrapper module
 -----------------------------------------------------------------
 
 .. automodule:: curategpt.wrappers.investigation.ncbi_bioproject_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.investigation.ncbi\_biosample\_wrapper module
 ----------------------------------------------------------------
 
 .. automodule:: curategpt.wrappers.investigation.ncbi_biosample_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.investigation.nmdc\_wrapper module
 -----------------------------------------------------
 
 .. automodule:: curategpt.wrappers.investigation.nmdc_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.wrappers.investigation
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

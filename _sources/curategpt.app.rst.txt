@@ -9,53 +9,53 @@ curategpt.app.app module
 
 .. automodule:: curategpt.app.app
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.app.app\_alz module
 -----------------------------
 
 .. automodule:: curategpt.app.app_alz
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.app.cart module
 -------------------------
 
 .. automodule:: curategpt.app.cart
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.app.components module
 -------------------------------
 
 .. automodule:: curategpt.app.components
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.app.helper module
 ---------------------------
 
 .. automodule:: curategpt.app.helper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.app.state module
 --------------------------
 
 .. automodule:: curategpt.app.state
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.app
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

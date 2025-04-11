@@ -9,61 +9,61 @@ curategpt.utils.eval\_utils module
 
 .. automodule:: curategpt.utils.eval_utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.utils.llm\_utils module
 ---------------------------------
 
 .. automodule:: curategpt.utils.llm_utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.utils.patch\_utils module
 -----------------------------------
 
 .. automodule:: curategpt.utils.patch_utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.utils.search module
 -----------------------------
 
 .. automodule:: curategpt.utils.search
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.utils.tokens module
 -----------------------------
 
 .. automodule:: curategpt.utils.tokens
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.utils.vector\_algorithms module
 -----------------------------------------
 
 .. automodule:: curategpt.utils.vector_algorithms
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.utils.vectordb\_operations module
 -------------------------------------------
 
 .. automodule:: curategpt.utils.vectordb_operations
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

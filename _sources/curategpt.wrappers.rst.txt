@@ -14,6 +14,7 @@ Subpackages
    curategpt.wrappers.legal
    curategpt.wrappers.literature
    curategpt.wrappers.ontology
+   curategpt.wrappers.paperqa
 
 Submodules
 ----------
@@ -23,13 +24,13 @@ curategpt.wrappers.base\_wrapper module
 
 .. automodule:: curategpt.wrappers.base_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.wrappers
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

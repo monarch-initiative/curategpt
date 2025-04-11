@@ -9,45 +9,45 @@ curategpt.wrappers.literature.bioc\_wrapper module
 
 .. automodule:: curategpt.wrappers.literature.bioc_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.literature.eutils\_wrapper module
 ----------------------------------------------------
 
 .. automodule:: curategpt.wrappers.literature.eutils_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.literature.pmc\_wrapper module
 -------------------------------------------------
 
 .. automodule:: curategpt.wrappers.literature.pmc_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.literature.pubmed\_wrapper module
 ----------------------------------------------------
 
 .. automodule:: curategpt.wrappers.literature.pubmed_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.literature.wikipedia\_wrapper module
 -------------------------------------------------------
 
 .. automodule:: curategpt.wrappers.literature.wikipedia_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.wrappers.literature
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

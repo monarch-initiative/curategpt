@@ -1,0 +1,21 @@
+curategpt.wrappers.paperqa package
+==================================
+
+Submodules
+----------
+
+curategpt.wrappers.paperqa.paperqawrapper module
+------------------------------------------------
+
+.. automodule:: curategpt.wrappers.paperqa.paperqawrapper
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: curategpt.wrappers.paperqa
+   :members:
+   :show-inheritance:
+   :undoc-members:

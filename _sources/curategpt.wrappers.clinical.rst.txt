@@ -9,45 +9,45 @@ curategpt.wrappers.clinical.clinvar\_wrapper module
 
 .. automodule:: curategpt.wrappers.clinical.clinvar_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.clinical.ctgov\_wrapper module
 -------------------------------------------------
 
 .. automodule:: curategpt.wrappers.clinical.ctgov_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.clinical.hpoa\_by\_pub\_wrapper module
 ---------------------------------------------------------
 
 .. automodule:: curategpt.wrappers.clinical.hpoa_by_pub_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.clinical.hpoa\_wrapper module
 ------------------------------------------------
 
 .. automodule:: curategpt.wrappers.clinical.hpoa_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 curategpt.wrappers.clinical.maxoa\_wrapper module
 -------------------------------------------------
 
 .. automodule:: curategpt.wrappers.clinical.maxoa_wrapper
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.wrappers.clinical
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

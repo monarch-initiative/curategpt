@@ -9,13 +9,13 @@ curategpt.adhoc.gocam\_predictor module
 
 .. automodule:: curategpt.adhoc.gocam_predictor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: curategpt.adhoc
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

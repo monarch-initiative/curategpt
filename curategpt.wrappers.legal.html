@@ -9,13 +9,13 @@
   <title>curategpt.wrappers.legal package &mdash; curategpt 0.2.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=a47416a6"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -60,6 +60,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="curategpt.wrappers.literature.html">curategpt.wrappers.literature package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curategpt.wrappers.ontology.html">curategpt.wrappers.ontology package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curategpt.wrappers.paperqa.html">curategpt.wrappers.paperqa package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="curategpt.wrappers.html#submodules">Submodules</a></li>
@@ -109,7 +110,7 @@
 <p>Chat with a KB.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="curategpt.wrappers.legal.reusabledata_wrapper.ReusableDataWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.wrappers.legal.reusabledata_wrapper.</span></span><span class="sig-name descname"><span class="pre">ReusableDataWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_locator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_store</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_label_adapter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">glob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.wrappers.legal.reusabledata_wrapper.ReusableDataWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">curategpt.wrappers.legal.reusabledata_wrapper.</span></span><span class="sig-name descname"><span class="pre">ReusableDataWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_locator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_store</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_label_adapter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">glob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#curategpt.wrappers.legal.reusabledata_wrapper.ReusableDataWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="curategpt.wrappers.html#curategpt.wrappers.base_wrapper.BaseWrapper" title="curategpt.wrappers.base_wrapper.BaseWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a></p>
 <p>A wrapper over a reusabledata.org yaml files.</p>
 <p>Each yaml file is treated as a distinct dataset object;
@@ -140,7 +141,7 @@ it is expected that all objects from the source are ingested.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>)</p></li>
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
 <li><p><strong>object_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional list of IDs to fetch</p></li>
 <li><p><strong>kwargs</strong></p></li>
 </ul>
