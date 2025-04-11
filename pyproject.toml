@@ -7,7 +7,7 @@ license = "BSD-3"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9, !=3.9.7"
+python = "^3.11"
 click = "^8.1.7"
 importlib-metadata = ">=6"
 oaklib = "^0.6.9"
