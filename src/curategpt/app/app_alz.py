@@ -163,7 +163,7 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
     return agent
 
 
-def ask_chatbot(query, expand=False) -> ChatResponse:
+def ask_chatbot(query, expand=False, limit=10) -> ChatResponse:
     agent = get_chat_agent()
     if collection == "No collection":
         response = agent.extractor.model.prompt(query, system="You are a helpful Alzheimer's disease expert.")
@@ -175,7 +175,7 @@ def ask_chatbot(query, expand=False) -> ChatResponse:
             uncited_references={}
         )
     else:
-        return agent.chat(query, expand=expand)
+        return agent.chat(query, expand=expand, limit=limit)
 
 
 def html_table(rows: List[dict]) -> str:
@@ -197,72 +197,7 @@ def html_table(rows: List[dict]) -> str:
     return html_content
 
 
-# Search operation
-if option == SEARCH:
-    page_state = state.get_page_state(SEARCH)
-    st.subheader(f"Search documents in *{collection}*")
-    search_query = st.text_input(
-        "Search by text",
-        help="Enter any text - embedding similarity will be used to find similar objects.",
-    )
-
-    relevance_factor = st.slider(
-        "Relevance Factor",
-        min_value=0.0,
-        max_value=1.0,
-        value=1.0,
-        step=0.05,
-        help="""
-                                 How much to weight the relevance vs diversity of the search query.
-                                 If this is set to less than 1.0, then MMR will be used to diversify the results.
-                                 (this corresponds to the lambda parameter in the MMR formula)
-                                 """,
-    )
-
-    if st.button("Search"):
-        results = db.search(
-            search_query, collection=collection, relevance_factor=relevance_factor, include=["*"]
-        )
-        page_state.results = list(results)
-        st.session_state.add_to_cart_index = None  # Reset
-
-    if page_state.results:
-        results = page_state.results
-        cm = db.collection_metadata(collection, include_derived=True)
-        try:
-            if cm:
-                st.write(
-                    f"Searching over {cm.object_count} objects using embedding model {cm.model}"
-                )
-            else:
-                st.write(f"Dynamic search over {collection}...")
-        except AttributeError as e:
-            st.write(f"Searching over {collection} but encountered an error: {e}")
-
-        def _flat(obj: dict, limit=40) -> dict:
-            if not obj:
-                return {}
-            return {
-                k: str(json.dumps(v) if isinstance(v, (list, dict)) else v)[0:limit]
-                for k, v in obj.items()
-            }
-
-        rows = [
-            {"rank": i + 1, "distance": distance, **_flat(obj), "doc": _flat(doc)}
-            for i, (obj, distance, doc) in enumerate(results)
-        ]
-        html = html_table(rows)
-        st.write(html, unsafe_allow_html=True)
-
-        for i, (obj, _distance, _doc) in enumerate(results):
-            st.write(f"## Result {i+1}")
-            st.code(yaml.dump(obj, sort_keys=False))
-            if st.button(f"Add to cart {i+1}"):
-                cart.add(obj)
-                st.success("Document added to cart!")
-
-
-elif option == CHAT:
+if option == CHAT:
     page_state = state.get_page_state(CHAT)
     if collection == "No collection":
         st.subheader("Chat with the Alzheimer's AI assistant")
@@ -304,7 +239,7 @@ elif option == CHAT:
     extractor.model_name = model_name
 
     if st.button(CHAT):
-        response = ask_chatbot(query, expand=expand)
+        response = ask_chatbot(query, expand=expand, limit=limit)
         page_state.chat_response = response
 
     if page_state.chat_response:
