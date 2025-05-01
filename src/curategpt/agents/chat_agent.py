@@ -51,36 +51,6 @@ def replace_references_with_links(text):
     return re.sub(pattern, replacement, text)
 
 
-def format_reference_as_markdown(ref_num, ref_data):
-    """Format a reference as Markdown with good formatting."""
-    if isinstance(ref_data, str):
-        # Handle old-style string references
-        return f"### Reference {ref_num}\n{ref_data}"
-
-    # Handle structured references
-    md = f"### Reference {ref_num}\n"
-
-    if "id" in ref_data and ref_data["id"]:
-        md += f"**ID**: {ref_data['id']}\n\n"
-
-    if "title" in ref_data and ref_data["title"]:
-        md += f"**Title**: {ref_data['title']}\n\n"
-
-    if "abstract" in ref_data and ref_data["abstract"]:
-        md += f"**Abstract**: {ref_data['abstract']}\n\n"
-
-    if "citation" in ref_data and ref_data["citation"]:
-        md += f"**Citation**: {ref_data['citation']}\n\n"
-
-    if "url" in ref_data and ref_data["url"]:
-        md += f"**URL**: [{ref_data['url']}]({ref_data['url']})\n\n"
-
-    if "doi" in ref_data and ref_data["doi"]:
-        md += f"**DOI**: {ref_data['doi']}\n\n"
-
-    return md.strip()
-
-
 @dataclass
 class ChatAgent(BaseAgent):
     """
@@ -182,39 +152,12 @@ class ChatAgent(BaseAgent):
         uncited_references_dict = {
             ref: ref_obj for ref, ref_obj in references.items() if ref not in used_references
         }
-
-        # Create structured references when possible
-        structured_references = {}
-        for ref_num, ref_data in used_references_dict.items():
-            if ref_num != "?" and isinstance(ref_data, str):
-                # Try to parse the YAML string into structured data
-                try:
-                    yaml_dict = yaml.safe_load(ref_data)
-                    if isinstance(yaml_dict, dict):
-                        structured_references[ref_num] = yaml_dict
-                    else:
-                        structured_references[ref_num] = ref_data
-                except Exception:
-                    structured_references[ref_num] = ref_data
-            else:
-                structured_references[ref_num] = ref_data
-
-        used_references_dict = structured_references
         formatted_text = replace_references_with_links(response_text)
-
-        # Format references as markdown
-        formatted_refs = "\n\n".join([
-            format_reference_as_markdown(ref_num, ref_data)
-            for ref_num, ref_data in used_references_dict.items()
-            if ref_num != "?"  # Skip placeholder references
-        ])
-
         return ChatResponse(
             body=response_text,
             formatted_body=formatted_text,
             prompt=prompt,
             references=used_references_dict,
-            formatted_references=formatted_refs,
             uncited_references=uncited_references_dict,
             conversation_id=conversation_id,
         )
@@ -287,7 +230,6 @@ class ChatAgentAlz(BaseAgent):
             agent = model
             conversation_id = None
 
-        # Replace this block in ChatAgentAlz.chat
         if is_paperqa:
             session = kb_results.session
             response_text = session.answer.strip()
@@ -296,18 +238,13 @@ class ChatAgentAlz(BaseAgent):
                 self._format_paperqa_references(response_text,
                                                 session.contexts))
 
-            # Format references as markdown
-            formatted_refs = "\n\n".join([
-                format_reference_as_markdown(ref_num, ref_data)
-                for ref_num, ref_data in references.items()
-            ])
+            formatted_refs = {k: yaml.dump(v, sort_keys=False) for k, v in references.items() if v}
 
             return ChatResponse(
                 body=response_text,
                 formatted_body=formatted_body,
                 prompt=prompt,
-                references=references,
-                formatted_references=formatted_refs,
+                references=formatted_refs,
                 uncited_references={},
                 conversation_id=None,
             )
@@ -328,7 +265,7 @@ class ChatAgentAlz(BaseAgent):
                     references[str(i)] = obj_text
                     texts.append(f"## Reference {i}\n{obj_text}")
                     current_length += len(obj_text)
-                model = self.extractor.model
+
                 prompt = "I will first give background facts, then ask a question. Use the background fact to answer\n"
                 prompt += "---\nBackground facts:\n"
                 prompt += "\n".join(texts)
@@ -358,7 +295,7 @@ class ChatAgentAlz(BaseAgent):
 
             response = agent.prompt(prompt, system="You are a scientist assistant.")
             response_text = response.text()
-            pattern = r"\[(\d+|\?)\]"
+            pattern = r"\[(\d+)\]"
             used_references = re.findall(pattern, response_text)
             used_references_dict = {ref: references.get(ref, "NO REFERENCE") for ref in used_references}
             uncited_references_dict = {

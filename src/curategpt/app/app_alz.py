@@ -245,20 +245,20 @@ if option == CHAT:
     if page_state.chat_response:
         response = page_state.chat_response
         st.markdown(response.formatted_body)
-        add_button = st.button("Add to your cart")
-        if add_button:
-            logger.error("Adding to cart")
-            cart.add(response)
-            st.write("Added to cart!")
+        # add_button = st.button("Add to your cart")
+        # if add_button:
+        #     logger.error("Adding to cart")
+        #     cart.add(response)
+        #     st.write("Added to cart!")
 
         st.markdown("## References")
         for ref, text in response.references.items():
             st.subheader(f"Reference {ref}", anchor=f"ref-{ref}")
             st.code(text, language="yaml")
-            if st.button(f"Add to cart {ref}"):
-                # TODO: unpack
-                cart.add({"text": text, "id": ref})
-                st.success("Document added to cart!")
+            # if st.button(f"Add to cart {ref}"):
+            #     # TODO: unpack
+            #     cart.add({"text": text, "id": ref})
+            #     st.success("Document added to cart!")
         if response.uncited_references:
             st.markdown("## Uncited references")
             st.caption(
