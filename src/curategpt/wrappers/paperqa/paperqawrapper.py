@@ -3,7 +3,7 @@ import logging
 import os
 from dataclasses import dataclass
 
-from paperqa import Docs, Settings
+from paperqa import Settings
 from paperqa.agents.main import agent_query
 from paperqa.agents.search import get_directory_index
 

@@ -200,8 +200,8 @@ class ChatAgentAlz(BaseAgent):
         if hasattr(self.knowledge_source, 'name') and self.knowledge_source.name == 'paperqa':
             self.knowledge_source.settings.agent.agent_system_prompt = (
                 """You are a specialized AI assistant for biomedical researchers and clinicians focused on
-                Alzheimer's disease and related topics. I will ask a question and you will answer 
-                as best as possible, citing references. For any additional facts that you are 
+                Alzheimer's disease and related topics. I will ask a question and you will answer
+                as best as possible, citing references. For any additional facts that you are
                 sure of, but without a citation, write [?].
                 """)
 
@@ -324,8 +324,8 @@ class ChatAgentAlz(BaseAgent):
 
     @staticmethod
     def _format_paperqa_references(answer: str, contexts: list) -> tuple[str, dict]:
-        from collections import OrderedDict
         import re
+        from collections import OrderedDict
 
         formatted_body = answer
         doc_key_to_num = OrderedDict()
