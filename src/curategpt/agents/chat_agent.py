@@ -196,69 +196,141 @@ class ChatAgentAlz(BaseAgent):
             collection = self.knowledge_source_collection
         kwargs["collection"] = collection
 
+        # Set Alzheimer's system prompt if we are using paperqa
+        if hasattr(self.knowledge_source, 'name') and self.knowledge_source.name == 'paperqa':
+            self.knowledge_source.settings.agent.agent_system_prompt = (
+                """You are a specialized AI assistant for biomedical researchers and clinicians focused on
+                Alzheimer's disease and related topics. I will ask a question and you will answer 
+                as best as possible, citing references. For any additional facts that you are 
+                sure of, but without a citation, write [?].
+                """)
+
         # The search now returns dictionary results directly.
-        kb_results = list(self.knowledge_source.search(
-            query, relevance_factor=self.relevance_factor, limit=limit, expand=expand, **kwargs
-        ))
-
-        while True:
-            references = {}
-            texts = []
-            for i, result_tuple in enumerate(kb_results, start=1):
-                # Extract the object from the standard tuple format (obj, distance, metadata)
-                obj, _, _ = result_tuple
-
-                obj_text = yaml.dump({k: v for k, v in obj.items() if v}, sort_keys=False)
-                references[str(i)] = obj_text
-                texts.append(f"## Reference {i}\n{obj_text}")
-
-            model = self.extractor.model
-            prompt = (
-                "You are a specialized AI assistant for biomedical researchers and clinicians focused on "
-                "Alzheimer's disease and related topics. I will provide relevant background information, then ask "
-                "a question. Use this context to provide evidence-based answers with proper scientific citations.\n"
-            )
-            prompt += "---\nBackground facts:\n" + "\n".join(texts) + "\n\n"
-            prompt += (
-                "I will ask a question and you will answer as best as possible, citing the references above.\n"
-                "Write references in square brackets, e.g. [1]. For any additional facts without a citation, write [?].\n"
-            )
-            prompt += f"---\nHere is the Question: {query}.\n"
-            logger.debug(f"Candidate Prompt: {prompt}")
-            estimated_length = estimate_num_tokens([prompt])
-            logger.debug(f"Max tokens {model.model_id}: {max_tokens_by_model(model.model_id)}")
-
-            if estimated_length + 300 < max_tokens_by_model(model.model_id):
-                break
-            else:
-                logger.debug("Prompt too long, removing least relevant result.")
-                if not kb_results:
-                    raise ValueError(f"Prompt too long: {prompt}.")
-                kb_results.pop()
-
-        logger.info("Final prompt constructed for chat.")
-        if conversation:
-            conversation.model = model
-            agent = conversation
-            conversation_id = conversation.id
-            logger.info(f"Using conversation context with ID: {conversation_id}")
-        else:
-            agent = model
-            conversation_id = None
-
-        response = agent.prompt(prompt, system="You are a scientist assistant.")
-        response_text = response.text()
-        pattern = r"\[(\d+|\?)\]"
-        used_references = re.findall(pattern, response_text)
-        used_references_dict = {ref: references.get(ref, "NO REFERENCE") for ref in used_references}
-        uncited_references_dict = {ref: ref_obj for ref, ref_obj in references.items() if ref not in used_references}
-        formatted_text = replace_references_with_links(response_text)
-
-        return ChatResponse(
-            body=response_text,
-            formatted_body=formatted_text,
-            prompt=prompt,
-            references=used_references_dict,
-            uncited_references=uncited_references_dict,
-            conversation_id=conversation_id,
+        kb_results = self.knowledge_source.search(
+            query,
+            relevance_factor=self.relevance_factor,
+            limit=limit,
+            expand=expand,
+            **kwargs
         )
+
+        # Check if we're using PaperQA
+        is_paperqa = hasattr(self.knowledge_source, 'name') and self.knowledge_source.name == 'paperqa'
+
+        model = self.extractor.model
+
+        def _format_paperqa_references(answer: str, contexts: list):
+            from collections import OrderedDict
+
+            seen = OrderedDict()
+            reference_map = {}
+            formatted_body = answer
+
+            for context in contexts:
+                key = context.text.doc.key
+                if key not in seen:
+                    seen[key] = context
+
+            for idx, (key, ctx) in enumerate(seen.items(), 1):
+                ref_id = f"[{idx}]"
+                doc = ctx.text.doc
+                tooltip = ctx.context.strip().split('\n')[0] if ctx.context else ""
+                link = f'<a href="{doc.doi_url}" id="ref-{idx}" title="{tooltip}">{ref_id}</a>'
+                formatted_body = formatted_body.replace(key, link)
+
+                reference_map[str(idx)] = {
+                    "key": key,
+                    "citation": doc.citation,
+                    "url": doc.doi_url,
+                    "doi": doc.doi,
+                    "authors": doc.authors,
+                    "title": doc.title,
+                    "pages": ctx.text.name.split("pages")[
+                        -1].strip() if "pages" in ctx.text.name else None,
+                    "tooltip": tooltip,
+                }
+
+            return formatted_body, reference_map
+
+        # Replace this block in ChatAgentAlz.chat
+        if is_paperqa:
+            session = kb_results.session
+            response_text = session.answer.strip()
+            prompt = f"[PaperQA] Question: {session.question}"
+            formatted_body, references = _format_paperqa_references(response_text,
+                                                                    session.contexts)
+
+            return ChatResponse(
+                body=response_text,
+                formatted_body=formatted_body,
+                prompt=prompt,
+                references=references,
+                uncited_references={},
+                conversation_id=None,
+            )
+
+        else:
+            kb_results = list(kb_results)
+            # Regular processing for non-PaperQA sources
+
+            # For other sources, we need to format the results and create a prompt
+            while True:
+                references = {}
+                texts = []
+                for i, result_tuple in enumerate(kb_results, start=1):
+                    # Extract the object from the standard tuple format (obj, distance, metadata)
+                    obj, _, _ = result_tuple
+
+                    obj_text = yaml.dump({k: v for k, v in obj.items() if v}, sort_keys=False)
+                    references[str(i)] = obj_text
+                    texts.append(f"## Reference {i}\n{obj_text}")
+
+                prompt = (
+                    "You are a specialized AI assistant for biomedical researchers and clinicians focused on "
+                    "Alzheimer's disease and related topics. I will provide relevant background information, then ask "
+                    "a question. Use this context to provide evidence-based answers with proper scientific citations.\n"
+                )
+                prompt += "---\nBackground facts:\n" + "\n".join(texts) + "\n\n"
+                prompt += (
+                    "I will ask a question and you will answer as best as possible, citing the references above.\n"
+                    "Write references in square brackets, e.g. [1]. For any additional facts without a citation, write [?].\n"
+                )
+                prompt += f"---\nHere is the Question: {query}.\n"
+                logger.debug(f"Candidate Prompt: {prompt}")
+                estimated_length = estimate_num_tokens([prompt])
+                logger.debug(f"Max tokens {model.model_id}: {max_tokens_by_model(model.model_id)}")
+
+                if estimated_length + 300 < max_tokens_by_model(model.model_id):
+                    break
+                else:
+                    logger.debug("Prompt too long, removing least relevant result.")
+                    if not kb_results:
+                        raise ValueError(f"Prompt too long: {prompt}.")
+                    kb_results.pop()
+
+            logger.info("Final prompt constructed for chat.")
+            if conversation:
+                conversation.model = model
+                agent = conversation
+                conversation_id = conversation.id
+                logger.info(f"Using conversation context with ID: {conversation_id}")
+            else:
+                agent = model
+                conversation_id = None
+
+            response = agent.prompt(prompt, system="You are a scientist assistant.")
+            response_text = response.text()
+            pattern = r"\[(\d+|\?)\]"
+            used_references = re.findall(pattern, response_text)
+            used_references_dict = {ref: references.get(ref, "NO REFERENCE") for ref in used_references}
+            uncited_references_dict = {ref: ref_obj for ref, ref_obj in references.items() if ref not in used_references}
+            formatted_text = replace_references_with_links(response_text)
+
+            return ChatResponse(
+                body=response_text,
+                formatted_body=formatted_text,
+                prompt=prompt,
+                references=used_references_dict,
+                uncited_references=uncited_references_dict,
+                conversation_id=conversation_id,
+            )
