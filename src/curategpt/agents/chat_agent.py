@@ -238,7 +238,21 @@ class ChatAgentAlz(BaseAgent):
                 self._format_paperqa_references(response_text,
                                                 session.contexts))
 
-            formatted_refs = {k: yaml.dump(v, sort_keys=False) for k, v in references.items() if v}
+            # formatted_refs = {k: yaml.dump(v, sort_keys=False) for k, v in references.items() if v}
+
+            def drop_empty_fields(d: dict) -> dict:
+                return {k: v for k, v in d.items() if isinstance(v, str) and v.strip()}
+
+            formatted_refs = {
+                k: yaml.safe_dump(
+                    drop_empty_fields(v),
+                    sort_keys=False,
+                    allow_unicode=True,
+                    default_flow_style=False,
+                    width=80  # prevents line wrapping madness
+                )
+                for k, v in references.items()
+            }
 
             return ChatResponse(
                 body=response_text,
@@ -246,7 +260,7 @@ class ChatAgentAlz(BaseAgent):
                 prompt=prompt,
                 references=formatted_refs,
                 uncited_references={},
-                conversation_id=None,
+                conversation_id=conversation_id,
             )
 
         else:
