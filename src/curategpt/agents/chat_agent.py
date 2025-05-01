@@ -219,38 +219,36 @@ class ChatAgentAlz(BaseAgent):
 
         model = self.extractor.model
 
-        def _format_paperqa_references(answer: str, contexts: list):
+        def _format_paperqa_references(answer: str, contexts: list) -> tuple[str, dict]:
             from collections import OrderedDict
 
             seen = OrderedDict()
             reference_map = {}
-            formatted_body = answer
+            formatted_answer = answer
 
-            for context in contexts:
-                key = context.text.doc.key
+            for ctx in contexts:
+                key = ctx.text.doc.key
                 if key not in seen:
-                    seen[key] = context
+                    seen[key] = ctx
 
             for idx, (key, ctx) in enumerate(seen.items(), 1):
                 ref_id = f"[{idx}]"
                 doc = ctx.text.doc
-                tooltip = ctx.context.strip().split('\n')[0] if ctx.context else ""
-                link = f'<a href="{doc.doi_url}" id="ref-{idx}" title="{tooltip}">{ref_id}</a>'
-                formatted_body = formatted_body.replace(key, link)
+                tooltip = ctx.context.strip().split("\n")[0] if ctx.context else ""
+                markdown_link = f"[{idx}]({doc.doi_url} \"{tooltip}\")"
+
+                # Replace inline mentions of doc key with reference link
+                formatted_answer = formatted_answer.replace(key, markdown_link)
 
                 reference_map[str(idx)] = {
-                    "key": key,
                     "citation": doc.citation,
-                    "url": doc.doi_url,
                     "doi": doc.doi,
-                    "authors": doc.authors,
-                    "title": doc.title,
+                    "url": doc.doi_url,
                     "pages": ctx.text.name.split("pages")[
                         -1].strip() if "pages" in ctx.text.name else None,
-                    "tooltip": tooltip,
                 }
 
-            return formatted_body, reference_map
+            return formatted_answer, reference_map
 
         # Replace this block in ChatAgentAlz.chat
         if is_paperqa:
