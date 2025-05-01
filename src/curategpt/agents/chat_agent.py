@@ -221,34 +221,41 @@ class ChatAgentAlz(BaseAgent):
 
         def _format_paperqa_references(answer: str, contexts: list) -> tuple[str, dict]:
             from collections import OrderedDict
+            import re
 
-            seen = OrderedDict()
-            reference_map = {}
-            formatted_answer = answer
+            formatted_body = answer
+            doc_key_to_num = OrderedDict()
+            references = {}
 
+            # Assign numbers to unique doc.key
             for ctx in contexts:
-                key = ctx.text.doc.key
-                if key not in seen:
-                    seen[key] = ctx
-
-            for idx, (key, ctx) in enumerate(seen.items(), 1):
-                ref_id = f"[{idx}]"
                 doc = ctx.text.doc
-                tooltip = ctx.context.strip().split("\n")[0] if ctx.context else ""
-                markdown_link = f"[{idx}]({doc.doi_url} \"{tooltip}\")"
+                if doc.key not in doc_key_to_num:
+                    doc_key_to_num[doc.key] = len(doc_key_to_num) + 1
+                    references[str(doc_key_to_num[doc.key])] = {
+                        "citation": doc.citation,
+                        "url": doc.doi_url,
+                        "doi": doc.doi
+                    }
 
-                # Replace inline mentions of doc key with reference link
-                formatted_answer = formatted_answer.replace(key, markdown_link)
+            used_pairs = set()
+            for ctx in contexts:
+                text_name = ctx.text.name.strip()  # e.g. melendez2024 pages 6–7
+                doc_key = ctx.text.doc.key
+                ref_num = doc_key_to_num[doc_key]
+                pages = text_name.split("pages")[
+                    -1].strip() if "pages" in text_name else None
 
-                reference_map[str(idx)] = {
-                    "citation": doc.citation,
-                    "doi": doc.doi,
-                    "url": doc.doi_url,
-                    "pages": ctx.text.name.split("pages")[
-                        -1].strip() if "pages" in ctx.text.name else None,
-                }
+                if (text_name, ref_num, pages) in used_pairs:
+                    continue
+                used_pairs.add((text_name, ref_num, pages))
 
-            return formatted_answer, reference_map
+                markdown_link = f"[{ref_num}](#ref-{ref_num})"
+                replacement = f"{markdown_link} (pages {pages})" if pages else markdown_link
+                formatted_body = re.sub(re.escape(text_name), replacement,
+                                        formatted_body)
+
+            return formatted_body, references
 
         # Replace this block in ChatAgentAlz.chat
         if is_paperqa:
