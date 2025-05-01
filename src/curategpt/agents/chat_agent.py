@@ -34,9 +34,6 @@ class ChatResponse(BaseModel):
     formatted_body: str = None
     """Body formatted with markdown links to references."""
 
-    formatted_references: str = None
-    """References formatted as markdown for display."""
-
     references: Optional[Dict[str, Any]] = None
     """References for citations detected in response."""
 
