@@ -44,7 +44,7 @@ class ChatResponse(BaseModel):
 def replace_references_with_links(text):
     """Replace references with links."""
     pattern = r"\[(\d+)\]"
-    replacement = lambda m: f"[{m.group(1)}](#ref-{m.group(1)})"
+    def replacement(m): return f"[{m.group(1)}](#ref-{m.group(1)})"
     return re.sub(pattern, replacement, text)
 
 
@@ -85,7 +85,8 @@ class ChatAgent(BaseAgent):
                 self.extractor = self.knowledge_source.extractor
             else:
                 raise ValueError("Extractor must be set.")
-        logger.info(f"Chat: {query} on {self.knowledge_source} kwargs: {kwargs}, limit: {limit}")
+        logger.info(
+            f"Chat: {query} on {self.knowledge_source} kwargs: {kwargs}, limit: {limit}")
         if collection is None:
             collection = self.knowledge_source_collection
         kwargs["collection"] = collection
@@ -101,7 +102,8 @@ class ChatAgent(BaseAgent):
             current_length = 0
             for obj, _, _obj_meta in kb_results:
                 i += 1
-                obj_text = yaml.dump({k: v for k, v in obj.items() if v}, sort_keys=False)
+                obj_text = yaml.dump(
+                    {k: v for k, v in obj.items() if v}, sort_keys=False)
                 references[str(i)] = obj_text
                 texts.append(f"## Reference {i}\n{obj_text}")
                 current_length += len(obj_text)
@@ -126,7 +128,8 @@ class ChatAgent(BaseAgent):
                 break
             else:
                 # remove least relevant
-                logger.debug(f"Removing least relevant of {len(kb_results)}: {kb_results[-1]}")
+                logger.debug(
+                    f"Removing least relevant of {len(kb_results)}: {kb_results[-1]}")
                 if not kb_results:
                     raise ValueError(f"Prompt too long: {prompt}.")
                 kb_results.pop()
@@ -141,11 +144,13 @@ class ChatAgent(BaseAgent):
         else:
             agent = model
             conversation_id = None
-        response = agent.prompt(prompt, system="You are a scientist assistant.")
+        response = agent.prompt(
+            prompt, system="You are a scientist assistant.")
         response_text = response.text()
         pattern = r"\[(\d+|\?)\]"
         used_references = re.findall(pattern, response_text)
-        used_references_dict = {ref: references.get(ref, "NO REFERENCE") for ref in used_references}
+        used_references_dict = {ref: references.get(
+            ref, "NO REFERENCE") for ref in used_references}
         uncited_references_dict = {
             ref: ref_obj for ref, ref_obj in references.items() if ref not in used_references
         }
@@ -191,7 +196,8 @@ class ChatAgentAlz(BaseAgent):
             else:
                 raise ValueError("Extractor must be set.")
 
-        logger.info(f"Chat: {query} on {self.knowledge_source} with limit: {limit}")
+        logger.info(
+            f"Chat: {query} on {self.knowledge_source} with limit: {limit}")
         if collection is None:
             collection = self.knowledge_source_collection
         kwargs["collection"] = collection
@@ -215,7 +221,8 @@ class ChatAgentAlz(BaseAgent):
         )
 
         # Check if we're using PaperQA
-        is_paperqa = hasattr(self.knowledge_source, 'name') and self.knowledge_source.name == 'paperqa'
+        is_paperqa = hasattr(self.knowledge_source,
+                             'name') and self.knowledge_source.name == 'paperqa'
 
         model = self.extractor.model
         if conversation:
@@ -272,7 +279,8 @@ class ChatAgentAlz(BaseAgent):
                 current_length = 0
                 for obj, _, _obj_meta in kb_results:
                     i += 1
-                    obj_text = yaml.dump({k: v for k, v in obj.items() if v}, sort_keys=False)
+                    obj_text = yaml.dump(
+                        {k: v for k, v in obj.items() if v}, sort_keys=False)
                     references[str(i)] = obj_text
                     texts.append(f"## Reference {i}\n{obj_text}")
                     current_length += len(obj_text)
@@ -297,18 +305,21 @@ class ChatAgentAlz(BaseAgent):
                     break
                 else:
                     # remove least relevant
-                    logger.debug(f"Removing least relevant of {len(kb_results)}: {kb_results[-1]}")
+                    logger.debug(
+                        f"Removing least relevant of {len(kb_results)}: {kb_results[-1]}")
                     if not kb_results:
                         raise ValueError(f"Prompt too long: {prompt}.")
                     kb_results.pop()
 
             logger.info(f"Prompt: {prompt}")
 
-            response = agent.prompt(prompt, system="You are a scientist assistant.")
+            response = agent.prompt(
+                prompt, system="You are a scientist assistant.")
             response_text = response.text()
             pattern = r"\[(\d+)\]"
             used_references = re.findall(pattern, response_text)
-            used_references_dict = {ref: references.get(ref, "NO REFERENCE") for ref in used_references}
+            used_references_dict = {ref: references.get(
+                ref, "NO REFERENCE") for ref in used_references}
             uncited_references_dict = {
                 ref: ref_obj for ref, ref_obj in references.items() if ref not in used_references
             }
