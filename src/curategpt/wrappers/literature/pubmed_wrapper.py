@@ -128,7 +128,7 @@ class PubmedWrapper(BaseWrapper):
         data = response.json()
 
         # Extract PubMed IDs from the response
-        if "esearchresult" not in data:
+        if "esearchresult" not in data or "idlist" not in data["esearchresult"]:
             logger.error(f"Failed to find results for {text}")
             logger.error(f"Data: {data}")
             return []
