@@ -13,6 +13,7 @@ import yaml
 from chromadb import ClientAPI as API
 from chromadb import Settings
 from chromadb.api import EmbeddingFunction
+from chromadb.errors import NotFoundError
 from chromadb.utils import embedding_functions
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
@@ -361,8 +362,13 @@ class ChromaDBAdapter(DBAdapter):
         """
         collection_name = self._get_collection(collection_name)
         try:
-            collection_obj = self.client.get_collection(name=collection_name)
-        except ValueError as e:
+            collection_obj = self.client.get_or_create_collection(name=collection_name)
+        except NotFoundError as e:
+            # This is raised if the collection does not exist,
+            # but the get_or_create_collection method will create it if it does not exist,
+            # so this error is unlikely to be raised.
+            # If the above method uses get_collection, it may raise NotFoundError
+            # if the collection does not exist.
             logger.warning(f"Did not find an existing collection named {collection_name}: {e}\nAssuming this is a new collection.")
             return None
         metadata_data = {**collection_obj.metadata, **kwargs}
