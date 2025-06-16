@@ -13,6 +13,7 @@ import yaml
 from chromadb import ClientAPI as API
 from chromadb import Settings
 from chromadb.api import EmbeddingFunction
+from chromadb.errors import NotFoundError
 from chromadb.utils import embedding_functions
 from linkml_runtime.dumpers import json_dumper
 from linkml_runtime.utils.yamlutils import YAMLRoot
@@ -209,11 +210,19 @@ class ChromaDBAdapter(DBAdapter):
         )
         ef = self._embedding_function(model)
         adapter_metadata = cm.serialize_venomx_metadata_for_adapter(self.name)
-        collection_obj = client.get_or_create_collection(
-            name=collection,
-            embedding_function=ef,
-            metadata=adapter_metadata,
-        )
+        try:
+            collection_obj = client.get_or_create_collection(
+                name=collection,
+                embedding_function=ef,
+                metadata=adapter_metadata,
+            )
+        except ValueError as e:
+            logger.error(f"Encountered an error with collection {collection}: {e}\n"
+                         "Trying again without change to embedding function...")
+            collection_obj = client.get_or_create_collection(
+                name=collection,
+                metadata=adapter_metadata,
+            )
         if self._is_openai(venomx) and batch_size is None:
             # TODO: see https://github.com/chroma-core/chroma/issues/709
             batch_size = 100
@@ -361,16 +370,25 @@ class ChromaDBAdapter(DBAdapter):
         """
         collection_name = self._get_collection(collection_name)
         try:
-            collection_obj = self.client.get_collection(name=collection_name)
-        except ValueError as e:
+            collection_obj = self.client.get_or_create_collection(name=collection_name)
+        except NotFoundError as e:
+            # This is raised if the collection does not exist,
+            # but the get_or_create_collection method will create it if it does not exist,
+            # so this error is unlikely to be raised.
+            # If the above method uses get_collection, it may raise NotFoundError
+            # if the collection does not exist.
             logger.warning(f"Did not find an existing collection named {collection_name}: {e}\nAssuming this is a new collection.")
             return None
-        metadata_data = {**collection_obj.metadata, **kwargs}
-        try:
-            cm = Metadata.deserialize_venomx_metadata_from_adapter(metadata_data, self.name)
-        except ValidationError as ve:
-            logger.error(f"Deserializing failed. Creating clean and empty venomx object for insertion. Metadata validation error: {ve}")
-            cm = Metadata(venomx=Index())
+        if collection_obj.metadata:
+            metadata_data = {**collection_obj.metadata, **kwargs}
+            try:
+                cm = Metadata.deserialize_venomx_metadata_from_adapter(metadata_data, self.name)
+            except ValidationError as ve:
+                logger.error(f"Deserializing failed. Creating clean and empty venomx object for insertion. Metadata validation error: {ve}")
+                cm = Metadata(venomx=Index(id=collection_name))
+        else:
+            logger.info(f"Collection {collection_name} has no metadata, creating empty Metadata object.")
+            cm = Metadata(venomx=Index(id=collection_name))
 
         if include_derived:
             try:
@@ -430,7 +448,10 @@ class ChromaDBAdapter(DBAdapter):
             scalar_updates = {k: v for k, v in kwargs.items() if k != "venomx"} # any additional param, e.g object type
             metadata = metadata.model_copy(update=scalar_updates)
 
-            prev_model = metadata.venomx.embedding_model.name
+            if metadata.venomx.embedding_model:
+                prev_model = metadata.venomx.embedding_model.name
+            else:
+                prev_model = None
             if kwargs.get('model') is None:
                 kwargs['model'] = self.default_model
             if prev_model and kwargs.get('model') != prev_model:
