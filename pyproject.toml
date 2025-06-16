@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "curategpt"
-version = "0.2.3"
+version = "0.2.4"
 description = "CurateGPT"
 authors = ["Chris Mungall <cjmungall@lbl.gov>", "Carlo Kroll <ckroll95@gmail.com>", "Harshad Hegde <hhegde@lbl.gov>", "J. Harry Caufield <jhc@lbl.gov>"]
 license = "BSD-3"
@@ -16,7 +16,7 @@ streamlit = ">=1.22.0"
 openai = ">=0.27.7"
 wikipedia = ">=1.4.0"
 google-search-results = ">=2.4.2"
-chromadb = "^0.5.0"
+chromadb = ">=1.0.0"
 tiktoken = "^0.7.0"
 inflection = ">=0.5.1"
 sentence-transformers = ">=2.2.2"
@@ -25,7 +25,7 @@ linkml-runtime = "^1.6.3"
 python-ulid = "^1.1.0"
 sqlite-utils = "^3.34"
 gpt4all = {version = "^1.0.8", optional = true}
-httpx = "^0.24.1"
+httpx = ">0.24.1"
 eutils = "^0.6.0"
 matplotlib = "^3.7.2"
 seaborn = "^0.12.2"
@@ -56,6 +56,7 @@ onnxruntime = [
     {version = "^1.20.0", python = ">=3.10"}
 ]
 paper-qa = {version = "^5.20.0", optional = true, python = ">=3.11"}
+xmlschema = "^4.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"
