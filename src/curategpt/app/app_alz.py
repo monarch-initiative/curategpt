@@ -97,8 +97,8 @@ def filtered_collection_names() -> List[str]:
 
 collection = st.sidebar.selectbox(
     "Choose collection",
-    [PUBMED, PAPERQA, WIKIPEDIA] + filtered_collection_names() + ["No collection"],
-    index=1,  # Set PAPERQA (Trusted Alzheimers Corpus) as default
+    [PAPERQA, PUBMED] + filtered_collection_names() + ["No collection"],
+    index=0,  # Set PAPERQA (Trusted Alzheimers Corpus) as default
     help="""
     A collection is a knowledge base that is used to support the AI model when answering questions.
     Select 'Trusted Alzheimers Corpus' to use a trusted corpus of Alzheimer's research papers curated by our team.
