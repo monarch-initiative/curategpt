@@ -19,7 +19,7 @@ from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
 
 PUBMED = "PubMed"
 WIKIPEDIA = "Wikipedia"
-PAPERQA = "Alzheimers_Papers"
+PAPERQA = "Trusted Alzheimers Corpus"
 
 CHAT = "Chat"
 SEARCH = "Search"
@@ -68,10 +68,9 @@ if PAPERQA in [PUBMED, PAPERQA, WIKIPEDIA] and os.environ.get("PQA_HOME") is Non
 if not db.list_collection_names():
     st.warning("No collections found. Please use command line to load one.")
 
-# Include Chat, Search, and CiteSeek in PAGES
+# Include only Chat in PAGES
 PAGES = [
-    CHAT,
-    CITESEEK
+    CHAT
 ]
 
 
@@ -99,11 +98,11 @@ def filtered_collection_names() -> List[str]:
 collection = st.sidebar.selectbox(
     "Choose collection",
     [PUBMED, PAPERQA, WIKIPEDIA] + filtered_collection_names() + ["No collection"],
-    index=0,  # Set PUBMED as default (index 0 since it's first in the list)
+    index=1,  # Set PAPERQA (Trusted Alzheimers Corpus) as default
     help="""
-    A collection is a knowledge base. It could be anything, but
-    it's likely your instance has some bio-ontologies pre-loaded.
-    Select 'Alzheimer's Papers (via PaperQA)' for direct access to a trusted corpus of Alzheimer's research papers.
+    A collection is a knowledge base that is used to support the AI model when answering questions.
+    Select 'Trusted Alzheimers Corpus' to use a trusted corpus of Alzheimer's research papers curated by our team.
+    Select "Pubmed" to use all of Pubmed.
     Select 'No collection' to interact with the model directly without a knowledge base.
     """,
 )
@@ -122,17 +121,6 @@ model_name = st.sidebar.selectbox(
 extractor = BasicExtractor()
 state.extractor = extractor
 
-# Add background_collection for CiteSeek functionality
-background_collection = st.sidebar.selectbox(
-    "Background knowledge for CiteSeek",
-    [NO_BACKGROUND_SELECTED, PUBMED, PAPERQA, WIKIPEDIA],
-    index=1,  # Set PubMed as default
-    help="""
-    Background databases provide evidence sources for CiteSeek.
-    PubMed is recommended for verifying medical claims.
-    Alzheimer's Papers provides specialized knowledge from trusted Alzheimer's research papers.
-    """,
-)
 
 # st.sidebar.markdown(f"Cart: {cart.size} items")
 
