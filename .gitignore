@@ -145,3 +145,4 @@ tests/input/dbs/go-nucleus-chroma/*/*.bin
 tests/output/*
 .streamlit
 data/
+.claude
