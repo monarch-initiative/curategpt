@@ -40,13 +40,7 @@ CITESEEK = "CiteSeek"
 NO_BACKGROUND_SELECTED = "No background collection"
 
 MODELS = [
-    "gpt-4o",
-    "gpt-3.5-turbo",
-    "gpt-4-turbo",
-    "gpt-4",
-    "chatgpt-16k",
-    "nous-hermes-13b",
-    "llama2",
+    "gpt-4o"
 ]
 
 logger = logging.getLogger(__name__)
@@ -110,9 +104,9 @@ collection = st.sidebar.selectbox(
 # Simplified model selection with only gpt-4o
 model_name = st.sidebar.selectbox(
     "Choose model",
-    ["gpt-4o"],
+    MODELS,
     index=0,
-    help="Using GPT-4o for optimal results."
+    help="Current only supporting gpt-4o"
 )
 
 # Removed extraction_strategy and background_collection sections

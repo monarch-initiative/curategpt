@@ -342,13 +342,14 @@ class ChatAgentAlz(BaseAgent):
         doc_key_to_num = OrderedDict()
         references = {}
 
-        # Assign numbers to unique doc.key
+        # Assign numbers to unique doc.dockey
         for ctx in contexts:
             doc = ctx.text.doc
-            if doc.key not in doc_key_to_num:
-                doc_key_to_num[doc.key] = len(doc_key_to_num) + 1
-                references[str(doc_key_to_num[doc.key])] = {
-                    "id": doc.key if hasattr(doc, 'key') else "",
+            doc_key = doc.dockey if hasattr(doc, 'dockey') else (doc.key if hasattr(doc, 'key') else "")
+            if doc_key not in doc_key_to_num:
+                doc_key_to_num[doc_key] = len(doc_key_to_num) + 1
+                references[str(doc_key_to_num[doc_key])] = {
+                    "id": doc_key,
                     "title": doc.title if hasattr(doc, 'title') else "",
                     "abstract": doc.text if hasattr(doc, 'text') else "",
                     "citation": doc.citation if hasattr(doc, 'citation') else "",
@@ -359,7 +360,8 @@ class ChatAgentAlz(BaseAgent):
         used_pairs = set()
         for ctx in contexts:
             text_name = ctx.text.name.strip()  # e.g. melendez2024 pages 6–7
-            doc_key = ctx.text.doc.key
+            doc = ctx.text.doc
+            doc_key = doc.dockey if hasattr(doc, 'dockey') else (doc.key if hasattr(doc, 'key') else "")
             ref_num = doc_key_to_num[doc_key]
             pages = text_name.split("pages")[
                 -1].strip() if "pages" in text_name else None
