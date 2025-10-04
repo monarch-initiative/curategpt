@@ -19,8 +19,9 @@ from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
 
 PUBMED = "PubMed"
 WIKIPEDIA = "Wikipedia"
-PAPERQA = "Trusted Alzheimers Corpus (smaller)"
-PAPERQA2 = "Trusted Alzheimers Corpus (larger)"
+PAPERQA = "Trusted Alzheimers Corpus (small)"
+PAPERQA2 = "Trusted Alzheimers Corpus (medium)"
+PAPERQA3 = "Trusted Alzheimers Corpus (large)"
 
 CHAT = "Chat"
 SEARCH = "Search"
@@ -61,8 +62,9 @@ if PAPERQA in [PUBMED, PAPERQA, WIKIPEDIA] and os.environ.get("PQA_HOME") is Non
         "Use 'curategpt paperqa index /path/to/papers' to create an index."
     )
 
-# Check if second corpus is available
+# Check if additional corpora are available
 has_second_corpus = os.environ.get("PQA_HOME2") is not None
+has_third_corpus = os.environ.get("PQA_HOME3") is not None
 if not db.list_collection_names():
     st.warning("No collections found. Please use command line to load one.")
 
@@ -97,6 +99,8 @@ def filtered_collection_names() -> List[str]:
 collection_options = [PAPERQA]
 if has_second_corpus:
     collection_options.append(PAPERQA2)
+if has_third_corpus:
+    collection_options.append(PAPERQA3)
 collection_options.extend([PUBMED] + filtered_collection_names() + ["No collection"])
 
 collection = st.sidebar.selectbox(
@@ -106,9 +110,10 @@ collection = st.sidebar.selectbox(
     help="""
     A collection is a knowledge base that is used for retrieval augmented generation (RAG) 
     to support the AI model when answering questions.
-    Select 'Trusted Alzheimers Corpus (smaller)' or 'Trusted Alzheimers Corpus (larger)'
-    to use corpora of 358 and 3,028 Alzheimer's research papers, respectively, curated 
-    by experts at Alzforum, U of Washington and Wash U. 
+    Select 'Trusted Alzheimers Corpus (small)', 'Trusted Alzheimers Corpus (medium)', 
+    or 'Trusted Alzheimers Corpus (large)' to use corpora of 358, 1,065, and 3,028 
+    Alzheimer's research papers, respectively, curated by experts at Alzforum, 
+    U of Washington and Wash U. 
     Select 'Pubmed' to use all of Pubmed.
     Select 'kg_alz_humanized' to use KG Alzheimers (beta)
     Select 'No collection' to interact with the model directly without a knowledge base.
@@ -146,6 +151,8 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
         source = PaperQAWrapper(extractor=extractor)
     elif collection == PAPERQA2:
         source = PaperQAWrapper(extractor=extractor, corpus_id="2")
+    elif collection == PAPERQA3:
+        source = PaperQAWrapper(extractor=extractor, corpus_id="3")
     else:
         source = db
 
