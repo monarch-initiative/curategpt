@@ -106,7 +106,7 @@ collection_options.extend([PUBMED] + filtered_collection_names() + ["No collecti
 collection = st.sidebar.selectbox(
     "Choose collection",
     collection_options,
-    index=2 if has_third_corpus else 0,  # Set PAPERQA3 (large) as default if available, otherwise PAPERQA (small)
+    index=1,  # Set PAPERQA2 (medium - 1k papers) as default
     help="""
     A collection is a knowledge base that is used for retrieval augmented generation (RAG)
     to support the AI model when answering questions.
