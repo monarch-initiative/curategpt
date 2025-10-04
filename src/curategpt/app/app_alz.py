@@ -106,14 +106,14 @@ collection_options.extend([PUBMED] + filtered_collection_names() + ["No collecti
 collection = st.sidebar.selectbox(
     "Choose collection",
     collection_options,
-    index=1 if has_second_corpus else 0,  # Set PAPERQA2 (medium) as default if available, otherwise PAPERQA (small)
+    index=2 if has_third_corpus else 0,  # Set PAPERQA3 (large) as default if available, otherwise PAPERQA (small)
     help="""
-    A collection is a knowledge base that is used for retrieval augmented generation (RAG) 
+    A collection is a knowledge base that is used for retrieval augmented generation (RAG)
     to support the AI model when answering questions.
-    Select 'Trusted Alzheimers Corpus (small)', 'Trusted Alzheimers Corpus (medium)', 
-    or 'Trusted Alzheimers Corpus (large)' to use corpora of 358, 1,065, and 3,028 
-    Alzheimer's research papers, respectively, curated by experts at Alzforum, 
-    U of Washington and Wash U. 
+    Select 'Trusted Alzheimers Corpus (small)', 'Trusted Alzheimers Corpus (medium)',
+    or 'Trusted Alzheimers Corpus (large)' to use corpora of 358, 1,065, and 3,028
+    Alzheimer's research papers, respectively, curated by experts at Alzforum,
+    U of Washington and Wash U.
     Select 'Pubmed' to use all of Pubmed.
     Select 'kg_alz_humanized' to use KG Alzheimers (beta)
     Select 'No collection' to interact with the model directly without a knowledge base.

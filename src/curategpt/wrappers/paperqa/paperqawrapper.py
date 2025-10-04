@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from paperqa import Settings
 from paperqa.agents.main import agent_query
 from paperqa.agents.search import get_directory_index
-from paperqa.settings import IndexSettings
 
 from curategpt.wrappers.base_wrapper import BaseWrapper
 
@@ -29,13 +28,13 @@ class PaperQAWrapper(BaseWrapper):
         # Use corpus-specific environment variables
         pqa_home_var = f"PQA_HOME{self.corpus_id}" if self.corpus_id else "PQA_HOME"
         pqa_index_var = f"PQA_INDEX{self.corpus_id}" if self.corpus_id else "PQA_INDEX"
-        
+
         pqa_home = os.environ.get(pqa_home_var)
         if not pqa_home:
             raise ValueError(f"{pqa_home_var} environment variable is not set!")
-        
+
         self.settings = Settings(paper_directory=pqa_home)
-        
+
         # Allow optional specification of existing index
         pqa_index = os.environ.get(pqa_index_var)
         if pqa_index:
@@ -44,7 +43,7 @@ class PaperQAWrapper(BaseWrapper):
             self.settings.agent.index.index_directory = f"{pqa_home}/.pqa/indexes"
             logger.info(f"Using specified index: {pqa_index} for corpus {self.corpus_id or 'default'}")
             logger.info(f"Index directory: {self.settings.agent.index.index_directory}")
-        
+
         self._ensure_index_exists()
 
     def _ensure_index_exists(self):
