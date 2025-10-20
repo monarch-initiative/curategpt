@@ -79,16 +79,9 @@ def _clear_sticky_page():
     state.page = None
 
 
-# Sidebar with operation selection
-option_selected = st.sidebar.selectbox(
-    "Choose operation",
-    PAGES,
-    index=0,  # Set Chat as default
-    on_change=_clear_sticky_page,
-)
-option = state.page or option_selected
-logger.error(f"Selected {option_selected}; sp={state.page}; opt={option}")
-# logger.error(f"State: {state}")
+# Always use Chat operation (no sidebar selector needed)
+option = CHAT
+logger.error(f"Selected Chat; opt={option}")
 
 
 def filtered_collection_names() -> List[str]:
@@ -120,24 +113,15 @@ collection = st.sidebar.selectbox(
     """,
 )
 
-# Simplified model selection with only gpt-4o
-model_name = st.sidebar.selectbox(
-    "Choose model",
-    MODELS,
-    index=0,
-    help="Current only supporting gpt-4o"
-)
-
 # Removed extraction_strategy and background_collection sections
 
-# Default to BasicExtractor
+# Default to BasicExtractor with gpt-4o model
 extractor = BasicExtractor()
+extractor.model_name = "gpt-4o"
 state.extractor = extractor
 
 
 # st.sidebar.markdown(f"Cart: {cart.size} items")
-
-st.sidebar.markdown("Developed by the Monarch Initiative")
 
 
 def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
@@ -219,7 +203,7 @@ if option == CHAT:
     # Only show these controls if using a knowledge base
     if collection != "No collection":
         limit = st.slider(
-            "Detail",
+            "Relevant publications to retrieve",
             min_value=0,
             max_value=30,
             value=10,
@@ -230,21 +214,12 @@ if option == CHAT:
                                        complete results, but may also exceed context windows for the model.
                                        """,
         )
-        expand = st.checkbox(
-            "Expand query",
-            help="""
-                                                    If checked, perform query expansion (pubmed only).
-                                                    """,
-        )
     else:
         # Set default values when not using a knowledge base
         limit = 0
-        expand = False
-
-    extractor.model_name = model_name
 
     if st.button(CHAT):
-        response = ask_chatbot(query, expand=expand, limit=limit)
+        response = ask_chatbot(query, expand=False, limit=limit)
         page_state.chat_response = response
 
     if page_state.chat_response:
@@ -286,7 +261,7 @@ elif option == CITESEEK:
     )
 
     limit = st.slider(
-        "Detail",
+        "Relevant publications to retrieve",
         min_value=0,
         max_value=30,
         value=10,
@@ -297,7 +272,6 @@ elif option == CITESEEK:
                                    complete results, but may also exceed context windows for the model.
                                    """,
     )
-    extractor.model_name = model_name
 
     if page_state.selected is not None:
         if st.button("Clear"):
