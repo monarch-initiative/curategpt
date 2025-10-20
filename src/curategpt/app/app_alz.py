@@ -19,7 +19,9 @@ from curategpt.wrappers.paperqa.paperqawrapper import PaperQAWrapper
 
 PUBMED = "PubMed"
 WIKIPEDIA = "Wikipedia"
-PAPERQA = "Alzheimers_Papers"
+PAPERQA = "Trusted Alzheimers Corpus (small)"
+PAPERQA2 = "Trusted Alzheimers Corpus (medium)"
+PAPERQA3 = "Trusted Alzheimers Corpus (large)"
 
 CHAT = "Chat"
 SEARCH = "Search"
@@ -40,13 +42,7 @@ CITESEEK = "CiteSeek"
 NO_BACKGROUND_SELECTED = "No background collection"
 
 MODELS = [
-    "gpt-4o",
-    "gpt-3.5-turbo",
-    "gpt-4-turbo",
-    "gpt-4",
-    "chatgpt-16k",
-    "nous-hermes-13b",
-    "llama2",
+    "gpt-4o"
 ]
 
 logger = logging.getLogger(__name__)
@@ -65,13 +61,16 @@ if PAPERQA in [PUBMED, PAPERQA, WIKIPEDIA] and os.environ.get("PQA_HOME") is Non
         "you need to set PQA_HOME to the directory containing your indexed papers. "
         "Use 'curategpt paperqa index /path/to/papers' to create an index."
     )
+
+# Check if additional corpora are available
+has_second_corpus = os.environ.get("PQA_HOME2") is not None
+has_third_corpus = os.environ.get("PQA_HOME3") is not None
 if not db.list_collection_names():
     st.warning("No collections found. Please use command line to load one.")
 
-# Include Chat, Search, and CiteSeek in PAGES
+# Include only Chat in PAGES
 PAGES = [
-    CHAT,
-    CITESEEK
+    CHAT
 ]
 
 
@@ -80,63 +79,49 @@ def _clear_sticky_page():
     state.page = None
 
 
-# Sidebar with operation selection
-option_selected = st.sidebar.selectbox(
-    "Choose operation",
-    PAGES,
-    index=0,  # Set Chat as default
-    on_change=_clear_sticky_page,
-)
-option = state.page or option_selected
-logger.error(f"Selected {option_selected}; sp={state.page}; opt={option}")
-# logger.error(f"State: {state}")
+# Always use Chat operation (no sidebar selector needed)
+option = CHAT
+logger.error(f"Selected Chat; opt={option}")
 
 
 def filtered_collection_names() -> List[str]:
     return [c for c in db.list_collection_names() if not c.endswith("_cached")]
 
 
+# Build collection options dynamically
+collection_options = [PAPERQA]
+if has_second_corpus:
+    collection_options.append(PAPERQA2)
+if has_third_corpus:
+    collection_options.append(PAPERQA3)
+collection_options.extend([PUBMED] + filtered_collection_names() + ["No collection"])
+
 collection = st.sidebar.selectbox(
     "Choose collection",
-    [PUBMED, PAPERQA, WIKIPEDIA] + filtered_collection_names() + ["No collection"],
-    index=0,  # Set PUBMED as default (index 0 since it's first in the list)
+    collection_options,
+    index=1,  # Set PAPERQA2 (medium - 1k papers) as default
     help="""
-    A collection is a knowledge base. It could be anything, but
-    it's likely your instance has some bio-ontologies pre-loaded.
-    Select 'Alzheimer's Papers (via PaperQA)' for direct access to a trusted corpus of Alzheimer's research papers.
+    A collection is a knowledge base that is used for retrieval augmented generation (RAG)
+    to support the AI model when answering questions.
+    Select 'Trusted Alzheimers Corpus (small)', 'Trusted Alzheimers Corpus (medium)',
+    or 'Trusted Alzheimers Corpus (large)' to use corpora of 358, 1,065, and 3,028
+    Alzheimer's research papers, respectively, curated by experts at Alzforum,
+    U of Washington and Wash U.
+    Select 'Pubmed' to use all of Pubmed.
+    Select 'kg_alz_humanized' to use KG Alzheimers (beta)
     Select 'No collection' to interact with the model directly without a knowledge base.
     """,
 )
 
-# Simplified model selection with only gpt-4o
-model_name = st.sidebar.selectbox(
-    "Choose model",
-    ["gpt-4o"],
-    index=0,
-    help="Using GPT-4o for optimal results."
-)
-
 # Removed extraction_strategy and background_collection sections
 
-# Default to BasicExtractor
+# Default to BasicExtractor with gpt-4o model
 extractor = BasicExtractor()
+extractor.model_name = "gpt-4o"
 state.extractor = extractor
 
-# Add background_collection for CiteSeek functionality
-background_collection = st.sidebar.selectbox(
-    "Background knowledge for CiteSeek",
-    [NO_BACKGROUND_SELECTED, PUBMED, PAPERQA, WIKIPEDIA],
-    index=1,  # Set PubMed as default
-    help="""
-    Background databases provide evidence sources for CiteSeek.
-    PubMed is recommended for verifying medical claims.
-    Alzheimer's Papers provides specialized knowledge from trusted Alzheimer's research papers.
-    """,
-)
 
 # st.sidebar.markdown(f"Cart: {cart.size} items")
-
-st.sidebar.markdown("Developed by the Monarch Initiative")
 
 
 def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
@@ -148,6 +133,10 @@ def get_chat_agent() -> Union[ChatAgentAlz, BaseWrapper]:
         source = WikipediaWrapper(local_store=db, extractor=extractor)
     elif collection == PAPERQA:
         source = PaperQAWrapper(extractor=extractor)
+    elif collection == PAPERQA2:
+        source = PaperQAWrapper(extractor=extractor, corpus_id="2")
+    elif collection == PAPERQA3:
+        source = PaperQAWrapper(extractor=extractor, corpus_id="3")
     else:
         source = db
 
@@ -214,7 +203,7 @@ if option == CHAT:
     # Only show these controls if using a knowledge base
     if collection != "No collection":
         limit = st.slider(
-            "Detail",
+            "Relevant publications to retrieve",
             min_value=0,
             max_value=30,
             value=10,
@@ -225,21 +214,12 @@ if option == CHAT:
                                        complete results, but may also exceed context windows for the model.
                                        """,
         )
-        expand = st.checkbox(
-            "Expand query",
-            help="""
-                                                    If checked, perform query expansion (pubmed only).
-                                                    """,
-        )
     else:
         # Set default values when not using a knowledge base
         limit = 0
-        expand = False
-
-    extractor.model_name = model_name
 
     if st.button(CHAT):
-        response = ask_chatbot(query, expand=expand, limit=limit)
+        response = ask_chatbot(query, expand=False, limit=limit)
         page_state.chat_response = response
 
     if page_state.chat_response:
@@ -281,7 +261,7 @@ elif option == CITESEEK:
     )
 
     limit = st.slider(
-        "Detail",
+        "Relevant publications to retrieve",
         min_value=0,
         max_value=30,
         value=10,
@@ -292,7 +272,6 @@ elif option == CITESEEK:
                                    complete results, but may also exceed context windows for the model.
                                    """,
     )
-    extractor.model_name = model_name
 
     if page_state.selected is not None:
         if st.button("Clear"):
