@@ -1,0 +1,45 @@
+name: Publish Python Package (Dry Run)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [created]
+
+jobs:
+  build-n-publish:
+    name: Build and publish Python 🐍 distributions 📦 to PyPI
+    runs-on: ubuntu-latest
+    environment: release
+    strategy:
+      matrix:
+        python-version: [ "3.11", "3.12" ]
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7.6.0
+
+      - name: Install dependencies
+        run: uv sync
+      
+      - name: Git debug info
+        run: echo "Git URL --- $(git config --get remote.origin.url)"
+             echo "Git Describe --- $(git describe)"
+             echo "Git Describe (tags) --- $(git describe --tags)"
+             echo "Git tag list --- $(git tag --list)"
+
+      - name: Build source and wheel archives
+        run: uv build
+
+#      - name: Publish distribution 📦 to PyPI
+#        uses: pypa/gh-action-pypi-publish@release/v1

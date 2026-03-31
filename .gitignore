@@ -143,3 +143,4 @@ stagedb/*
 *.rej
 tests/input/dbs/go-nucleus-chroma/*/*.bin
 tests/output/*
+chroma.sqlite3

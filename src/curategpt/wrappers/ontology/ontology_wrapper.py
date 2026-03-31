@@ -171,7 +171,7 @@ class OntologyWrapper(BaseWrapper):
                     for r in ldef.restrictions
                 ]
         for obj in self._objects_by_curie.values():
-            yield obj.dict()
+            yield obj.model_dump()
 
     def as_object(self, curie: CURIE) -> Optional[OntologyClass]:
         if not self._objects_by_curie:

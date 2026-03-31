@@ -1,4 +1,5 @@
-RUN = poetry run
+RUN = uv run
+INSTALL = uv sync
 CURATE = $(RUN) curategpt
 
 DB_PATH = stagedb
@@ -127,3 +128,28 @@ load-github-mixs:
 
 load-github-nmdc-schema-issues-prs:
 	$(CURATE) -v view index -p $(DB_PATH) -c gh_nmdc -m openai:  --view github --init-with "{repo: microbiomedata/nmdc-schema}"
+
+.PHONY: tests
+tests:
+	$(INSTALL)
+	$(RUN) pytest tests
+
+.PHONY: prep-gh-pages-dir
+prep-gh-pages-dir:
+	rm gh-pages -rf
+	rm docs/_build -rf
+	mkdir gh-pages
+	touch gh-pages/.nojekyll
+
+.PHONY: sphinx-build-docs
+sphinx-build-docs:
+	$(INSTALL) --extra docs
+	cd docs/ && $(RUN) sphinx-apidoc -o . ../src/curategpt/ --ext-autodoc -f
+	cd docs/ && $(RUN) sphinx-build -b html . _build
+
+.PHONY: stage-docs
+stage-docs:
+	cp -r docs/_build/* gh-pages/
+
+.PHONY: make-docs
+make-docs: prep-gh-pages-dir sphinx-build-docs stage-docs

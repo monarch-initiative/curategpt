@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel, ConfigDict, Extra
+from pydantic import BaseModel, ConfigDict
 
 
 class Relationship(BaseModel):
@@ -15,7 +15,7 @@ class Relationship(BaseModel):
     target: str
 
 
-class OntologyClass(BaseModel, extra=Extra.allow):
+class OntologyClass(BaseModel, extra="allow"):
     """
     An ontology class.
 

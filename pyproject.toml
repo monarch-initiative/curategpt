@@ -1,109 +1,132 @@
-[tool.poetry]
+[project]
 name = "curategpt"
-version = "0.2.4"
+#version = "0.2.4"
+dynamic = ["version"]
 description = "CurateGPT"
-authors = ["Chris Mungall <cjmungall@lbl.gov>", "Carlo Kroll <ckroll95@gmail.com>", "Harshad Hegde <hhegde@lbl.gov>", "J. Harry Caufield <jhc@lbl.gov>"]
-license = "BSD-3"
+authors = [
+    {name="Chris Mungall", email="cjmungall@lbl.gov"},
+    {name="Carlo Kroll", email="ckroll95@gmail.com"},
+    {name="Harshad Hegde", email="hhegde@lbl.gov"}, 
+    {name="J. Harry Caufield", email="jhc@lbl.gov"},
+]
+#Python needs to be locked >=3.11 because of paperqa>=5.
+#Python needs to be locked <3.13 because chromadb==0.5.0 requires numpy<2 which segfaults if you run in python 3.13
+requires-python= ">=3.11,<4,<3.13"
+license = "BSD-3-Clause" 
 readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "^3.11"
-click = "^8.1.7"
-importlib-metadata = ">=6"
-oaklib = "^0.6.9"
-beautifulsoup4 = ">=4.8.0"
-streamlit = ">=1.22.0"
-openai = ">=0.27.7"
-wikipedia = ">=1.4.0"
-google-search-results = ">=2.4.2"
-chromadb = "^0.5.0"
-tiktoken = "^0.7.0"
-inflection = ">=0.5.1"
-sentence-transformers = ">=2.2.2"
-pymongo = ">=4.4.1"
-linkml-runtime = "^1.6.3"
-python-ulid = "^1.1.0"
-sqlite-utils = "^3.34"
-gpt4all = {version = "^1.0.8", optional = true}
-httpx = "^0.24.1"
-eutils = "^0.6.0"
-matplotlib = "^3.7.2"
-seaborn = "^0.12.2"
-bioc = {version = ">=2.0.0.post5", optional = true}
-requests-cache = "^1.1.0"
-jsonpatch = "^1.33"
-scholarly = "^1.7.11"
-pytrials = "^0.3.0"
-xmltodict = "^0.13.0"
-ratelimiter = "^1.2.0.post0"
-google-api-python-client = "^2.97.0"
-google-auth-oauthlib = "^1.0.0"
-textract = "1.5.0"
-jsonpath-ng = "^1.5.3"
-pygithub = "^1.59.1"
-jsonlines = "*"
-llm = "^0.15"
-llm-gpt4all = {version = "^0.1.1", optional = true}
-gspread = "^5.10.0"
-defusedxml = "^0.7.1"
-click-default-group = "^1.2.4"
-venomx = "^0.1.1"
-duckdb = "~1.0.0"
-python-dotenv = "^1.0.1"
-langchain-community = {version = "*", optional = true}
-onnxruntime = [
-    {version = "<=1.19.2", python = "<3.10"},
-    {version = "^1.20.0", python = ">=3.10"}
+dependencies = [
+    "click>=8.1.7,<9",
+    "importlib-metadata>=6",
+    "oaklib>=0.6.9",
+    "beautifulsoup4>=4.8.0",
+    "streamlit>=1.22.0",
+    "openai>=0.27.7",
+    "wikipedia>=1.4.0",
+    "google-search-results>=2.4.2",
+    "chromadb==0.5.0", #TODO: This is pretty out of date, we have a weird try/catch block in src/store/chromadb_adapter.py that doesn't work with all versions past 0.5.0. Also this constrains us to an old version of numpy. 
+    "numpy<2",
+    "tiktoken>=0.7.0",
+    "inflection>=0.5.1",
+    "sentence-transformers>=2.2.2", #This brings in Torch
+    "pymongo>=4.4.1",
+    "linkml-runtime>=1.6.3",
+    "python-ulid>=1.1.0,<2",
+    "sqlite-utils>=3.34",
+    "httpx>=0.24.1",
+    "eutils>=0.6.0",
+    "matplotlib>=3.7.2",
+    "seaborn>=0.12.2",
+    "requests-cache>=1.1.0",
+    "jsonpatch>=1.33",
+    "scholarly>=1.7.11",
+    "pytrials>=0.3.0",
+    "xmltodict>=0.13.0",
+    "ratelimiter>=1.2.0.post0",
+    "google-api-python-client>=2.97.0",
+    "google-auth-oauthlib>=1.0.0",
+    "textract==1.5.0",
+    "jsonpath-ng>=1.5.3",
+    "pygithub>=1.59.1",
+    "jsonlines",
+    "llm>=0.15",
+    "gspread>=5.10.0",
+    "defusedxml>=0.7.1",
+    "click-default-group>=1.2.4",
+    "venomx>=0.1.1",
+    "duckdb>=1.0.0",
+    "python-dotenv>=1.0.1",
+    "onnxruntime>=1.20.0",
+    "setuptools<81",
+    "coredis>=6.3.0",
+#onnxruntime = [
+#    {version = "<=1.19.2", python = "<3.10"},
+#    {version = "^1.20.0", python = ">=3.10"}
+#]
 ]
-paper-qa = {version = "^5.20.0", optional = true, python = ">=3.11"}
 
-[tool.poetry.group.dev.dependencies]
-pytest = ">=7.1.2"
-tox = ">=3.25.1"
-linkml = "^1.5.6"
-jupyter = "^1.0.0"
-sphinx = {version = ">=6.1.3", extras = ["docs"]}
-sphinx-rtd-theme = {version = ">=1.0.0", extras = ["docs"]}
-sphinx-autodoc-typehints = {version = ">=1.2.0", extras = ["docs"]}
-sphinx-click = {version = ">=4.3.0", extras = ["docs"]}
-sphinx-automodapi = {version = "*", extras = ["docs"]}
-myst-parser = {version = ">=0.18.1", extras = ["docs"]}
+[dependency-groups]
 
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.docs.dependencies]
-sphinx = {version = ">=6.1.3"}
-sphinx-rtd-theme = {version = ">=1.0.0"}
-sphinx-autodoc-typehints = {version = ">=1.2.0"}
-sphinx-click = {version = ">=4.3.0"}
-myst-parser = {version = ">=0.18.1"}
-
-[tool.poetry.scripts]
-curategpt = "curategpt.cli:main"
-gocampr = "curategpt.adhoc.gocam_predictor:main"
-
-[tool.poetry.extras]
-docs = [
-    "sphinx",
-    "sphinx-rtd-theme",
-    "sphinx-autodoc-typehints",
-    "sphinx-click",
-    "myst-parser"
+dev = [
+    "pytest>=7.1.2",
+    "tox>=3.25.1",
+    "linkml>=1.10.0",
+    "jupyter>=1.0.0",
+    "ruff",
+    "black",
 ]
+
+optional = [
+    "langchain-community",
+]
+
 bioc = [
-    "bioc"
+    "bioc>=2.0.0.post5"
 ]
+
 gpt4all = [
-    "gpt4all",
-    "llm-gpt4all"
+    "gpt4all>=1.0.8,<2",
+    "llm-gpt4all>=0.1.1"
 ]
+
+
 paperqa = [
-    "paper-qa",
+    #"paper-qa>=5.20.0,<6",
+    "paper-qa>=5,<7",
     "langchain-community"
 ]
 
-[tool.poetry-dynamic-versioning]
+[project.optional-dependencies]
+
+docs = [
+    "sphinx>=6.1.3",
+    "sphinx-rtd-theme>=3.1.0",
+    "sphinx-autodoc-typehints",
+    "sphinx-click>=4.3.0",
+    "sphinx-automodapi",
+    "myst_parser",
+#    "python-ldap",
+]
+
+### END DEPENDENCY GROUPS ###
+
+[project.scripts]
+curategpt = "curategpt.cli:main"
+gocampr = "curategpt.adhoc.gocam_predictor:main"
+
+
+[tool.uv]
+default-groups = ["dev", "optional","bioc","gpt4all","paperqa"]
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+fallback-version = "0.2.4"
 enable = false
 vcs = "git"
 style = "pep440"
@@ -117,6 +140,10 @@ line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]  # New section for linter-specific settings
+exclude = [
+    "*.ipynb", #These are for example use cases.
+]
+
 extend-ignore = [
     "D211",  # `no-blank-line-before-class`
     "D212",  # `multi-line-summary-first-line`
@@ -134,6 +161,11 @@ select = [
     "I",  # isort
     # "S",  # flake8-bandit
     "W",  # Warning
+    #"C90"
+]
+
+ignore = [
+    
 ]
 
 unfixable = []
@@ -150,7 +182,3 @@ skip = "*.po,*.ts,.git,pyproject.toml"
 count = ""
 quiet-level = 3
 # ignore-words-list = ""
-
-[build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
-build-backend = "poetry_dynamic_versioning.backend"
